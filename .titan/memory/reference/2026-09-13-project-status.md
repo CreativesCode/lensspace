@@ -81,6 +81,34 @@ Date: 2026-09-13
   no application-level override. Remote rollback fixtures verified the unpaid
   rejection, partial/final mixed-currency payments and successful paid delivery.
 
+## Seller cashboxes and closures
+
+- The local migration adds a daily cashbox per organization, branch, seller,
+  business date and currency, using the organization's configured timezone.
+- Primary and sequential complementary closures preserve expected, declared and
+  difference amounts plus immutable one-time payment allocations.
+- Payment insertion and closure serialize on the same cashbox row. Later payments
+  remain accepted, are marked post-close by the database and feed only a future
+  complementary closure.
+- `/cashbox` provides seller closing and owner review with date, branch and seller
+  filters. Order payment history identifies post-close receipts.
+- Local and hosted rollback fixtures passed. The hosted migration and advisors
+  also passed without introducing new findings. Interactive responsive QA remains.
+
+## Production and provider workflows
+
+- Deployed production jobs support one current lens and mounting job per order,
+  role-matched provider assignment, constrained state transitions and immutable
+  actor-attributed events.
+- Providers see only their assigned operational snapshot without customer identity,
+  prices or payments. Owners and the primary seller retain authorized workflow access.
+- Incidents preserve cost responsibility. Accepted rework supersedes rather than
+  overwrites the original job and remains linked to it.
+- `/production` implements assignment, work cards, transitions, incident reporting
+  and rework acceptance using the approved workshop design composition.
+- Local and hosted transactional fixtures and hosted advisors passed. Interactive
+  multi-role browser QA remains pending.
+
 ## Mandatory design rule
 
 - `docs/design/` is the visual source of truth for every existing and future view.
@@ -113,11 +141,10 @@ Date: 2026-09-13
 
 1. Apply the design precedence and shared component library to every new view.
 2. Carry the operational/read-only guard into each future write feature.
-3. Finish Phase 4 with seller cashboxes and immutable primary/complementary daily
-   closures, including post-close payment attribution. Detailed scope and
-   acceptance criteria: `.titan/memory/reference/2026-09-13-next-work.md`.
-4. Complete interactive responsive/mobile QA for the refreshed views, including
+3. Complete interactive responsive/mobile QA for the refreshed views, including
    the customer, prescription, catalog, sales and order/payment workspaces.
+4. Validate production with real seller/owner/provider sessions.
+5. Begin Phase 6 order history, owner dashboards and the manual WhatsApp boundary.
 
 ## Evidence
 

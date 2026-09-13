@@ -109,11 +109,24 @@ database-enforced zero-balance delivery guard are deployed at `/orders`. Only
 seller cashboxes and immutable primary/complementary closures remain in Phase 4;
 their detailed handoff is `.titan/memory/reference/2026-09-13-next-work.md`.
 
+Completed 2026-09-13: seller cashboxes and immutable primary/complementary
+closures are deployed. Local and hosted transactional fixtures verified
+exact totals, differences, late-payment attribution, complementary sequencing,
+one-time allocation, immutability and seller/owner access. Hosted advisors added
+no new findings. Phase 4 is complete; responsive QA remains pilot hardening.
+
 ### Phase 5 — Production, providers and incidents
 
 Outcome: one active lens provider and mounting provider per order, assignments, independent state dimensions, provider-scoped access, incidents and linked rework.
 
 Verification: transition guards, assignment isolation across organizations, post-dispatch edit lock and cost-responsibility history.
+
+Progress 2026-09-13: provider-scoped lens/mounting jobs, constrained transitions,
+append-only events, incidents and linked rework are deployed. Local and hosted
+rollback fixtures verified assignment isolation, provider visibility, transition
+guards, immutable operational snapshots and cost-responsibility history.
+`/production` is implemented and passes static application checks; interactive
+multi-role browser QA remains pending before Phase 5 is marked complete.
 
 ### Phase 6 — History, dashboards and WhatsApp boundary
 

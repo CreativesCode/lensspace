@@ -975,6 +975,22 @@ export type Database = {
         Returns: boolean
       }
       current_user_is_platform_admin: { Args: never; Returns: boolean }
+      close_cashbox: {
+        Args: {
+          closure_type: string
+          declared_amount: number
+          target_cashbox_id: number
+        }
+        Returns: Json
+      }
+      assign_production_job: {
+        Args: { job_type: string; provider_id: string; target_order_id: number }
+        Returns: number
+      }
+      create_production_rework: {
+        Args: { target_incident_id: number }
+        Returns: number
+      }
       find_auth_user_by_email: {
         Args: { target_email: string }
         Returns: {
@@ -987,6 +1003,15 @@ export type Database = {
         Returns: Json
       }
       list_accessible_orders: { Args: never; Returns: Json }
+      list_accessible_production_jobs: { Args: never; Returns: Json }
+      list_accessible_cashboxes: {
+        Args: {
+          target_branch_id?: number | null
+          target_business_date?: string | null
+          target_seller_id?: string | null
+        }
+        Returns: Json
+      }
       manage_organization_member: {
         Args: {
           target_branch_id: number
@@ -1009,6 +1034,10 @@ export type Database = {
         }
         Returns: Json
       }
+      report_production_incident: {
+        Args: { cost_responsibility: string; description: string; target_job_id: number }
+        Returns: number
+      }
       save_quotation: {
         Args: {
           selected_item_ids: number[]
@@ -1021,6 +1050,10 @@ export type Database = {
           target_usd_to_cup_rate: number | null
         }
         Returns: number
+      }
+      transition_production_job: {
+        Args: { notes?: string | null; target_job_id: number; target_status: string }
+        Returns: undefined
       }
     }
     Enums: {

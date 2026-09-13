@@ -35,13 +35,17 @@ async function AuthenticatedLayout({ children }: { children: React.ReactNode }) 
             <span className="h-2 w-2 rounded-full border border-[#6F9C96]" />
             Catálogo y precios
           </Link>
-          <Link href="/sales" className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[#A7CFC9] transition hover:bg-[#10463F] hover:text-[#D8F5EF]">
+          <Link href="/cashbox" className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[#A7CFC9] transition hover:bg-[#10463F] hover:text-[#D8F5EF]">
             <span className="h-2 w-2 rounded-full border border-[#6F9C96]" />
-            Nueva venta
+            Caja y cierres
           </Link>
           <Link href="/orders" className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[#A7CFC9] transition hover:bg-[#10463F] hover:text-[#D8F5EF]">
             <span className="h-2 w-2 rounded-full border border-[#6F9C96]" />
             Pedidos y cobros
+          </Link>
+          <Link href="/production" className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[#A7CFC9] transition hover:bg-[#10463F] hover:text-[#D8F5EF]">
+            <span className="h-2 w-2 rounded-full border border-[#6F9C96]" />
+            Producción
           </Link>
           <Link href="/sales" className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[#A7CFC9] transition hover:bg-[#10463F] hover:text-[#D8F5EF]">
             <span className="h-2 w-2 rounded-full border border-[#6F9C96]" />
