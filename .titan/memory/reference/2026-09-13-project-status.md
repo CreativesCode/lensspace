@@ -55,6 +55,32 @@ Date: 2026-09-13
   and USD totals, tenant overrides, seller calculation access and denial of
   seller price changes. All fixture data was rolled back.
 
+## Quotation and order foundation
+
+- `/sales` supports selecting a customer, optional prescription, catalog
+  configuration, an explicit exchange rate, quotation review and verbal customer
+  acceptance.
+- Saving a quotation snapshots the current proposal. Acceptance recalculates it;
+  a catalog price change rejects the transition and requires reconfirmation.
+- Successful acceptance atomically creates the numbered order, immutable line and
+  currency snapshots, exchange-rate snapshot and confirmation record.
+- RLS preserves seller-owned commercial isolation while owners retain organization
+  access. Remote rollback fixtures verified acceptance, numbering, immutability
+  and price-change rejection.
+
+## Payments and delivery
+
+- `/orders` lists the commercial records visible to the current seller/owner and
+  exposes payment detail, remaining balance and guarded delivery.
+- Cash payments support CUP and USD, preserve amount/currency/applied rate and
+  generate an immutable CUP equivalent. Payment status updates automatically and
+  overpayments are rejected.
+- Every sale now requires an exchange-rate snapshot. The order balance uses its
+  accepted CUP equivalent, independent of later catalog or global rate changes.
+- A database transition guard prohibits delivery with any pending balance and has
+  no application-level override. Remote rollback fixtures verified the unpaid
+  rejection, partial/final mixed-currency payments and successful paid delivery.
+
 ## Mandatory design rule
 
 - `docs/design/` is the visual source of truth for every existing and future view.
@@ -87,10 +113,11 @@ Date: 2026-09-13
 
 1. Apply the design precedence and shared component library to every new view.
 2. Carry the operational/read-only guard into each future write feature.
-3. Start Phase 4 with quotations, immutable price/exchange snapshots and order
-   confirmation.
+3. Finish Phase 4 with seller cashboxes and immutable primary/complementary daily
+   closures, including post-close payment attribution. Detailed scope and
+   acceptance criteria: `.titan/memory/reference/2026-09-13-next-work.md`.
 4. Complete interactive responsive/mobile QA for the refreshed views, including
-   the customer, prescription and catalog workspaces.
+   the customer, prescription, catalog, sales and order/payment workspaces.
 
 ## Evidence
 
@@ -98,6 +125,8 @@ Date: 2026-09-13
 - `.titan/qa/2026-09-13-clinical-foundation.md`
 - `.titan/qa/2026-09-13-prescription-workflow.md`
 - `.titan/qa/2026-09-13-catalog-pricing.md`
+- `.titan/qa/2026-09-13-quotation-order-snapshots.md`
+- `.titan/qa/2026-09-13-payments-balances-delivery.md`
 - `.titan/qa/design-refresh/2026-09-13-design-refresh.md`
 
 No credentials, connection strings or private user data are stored here.

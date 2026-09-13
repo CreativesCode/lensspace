@@ -918,6 +918,10 @@ export type Database = {
         }
         Returns: Json
       }
+      accept_quotation: {
+        Args: { target_quotation_id: number }
+        Returns: Json
+      }
       create_customer_with_phones: {
         Args: {
           customer_address?: string
@@ -978,6 +982,11 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_order_payment_summary: {
+        Args: { target_order_id: number }
+        Returns: Json
+      }
+      list_accessible_orders: { Args: never; Returns: Json }
       manage_organization_member: {
         Args: {
           target_branch_id: number
@@ -985,6 +994,33 @@ export type Database = {
           target_status: string
         }
         Returns: undefined
+      }
+      mark_order_delivered: {
+        Args: { target_order_id: number }
+        Returns: undefined
+      }
+      register_cash_payment: {
+        Args: {
+          payment_amount: number
+          payment_applied_rate: number
+          payment_currency: string
+          payment_notes?: string | null
+          target_order_id: number
+        }
+        Returns: Json
+      }
+      save_quotation: {
+        Args: {
+          selected_item_ids: number[]
+          target_branch_id: number
+          target_customer_id: number
+          target_notes?: string | null
+          target_organization_id: number
+          target_prescription_revision_id: number | null
+          target_quotation_id: number | null
+          target_usd_to_cup_rate: number | null
+        }
+        Returns: number
       }
     }
     Enums: {

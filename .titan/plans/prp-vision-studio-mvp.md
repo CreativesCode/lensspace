@@ -100,6 +100,15 @@ Outcome: quotation acceptance into orders, immutable price/exchange snapshots, m
 
 Verification: totals and conversions, reconfirmation after price changes, zero-balance delivery guard, post-close payment behavior and immutable closing tests.
 
+Progress 2026-09-13: quotation save and verbal acceptance are deployed. Acceptance
+recalculates current prices, rejects stale proposals and atomically creates a
+numbered order with immutable line, currency, exchange-rate and confirmation
+snapshots. `/sales` exposes the flow. Mixed-currency cash payments, immutable
+per-payment exchange data, derived balances, overpayment rejection and the
+database-enforced zero-balance delivery guard are deployed at `/orders`. Only
+seller cashboxes and immutable primary/complementary closures remain in Phase 4;
+their detailed handoff is `.titan/memory/reference/2026-09-13-next-work.md`.
+
 ### Phase 5 — Production, providers and incidents
 
 Outcome: one active lens provider and mounting provider per order, assignments, independent state dimensions, provider-scoped access, incidents and linked rework.
@@ -146,6 +155,12 @@ Verification: full role matrix, tenant-isolation suite, accessibility/responsive
   equivalent, high-graduation surcharge warnings, seller calculation access and
   seller denial on price mutation; all fixtures were rolled back. TypeScript,
   ESLint and the Next.js production build passed with `/catalog` included.
+- 2026-09-13: Phase 4 quotation/order foundation deployed. Rollback fixtures
+  verified atomic acceptance and numbering, immutable snapshots, one verbal
+  confirmation and mandatory reconfirmation after catalog price changes.
+- 2026-09-13: Phase 4 payment/delivery block deployed. Rollback fixtures verified
+  CUP/USD partial and final payments, historical equivalents, automatic balance
+  status, overpayment rejection and the no-debt delivery invariant.
 
 ## Decisions and open questions
 
