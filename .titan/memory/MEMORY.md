@@ -12,3 +12,5 @@ Read relevant entries only. Store decisions with dates and evidence.
 - [2026-09-12 — Vision Studio product scope](project/2026-09-12-vision-studio-scope.md)
 
 ## References
+
+- [2026-09-12 — Development setup and handoff](reference/2026-09-12-development-setup.md)
