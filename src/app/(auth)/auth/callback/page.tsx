@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/client'
+import { VisionStudioLogo } from '@/shared/components'
 
 export default function AuthCallbackPage() {
   const router = useRouter()
@@ -63,8 +64,11 @@ export default function AuthCallbackPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center px-6">
-      <div className="max-w-md text-center">
-        <h1 className="text-2xl font-bold text-slate-950">
+      <div className="max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+        <div className="mb-7 flex justify-center">
+          <VisionStudioLogo compact />
+        </div>
+        <h1 className="font-display text-2xl font-bold text-slate-950">
           {error ? 'No pudimos completar el acceso' : 'Completando acceso…'}
         </h1>
         <p className="mt-3 text-slate-600">

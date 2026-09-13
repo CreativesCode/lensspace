@@ -102,6 +102,126 @@ export type Database = {
           },
         ]
       }
+      customer_phones: {
+        Row: {
+          branch_id: number
+          created_at: string
+          customer_id: number
+          id: number
+          is_primary: boolean
+          label: string
+          normalized_phone: string | null
+          organization_id: number
+          phone_number: string
+          updated_at: string
+          whatsapp_enabled: boolean
+        }
+        Insert: {
+          branch_id: number
+          created_at?: string
+          customer_id: number
+          id?: never
+          is_primary?: boolean
+          label?: string
+          normalized_phone?: string | null
+          organization_id: number
+          phone_number: string
+          updated_at?: string
+          whatsapp_enabled?: boolean
+        }
+        Update: {
+          branch_id?: number
+          created_at?: string
+          customer_id?: number
+          id?: never
+          is_primary?: boolean
+          label?: string
+          normalized_phone?: string | null
+          organization_id?: number
+          phone_number?: string
+          updated_at?: string
+          whatsapp_enabled?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_phones_customer_fkey"
+            columns: ["customer_id", "organization_id", "branch_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id", "organization_id", "branch_id"]
+          },
+        ]
+      }
+      customers: {
+        Row: {
+          address: string | null
+          archived_at: string | null
+          birth_date: string | null
+          branch_id: number
+          created_at: string
+          created_by: string
+          full_name: string
+          id: number
+          messaging_consent: boolean
+          national_id: string | null
+          notes: string | null
+          organization_id: number
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          archived_at?: string | null
+          birth_date?: string | null
+          branch_id: number
+          created_at?: string
+          created_by: string
+          full_name: string
+          id?: never
+          messaging_consent?: boolean
+          national_id?: string | null
+          notes?: string | null
+          organization_id: number
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          archived_at?: string | null
+          birth_date?: string | null
+          branch_id?: number
+          created_at?: string
+          created_by?: string
+          full_name?: string
+          id?: never
+          messaging_consent?: boolean
+          national_id?: string | null
+          notes?: string | null
+          organization_id?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customers_branch_fkey"
+            columns: ["branch_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id", "organization_id"]
+          },
+          {
+            foreignKeyName: "customers_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "customers_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       module_dependencies: {
         Row: {
           created_at: string
@@ -289,6 +409,236 @@ export type Database = {
         }
         Relationships: []
       }
+      prescription_files: {
+        Row: {
+          branch_id: number
+          byte_size: number
+          created_at: string
+          file_name: string
+          id: number
+          mime_type: string
+          organization_id: number
+          prescription_id: number
+          revision_id: number
+          storage_path: string
+          uploaded_by: string
+        }
+        Insert: {
+          branch_id: number
+          byte_size: number
+          created_at?: string
+          file_name: string
+          id?: never
+          mime_type: string
+          organization_id: number
+          prescription_id: number
+          revision_id: number
+          storage_path: string
+          uploaded_by: string
+        }
+        Update: {
+          branch_id?: number
+          byte_size?: number
+          created_at?: string
+          file_name?: string
+          id?: never
+          mime_type?: string
+          organization_id?: number
+          prescription_id?: number
+          revision_id?: number
+          storage_path?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prescription_files_prescription_fkey"
+            columns: ["prescription_id", "organization_id", "branch_id"]
+            isOneToOne: false
+            referencedRelation: "prescriptions"
+            referencedColumns: ["id", "organization_id", "branch_id"]
+          },
+          {
+            foreignKeyName: "prescription_files_revision_fkey"
+            columns: [
+              "revision_id",
+              "prescription_id",
+              "organization_id",
+              "branch_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "prescription_revisions"
+            referencedColumns: [
+              "id",
+              "prescription_id",
+              "organization_id",
+              "branch_id",
+            ]
+          },
+          {
+            foreignKeyName: "prescription_files_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      prescription_revisions: {
+        Row: {
+          branch_id: number
+          change_reason: string | null
+          created_at: string
+          created_by: string
+          id: number
+          left_addition: number | null
+          left_axis: number | null
+          left_cylinder: number | null
+          left_height: number | null
+          left_prism: number | null
+          left_prism_base: string | null
+          left_pupillary_distance: number | null
+          left_sphere: number | null
+          notes: string | null
+          organization_id: number
+          prescriber_name: string | null
+          prescription_date: string
+          prescription_id: number
+          pupillary_distance_total: number | null
+          revision_number: number
+          right_addition: number | null
+          right_axis: number | null
+          right_cylinder: number | null
+          right_height: number | null
+          right_prism: number | null
+          right_prism_base: string | null
+          right_pupillary_distance: number | null
+          right_sphere: number | null
+        }
+        Insert: {
+          branch_id: number
+          change_reason?: string | null
+          created_at?: string
+          created_by: string
+          id?: never
+          left_addition?: number | null
+          left_axis?: number | null
+          left_cylinder?: number | null
+          left_height?: number | null
+          left_prism?: number | null
+          left_prism_base?: string | null
+          left_pupillary_distance?: number | null
+          left_sphere?: number | null
+          notes?: string | null
+          organization_id: number
+          prescriber_name?: string | null
+          prescription_date?: string
+          prescription_id: number
+          pupillary_distance_total?: number | null
+          revision_number: number
+          right_addition?: number | null
+          right_axis?: number | null
+          right_cylinder?: number | null
+          right_height?: number | null
+          right_prism?: number | null
+          right_prism_base?: string | null
+          right_pupillary_distance?: number | null
+          right_sphere?: number | null
+        }
+        Update: {
+          branch_id?: number
+          change_reason?: string | null
+          created_at?: string
+          created_by?: string
+          id?: never
+          left_addition?: number | null
+          left_axis?: number | null
+          left_cylinder?: number | null
+          left_height?: number | null
+          left_prism?: number | null
+          left_prism_base?: string | null
+          left_pupillary_distance?: number | null
+          left_sphere?: number | null
+          notes?: string | null
+          organization_id?: number
+          prescriber_name?: string | null
+          prescription_date?: string
+          prescription_id?: number
+          pupillary_distance_total?: number | null
+          revision_number?: number
+          right_addition?: number | null
+          right_axis?: number | null
+          right_cylinder?: number | null
+          right_height?: number | null
+          right_prism?: number | null
+          right_prism_base?: string | null
+          right_pupillary_distance?: number | null
+          right_sphere?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prescription_revisions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "prescription_revisions_prescription_fkey"
+            columns: ["prescription_id", "organization_id", "branch_id"]
+            isOneToOne: false
+            referencedRelation: "prescriptions"
+            referencedColumns: ["id", "organization_id", "branch_id"]
+          },
+        ]
+      }
+      prescriptions: {
+        Row: {
+          archived_at: string | null
+          branch_id: number
+          created_at: string
+          created_by: string
+          customer_id: number
+          id: number
+          organization_id: number
+          updated_at: string
+        }
+        Insert: {
+          archived_at?: string | null
+          branch_id: number
+          created_at?: string
+          created_by: string
+          customer_id: number
+          id?: never
+          organization_id: number
+          updated_at?: string
+        }
+        Update: {
+          archived_at?: string | null
+          branch_id?: number
+          created_at?: string
+          created_by?: string
+          customer_id?: number
+          id?: never
+          organization_id?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prescriptions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "prescriptions_customer_fkey"
+            columns: ["customer_id", "organization_id", "branch_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id", "organization_id", "branch_id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -419,6 +769,14 @@ export type Database = {
           is_confirmed: boolean
           user_id: string
         }[]
+      }
+      manage_organization_member: {
+        Args: {
+          target_branch_id: number
+          target_membership_id: number
+          target_status: string
+        }
+        Returns: undefined
       }
     }
     Enums: {

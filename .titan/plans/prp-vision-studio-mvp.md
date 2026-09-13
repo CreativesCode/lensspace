@@ -72,7 +72,7 @@ Verification:
 - SQL tests demonstrate tenant isolation and subscription/module operation checks.
 - Generated TypeScript database types are committed and application checks pass.
 
-### Phase 2 — Managed authentication and onboarding (in progress)
+### Phase 2 — Managed authentication and onboarding (completed 2026-09-13)
 
 Outcome: email/password login, session refresh middleware, protected layouts, platform-superadmin organization/first-owner onboarding and owner-managed seller/provider invitations.
 
@@ -83,6 +83,10 @@ Verification: login/logout/session refresh, route protection, inactive/suspended
 Outcome: branch-shared customer/prescription lookup, revision audit, private files, configurable multi-currency catalog and advisory graduation rules.
 
 Verification: duplicate warnings, prescription revision preservation, private-file policies, deterministic price fixtures and cross-seller commercial isolation.
+
+Progress 2026-09-13: customer, non-unique phone, prescription, immutable revision
+and private-file metadata tables are deployed with tenant/branch RLS. The
+customer UI, Storage bucket policies, catalog and pricing remain pending.
 
 ### Phase 4 — Quotations, orders, payments and cashbox
 
@@ -126,6 +130,8 @@ Verification: full role matrix, tenant-isolation suite, accessibility/responsive
 - 2026-09-12: platform-admin onboarding UI and authenticated Edge Function implemented. Atomic database onboarding creates the organization, first branch, subscription, owner membership, module entitlements and audit event.
 - 2026-09-12: platform organization listing and owner team management implemented. Invitations support sellers by branch and external lens/mounting providers, including reuse of an existing account across organizations and automatic membership activation after email confirmation.
 - 2026-09-12: seller/provider dashboard implemented with organization, branch, role, module and operational-state visibility. Expired/suspended tenants cannot mutate team membership.
+- 2026-09-13: owner controls for member deactivation/reactivation and seller branch reassignment implemented through an authenticated, audited database function. Direct membership updates were revoked from authenticated clients; authorized and denied paths passed transactional remote checks.
+- 2026-09-13: Phase 3 clinical foundation deployed. Transactional fixtures proved same-branch seller access, cross-branch and unrelated-user isolation, non-unique normalized phone matching, and append-only prescription revisions.
 
 ## Decisions and open questions
 

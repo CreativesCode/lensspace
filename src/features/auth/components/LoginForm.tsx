@@ -3,6 +3,7 @@
 import { useActionState } from 'react'
 
 import { login, type LoginState } from '../actions'
+import { PasswordInput } from '@/shared/components'
 
 const initialState: LoginState = { error: null }
 
@@ -31,10 +32,9 @@ export function LoginForm({ next = '/dashboard' }: { next?: string }) {
         <label htmlFor="password" className="text-sm font-medium text-slate-700">
           Contraseña
         </label>
-        <input
+        <PasswordInput
           id="password"
           name="password"
-          type="password"
           autoComplete="current-password"
           required
           className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-sky-600 focus:ring-4 focus:ring-sky-100"

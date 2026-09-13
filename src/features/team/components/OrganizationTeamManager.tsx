@@ -11,6 +11,7 @@ type TeamMember = {
   displayName: string
   role: string
   status: string
+  branchId: number | null
   branchName: string | null
 }
 type Branch = { id: number; name: string }
@@ -32,6 +33,7 @@ export function OrganizationTeamManager({
   const supabase = useMemo(() => createClient(), [])
   const [role, setRole] = useState<ManagedRole>('seller')
   const [pending, setPending] = useState(false)
+  const [pendingMemberId, setPendingMemberId] = useState<number | null>(null)
   const [message, setMessage] = useState<string | null>(null)
 
   async function inviteMember(event: FormEvent<HTMLFormElement>) {
@@ -73,6 +75,38 @@ export function OrganizationTeamManager({
     setPending(false)
   }
 
+  async function manageMember(
+    member: TeamMember,
+    nextStatus: 'active' | 'inactive',
+    nextBranchId: number | null,
+  ) {
+    if (
+      nextStatus === 'inactive' &&
+      !window.confirm(`¿Desactivar el acceso de ${member.displayName}?`)
+    ) {
+      return
+    }
+
+    setPendingMemberId(member.id)
+    setMessage(null)
+
+    const { error } = await supabase.rpc('manage_organization_member', {
+      target_membership_id: member.id,
+      target_status: nextStatus,
+      target_branch_id: nextBranchId,
+    } as never)
+
+    if (error) {
+      setMessage(error.message || 'No se pudo actualizar el miembro.')
+      setPendingMemberId(null)
+      return
+    }
+
+    setMessage('Miembro actualizado correctamente.')
+    router.refresh()
+    setPendingMemberId(null)
+  }
+
   const inputClass =
     'mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-950 outline-none focus:border-sky-600 focus:ring-4 focus:ring-sky-100'
 
@@ -89,6 +123,7 @@ export function OrganizationTeamManager({
               <th className="px-3 py-2 font-medium">Rol</th>
               <th className="px-3 py-2 font-medium">Sucursal</th>
               <th className="px-3 py-2 font-medium">Estado</th>
+              <th className="px-3 py-2 font-medium">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -102,6 +137,57 @@ export function OrganizationTeamManager({
                   {member.branchName ?? 'Todas'}
                 </td>
                 <td className="px-3 py-3 text-slate-600">{member.status}</td>
+                <td className="px-3 py-3">
+                  {member.role === 'owner' ? (
+                    <span className="text-xs text-slate-400">No editable</span>
+                  ) : (
+                    <div className="flex min-w-56 flex-wrap items-center gap-2">
+                      {member.role === 'seller' ? (
+                        <select
+                          aria-label={`Sucursal de ${member.displayName}`}
+                          className="rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-700"
+                          value={member.branchId ?? ''}
+                          disabled={
+                            !canManage ||
+                            member.status === 'invited' ||
+                            pendingMemberId === member.id
+                          }
+                          onChange={(event) =>
+                            void manageMember(
+                              member,
+                              member.status === 'inactive' ? 'inactive' : 'active',
+                              Number(event.target.value),
+                            )
+                          }
+                        >
+                          {branches.map((branch) => (
+                            <option key={branch.id} value={branch.id}>
+                              {branch.name}
+                            </option>
+                          ))}
+                        </select>
+                      ) : null}
+                      <button
+                        type="button"
+                        disabled={!canManage || pendingMemberId === member.id}
+                        onClick={() =>
+                          void manageMember(
+                            member,
+                            member.status === 'inactive' ? 'active' : 'inactive',
+                            member.branchId,
+                          )
+                        }
+                        className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {pendingMemberId === member.id
+                          ? 'Guardando…'
+                          : member.status === 'inactive'
+                            ? 'Reactivar'
+                            : 'Desactivar'}
+                      </button>
+                    </div>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>

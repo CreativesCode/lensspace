@@ -10,10 +10,12 @@ Read relevant entries only. Store decisions with dates and evidence.
 
 ## Project decisions
 
+- [2026-09-13 — Design system and view precedence](project/2026-09-13-design-system.md)
 - [2026-09-12 — Application stack](project/2026-09-12-application-stack.md)
 - [2026-09-12 — Vision Studio product scope](project/2026-09-12-vision-studio-scope.md)
 
 ## References
 
+- [2026-09-13 — Current implementation status](reference/2026-09-13-project-status.md)
 - [2026-09-12 — Development setup and handoff](reference/2026-09-12-development-setup.md)
-- [2026-09-12 — Current implementation status](reference/2026-09-12-implementation-status.md)
+- [2026-09-12 — Earlier implementation status (superseded)](reference/2026-09-12-implementation-status.md)

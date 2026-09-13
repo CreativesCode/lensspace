@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #f7fbfa; }
+  a { color: #0d7a72; text-decoration: none; }
+  a:hover { color: #07322f; }
+  input, select, textarea, button { font-family: inherit; }
+  ::placeholder { color: #9aaba7; }
+</style>
+</helmet>
+
+<div style="font-family: 'Source Sans 3', system-ui, sans-serif; color: #1c3a37; background: #f7fbfa; min-height: 100vh;">
+
+  <div style="padding: 40px 40px 28px; background: #07322f; color: #d8f0ed;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <svg width="38" height="24" viewBox="0 0 76 48" fill="none">
+        <path d="M6 24c10-13 22-19.5 32-19.5S60 11 70 24c-10 13-22 19.5-32 19.5S16 37 6 24z" stroke="#35c2a8" stroke-width="4" stroke-linejoin="round"></path>
+        <path d="M38 12v24" stroke="#35c2a8" stroke-width="4"></path>
+        <circle cx="38" cy="24" r="7.5" fill="#ff6b4a"></circle>
+      </svg>
+      <span style="font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; color: #f2fbf9;">Vision Studio</span>
+      <span style="font-size: 12.5px; color: #7fb3ac;">Biblioteca de componentes</span>
+    </div>
+    <h1 style="margin: 18px 0 0; font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; letter-spacing: -0.03em; color: #ffffff;">Todo lo que arma las pantallas</h1>
+    <p style="margin: 8px 0 0; max-width: 680px; font-size: 15px; line-height: 1.6; color: #a7cfc9; text-wrap: pretty;">Cada pieza está copiada tal cual se usa en la app: mismos colores, tipografías, radios y tamaños. Si necesitas una vista nueva, ármala con estos bloques y queda idéntica.</p>
+    <div style="margin-top: 22px; display: flex; gap: 8px; flex-wrap: wrap;">
+      <sc-for list="{{ indice }}" as="s" hint-placeholder-count="10">
+        <a href="{{ s.href }}" style="padding: 7px 13px; border-radius: 999px; background: #10463f; color: #a7cfc9; font-size: 12.5px;" style-hover="background: #0d7a72; color: #ffffff;">{{ s.label }}</a>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="padding: 32px 40px 80px; display: flex; flex-direction: column; gap: 34px; max-width: 1240px;">
+    <section id="fundamentos" style="display: flex; flex-direction: column; gap: 14px;">
+      <div>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: #07322f;">Fundamentos</div>
+        <div style="font-size: 13.5px; color: #74857f;">Colores, tipografía, radios y sombras. Todo lo demás se deriva de aquí.</div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px;">
+        <div style="background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px 20px;">
+          <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 12px;">Color</div>
+          <div style="display: flex; flex-direction: column; gap: 9px;">
+            <div style="display: flex; align-items: center; gap: 11px;"><span style="width: 30px; height: 30px; border-radius: 7px; background: #07322f;"></span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; color: #07322f;">#07322F</span><span style="font-size: 12.5px; color: #74857f;">Tinta · chrome, títulos</span></div>
+            <div style="display: flex; align-items: center; gap: 11px;"><span style="width: 30px; height: 30px; border-radius: 7px; background: #0d7a72;"></span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; color: #07322f;">#0D7A72</span><span style="font-size: 12.5px; color: #74857f;">Acción primaria</span></div>
+            <div style="display: flex; align-items: center; gap: 11px;"><span style="width: 30px; height: 30px; border-radius: 7px; background: #35c2a8;"></span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; color: #07322f;">#35C2A8</span><span style="font-size: 12.5px; color: #74857f;">Terminado, positivo</span></div>
+            <div style="display: flex; align-items: center; gap: 11px;"><span style="width: 30px; height: 30px; border-radius: 7px; background: #ff6b4a;"></span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; color: #07322f;">#FF6B4A</span><span style="font-size: 12.5px; color: #74857f;">Saldo, incidencia, alerta</span></div>
+            <div style="display: flex; align-items: center; gap: 11px;"><span style="width: 30px; height: 30px; border-radius: 7px; background: #f0fbf9; border: 1px solid #dcecea;"></span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; color: #07322f;">#F0FBF9</span><span style="font-size: 12.5px; color: #74857f;">Fondo destacado</span></div>
+            <div style="display: flex; align-items: center; gap: 11px;"><span style="width: 30px; height: 30px; border-radius: 7px; background: #fff; border: 1px solid #dcecea;"></span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; color: #07322f;">#E3EFED</span><span style="font-size: 12.5px; color: #74857f;">Borde · #74857F texto tenue</span></div>
+          </div>
+        </div>
+        <div style="background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px 20px;">
+          <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 12px;">Tipografía</div>
+          <div style="font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; color: #07322f; line-height: 1.15;">Space Grotesk 700 · 26/22/19</div>
+          <div style="margin-top: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 600; color: #0d7a72; font-variant-numeric: tabular-nums;">Cifras 15 000 CUP · ‑2.25 esf</div>
+          <div style="margin-top: 12px; font-size: 15px; line-height: 1.6; color: #4a5b58;">Source Sans 3 400/600 para cuerpo, formularios y tablas. 15 px en párrafos, 13,5 px en filas, 12,5 px en apoyos, 11 px en etiquetas de columna.</div>
+        </div>
+        <div style="background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px 20px;">
+          <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 12px;">Forma y profundidad</div>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <div style="width: 74px; height: 60px; border-radius: 5px; border: 1px solid #dcecea; background: #fbfefd; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; font-size: 11.5px; color: #74857f;">5 px chip</div>
+            <div style="width: 74px; height: 60px; border-radius: 7px; border: 1px solid #dcecea; background: #fbfefd; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; font-size: 11.5px; color: #74857f;">7 px botón</div>
+            <div style="width: 74px; height: 60px; border-radius: 10px; border: 1px solid #dcecea; background: #fbfefd; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; font-size: 11.5px; color: #74857f;">10 px card</div>
+            <div style="width: 74px; height: 60px; border-radius: 999px; border: 1px solid #dcecea; background: #fbfefd; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 10px; font-size: 11.5px; color: #74857f;">píldora</div>
+          </div>
+          <div style="margin-top: 14px; display: flex; gap: 12px; flex-wrap: wrap;">
+            <div style="padding: 12px 14px; border-radius: 10px; background: #fff; box-shadow: 0 1px 3px rgba(7,50,47,.12); font-size: 12.5px; color: #4a5b58;">Elevación 1 · tabs</div>
+            <div style="padding: 12px 14px; border-radius: 10px; background: #fff; box-shadow: 0 6px 16px rgba(7,50,47,.14); font-size: 12.5px; color: #4a5b58;">Elevación 2 · modal, FAB</div>
+          </div>
+          <div style="margin-top: 14px; font-size: 12.5px; color: #74857f;">Espaciado en múltiplos de 4: 8 entre elementos, 14 entre tarjetas, 18–20 dentro de tarjetas, 26–34 entre secciones.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="botones" style="display: flex; flex-direction: column; gap: 14px;">
+      <div>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: #07322f;">Botones</div>
+        <div style="font-size: 13.5px; color: #74857f;">Etiqueta en Space Grotesk 600. Solo un primario por bloque.</div>
+      </div>
+      <div style="background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 18px;">
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+          <button style="padding: 10px 16px; border: none; border-radius: 7px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;" style-hover="background: #07322f;">Primario</button>
+          <button style="padding: 10px 16px; border: 1px solid #dcecea; border-radius: 7px; background: #fff; color: #07322f; font-size: 13px; font-weight: 600; cursor: pointer;" style-hover="background: #f0fbf9;">Secundario</button>
+          <button style="padding: 10px 16px; border: none; border-radius: 7px; background: transparent; color: #0d7a72; font-size: 13px; font-weight: 600; cursor: pointer;" style-hover="background: #f0fbf9;">Fantasma</button>
+          <button style="padding: 10px 16px; border: 1px solid #ffd9cd; border-radius: 7px; background: #fff6f2; color: #c23c1c; font-size: 13px; font-weight: 600; cursor: pointer;" style-hover="background: #ffe8e1;">Destructivo</button>
+          <button style="padding: 10px 16px; border: none; border-radius: 7px; background: #eef5f4; color: #9aaba7; font-size: 13px; font-weight: 600; cursor: not-allowed;">Deshabilitado</button>
+          <button style="padding: 10px 16px; border: none; border-radius: 7px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: wait; opacity: .75;"><span style="width: 13px; height: 13px; border-radius: 999px; border: 2px solid rgba(255,255,255,.45); border-top-color: #fff;"></span>Guardando…</button>
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; padding-top: 16px; border-top: 1px solid #eef5f4;">
+          <button style="padding: 7px 12px; border: none; border-radius: 6px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer;">Pequeño 32 px</button>
+          <button style="padding: 10px 16px; border: none; border-radius: 7px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;">Medio 40 px</button>
+          <button style="padding: 15px 22px; border: none; border-radius: 9px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer;">Móvil 48 px</button>
+          <button style="padding: 10px 16px; border: none; border-radius: 7px; background: #07322f; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer;"><span style="font-size: 15px; line-height: 1;">+</span>Con icono</button>
+          <span style="width: 40px; height: 40px; border-radius: 7px; border: 1px solid #dcecea; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #4a5b58; font-size: 17px;">⋯</span>
+          <span style="width: 48px; height: 48px; border-radius: 999px; background: #0d7a72; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 6px 16px rgba(7,50,47,.28); cursor: pointer;">+</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="campos" style="display: flex; flex-direction: column; gap: 14px;">
+      <div>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: #07322f;">Campos</div>
+        <div style="font-size: 13.5px; color: #74857f;">Fondo #FBFEFD, borde #DCECEA, radio 7 px. Los numéricos usan Space Grotesk tabular.</div>
+      </div>
+      <div style="background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px;">
+        <div>
+          <div style="font-size: 11.5px; color: #74857f; margin-bottom: 5px;">Texto</div>
+          <input value="Marisol Cabrera Domínguez" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #dcecea; border-radius: 7px; font-size: 13.5px; background: #fbfefd; color: #1c3a37;">
+        </div>
+        <div>
+          <div style="font-size: 11.5px; color: #74857f; margin-bottom: 5px;">Búsqueda</div>
+          <div style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid #dcecea; border-radius: 7px; background: #fbfefd;">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="#74857f" stroke-width="1.6"></circle><path d="M11 11l3 3" stroke="#74857f" stroke-width="1.6" stroke-linecap="round"></path></svg>
+            <input placeholder="Folio, cliente o teléfono" style="border: none; outline: none; background: transparent; font-size: 13.5px; width: 100%;">
+          </div>
+        </div>
+        <div>
+          <div style="font-size: 11.5px; color: #74857f; margin-bottom: 5px;">Foco</div>
+          <input value="+53 5218 4477" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1.5px solid #0d7a72; border-radius: 7px; font-size: 13.5px; background: #fff; outline: none; box-shadow: 0 0 0 3px #e2f4f1;">
+        </div>
+        <div>
+          <div style="font-size: 11.5px; color: #74857f; margin-bottom: 5px;">Con error</div>
+          <input value="" placeholder="Nombre del cliente" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1.5px solid #ff6b4a; border-radius: 7px; font-size: 13.5px; background: #fffaf8;">
+          <div style="margin-top: 5px; font-size: 12px; color: #c23c1c;">El nombre es obligatorio.</div>
+        </div>
+        <div>
+          <div style="font-size: 11.5px; color: #74857f; margin-bottom: 5px;">Graduación</div>
+          <input value="-2.25" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #dcecea; border-radius: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-variant-numeric: tabular-nums; color: #07322f; background: #fbfefd;">
+          <div style="margin-top: 5px; font-size: 12px; color: #74857f;">Pasos de 0.25</div>
+        </div>
+        <div>
+          <div style="font-size: 11.5px; color: #74857f; margin-bottom: 5px;">Importe con moneda</div>
+          <div style="display: flex; gap: 8px;">
+            <input value="6 400" style="flex: 1; min-width: 0; padding: 10px 12px; border: 1px solid #dcecea; border-radius: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #07322f; background: #fbfefd;">
+            <div style="display: flex; gap: 4px;">
+              <span style="padding: 10px 14px; border-radius: 7px; background: #07322f; color: #fff; font-size: 12.5px; font-weight: 600; cursor: pointer;">CUP</span>
+              <span style="padding: 10px 14px; border-radius: 7px; background: #f2f6f5; color: #4a5b58; font-size: 12.5px; cursor: pointer;">USD</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size: 11.5px; color: #74857f; margin-bottom: 5px;">Selector</div>
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border: 1px solid #dcecea; border-radius: 7px; background: #fbfefd; font-size: 13.5px; cursor: pointer;"><span>Policarbonato 1.59</span><span style="color: #74857f; font-size: 11px;">▾</span></div>
+        </div>
+        <div>
+          <div style="font-size: 11.5px; color: #74857f; margin-bottom: 5px;">Fecha</div>
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border: 1px solid #dcecea; border-radius: 7px; background: #fbfefd; font-size: 13.5px;"><span>6 sep 2026</span><span style="width: 13px; height: 13px; border: 1.5px solid #74857f; border-radius: 3px;"></span></div>
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <div style="font-size: 11.5px; color: #74857f; margin-bottom: 5px;">Nota u observación</div>
+          <textarea placeholder="Observaciones de la receta" style="width: 100%; box-sizing: border-box; min-height: 74px; padding: 11px 12px; border: 1px solid #dcecea; border-radius: 8px; font-size: 13.5px; background: #fbfefd; resize: vertical;"></textarea>
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <div style="font-size: 11.5px; color: #74857f; margin-bottom: 5px;">Adjunto</div>
+          <div style="display: flex; gap: 12px; align-items: center; padding: 13px 15px; border: 1px dashed #b9dfd9; border-radius: 8px; background: #f7fdfc;">
+            <div style="width: 38px; height: 44px; border-radius: 4px; background: #e2f4f1; border: 1px solid #b9dfd9;"></div>
+            <div style="flex: 1; min-width: 0;"><div style="font-size: 13px; font-weight: 600; color: #07322f;">receta-marisol-sep2026.jpg</div><div style="font-size: 12px; color: #74857f;">Almacenamiento privado · 1,2 MB</div></div>
+            <button style="padding: 8px 13px; border: 1px solid #dcecea; border-radius: 7px; background: #fff; font-size: 12.5px; color: #07322f; cursor: pointer;">Reemplazar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="seleccion" style="display: flex; flex-direction: column; gap: 14px;">
+      <div>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: #07322f;">Selección</div>
+        <div style="font-size: 13.5px; color: #74857f;">Tarjetas para lo que tiene precio, chips para tratamientos, interruptores para módulos.</div>
+      </div>
+      <div style="background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 20px;">
+        <div>
+          <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 10px;">Tarjetas de opción</div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+            <div style="padding: 13px 14px; border: 1px solid #e3efed; border-radius: 8px; cursor: pointer;"><div style="font-size: 13.5px; font-weight: 600; color: #4a5b58;">Cerca</div><div style="font-size: 12px; color: #74857f;">desde 1 800 CUP</div></div>
+            <div style="padding: 13px 14px; border: 1.5px solid #0d7a72; border-radius: 8px; background: #f0fbf9; cursor: pointer;"><div style="font-size: 13.5px; font-weight: 600; color: #07322f;">Progresivo</div><div style="font-size: 12px; color: #0d7a72;">seleccionado</div></div>
+            <div style="padding: 13px 14px; border: 1px solid #eef5f4; border-radius: 8px; background: #fbfefd; cursor: not-allowed;"><div style="font-size: 13.5px; font-weight: 600; color: #9aaba7;">Ocupacional</div><div style="font-size: 12px; color: #9aaba7;">no disponible</div></div>
+          </div>
+        </div>
+        <div style="padding-top: 18px; border-top: 1px solid #eef5f4;">
+          <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 10px;">Chips de tratamiento</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <span style="padding: 8px 13px; border-radius: 999px; border: 1.5px solid #0d7a72; background: #f0fbf9; font-size: 12.5px; font-weight: 600; color: #07322f; cursor: pointer;">Antirreflejo ✓</span>
+            <span style="padding: 8px 13px; border-radius: 999px; border: 1.5px solid #0d7a72; background: #f0fbf9; font-size: 12.5px; font-weight: 600; color: #07322f; cursor: pointer;">Filtro azul ✓</span>
+            <span style="padding: 8px 13px; border-radius: 999px; border: 1px solid #e3efed; font-size: 12.5px; color: #4a5b58; cursor: pointer;">Fotocromático</span>
+            <span style="padding: 8px 13px; border-radius: 999px; border: 1px solid #e3efed; font-size: 12.5px; color: #4a5b58; cursor: pointer;">Endurecido</span>
+            <span style="padding: 8px 13px; border-radius: 999px; border: 1px dashed #dcecea; font-size: 12.5px; color: #9aaba7;">Incompatible</span>
+          </div>
+        </div>
+        <div style="padding-top: 18px; border-top: 1px solid #eef5f4; display: flex; gap: 34px; flex-wrap: wrap;">
+          <div>
+            <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 10px;">Casilla y radio</div>
+            <div style="display: flex; flex-direction: column; gap: 9px;">
+              <div style="display: flex; align-items: center; gap: 9px;"><span style="width: 17px; height: 17px; border-radius: 4px; background: #0d7a72; color: #fff; font-size: 11px; display: flex; align-items: center; justify-content: center;">✓</span><span style="font-size: 13.5px;">Consentimiento de WhatsApp</span></div>
+              <div style="display: flex; align-items: center; gap: 9px;"><span style="width: 17px; height: 17px; border-radius: 4px; border: 1.5px solid #dcecea;"></span><span style="font-size: 13.5px; color: #4a5b58;">Cliente sin carné</span></div>
+              <div style="display: flex; align-items: center; gap: 9px;"><span style="width: 17px; height: 17px; border-radius: 999px; border: 5px solid #0d7a72; background: #fff;"></span><span style="font-size: 13.5px;">Efectivo</span></div>
+              <div style="display: flex; align-items: center; gap: 9px;"><span style="width: 17px; height: 17px; border-radius: 999px; border: 1.5px solid #dcecea;"></span><span style="font-size: 13.5px; color: #9aaba7;">Transferencia (fuera del MVP)</span></div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 10px;">Interruptor de módulo</div>
+            <div style="display: flex; flex-direction: column; gap: 11px;">
+              <div style="display: flex; align-items: center; gap: 12px;"><button style="{{ switchOn }}" onClick="{{ toggleActivo }}"><span style="width: 19px; height: 19px; border-radius: 999px; background: #fff;"></span></button><span style="font-size: 13.5px;">Caja</span></div>
+              <div style="display: flex; align-items: center; gap: 12px;"><button style="{{ switchOff }}" onClick="{{ toggleApagado }}"><span style="width: 19px; height: 19px; border-radius: 999px; background: #fff;"></span></button><span style="font-size: 13.5px; color: #74857f;">Analítica</span></div>
+              <div style="display: flex; align-items: center; gap: 12px;"><span style="width: 40px; height: 23px; border-radius: 999px; padding: 2px; display: flex; align-items: center; justify-content: flex-end; background: #d5ebe7;"><span style="width: 19px; height: 19px; border-radius: 999px; background: #9aaba7;"></span></span><span style="font-size: 13.5px; color: #9aaba7;">Núcleo · obligatorio</span></div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 10px;">Segmentado</div>
+            <div style="display: inline-flex; gap: 3px; padding: 3px; border-radius: 8px; background: #f2f6f5;">
+              <span style="padding: 7px 14px; border-radius: 6px; background: #fff; box-shadow: 0 1px 3px rgba(7,50,47,.12); font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 600; color: #07322f; cursor: pointer;">Cronología</span>
+              <span style="padding: 7px 14px; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 600; color: #74857f; cursor: pointer;">Por dimensión</span>
+            </div>
+            <div style="margin-top: 14px; display: flex; gap: 6px; flex-wrap: wrap;">
+              <span style="padding: 7px 13px; border-radius: 999px; background: #07322f; color: #fff; font-size: 12.5px; font-weight: 600; cursor: pointer;">Activos</span>
+              <span style="padding: 7px 13px; border-radius: 999px; background: #f2f6f5; color: #4a5b58; font-size: 12.5px; cursor: pointer;">Con saldo</span>
+              <span style="padding: 7px 13px; border-radius: 999px; background: #f2f6f5; color: #4a5b58; font-size: 12.5px; cursor: pointer;">Listos</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="estados" style="display: flex; flex-direction: column; gap: 14px;">
+      <div>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: #07322f;">Estados</div>
+        <div style="font-size: 13.5px; color: #74857f;">Un color por significado, no por dimensión: verde medio en curso, menta terminado, coral incidencia, ámbar espera.</div>
+      </div>
+      <div style="background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 18px;">
+        <div>
+          <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 10px;">Comercial y entrega</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #eef3f2; color: #4a5b58;">Borrador</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #eef3f2; color: #4a5b58;">Cotizado</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #fff4e8; color: #a35a15;">Esperando aceptación</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #e2f4f1; color: #0d7a72;">Aceptado</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #35c2a8; color: #06302c;">Listo para recoger</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #e2f4f1; color: #0d7a72;">Cliente notificado</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #f2f6f5; color: #74857f;">Entregado</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #f2f6f5; color: #74857f;">Cerrado</span>
+          </div>
+        </div>
+        <div style="padding-top: 16px; border-top: 1px solid #eef5f4;">
+          <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 10px;">Producción, pago y suscripción</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #eef3f2; color: #4a5b58;">Pendiente</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #e2f4f1; color: #0d7a72;">Enviado</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #d9f5ee; color: #07655c;">En fabricación</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #d9f5ee; color: #07655c;">En montaje</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #ffe8e1; color: #c23c1c;">Incidencia</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #fff4e8; color: #a35a15;">Pago parcial</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #e2f4f1; color: #0d7a72;">Pagado</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #fff4e8; color: #a35a15;">Prueba</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #ffe8e1; color: #c23c1c;">Vencida</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #f2f6f5; color: #74857f;">Suspendida</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 700; background: #fff4e8; color: #a35a15;">EXCEPCIÓN</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 700; background: #e2f4f1; color: #0d7a72;">COMPLEMENTARIO</span>
+            <span style="padding: 1px 6px; border-radius: 4px; background: #e2f4f1; color: #0d7a72; font-size: 10.5px; font-weight: 700;">USD</span>
+          </div>
+        </div>
+        <div style="padding-top: 16px; border-top: 1px solid #eef5f4; display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-start;">
+          <div>
+            <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 10px;">Semáforo de producción</div>
+            <div style="display: flex; gap: 4px; align-items: center; margin-bottom: 8px;">
+              <span style="width: 9px; height: 9px; border-radius: 2px; background: #35c2a8;"></span>
+              <span style="width: 9px; height: 9px; border-radius: 2px; background: #0d7a72;"></span>
+              <span style="width: 9px; height: 9px; border-radius: 2px; background: #0d7a72;"></span>
+              <span style="width: 9px; height: 9px; border-radius: 2px; background: #35c2a8;"></span>
+              <span style="width: 9px; height: 9px; border-radius: 2px; background: #d5ebe7;"></span>
+              <span style="width: 9px; height: 9px; border-radius: 2px; background: #d5ebe7;"></span>
+            </div>
+            <div style="font-size: 12px; color: #74857f;">Orden · Pago · Cristales · Armadura · Montaje · Entrega</div>
+          </div>
+          <div>
+            <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 10px;">Progreso</div>
+            <div style="width: 220px; height: 9px; border-radius: 999px; background: #eef5f4;"><div style="width: 63%; height: 9px; border-radius: 999px; background: #0d7a72;"></div></div>
+            <div style="margin-top: 8px; display: flex; gap: 5px; width: 220px;"><span style="flex: 1; height: 4px; border-radius: 999px; background: #35c2a8;"></span><span style="flex: 1; height: 4px; border-radius: 999px; background: #35c2a8;"></span><span style="flex: 1; height: 4px; border-radius: 999px; background: #0d7a72;"></span><span style="flex: 1; height: 4px; border-radius: 999px; background: #e3efed;"></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="datos" style="display: flex; flex-direction: column; gap: 14px;">
+      <div>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: #07322f;">Datos y tablas</div>
+        <div style="font-size: 13.5px; color: #74857f;">Encabezados en mayúsculas 11 px, filas de 13,5 px, importes alineados a la derecha con cifras tabulares.</div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
+        <div style="background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 16px 18px;"><div style="font-size: 12.5px; color: #74857f;">Indicador simple</div><div style="margin-top: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #07322f; letter-spacing: -0.02em;">14</div><div style="margin-top: 4px; font-size: 12px; color: #74857f;">texto de apoyo</div></div>
+        <div style="background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 16px 18px;"><div style="font-size: 12.5px; color: #74857f;">Importe</div><div style="margin-top: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #07322f; letter-spacing: -0.02em; font-variant-numeric: tabular-nums;">38 200 <span style="font-size: 14px; font-weight: 500; color: #74857f;">CUP</span></div><div style="margin-top: 4px; font-size: 12px; color: #0d7a72;">+18 % vs agosto</div></div>
+        <div style="background: #fff; border: 1px solid #ffd9cd; border-radius: 10px; padding: 16px 18px;"><div style="font-size: 12.5px; color: #c23c1c;">Alerta</div><div style="margin-top: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #c23c1c; letter-spacing: -0.02em;">1</div><div style="margin-top: 4px; font-size: 12px; color: #74857f;">incidencia abierta</div></div>
+        <div style="background: #07322f; border-radius: 10px; padding: 16px 18px; color: #d8f0ed;"><div style="font-size: 12.5px; color: #7fb3ac;">Total destacado</div><div style="margin-top: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #fff; letter-spacing: -0.02em;">11 700 CUP</div><div style="margin-top: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #35c2a8;">+ 10 USD</div></div>
+      </div>
+      <div style="background: #fff; border: 1px solid #e3efed; border-radius: 10px; overflow: hidden;">
+        <div style="padding: 14px 16px; border-bottom: 1px solid #eef5f4; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #07322f;">Tabla estándar</div>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; min-width: 620px;">
+            <thead>
+              <tr style="background: #fbfefd;">
+                <th style="text-align: left; padding: 10px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #74857f; font-weight: 600; border-bottom: 1px solid #e3efed;">Pedido</th>
+                <th style="text-align: left; padding: 10px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #74857f; font-weight: 600; border-bottom: 1px solid #e3efed;">Cliente</th>
+                <th style="text-align: left; padding: 10px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #74857f; font-weight: 600; border-bottom: 1px solid #e3efed;">Estado</th>
+                <th style="text-align: right; padding: 10px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #74857f; font-weight: 600; border-bottom: 1px solid #e3efed;">Saldo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="cursor: pointer;" style-hover="background: #fbfefd;">
+                <td style="padding: 14px 16px; border-bottom: 1px solid #eef5f4;"><div style="font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: #07322f;">VIS-2026-000128</div><div style="font-size: 12px; color: #74857f;">Progresivo</div></td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #eef5f4; font-size: 13.5px;">Roberto Figueras</td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #eef5f4;"><span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #d9f5ee; color: #07655c;">En fabricación</span></td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #eef5f4; text-align: right;"><div style="font-family: 'Space Grotesk', sans-serif; font-size: 14.5px; font-weight: 600; color: #07322f; font-variant-numeric: tabular-nums;">12 800 CUP</div><div style="font-size: 11.5px; color: #74857f;">Saldo</div></td>
+              </tr>
+              <tr style="background: #fbfefd;">
+                <td style="padding: 14px 16px;"><div style="font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: #07322f;">VIS-2026-000119</div><div style="font-size: 12px; color: #74857f;">Bifocal</div></td>
+                <td style="padding: 14px 16px; font-size: 13.5px;">Ana Lucía Prieto</td>
+                <td style="padding: 14px 16px;"><span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #f2f6f5; color: #74857f;">Entregado</span></td>
+                <td style="padding: 14px 16px; text-align: right;"><div style="font-family: 'Space Grotesk', sans-serif; font-size: 14.5px; font-weight: 600; color: #74857f;">0</div><div style="font-size: 11.5px; color: #74857f;">Sin saldo</div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-top: 1px solid #eef5f4; flex-wrap: wrap;">
+          <span style="font-size: 12.5px; color: #74857f;">Mostrando 1–2 de 14</span>
+          <div style="margin-left: auto; display: flex; gap: 5px;">
+            <span style="min-width: 30px; height: 30px; border-radius: 6px; border: 1px solid #dcecea; display: flex; align-items: center; justify-content: center; font-size: 12.5px; color: #9aaba7; cursor: pointer;">‹</span>
+            <span style="min-width: 30px; height: 30px; border-radius: 6px; background: #07322f; color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 600; cursor: pointer;">1</span>
+            <span style="min-width: 30px; height: 30px; border-radius: 6px; border: 1px solid #dcecea; display: flex; align-items: center; justify-content: center; font-size: 12.5px; color: #4a5b58; cursor: pointer;">2</span>
+            <span style="min-width: 30px; height: 30px; border-radius: 6px; border: 1px solid #dcecea; display: flex; align-items: center; justify-content: center; font-size: 12.5px; color: #4a5b58; cursor: pointer;">›</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="navegacion" style="display: flex; flex-direction: column; gap: 14px;">
+      <div>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: #07322f;">Navegación</div>
+        <div style="font-size: 13.5px; color: #74857f;">Barra lateral tinta en escritorio, barra inferior con botón flotante en móvil.</div>
+      </div>
+      <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: stretch;">
+        <div style="flex: 0 0 244px; background: #07322f; border-radius: 10px; padding: 18px 14px; display: flex; flex-direction: column; gap: 4px;">
+          <div style="padding: 0 11px 8px; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #4d7a74;">Vendedor</div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 7px; background: #0d7a72; color: #fff; font-size: 13.5px; font-weight: 600;"><span style="width: 6px; height: 6px; border-radius: 999px; background: #ff6b4a;"></span>Bandeja de pedidos</div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 7px; color: #9fc3bd; font-size: 13.5px;"><span style="width: 6px; height: 6px; border-radius: 999px; background: #2b5c56;"></span>Nueva venta</div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 7px; color: #9fc3bd; font-size: 13.5px;"><span style="width: 6px; height: 6px; border-radius: 999px; background: #2b5c56;"></span>Caja y cobros</div>
+        </div>
+        <div style="flex: 1 1 380px; min-width: 300px; background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 20px;">
+          <div>
+            <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 10px;">Pestañas</div>
+            <div style="display: flex; gap: 4px; border-bottom: 1px solid #eef5f4;">
+              <button style="{{ tabResumen }}" onClick="{{ verResumen }}">Resumen</button>
+              <button style="{{ tabPagos }}" onClick="{{ verPagos }}">Pagos</button>
+              <button style="{{ tabHistorial }}" onClick="{{ verHistorial }}">Historial</button>
+            </div>
+            <div style="padding: 14px 2px; font-size: 13.5px; color: #4a5b58;">
+              <sc-if value="{{ esResumen }}" hint-placeholder-val="{{ true }}"><span>Datos generales del pedido, receta y configuración.</span></sc-if>
+              <sc-if value="{{ esPagos }}" hint-placeholder-val="{{ false }}"><span>Pagos registrados, moneda, tasa aplicada y caja receptora.</span></sc-if>
+              <sc-if value="{{ esHistorial }}" hint-placeholder-val="{{ false }}"><span>Cronología completa con autor y origen de cada cambio.</span></sc-if>
+            </div>
+          </div>
+          <div style="padding-top: 16px; border-top: 1px solid #eef5f4;">
+            <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 10px;">Pasos y migas</div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; border: 1px solid #e3efed; background: #fff;"><span style="width: 22px; height: 22px; border-radius: 999px; background: #35c2a8; color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 11.5px; font-weight: 700;">1</span><span style="font-size: 13px; color: #74857f;">Cliente</span></div>
+              <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; border: 1px solid #0d7a72; background: #f0fbf9;"><span style="width: 22px; height: 22px; border-radius: 999px; background: #0d7a72; color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 11.5px; font-weight: 700;">2</span><span style="font-size: 13px; font-weight: 600; color: #07322f;">Receta</span></div>
+              <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; border: 1px solid #e3efed; background: #fff;"><span style="width: 22px; height: 22px; border-radius: 999px; background: #eef5f4; color: #9aaba7; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 11.5px; font-weight: 700;">3</span><span style="font-size: 13px; color: #74857f;">Precio</span></div>
+            </div>
+            <div style="margin-top: 14px; font-size: 12.5px; color: #74857f;">Pedidos <span style="color: #cfdcd9;">›</span> VIS-2026-000123 <span style="color: #cfdcd9;">›</span> <span style="color: #07322f; font-weight: 600;">Historial</span></div>
+          </div>
+        </div>
+        <div style="flex: 0 0 300px; background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px 20px;">
+          <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 12px;">Barra inferior móvil</div>
+          <div style="border: 1px solid #e3efed; border-radius: 12px; overflow: hidden;">
+            <div style="height: 60px; background: #f7fbfa;"></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 18px 16px; background: #fff; border-top: 1px solid #e3efed;">
+              <span style="font-size: 11.5px; color: #0d7a72; font-weight: 600;">Pedidos</span>
+              <span style="font-size: 11.5px; color: #9aaba7;">Clientes</span>
+              <span style="width: 48px; height: 48px; border-radius: 999px; background: #0d7a72; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-top: -34px; box-shadow: 0 6px 16px rgba(7,50,47,.28);">+</span>
+              <span style="font-size: 11.5px; color: #9aaba7;">Caja</span>
+              <span style="font-size: 11.5px; color: #9aaba7;">Más</span>
+            </div>
+          </div>
+          <div style="margin-top: 14px; display: flex; align-items: center; gap: 10px;">
+            <div style="width: 34px; height: 34px; border-radius: 999px; background: #0d7a72; color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700;">YP</div>
+            <div><div style="font-size: 13px; font-weight: 600; color: #07322f;">Yanet Pérez</div><div style="font-size: 11.5px; color: #74857f;">Vendedora · Centro</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="feedback" style="display: flex; flex-direction: column; gap: 14px;">
+      <div>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: #07322f;">Avisos y diálogos</div>
+        <div style="font-size: 13.5px; color: #74857f;">Las advertencias del catálogo nunca bloquean: informan y dejan continuar.</div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px;">
+        <div style="background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; gap: 11px; padding: 13px 15px; border-radius: 8px; background: #fff6f2; border: 1px solid #ffd9cd;">
+            <span style="width: 18px; height: 18px; flex: 0 0 18px; border-radius: 999px; background: #ff6b4a; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">!</span>
+            <div style="font-size: 13px; line-height: 1.55; color: #7a3a26;"><strong>Orientativo.</strong> El catálogo sugiere alto índice para esta graduación; puedes continuar igual.</div>
+          </div>
+          <div style="display: flex; gap: 11px; padding: 13px 15px; border-radius: 8px; background: #fff9f0; border: 1px solid #f6e2c4;">
+            <span style="width: 18px; height: 18px; flex: 0 0 18px; border-radius: 999px; background: #d9a441; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">!</span>
+            <div style="font-size: 13px; line-height: 1.55; color: #7a5a1e;">Posible cliente duplicado: mismo teléfono que Marisol Rivas Pérez.</div>
+          </div>
+          <div style="display: flex; gap: 11px; padding: 13px 15px; border-radius: 8px; background: #f0fbf9; border: 1px solid #b9dfd9;">
+            <span style="width: 18px; height: 18px; flex: 0 0 18px; border-radius: 999px; background: #0d7a72; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">i</span>
+            <div style="font-size: 13px; line-height: 1.55; color: #0b5a53;">Tras enviar el trabajo al cristalero, los datos comerciales quedan bloqueados.</div>
+          </div>
+          <div style="display: flex; gap: 11px; padding: 13px 15px; border-radius: 8px; background: #eafaf5; border: 1px solid #a9e6d7;">
+            <span style="width: 18px; height: 18px; flex: 0 0 18px; border-radius: 999px; background: #35c2a8; color: #06302c; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">✓</span>
+            <div style="font-size: 13px; line-height: 1.55; color: #07655c;">Pago registrado. Saldo actualizado a 4 400 CUP.</div>
+          </div>
+        </div>
+
+        <div style="background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+          <div>
+            <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 10px;">Diálogo y aviso flotante</div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button style="padding: 10px 16px; border: 1px solid #dcecea; border-radius: 7px; background: #fff; font-size: 13px; font-weight: 600; color: #07322f; cursor: pointer;" style-hover="background: #f0fbf9;" onClick="{{ abrirModal }}">Abrir diálogo</button>
+              <button style="padding: 10px 16px; border: 1px solid #dcecea; border-radius: 7px; background: #fff; font-size: 13px; font-weight: 600; color: #07322f; cursor: pointer;" style-hover="background: #f0fbf9;" onClick="{{ mostrarToast }}">Mostrar aviso</button>
+            </div>
+          </div>
+          <div style="padding-top: 14px; border-top: 1px solid #eef5f4;">
+            <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 10px;">Estado vacío</div>
+            <div style="border: 1px dashed #dcecea; border-radius: 10px; padding: 26px 18px; text-align: center;">
+              <svg width="44" height="28" viewBox="0 0 76 48" fill="none" style="opacity: .5;">
+                <path d="M6 24c10-13 22-19.5 32-19.5S60 11 70 24c-10 13-22 19.5-32 19.5S16 37 6 24z" stroke="#9aaba7" stroke-width="3" stroke-linejoin="round"></path>
+                <circle cx="38" cy="24" r="7.5" fill="#cfdcd9"></circle>
+              </svg>
+              <div style="margin-top: 10px; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #07322f;">Sin pedidos con saldo</div>
+              <div style="margin-top: 4px; font-size: 13px; color: #74857f;">Cuando registres un cobro parcial aparecerá aquí.</div>
+              <button style="margin-top: 14px; padding: 10px 16px; border: none; border-radius: 7px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;">Nueva venta</button>
+            </div>
+          </div>
+          <div style="padding-top: 14px; border-top: 1px solid #eef5f4;">
+            <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 10px;">Carga</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <span style="height: 12px; width: 60%; border-radius: 4px; background: #eef5f4;"></span>
+              <span style="height: 12px; width: 88%; border-radius: 4px; background: #eef5f4;"></span>
+              <span style="height: 12px; width: 40%; border-radius: 4px; background: #eef5f4;"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <sc-if value="{{ modal }}" hint-placeholder-val="{{ false }}">
+        <div style="position: fixed; inset: 0; background: rgba(7,50,47,.45); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 40;" onClick="{{ cerrarModal }}">
+          <div style="width: 100%; max-width: 440px; background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 18px 48px rgba(7,50,47,.3);">
+            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: #07322f;">¿Marcar el pedido como entregado?</div>
+            <div style="margin-top: 8px; font-size: 14px; line-height: 1.6; color: #4a5b58;">El pedido conserva un saldo de 4 400 CUP. No se permite entregar con saldo pendiente; registra el cobro primero.</div>
+            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+              <button style="padding: 10px 16px; border: none; border-radius: 7px; background: transparent; font-size: 13px; font-weight: 600; color: #74857f; cursor: pointer;" onClick="{{ cerrarModal }}">Cancelar</button>
+              <button style="padding: 10px 16px; border: none; border-radius: 7px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;" onClick="{{ cerrarModal }}">Registrar cobro</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+        <div style="position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 11px; padding: 13px 18px; border-radius: 9px; background: #07322f; color: #e6f5f3; box-shadow: 0 10px 28px rgba(7,50,47,.32); z-index: 45;">
+          <span style="width: 18px; height: 18px; border-radius: 999px; background: #35c2a8; color: #06302c; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">✓</span>
+          <span style="font-size: 13.5px;">Mensaje de WhatsApp enviado a Marisol Cabrera.</span>
+        </div>
+      </sc-if>
+    </section>
+
+    <section id="cronologia" style="display: flex; flex-direction: column; gap: 14px;">
+      <div>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: #07322f;">Cronología</div>
+        <div style="font-size: 13.5px; color: #74857f;">Dos lecturas del mismo historial: cronológica y por dimensión.</div>
+      </div>
+      <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+        <div style="flex: 1 1 340px; min-width: 300px; background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 20px;">
+          <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 14px;">Evento de historial</div>
+          <div style="display: flex; gap: 14px;">
+            <div style="display: flex; flex-direction: column; align-items: center; flex: 0 0 11px;"><span style="width: 11px; height: 11px; border-radius: 999px; background: #35c2a8; box-shadow: 0 0 0 3px #e4f7f2; margin-top: 4px;"></span><span style="width: 1.5px; flex: 1; background: #e4f0ee; min-height: 14px;"></span></div>
+            <div style="flex: 1; padding-bottom: 18px;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;"><span style="padding: 2px 7px; border-radius: 4px; font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; background: #eef5f4; color: #4a5b58;">Pago</span><span style="font-size: 12px; color: #74857f;">12 sep · 08:30</span></div>
+              <div style="margin-top: 5px; font-size: 14px; font-weight: 600; color: #07322f;">Pago parcial en USD</div>
+              <div style="margin-top: 2px; font-size: 13px; line-height: 1.5; color: #4a5b58;">10 USD a 420 · equivale a 4 200 CUP · saldo 4 400 CUP</div>
+              <div style="margin-top: 4px; font-size: 12px; color: #74857f;">Yanet Pérez</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 14px;">
+            <div style="display: flex; flex-direction: column; align-items: center; flex: 0 0 11px;"><span style="width: 11px; height: 11px; border-radius: 999px; background: #ff6b4a; box-shadow: 0 0 0 3px #ffe0d6; margin-top: 4px;"></span></div>
+            <div style="flex: 1;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;"><span style="padding: 2px 7px; border-radius: 4px; font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; background: #ffe8e1; color: #c23c1c;">Cristales</span><span style="font-size: 12px; color: #74857f;">11 sep · 15:02</span></div>
+              <div style="margin-top: 5px; font-size: 14px; font-weight: 600; color: #07322f;">Incidencia abierta · cristal defectuoso</div>
+              <div style="margin-top: 2px; font-size: 13px; line-height: 1.5; color: #4a5b58;">Repetición vinculada al trabajo original · costo al cristalero</div>
+              <div style="margin-top: 4px; font-size: 12px; color: #74857f;">Yanet Pérez en nombre de Luis Rodríguez</div>
+            </div>
+          </div>
+        </div>
+        <div style="flex: 1 1 280px; min-width: 260px; background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 20px;">
+          <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 14px;">Mini-línea por dimensión</div>
+          <div style="border: 1px solid #eef5f4; border-radius: 9px; padding: 14px; max-width: 260px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px;"><span style="font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: #07322f;">Cristales</span><span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #d9f5ee; color: #07655c;">En fabricación</span></div>
+            <div style="display: flex; gap: 10px;"><div style="display: flex; flex-direction: column; align-items: center; flex: 0 0 10px;"><span style="width: 10px; height: 10px; border-radius: 999px; background: #35c2a8;"></span><span style="width: 1.5px; flex: 1; min-height: 12px; background: #bfe8e0;"></span></div><div style="padding-bottom: 10px;"><div style="font-size: 12.5px; color: #4a5b58;">Listo para enviar</div><div style="font-size: 11px; color: #74857f;">9 sep</div></div></div>
+            <div style="display: flex; gap: 10px;"><div style="display: flex; flex-direction: column; align-items: center; flex: 0 0 10px;"><span style="width: 10px; height: 10px; border-radius: 999px; background: #35c2a8;"></span><span style="width: 1.5px; flex: 1; min-height: 12px; background: #bfe8e0;"></span></div><div style="padding-bottom: 10px;"><div style="font-size: 12.5px; color: #4a5b58;">Enviado</div><div style="font-size: 11px; color: #74857f;">9 sep</div></div></div>
+            <div style="display: flex; gap: 10px;"><div style="display: flex; flex-direction: column; align-items: center; flex: 0 0 10px;"><span style="width: 10px; height: 10px; border-radius: 999px; background: #0d7a72;"></span><span style="width: 1.5px; flex: 1; min-height: 12px; background: #eef5f4;"></span></div><div style="padding-bottom: 10px;"><div style="font-size: 12.5px; font-weight: 600; color: #07322f;">En fabricación</div><div style="font-size: 11px; color: #74857f;">10 sep</div></div></div>
+            <div style="display: flex; gap: 10px;"><div style="display: flex; flex-direction: column; align-items: center; flex: 0 0 10px;"><span style="width: 10px; height: 10px; border-radius: 999px; background: #fff; border: 1.5px solid #d5ebe7;"></span></div><div><div style="font-size: 12.5px; color: #9aaba7;">Terminado</div></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="bloques" style="display: flex; flex-direction: column; gap: 14px;">
+      <div>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: #07322f;">Bloques compuestos</div>
+        <div style="font-size: 13.5px; color: #74857f;">Piezas listas para reusar: cabecera de pedido, panel de cotización, ficha de cliente, tarjeta de taller, cuadro de receta.</div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; align-items: start;">
+
+        <div style="background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px 20px;">
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <span style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.02em; color: #07322f;">Marisol Cabrera</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #d9f5ee; color: #07655c;">Cristales en fabricación</span>
+          </div>
+          <div style="margin-top: 5px; font-size: 13px; color: #74857f;">VIS-2026-000123 · progresivo policarbonato · Centro</div>
+          <div style="margin-top: 14px; display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap;">
+            <div><div style="font-size: 12px; color: #74857f;">Saldo pendiente</div><div style="font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; color: #ff6b4a; font-variant-numeric: tabular-nums;">4 400 CUP</div></div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button style="padding: 10px 16px; border: none; border-radius: 7px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;" style-hover="background: #07322f;">Registrar pago</button>
+              <button style="padding: 10px 16px; border: 1px solid #dcecea; border-radius: 7px; background: #fff; font-size: 13px; font-weight: 600; color: #07322f; cursor: pointer;">WhatsApp</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="background: #fff; border: 1px solid #e3efed; border-radius: 10px; overflow: hidden;">
+          <div style="padding: 16px 18px; background: #f0fbf9; border-bottom: 1px solid #dcecea;">
+            <div style="font-size: 12.5px; color: #0d7a72; font-weight: 600;">Cotización</div>
+            <div style="margin-top: 6px; display: flex; align-items: baseline; gap: 8px;"><span style="font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; letter-spacing: -0.03em; color: #07322f; font-variant-numeric: tabular-nums;">12 800</span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #0d7a72;">CUP</span></div>
+            <div style="margin-top: 2px; font-size: 12.5px; color: #74857f;">incluye 20 USD cobrados en CUP a 420</div>
+          </div>
+          <div style="padding: 14px 18px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; justify-content: space-between; font-size: 13px;"><span style="color: #4a5b58;">Cristal progresivo</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">7 200 CUP</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px;"><span style="color: #4a5b58;">Filtro azul <span style="padding: 1px 6px; border-radius: 4px; background: #e2f4f1; color: #0d7a72; font-size: 10.5px; font-weight: 700;">USD</span></span><span style="text-align: right;"><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">20 USD</span><span style="display: block; font-size: 11.5px; color: #74857f;">8 400 CUP a 420</span></span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px;"><span style="color: #74857f;">Armadura</span><span style="font-size: 12.5px; color: #a35a15;">por definir</span></div>
+          </div>
+        </div>
+
+        <div style="background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px 20px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 38px; height: 38px; border-radius: 999px; background: #0d7a72; color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700;">MC</div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 14.5px; font-weight: 600; color: #07322f;">Marisol Cabrera Domínguez</div>
+              <div style="font-size: 12.5px; color: #74857f;">+53 5218 4477 · 3 pedidos · WhatsApp autorizado</div>
+            </div>
+          </div>
+          <div style="margin-top: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px;">
+            <div><div style="font-size: 11.5px; color: #74857f;">Última receta</div><div style="font-size: 13.5px;">6 sep 2026</div></div>
+            <div><div style="font-size: 11.5px; color: #74857f;">Dirección</div><div style="font-size: 13.5px;">Calle 23 #452, Vedado</div></div>
+          </div>
+        </div>
+
+        <div style="background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 16px 18px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; color: #07322f;">VIS-2026-000123</span>
+            <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #d9f5ee; color: #07655c;">En fabricación</span>
+          </div>
+          <div style="margin-top: 3px; font-size: 12.5px; color: #74857f;">Trabajo de taller · sin datos de precio ni pago</div>
+          <div style="margin-top: 12px; padding: 10px 12px; border-radius: 8px; background: #fbfefd; border: 1px solid #eef5f4; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-variant-numeric: tabular-nums; color: #07322f;">
+            <div style="display: flex; justify-content: space-between;"><span>OD</span><span>-2.25 / -0.75 × 175 · add +2.00</span></div>
+            <div style="display: flex; justify-content: space-between; margin-top: 4px;"><span>OI</span><span>-2.50 / -1.00 × 10 · add +2.00</span></div>
+            <div style="display: flex; justify-content: space-between; margin-top: 4px; color: #74857f;"><span>DP / altura</span><span>31.0 / 30.5 · 18</span></div>
+          </div>
+          <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+            <button style="flex: 1; min-width: 120px; padding: 10px; border: none; border-radius: 7px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 600; cursor: pointer;">Marcar terminado</button>
+            <button style="padding: 10px 14px; border: 1px solid #ffd9cd; border-radius: 7px; background: #fff6f2; color: #c23c1c; font-size: 12.5px; font-weight: 600; cursor: pointer;">Incidencia</button>
+          </div>
+        </div>
+
+        <div style="background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 16px 18px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;"><span style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; color: #07322f;">Cuadro de receta</span><span style="font-size: 12px; color: #74857f;">6 sep 2026 · Dra. N. Sosa</span></div>
+          <table style="width: 100%; border-collapse: collapse; font-family: 'Space Grotesk', sans-serif; font-variant-numeric: tabular-nums;">
+            <tr><td style="font-size: 11px; color: #74857f; padding: 4px 6px;"></td><td style="font-size: 11px; color: #74857f; padding: 4px 6px;">ESF</td><td style="font-size: 11px; color: #74857f; padding: 4px 6px;">CIL</td><td style="font-size: 11px; color: #74857f; padding: 4px 6px;">EJE</td><td style="font-size: 11px; color: #74857f; padding: 4px 6px;">ADD</td><td style="font-size: 11px; color: #74857f; padding: 4px 6px;">DP</td></tr>
+            <tr><td style="font-size: 12.5px; font-weight: 700; color: #07322f; padding: 4px 6px;">OD</td><td style="font-size: 13px; padding: 4px 6px;">-2.25</td><td style="font-size: 13px; padding: 4px 6px;">-0.75</td><td style="font-size: 13px; padding: 4px 6px;">175</td><td style="font-size: 13px; padding: 4px 6px;">+2.00</td><td style="font-size: 13px; padding: 4px 6px;">31.0</td></tr>
+            <tr><td style="font-size: 12.5px; font-weight: 700; color: #07322f; padding: 4px 6px;">OI</td><td style="font-size: 13px; padding: 4px 6px;">-2.50</td><td style="font-size: 13px; padding: 4px 6px;">-1.00</td><td style="font-size: 13px; padding: 4px 6px;">10</td><td style="font-size: 13px; padding: 4px 6px;">+2.00</td><td style="font-size: 13px; padding: 4px 6px;">30.5</td></tr>
+          </table>
+        </div>
+
+        <div style="background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px 20px;">
+          <div style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; color: #07322f; margin-bottom: 12px;">Barra comparativa</div>
+          <div style="display: flex; flex-direction: column; gap: 13px;">
+            <div><div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;"><span>Yanet Pérez</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">198 400 CUP</span></div><div style="height: 9px; border-radius: 999px; background: #eef5f4;"><div style="width: 82%; height: 9px; border-radius: 999px; background: #0d7a72;"></div></div></div>
+            <div><div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;"><span>Alejandro Mena</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">142 700 CUP</span></div><div style="height: 9px; border-radius: 999px; background: #eef5f4;"><div style="width: 59%; height: 9px; border-radius: 999px; background: #35c2a8;"></div></div></div>
+            <div><div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;"><span>Dania Lorenzo</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">96 100 CUP</span></div><div style="height: 9px; border-radius: 999px; background: #eef5f4;"><div style="width: 40%; height: 9px; border-radius: 999px; background: #b9dfd9;"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="movil" style="display: flex; flex-direction: column; gap: 14px;">
+      <div>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: #07322f;">Patrones móviles</div>
+        <div style="font-size: 13.5px; color: #74857f;">Objetivos táctiles de 48 px, cabecera tinta, acción principal fija abajo.</div>
+      </div>
+      <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+        <div style="width: 300px; background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px;">
+          <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 12px;">Cabecera de pantalla</div>
+          <div style="border-radius: 12px; overflow: hidden;">
+            <div style="padding: 14px 16px; background: #07322f; color: #fff;">
+              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; color: #7fb3ac;"><span>9:41</span><span>Óptica Almendares</span></div>
+              <div style="margin-top: 10px; font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700;">Mis pedidos</div>
+              <div style="margin-top: 10px; padding: 10px 12px; border-radius: 8px; background: #10463f; font-size: 13px; color: #9fc3bd;">Buscar folio, cliente o teléfono</div>
+            </div>
+          </div>
+        </div>
+        <div style="width: 300px; background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px;">
+          <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 12px;">Tarjeta de lista</div>
+          <div style="background: #fff; border: 1px solid #e3efed; border-radius: 11px; padding: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; color: #07322f;">VIS-2026-000131</span><span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #35c2a8; color: #06302c;">Listo</span></div>
+            <div style="margin-top: 5px; font-size: 14px;">Marisol Cabrera</div>
+            <div style="margin-top: 6px; display: flex; gap: 4px;"><span style="width: 9px; height: 9px; border-radius: 2px; background: #35c2a8;"></span><span style="width: 9px; height: 9px; border-radius: 2px; background: #35c2a8;"></span><span style="width: 9px; height: 9px; border-radius: 2px; background: #35c2a8;"></span><span style="width: 9px; height: 9px; border-radius: 2px; background: #35c2a8;"></span><span style="width: 9px; height: 9px; border-radius: 2px; background: #35c2a8;"></span><span style="width: 9px; height: 9px; border-radius: 2px; background: #0d7a72;"></span></div>
+            <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 12.5px; color: #74857f;">Sin saldo</span><button style="padding: 9px 14px; border: none; border-radius: 7px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 600;">Notificar</button></div>
+          </div>
+        </div>
+        <div style="width: 300px; background: #fff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px;">
+          <div style="font-size: 12.5px; font-weight: 600; color: #07322f; margin-bottom: 12px;">Pie de acción</div>
+          <div style="border: 1px solid #e3efed; border-radius: 12px; padding: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+              <div><div style="font-size: 12px; color: #74857f;">Total</div><div style="font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; color: #07322f; letter-spacing: -0.02em;">12 800 CUP</div></div>
+              <span style="font-size: 12.5px; font-weight: 600; color: #0d7a72;">Ver desglose ›</span>
+            </div>
+            <button style="margin-top: 12px; width: 100%; padding: 15px; border: none; border-radius: 9px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600;">Continuar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!--SECCIONES-->
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:960}}">
+const SECCIONES = [
+  ['fundamentos', 'Fundamentos'],
+  ['botones', 'Botones'],
+  ['campos', 'Campos'],
+  ['seleccion', 'Selección'],
+  ['estados', 'Estados'],
+  ['datos', 'Datos y tablas'],
+  ['navegacion', 'Navegación'],
+  ['feedback', 'Avisos y diálogos'],
+  ['cronologia', 'Cronología'],
+  ['bloques', 'Bloques compuestos'],
+  ['movil', 'Patrones móviles'],
+];
+
+class Component extends DCLogic {
+  state = { modal: false, toast: false, tab: 'resumen', activo: true, apagado: false };
+
+  renderVals() {
+    const s = this.state;
+    const tab = (id) => 'padding:9px 15px;border:none;border-bottom:2px solid ' + (s.tab === id ? '#0d7a72' : 'transparent') + ';background:transparent;cursor:pointer;font-size:13.5px;font-weight:' + (s.tab === id ? '600' : '400') + ';color:' + (s.tab === id ? '#07322f' : '#74857f') + ';';
+    const sw = (on) => 'width:40px;height:23px;border-radius:999px;padding:2px;display:flex;align-items:center;cursor:pointer;border:none;justify-content:' + (on ? 'flex-end' : 'flex-start') + ';background:' + (on ? '#0d7a72' : '#dcecea') + ';transition:background .18s;';
+    return {
+      indice: SECCIONES.map(([id, label]) => ({ id, label, href: '#' + id })),
+      tabResumen: tab('resumen'), tabPagos: tab('pagos'), tabHistorial: tab('historial'),
+      verResumen: () => this.setState({ tab: 'resumen' }),
+      verPagos: () => this.setState({ tab: 'pagos' }),
+      verHistorial: () => this.setState({ tab: 'historial' }),
+      esResumen: s.tab === 'resumen', esPagos: s.tab === 'pagos', esHistorial: s.tab === 'historial',
+      switchOn: sw(s.activo), switchOff: sw(s.apagado),
+      toggleActivo: () => this.setState({ activo: !s.activo }),
+      toggleApagado: () => this.setState({ apagado: !s.apagado }),
+      modal: s.modal,
+      abrirModal: () => this.setState({ modal: true }),
+      cerrarModal: () => this.setState({ modal: false }),
+      toast: s.toast,
+      mostrarToast: () => { this.setState({ toast: true }); setTimeout(() => this.setState({ toast: false }), 2600); },
+    };
+  }
+}
+</script>
+</body>
+</html>

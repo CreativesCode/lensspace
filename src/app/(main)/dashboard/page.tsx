@@ -20,11 +20,11 @@ export default async function DashboardPage() {
       : await loadMemberAccess(supabase)
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-10">
-      <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
+    <section className="mx-auto max-w-7xl px-5 py-7 md:px-7">
+      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">
         Panel principal
       </p>
-      <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950">
+      <h1 className="mt-2 font-display text-[26px] font-bold tracking-[-0.02em] text-slate-950">
         {isPlatformAdmin ? 'Administración de organizaciones' : 'Vision Studio'}
       </h1>
       {isPlatformAdmin ? (
@@ -312,6 +312,7 @@ async function loadOwnedOrganizations(supabase: SupabaseServerClient) {
               ?.display_name ?? 'Usuario',
           role: membership.role,
           status: membership.status,
+          branchId: membership.branch_id,
           branchName:
             branches.find((branch) => branch.id === membership.branch_id)?.name ??
             null,

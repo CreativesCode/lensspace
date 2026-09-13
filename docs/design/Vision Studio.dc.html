@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #f7fbfa; }
+  a { color: #0d7a72; text-decoration: none; }
+  a:hover { color: #07322f; }
+  input, select, textarea, button { font-family: inherit; }
+  ::placeholder { color: #9aaba7; }
+</style>
+</helmet>
+
+<div style="display: flex; min-height: 100vh; font-family: 'Source Sans 3', system-ui, sans-serif; color: #1c3a37; background: #f7fbfa;">
+
+  <aside style="width: 244px; flex: 0 0 244px; background: #07322f; padding: 22px 16px; display: flex; flex-direction: column; gap: 26px; position: sticky; top: 0; height: 100vh; overflow-y: auto;">
+    <div style="display: flex; align-items: center; gap: 11px; padding: 0 4px;">
+      <svg width="34" height="22" viewBox="0 0 76 48" fill="none">
+        <path d="M6 24c10-13 22-19.5 32-19.5S60 11 70 24c-10 13-22 19.5-32 19.5S16 37 6 24z" stroke="#35c2a8" stroke-width="4" stroke-linejoin="round"></path>
+        <path d="M38 12v24" stroke="#35c2a8" stroke-width="4"></path>
+        <circle cx="38" cy="24" r="7.5" fill="#ff6b4a"></circle>
+      </svg>
+      <div>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 15.5px; font-weight: 700; color: #f2fbf9; letter-spacing: -0.01em;">Vision Studio</div>
+        <div style="font-size: 11px; color: #6f9c96;">Óptica Almendares</div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+      <div style="display: flex; flex-direction: column; gap: 3px;">
+        <div style="padding: 0 12px 6px; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #4d7a74;">Vendedor</div>
+        <sc-for list="{{ navVendedor }}" as="item" hint-placeholder-count="4">
+          <button style="{{ item.style }}" onClick="{{ item.go }}">
+            <span style="{{ item.dot }}"></span>
+            <span>{{ item.label }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 3px;">
+        <div style="padding: 0 12px 6px; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #4d7a74;">Dirección</div>
+        <sc-for list="{{ navDireccion }}" as="item" hint-placeholder-count="2">
+          <button style="{{ item.style }}" onClick="{{ item.go }}">
+            <span style="{{ item.dot }}"></span>
+            <span>{{ item.label }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 3px;">
+        <div style="padding: 0 12px 6px; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #4d7a74;">Plataforma</div>
+        <sc-for list="{{ navPlataforma }}" as="item" hint-placeholder-count="2">
+          <button style="{{ item.style }}" onClick="{{ item.go }}">
+            <span style="{{ item.dot }}"></span>
+            <span>{{ item.label }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="margin-top: auto; border-top: 1px solid #10463f; padding-top: 16px; display: flex; align-items: center; gap: 10px;">
+      <div style="width: 32px; height: 32px; border-radius: 999px; background: #0d7a72; color: #d8f5ef; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700;">YP</div>
+      <div style="line-height: 1.3;">
+        <div style="font-size: 13px; color: #e6f5f3; font-weight: 600;">Yanet Pérez</div>
+        <div style="font-size: 11px; color: #6f9c96;">Vendedora · Centro</div>
+      </div>
+    </div>
+  </aside>
+
+  <main style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+    <header style="display: flex; align-items: center; gap: 16px; padding: 16px 28px; background: #ffffff; border-bottom: 1px solid #e3efed; position: sticky; top: 0; z-index: 5;">
+      <div style="flex: 1; min-width: 0;">
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 600; letter-spacing: -0.02em; color: #07322f;">{{ tituloPantalla }}</div>
+        <div style="font-size: 12.5px; color: #74857f;">{{ subtituloPantalla }}</div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px; padding: 7px 12px; border: 1px solid #dcecea; border-radius: 7px; background: #fbfefd; font-size: 12.5px; color: #4a5b58;">
+          <span style="width: 7px; height: 7px; border-radius: 999px; background: #35c2a8;"></span>
+          <span>Tasa de hoy · 1 USD = 420 CUP</span>
+        </div>
+        <button style="padding: 9px 16px; border: none; border-radius: 7px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;" style-hover="background: #07322f;" onClick="{{ irNueva }}">+ Nueva venta</button>
+      </div>
+    </header>
+
+    <div style="flex: 1; padding: 26px 28px 60px;">
+      <sc-if value="{{ esPedidos }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px;">
+            <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 16px 18px;">
+              <div style="font-size: 12.5px; color: #74857f;">Pedidos activos</div>
+              <div style="margin-top: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #07322f; letter-spacing: -0.02em;">14</div>
+              <div style="margin-top: 4px; font-size: 12px; color: #74857f;">6 en producción · 3 listos</div>
+            </div>
+            <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 16px 18px;">
+              <div style="font-size: 12.5px; color: #74857f;">Por cobrar</div>
+              <div style="margin-top: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #07322f; letter-spacing: -0.02em; font-variant-numeric: tabular-nums;">38 200 <span style="font-size: 14px; font-weight: 500; color: #74857f;">CUP</span></div>
+              <div style="margin-top: 4px; font-size: 12px; color: #74857f;">+ 40 USD en dos pedidos</div>
+            </div>
+            <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 16px 18px;">
+              <div style="font-size: 12.5px; color: #74857f;">Listos para recoger</div>
+              <div style="margin-top: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #07322f; letter-spacing: -0.02em;">3</div>
+              <div style="margin-top: 4px; font-size: 12px; color: #0d7a72;">2 sin notificar por WhatsApp</div>
+            </div>
+            <div style="background: #ffffff; border: 1px solid #ffd9cd; border-radius: 10px; padding: 16px 18px;">
+              <div style="font-size: 12.5px; color: #c23c1c;">Incidencias abiertas</div>
+              <div style="margin-top: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #c23c1c; letter-spacing: -0.02em;">1</div>
+              <div style="margin-top: 4px; font-size: 12px; color: #74857f;">Cristal defectuoso · VIS-000129</div>
+            </div>
+          </div>
+
+          <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; overflow: hidden;">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 14px 16px; border-bottom: 1px solid #eef5f4;">
+              <div style="display: flex; align-items: center; gap: 8px; flex: 1 1 240px; min-width: 200px; padding: 8px 12px; border: 1px solid #dcecea; border-radius: 7px; background: #fbfefd;">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="#74857f" stroke-width="1.6"></circle><path d="M11 11l3 3" stroke="#74857f" stroke-width="1.6" stroke-linecap="round"></path></svg>
+                <input type="text" placeholder="Buscar por folio, cliente o teléfono" style="border: none; outline: none; background: transparent; font-size: 13px; width: 100%; color: #1c3a37;">
+              </div>
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <span style="padding: 7px 13px; border-radius: 999px; background: #07322f; color: #ffffff; font-size: 12.5px; font-weight: 600; cursor: pointer;">Activos</span>
+                <span style="padding: 7px 13px; border-radius: 999px; background: #f2f6f5; color: #4a5b58; font-size: 12.5px; cursor: pointer;">Con saldo</span>
+                <span style="padding: 7px 13px; border-radius: 999px; background: #f2f6f5; color: #4a5b58; font-size: 12.5px; cursor: pointer;">Listos</span>
+                <span style="padding: 7px 13px; border-radius: 999px; background: #f2f6f5; color: #4a5b58; font-size: 12.5px; cursor: pointer;">Incidencias</span>
+                <span style="padding: 7px 13px; border-radius: 999px; background: #f2f6f5; color: #4a5b58; font-size: 12.5px; cursor: pointer;">Todos</span>
+              </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; min-width: 880px;">
+                <thead>
+                  <tr style="background: #fbfefd;">
+                    <th style="text-align: left; padding: 10px 14px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #74857f; font-weight: 600; border-bottom: 1px solid #e3efed;">Pedido</th>
+                    <th style="text-align: left; padding: 10px 14px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #74857f; font-weight: 600; border-bottom: 1px solid #e3efed;">Cliente</th>
+                    <th style="text-align: left; padding: 10px 14px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #74857f; font-weight: 600; border-bottom: 1px solid #e3efed;">Estado</th>
+                    <th style="text-align: left; padding: 10px 14px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #74857f; font-weight: 600; border-bottom: 1px solid #e3efed;">Producción</th>
+                    <th style="text-align: right; padding: 10px 14px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #74857f; font-weight: 600; border-bottom: 1px solid #e3efed;">Saldo</th>
+                    <th style="text-align: right; padding: 10px 14px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #74857f; font-weight: 600; border-bottom: 1px solid #e3efed;">Actualizado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ ordenes }}" as="o" hint-placeholder-count="6">
+                    <tr style="cursor: pointer;" style-hover="background: #fbfefd;" onClick="{{ o.abrir }}">
+                      <td style="{{ o.celdaStyle }}">
+                        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: #07322f;">{{ o.folio }}</div>
+                        <div style="font-size: 12px; color: #74857f;">{{ o.tipo }}</div>
+                      </td>
+                      <td style="{{ o.celdaStyle }}">
+                        <div style="font-size: 13.5px; color: #1c3a37;">{{ o.cliente }}</div>
+                      </td>
+                      <td style="{{ o.celdaStyle }}"><span style="{{ o.chipStyle }}">{{ o.estado }}</span></td>
+                      <td style="{{ o.celdaStyle }}">
+                        <div style="display: flex; gap: 4px; align-items: center;">
+                          <sc-for list="{{ o.dots }}" as="d" hint-placeholder-count="6">
+                            <span style="{{ d.style }}"></span>
+                          </sc-for>
+                        </div>
+                      </td>
+                      <td style="{{ o.celdaStyle }}">
+                        <div style="text-align: right;">
+                          <div style="{{ o.saldoStyle }}">{{ o.saldo }}</div>
+                          <div style="font-size: 11.5px; color: #74857f;">{{ o.saldoLabel }}</div>
+                        </div>
+                      </td>
+                      <td style="{{ o.celdaStyle }}">
+                        <div style="text-align: right; font-size: 12.5px; color: #74857f;">{{ o.actualizado }}</div>
+                      </td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 16px; padding: 12px 16px; border-top: 1px solid #eef5f4; font-size: 12px; color: #74857f; flex-wrap: wrap;">
+              <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 9px; height: 9px; border-radius: 2px; background: #35c2a8;"></span>Terminado</span>
+              <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 9px; height: 9px; border-radius: 2px; background: #0d7a72;"></span>En curso</span>
+              <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 9px; height: 9px; border-radius: 2px; background: #d5ebe7;"></span>Pendiente</span>
+              <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 9px; height: 9px; border-radius: 2px; background: #ff6b4a;"></span>Incidencia</span>
+              <span style="margin-left: auto;">Orden · Pago · Cristales · Armadura · Montaje · Entrega</span>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ esNueva }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 18px;">
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <sc-for list="{{ pasos }}" as="p" hint-placeholder-count="4">
+              <button style="{{ p.style }}" onClick="{{ p.ir }}">
+                <span style="{{ p.numStyle }}">{{ p.n }}</span>
+                <span style="{{ p.labelStyle }}">{{ p.label }}</span>
+              </button>
+            </sc-for>
+          </div>
+
+          <div style="display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap;">
+            <div style="flex: 1 1 520px; min-width: 320px; display: flex; flex-direction: column; gap: 16px;">
+
+              <sc-if value="{{ paso1 }}" hint-placeholder-val="{{ false }}">
+                <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 20px;">
+                  <div style="font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; color: #07322f;">Buscar o registrar al cliente</div>
+                  <div style="margin-top: 4px; font-size: 13px; color: #74857f;">El teléfono no es único: varias personas pueden compartirlo.</div>
+                  <div style="margin-top: 14px; display: flex; align-items: center; gap: 8px; padding: 11px 13px; border: 1px solid #dcecea; border-radius: 8px; background: #fbfefd;">
+                    <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="#74857f" stroke-width="1.6"></circle><path d="M11 11l3 3" stroke="#74857f" stroke-width="1.6" stroke-linecap="round"></path></svg>
+                    <input type="text" value="Marisol" style="border: none; outline: none; background: transparent; font-size: 14px; width: 100%; color: #1c3a37;">
+                  </div>
+                  <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1.5px solid #0d7a72; border-radius: 8px; background: #f0fbf9;">
+                      <div style="width: 34px; height: 34px; border-radius: 999px; background: #0d7a72; color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700;">MC</div>
+                      <div style="flex: 1; min-width: 0;">
+                        <div style="font-size: 14px; font-weight: 600; color: #07322f;">Marisol Cabrera Domínguez</div>
+                        <div style="font-size: 12.5px; color: #74857f;">+53 5218 4477 · 3 pedidos previos · última receta 2 mar 2026</div>
+                      </div>
+                      <span style="font-size: 11.5px; font-weight: 600; color: #0d7a72;">Seleccionada</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid #e3efed; border-radius: 8px; background: #ffffff;">
+                      <div style="width: 34px; height: 34px; border-radius: 999px; background: #eef5f4; color: #74857f; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700;">MR</div>
+                      <div style="flex: 1; min-width: 0;">
+                        <div style="font-size: 14px; color: #1c3a37;">Marisol Rivas Pérez</div>
+                        <div style="font-size: 12.5px; color: #74857f;">+53 5218 4477 · mismo teléfono</div>
+                      </div>
+                      <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #fff4e8; color: #a35a15;">Posible duplicado</span>
+                    </div>
+                  </div>
+                  <div style="margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button style="padding: 10px 16px; border: 1px solid #dcecea; border-radius: 7px; background: #ffffff; font-size: 13px; font-weight: 600; color: #07322f; cursor: pointer;" style-hover="background: #f0fbf9;">+ Registrar cliente nuevo</button>
+                    <button style="padding: 10px 16px; border: none; border-radius: 7px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;" style-hover="background: #07322f;" onClick="{{ siguientePaso }}">Continuar a la receta</button>
+                  </div>
+                </div>
+                <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 20px;">
+                  <div style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #07322f; margin-bottom: 14px;">Ficha de Marisol Cabrera</div>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;">
+                    <div><div style="font-size: 11.5px; color: #74857f; margin-bottom: 4px;">Teléfonos</div><div style="font-size: 13.5px;">+53 5218 4477 · +53 7832 1190</div></div>
+                    <div><div style="font-size: 11.5px; color: #74857f; margin-bottom: 4px;">Dirección</div><div style="font-size: 13.5px;">Calle 23 #452, Vedado</div></div>
+                    <div><div style="font-size: 11.5px; color: #74857f; margin-bottom: 4px;">Nacimiento</div><div style="font-size: 13.5px;">14 jun 1968</div></div>
+                    <div><div style="font-size: 11.5px; color: #74857f; margin-bottom: 4px;">Consentimiento WhatsApp</div><div style="font-size: 13.5px; color: #0d7a72; font-weight: 600;">Otorgado · 2 mar 2026</div></div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ paso2 }}" hint-placeholder-val="{{ false }}">
+                <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 20px;">
+                  <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+                    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; color: #07322f;">Receta</div>
+                    <div style="font-size: 12.5px; color: #74857f;">El original se preserva; toda corrección registra autor, fecha y valores.</div>
+                  </div>
+                  <div style="margin-top: 16px; overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; min-width: 520px;">
+                      <thead>
+                        <tr>
+                          <th style="text-align: left; padding: 8px 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #74857f;"></th>
+                          <th style="text-align: left; padding: 8px 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #74857f;">Esfera</th>
+                          <th style="text-align: left; padding: 8px 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #74857f;">Cilindro</th>
+                          <th style="text-align: left; padding: 8px 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #74857f;">Eje</th>
+                          <th style="text-align: left; padding: 8px 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #74857f;">Adición</th>
+                          <th style="text-align: left; padding: 8px 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #74857f;">DP</th>
+                          <th style="text-align: left; padding: 8px 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #74857f;">Altura</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td style="padding: 6px 10px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; color: #07322f;">OD</td>
+                          <td style="padding: 6px 10px;"><input value="-2.25" style="width: 100%; min-width: 64px; padding: 9px 10px; border: 1px solid #dcecea; border-radius: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; color: #07322f; background: #fbfefd;"></td>
+                          <td style="padding: 6px 10px;"><input value="-0.75" style="width: 100%; min-width: 64px; padding: 9px 10px; border: 1px solid #dcecea; border-radius: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; color: #07322f; background: #fbfefd;"></td>
+                          <td style="padding: 6px 10px;"><input value="175" style="width: 100%; min-width: 60px; padding: 9px 10px; border: 1px solid #dcecea; border-radius: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; color: #07322f; background: #fbfefd;"></td>
+                          <td style="padding: 6px 10px;"><input value="+2.00" style="width: 100%; min-width: 64px; padding: 9px 10px; border: 1px solid #dcecea; border-radius: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; color: #07322f; background: #fbfefd;"></td>
+                          <td style="padding: 6px 10px;"><input value="31.0" style="width: 100%; min-width: 60px; padding: 9px 10px; border: 1px solid #dcecea; border-radius: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; color: #07322f; background: #fbfefd;"></td>
+                          <td style="padding: 6px 10px;"><input value="18" style="width: 100%; min-width: 58px; padding: 9px 10px; border: 1px solid #dcecea; border-radius: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; color: #07322f; background: #fbfefd;"></td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 6px 10px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; color: #07322f;">OI</td>
+                          <td style="padding: 6px 10px;"><input value="-2.50" style="width: 100%; min-width: 64px; padding: 9px 10px; border: 1px solid #dcecea; border-radius: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; color: #07322f; background: #fbfefd;"></td>
+                          <td style="padding: 6px 10px;"><input value="-1.00" style="width: 100%; min-width: 64px; padding: 9px 10px; border: 1px solid #dcecea; border-radius: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; color: #07322f; background: #fbfefd;"></td>
+                          <td style="padding: 6px 10px;"><input value="10" style="width: 100%; min-width: 60px; padding: 9px 10px; border: 1px solid #dcecea; border-radius: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; color: #07322f; background: #fbfefd;"></td>
+                          <td style="padding: 6px 10px;"><input value="+2.00" style="width: 100%; min-width: 64px; padding: 9px 10px; border: 1px solid #dcecea; border-radius: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; color: #07322f; background: #fbfefd;"></td>
+                          <td style="padding: 6px 10px;"><input value="30.5" style="width: 100%; min-width: 60px; padding: 9px 10px; border: 1px solid #dcecea; border-radius: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; color: #07322f; background: #fbfefd;"></td>
+                          <td style="padding: 6px 10px;"><input value="18" style="width: 100%; min-width: 58px; padding: 9px 10px; border: 1px solid #dcecea; border-radius: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; color: #07322f; background: #fbfefd;"></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div style="margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px;">
+                    <div><div style="font-size: 11.5px; color: #74857f; margin-bottom: 5px;">Prisma / base</div><input value="—" style="width: 100%; padding: 9px 10px; border: 1px solid #dcecea; border-radius: 7px; font-size: 13.5px; background: #fbfefd;"></div>
+                    <div><div style="font-size: 11.5px; color: #74857f; margin-bottom: 5px;">Fecha de la receta</div><input value="6 sep 2026" style="width: 100%; padding: 9px 10px; border: 1px solid #dcecea; border-radius: 7px; font-size: 13.5px; background: #fbfefd;"></div>
+                    <div><div style="font-size: 11.5px; color: #74857f; margin-bottom: 5px;">Médico u optometrista</div><input value="Dra. Nereida Sosa" style="width: 100%; padding: 9px 10px; border: 1px solid #dcecea; border-radius: 7px; font-size: 13.5px; background: #fbfefd;"></div>
+                  </div>
+                  <div style="margin-top: 14px; display: flex; gap: 12px; align-items: center; padding: 13px 15px; border: 1px dashed #b9dfd9; border-radius: 8px; background: #f7fdfc;">
+                    <div style="width: 38px; height: 44px; border-radius: 4px; background: #e2f4f1; border: 1px solid #b9dfd9;"></div>
+                    <div style="flex: 1; min-width: 0;">
+                      <div style="font-size: 13px; font-weight: 600; color: #07322f;">receta-marisol-sep2026.jpg</div>
+                      <div style="font-size: 12px; color: #74857f;">Adjunto original · almacenamiento privado</div>
+                    </div>
+                    <button style="padding: 8px 13px; border: 1px solid #dcecea; border-radius: 7px; background: #fff; font-size: 12.5px; color: #07322f; cursor: pointer;">Reemplazar</button>
+                  </div>
+                  <div style="margin-top: 16px; display: flex; gap: 10px;">
+                    <button style="padding: 10px 16px; border: 1px solid #dcecea; border-radius: 7px; background: #fff; font-size: 13px; color: #4a5b58; cursor: pointer;" onClick="{{ pasoAnterior }}">Atrás</button>
+                    <button style="padding: 10px 16px; border: none; border-radius: 7px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;" style-hover="background: #07322f;" onClick="{{ siguientePaso }}">Continuar a configuración</button>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ paso3 }}" hint-placeholder-val="{{ true }}">
+                <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 20px;">
+                  <div style="font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; color: #07322f;">Tipo de espejuelo</div>
+                  <div style="margin-top: 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;">
+                    <div style="padding: 13px 14px; border: 1px solid #e3efed; border-radius: 8px; cursor: pointer;"><div style="font-size: 13.5px; font-weight: 600; color: #4a5b58;">Cerca</div><div style="font-size: 12px; color: #74857f;">desde 1 800 CUP</div></div>
+                    <div style="padding: 13px 14px; border: 1px solid #e3efed; border-radius: 8px; cursor: pointer;"><div style="font-size: 13.5px; font-weight: 600; color: #4a5b58;">Lejos</div><div style="font-size: 12px; color: #74857f;">desde 2 100 CUP</div></div>
+                    <div style="padding: 13px 14px; border: 1px solid #e3efed; border-radius: 8px; cursor: pointer;"><div style="font-size: 13.5px; font-weight: 600; color: #4a5b58;">Bifocal</div><div style="font-size: 12px; color: #74857f;">desde 4 500 CUP</div></div>
+                    <div style="padding: 13px 14px; border: 1.5px solid #0d7a72; border-radius: 8px; background: #f0fbf9; cursor: pointer;"><div style="font-size: 13.5px; font-weight: 600; color: #07322f;">Progresivo</div><div style="font-size: 12px; color: #0d7a72;">desde 9 200 CUP</div></div>
+                  </div>
+
+                  <div style="margin-top: 20px; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; color: #07322f;">Cristal y tratamientos</div>
+                  <div style="margin-top: 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px;">
+                    <div>
+                      <div style="font-size: 11.5px; color: #74857f; margin-bottom: 5px;">Material</div>
+                      <div style="padding: 10px 12px; border: 1px solid #dcecea; border-radius: 7px; background: #fbfefd; font-size: 13.5px; display: flex; justify-content: space-between; align-items: center;"><span>Policarbonato 1.59</span><span style="font-size: 12px; color: #74857f;">CUP</span></div>
+                    </div>
+                    <div>
+                      <div style="font-size: 11.5px; color: #74857f; margin-bottom: 5px;">Armadura</div>
+                      <div style="padding: 10px 12px; border: 1px solid #dcecea; border-radius: 7px; background: #fbfefd; font-size: 13.5px; display: flex; justify-content: space-between; align-items: center;"><span>Aún no escogida</span><span style="padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #fff4e8; color: #a35a15;">Pendiente</span></div>
+                    </div>
+                  </div>
+                  <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+                    <span style="padding: 8px 13px; border-radius: 999px; border: 1.5px solid #0d7a72; background: #f0fbf9; font-size: 12.5px; font-weight: 600; color: #07322f; cursor: pointer;">Antirreflejo ✓</span>
+                    <span style="padding: 8px 13px; border-radius: 999px; border: 1.5px solid #0d7a72; background: #f0fbf9; font-size: 12.5px; font-weight: 600; color: #07322f; cursor: pointer;">Filtro azul ✓</span>
+                    <span style="padding: 8px 13px; border-radius: 999px; border: 1px solid #e3efed; font-size: 12.5px; color: #4a5b58; cursor: pointer;">Fotocromático</span>
+                    <span style="padding: 8px 13px; border-radius: 999px; border: 1px solid #e3efed; font-size: 12.5px; color: #4a5b58; cursor: pointer;">Endurecido</span>
+                    <span style="padding: 8px 13px; border-radius: 999px; border: 1px solid #e3efed; font-size: 12.5px; color: #4a5b58; cursor: pointer;">Tinte</span>
+                  </div>
+
+                  <div style="margin-top: 18px; display: flex; gap: 11px; padding: 13px 15px; border-radius: 8px; background: #fff6f2; border: 1px solid #ffd9cd;">
+                    <span style="width: 18px; height: 18px; flex: 0 0 18px; border-radius: 999px; background: #ff6b4a; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">!</span>
+                    <div style="font-size: 13px; line-height: 1.55; color: #7a3a26;">Con ‑2.50 y adición +2.00 el catálogo sugiere policarbonato o alto índice para progresivos. <strong>Es orientativo:</strong> puedes continuar con la selección actual y la excepción queda registrada.</div>
+                  </div>
+                  <div style="margin-top: 16px; display: flex; gap: 10px;">
+                    <button style="padding: 10px 16px; border: 1px solid #dcecea; border-radius: 7px; background: #fff; font-size: 13px; color: #4a5b58; cursor: pointer;" onClick="{{ pasoAnterior }}">Atrás</button>
+                    <button style="padding: 10px 16px; border: none; border-radius: 7px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;" style-hover="background: #07322f;" onClick="{{ siguientePaso }}">Continuar a aceptación</button>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ paso4 }}" hint-placeholder-val="{{ false }}">
+                <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 20px;">
+                  <div style="font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; color: #07322f;">Confirmación del cliente</div>
+                  <div style="margin-top: 4px; font-size: 13px; color: #74857f;">Sin firma: basta que el vendedor pulse Aceptar cuando el cliente confirma de palabra.</div>
+
+                  <div style="margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                    <div style="padding: 14px; border: 1px solid #e3efed; border-radius: 8px;">
+                      <div style="font-size: 11.5px; color: #74857f;">Tasa de esta venta</div>
+                      <div style="margin-top: 5px; font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #07322f;">420 CUP / USD</div>
+                      <div style="margin-top: 3px; font-size: 12px; color: #74857f;">Se congela como instantánea del pedido.</div>
+                    </div>
+                    <div style="padding: 14px; border: 1px solid #e3efed; border-radius: 8px;">
+                      <div style="font-size: 11.5px; color: #74857f;">Anticipo recomendado (50 %)</div>
+                      <div style="margin-top: 5px; font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #07322f;">6 400 CUP</div>
+                      <div style="margin-top: 3px; font-size: 12px; color: #0d7a72;">Puedes omitirlo; la excepción se registra.</div>
+                    </div>
+                  </div>
+
+                  <div style="margin-top: 16px; padding: 14px; border: 1px solid #e3efed; border-radius: 8px;">
+                    <div style="font-size: 13px; font-weight: 600; color: #07322f; margin-bottom: 10px;">Registrar primer pago en efectivo</div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                      <input value="6 400" style="flex: 1 1 140px; padding: 10px 12px; border: 1px solid #dcecea; border-radius: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #07322f; background: #fbfefd;">
+                      <div style="display: flex; gap: 6px;">
+                        <span style="padding: 10px 16px; border-radius: 7px; background: #07322f; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;">CUP</span>
+                        <span style="padding: 10px 16px; border-radius: 7px; background: #f2f6f5; color: #4a5b58; font-size: 13px; cursor: pointer;">USD</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style="margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button style="padding: 12px 20px; border: none; border-radius: 7px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;" style-hover="background: #07322f;" onClick="{{ abrirDetalle }}">Aceptar y crear pedido</button>
+                    <button style="padding: 12px 18px; border: 1px solid #dcecea; border-radius: 7px; background: #fff; font-size: 13.5px; font-weight: 600; color: #07322f; cursor: pointer;" style-hover="background: #f0fbf9;">Enviar cotización por WhatsApp</button>
+                    <button style="padding: 12px 18px; border: none; border-radius: 7px; background: transparent; font-size: 13.5px; color: #74857f; cursor: pointer;" onClick="{{ pasoAnterior }}">Atrás</button>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+
+            <div style="flex: 1 1 320px; min-width: 280px; max-width: 400px; position: sticky; top: 96px; background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; overflow: hidden;">
+              <div style="padding: 18px 20px; background: #f0fbf9; border-bottom: 1px solid #dcecea;">
+                <div style="font-size: 12.5px; color: #0d7a72; font-weight: 600;">Cotización</div>
+                <div style="margin-top: 6px; display: flex; align-items: baseline; gap: 8px;">
+                  <span style="font-family: 'Space Grotesk', sans-serif; font-size: 34px; font-weight: 700; letter-spacing: -0.03em; color: #07322f; font-variant-numeric: tabular-nums;">12 800</span>
+                  <span style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #0d7a72;">CUP</span>
+                </div>
+                <div style="margin-top: 2px; font-size: 12.5px; color: #74857f;">incluye 20 USD cobrados en CUP a 420</div>
+                <button style="margin-top: 12px; padding: 8px 14px; border: 1px solid #b9dfd9; border-radius: 7px; background: #ffffff; font-size: 12.5px; font-weight: 600; color: #07322f; cursor: pointer;" style-hover="background: #e2f4f1;" onClick="{{ alternarDesglose }}">{{ textoDesglose }}</button>
+              </div>
+              <sc-if value="{{ desglose }}" hint-placeholder-val="{{ false }}">
+                <div style="padding: 14px 20px; display: flex; flex-direction: column; gap: 11px; border-bottom: 1px solid #eef5f4;">
+                  <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 13px;"><span style="color: #4a5b58;">Cristal progresivo policarbonato</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #07322f;">7 200 CUP</span></div>
+                  <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 13px;"><span style="color: #4a5b58;">Recargo banda ‑2.00 a ‑4.00</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #07322f;">900 CUP</span></div>
+                  <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 13px;"><span style="color: #4a5b58;">Antirreflejo</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #07322f;">1 400 CUP</span></div>
+                  <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 13px;">
+                    <span style="color: #4a5b58;">Filtro azul <span style="padding: 1px 6px; border-radius: 4px; background: #e2f4f1; color: #0d7a72; font-size: 10.5px; font-weight: 700;">USD</span></span>
+                    <span style="text-align: right;"><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #07322f;">20 USD</span><span style="display: block; font-size: 11.5px; color: #74857f;">8 400 CUP a 420</span></span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 13px;"><span style="color: #4a5b58;">Montaje</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #07322f;">900 CUP</span></div>
+                  <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 13px;"><span style="color: #74857f;">Armadura</span><span style="font-size: 12.5px; color: #a35a15;">por definir</span></div>
+                </div>
+              </sc-if>
+              <div style="padding: 16px 20px; display: flex; flex-direction: column; gap: 9px;">
+                <div style="display: flex; justify-content: space-between; font-size: 13px; color: #4a5b58;"><span>Cliente</span><span style="font-weight: 600; color: #07322f;">Marisol Cabrera</span></div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; color: #4a5b58;"><span>Receta</span><span style="font-weight: 600; color: #07322f;">6 sep 2026</span></div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; color: #4a5b58;"><span>Sucursal</span><span style="font-weight: 600; color: #07322f;">Centro</span></div>
+                <div style="margin-top: 4px; padding-top: 12px; border-top: 1px dashed #dcecea; font-size: 12px; color: #74857f; line-height: 1.5;">El precio aceptado se copia al pedido como instantánea. Si cambia el total después, hace falta una nueva confirmación del cliente.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ esDetalle }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 18px;">
+          <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px 20px; display: flex; gap: 18px; flex-wrap: wrap; align-items: center;">
+            <div style="flex: 1 1 260px; min-width: 220px;">
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <span style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.02em; color: #07322f;">Marisol Cabrera</span>
+                <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #d9f5ee; color: #07655c;">Cristales en fabricación</span>
+              </div>
+              <div style="margin-top: 5px; font-size: 13px; color: #74857f;">Progresivo policarbonato · antirreflejo · filtro azul · armadura acetato carey</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 12px; color: #74857f;">Saldo pendiente</div>
+              <div style="font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; color: #ff6b4a; font-variant-numeric: tabular-nums; letter-spacing: -0.02em;">4 400 CUP</div>
+              <div style="font-size: 12px; color: #74857f;">de 15 000 CUP · 2 pagos</div>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button style="padding: 10px 16px; border: none; border-radius: 7px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;" style-hover="background: #07322f;">Registrar pago</button>
+              <button style="padding: 10px 16px; border: 1px solid #dcecea; border-radius: 7px; background: #fff; font-size: 13px; font-weight: 600; color: #07322f; cursor: pointer;" style-hover="background: #f0fbf9;">WhatsApp</button>
+              <button style="padding: 10px 16px; border: 1px solid #ffd9cd; border-radius: 7px; background: #fff6f2; font-size: 13px; font-weight: 600; color: #c23c1c; cursor: pointer;" style-hover="background: #ffe8e1;">Abrir incidencia</button>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap;">
+            <div style="flex: 1 1 460px; min-width: 320px; background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; overflow: hidden;">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #eef5f4; flex-wrap: wrap;">
+                <div style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #07322f;">Estados e historial</div>
+                <div style="margin-left: auto; display: flex; gap: 3px; padding: 3px; border-radius: 8px; background: #f2f6f5;">
+                  <button style="{{ estiloTabUnificada }}" onClick="{{ verUnificada }}">Cronología única</button>
+                  <button style="{{ estiloTabDimensiones }}" onClick="{{ verDimensiones }}">Por dimensión</button>
+                </div>
+              </div>
+
+              <sc-if value="{{ varianteUnificada }}" hint-placeholder-val="{{ true }}">
+                <div style="padding: 18px 20px; display: flex; flex-direction: column; gap: 0;">
+                  <sc-for list="{{ cronologia }}" as="e" hint-placeholder-count="6">
+                    <div style="display: flex; gap: 14px;">
+                      <div style="display: flex; flex-direction: column; align-items: center; flex: 0 0 11px;">
+                        <span style="{{ e.puntoStyle }}"></span>
+                        <span style="width: 1.5px; flex: 1; background: #e4f0ee; min-height: 14px;"></span>
+                      </div>
+                      <div style="flex: 1; min-width: 0; padding-bottom: 18px;">
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                          <span style="{{ e.dimStyle }}">{{ e.dim }}</span>
+                          <span style="font-size: 12px; color: #74857f;">{{ e.cuando }}</span>
+                        </div>
+                        <div style="margin-top: 5px; font-size: 14px; font-weight: 600; color: #07322f;">{{ e.titulo }}</div>
+                        <div style="margin-top: 2px; font-size: 13px; line-height: 1.5; color: #4a5b58;">{{ e.detalle }}</div>
+                        <div style="margin-top: 4px; font-size: 12px; color: #74857f;">{{ e.actor }}</div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ varianteDimensiones }}" hint-placeholder-val="{{ false }}">
+                <div style="padding: 18px 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 18px;">
+                  <sc-for list="{{ dimensiones }}" as="d" hint-placeholder-count="6">
+                    <div style="border: 1px solid #eef5f4; border-radius: 9px; padding: 14px;">
+                      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px;">
+                        <span style="font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: #07322f;">{{ d.nombre }}</span>
+                        <span style="{{ d.chipStyle }}">{{ d.actual }}</span>
+                      </div>
+                      <sc-for list="{{ d.pasos }}" as="p" hint-placeholder-count="4">
+                        <div style="display: flex; gap: 10px;">
+                          <div style="display: flex; flex-direction: column; align-items: center; flex: 0 0 10px;">
+                            <span style="{{ p.puntoStyle }}"></span>
+                            <span style="{{ p.lineaStyle }}"></span>
+                          </div>
+                          <div style="flex: 1; min-width: 0; padding-bottom: 10px;">
+                            <div style="{{ p.labelStyle }}">{{ p.label }}</div>
+                            <div style="font-size: 11px; color: #74857f;">{{ p.fecha }}</div>
+                          </div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+
+            <div style="flex: 1 1 300px; min-width: 280px; max-width: 400px; display: flex; flex-direction: column; gap: 16px;">
+              <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; overflow: hidden;">
+                <div style="padding: 16px 18px; background: #f0fbf9; border-bottom: 1px solid #dcecea;">
+                  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span style="font-size: 12.5px; font-weight: 600; color: #0d7a72;">Total del pedido</span>
+                    <span style="font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; color: #07322f; font-variant-numeric: tabular-nums;">15 000 CUP</span>
+                  </div>
+                  <button style="margin-top: 10px; padding: 7px 13px; border: 1px solid #b9dfd9; border-radius: 7px; background: #ffffff; font-size: 12.5px; font-weight: 600; color: #07322f; cursor: pointer;" style-hover="background: #e2f4f1;" onClick="{{ alternarDesglose }}">{{ textoDesglose }}</button>
+                </div>
+                <sc-if value="{{ desglose }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid #eef5f4;">
+                    <div style="display: flex; justify-content: space-between; font-size: 13px;"><span style="color: #4a5b58;">Cristal progresivo policarbonato</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">7 200 CUP</span></div>
+                    <div style="display: flex; justify-content: space-between; font-size: 13px;"><span style="color: #4a5b58;">Recargo por graduación</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">900 CUP</span></div>
+                    <div style="display: flex; justify-content: space-between; font-size: 13px;"><span style="color: #4a5b58;">Antirreflejo</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">1 400 CUP</span></div>
+                    <div style="display: flex; justify-content: space-between; font-size: 13px;"><span style="color: #4a5b58;">Filtro azul <span style="padding: 1px 6px; border-radius: 4px; background: #e2f4f1; color: #0d7a72; font-size: 10.5px; font-weight: 700;">USD</span></span><span style="text-align: right;"><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">20 USD</span><span style="display: block; font-size: 11.5px; color: #74857f;">8 400 CUP a 420</span></span></div>
+                    <div style="display: flex; justify-content: space-between; font-size: 13px;"><span style="color: #4a5b58;">Armadura acetato carey</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">2 200 CUP</span></div>
+                    <div style="display: flex; justify-content: space-between; font-size: 13px;"><span style="color: #4a5b58;">Montaje</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">900 CUP</span></div>
+                  </div>
+                </sc-if>
+                <div style="padding: 14px 18px; display: flex; flex-direction: column; gap: 10px;">
+                  <div style="font-size: 12.5px; font-weight: 600; color: #07322f;">Pagos</div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                    <div><div style="color: #1c3a37;">8 sep · efectivo CUP</div><div style="font-size: 11.5px; color: #74857f;">Caja Yanet Pérez</div></div>
+                    <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">6 400 CUP</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                    <div><div style="color: #1c3a37;">12 sep · efectivo USD</div><div style="font-size: 11.5px; color: #74857f;">10 USD a 420 · posterior al cierre</div></div>
+                    <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">4 200 CUP</span>
+                  </div>
+                  <div style="margin-top: 4px; padding: 10px 12px; border-radius: 7px; background: #fff6f2; font-size: 12.5px; color: #7a3a26; line-height: 1.5;">No se puede marcar entregado con saldo pendiente.</div>
+                </div>
+              </div>
+
+              <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 16px 18px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                  <span style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; color: #07322f;">Receta</span>
+                  <span style="font-size: 12px; color: #74857f;">6 sep 2026 · Dra. N. Sosa</span>
+                </div>
+                <table style="width: 100%; border-collapse: collapse; font-family: 'Space Grotesk', sans-serif; font-variant-numeric: tabular-nums;">
+                  <tr>
+                    <td style="font-size: 11px; color: #74857f; padding: 4px 6px;"></td>
+                    <td style="font-size: 11px; color: #74857f; padding: 4px 6px;">ESF</td>
+                    <td style="font-size: 11px; color: #74857f; padding: 4px 6px;">CIL</td>
+                    <td style="font-size: 11px; color: #74857f; padding: 4px 6px;">EJE</td>
+                    <td style="font-size: 11px; color: #74857f; padding: 4px 6px;">ADD</td>
+                    <td style="font-size: 11px; color: #74857f; padding: 4px 6px;">DP</td>
+                  </tr>
+                  <tr>
+                    <td style="font-size: 12.5px; font-weight: 700; color: #07322f; padding: 4px 6px;">OD</td>
+                    <td style="font-size: 13px; padding: 4px 6px;">-2.25</td>
+                    <td style="font-size: 13px; padding: 4px 6px;">-0.75</td>
+                    <td style="font-size: 13px; padding: 4px 6px;">175</td>
+                    <td style="font-size: 13px; padding: 4px 6px;">+2.00</td>
+                    <td style="font-size: 13px; padding: 4px 6px;">31.0</td>
+                  </tr>
+                  <tr>
+                    <td style="font-size: 12.5px; font-weight: 700; color: #07322f; padding: 4px 6px;">OI</td>
+                    <td style="font-size: 13px; padding: 4px 6px;">-2.50</td>
+                    <td style="font-size: 13px; padding: 4px 6px;">-1.00</td>
+                    <td style="font-size: 13px; padding: 4px 6px;">10</td>
+                    <td style="font-size: 13px; padding: 4px 6px;">+2.00</td>
+                    <td style="font-size: 13px; padding: 4px 6px;">30.5</td>
+                  </tr>
+                </table>
+                <div style="margin-top: 12px; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px dashed #b9dfd9; border-radius: 7px;">
+                  <div style="width: 26px; height: 32px; border-radius: 3px; background: #e2f4f1; border: 1px solid #b9dfd9;"></div>
+                  <span style="font-size: 12.5px; color: #4a5b58;">receta-marisol-sep2026.jpg</span>
+                </div>
+              </div>
+
+              <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 16px 18px;">
+                <div style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; color: #07322f; margin-bottom: 10px;">Asignaciones</div>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px;"><span style="color: #4a5b58;">Cristalero</span><span style="font-weight: 600; color: #07322f;">Cristalería Rodríguez</span></div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px;"><span style="color: #4a5b58;">Montador</span><span style="color: #a35a15; font-weight: 600;">Sin asignar</span></div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px;"><span style="color: #4a5b58;">Vendedora</span><span style="font-weight: 600; color: #07322f;">Yanet Pérez</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ esCaja }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap;">
+          <div style="flex: 1 1 480px; min-width: 320px; display: flex; flex-direction: column; gap: 16px;">
+            <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; overflow: hidden;">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #eef5f4;">
+                <span style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #07322f;">Cobros del día</span>
+                <span style="margin-left: auto; font-size: 12.5px; color: #74857f;">12 sep 2026 · 7 movimientos</span>
+              </div>
+              <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; min-width: 560px;">
+                <thead>
+                  <tr style="background: #fbfefd;">
+                    <th style="text-align: left; padding: 9px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #74857f; border-bottom: 1px solid #e3efed;">Hora</th>
+                    <th style="text-align: left; padding: 9px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #74857f; border-bottom: 1px solid #e3efed;">Pedido</th>
+                    <th style="text-align: left; padding: 9px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #74857f; border-bottom: 1px solid #e3efed;">Concepto</th>
+                    <th style="text-align: right; padding: 9px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #74857f; border-bottom: 1px solid #e3efed;">Importe</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td style="padding: 12px 16px; font-size: 13px; color: #74857f; border-bottom: 1px solid #f3f8f7;">08:30</td><td style="padding: 12px 16px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: #07322f; border-bottom: 1px solid #f3f8f7;">VIS-2026-000123</td><td style="padding: 12px 16px; font-size: 13px; border-bottom: 1px solid #f3f8f7;">Pago parcial · 10 USD a 420</td><td style="padding: 12px 16px; text-align: right; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; border-bottom: 1px solid #f3f8f7;">10 USD</td></tr>
+                  <tr><td style="padding: 12px 16px; font-size: 13px; color: #74857f; border-bottom: 1px solid #f3f8f7;">09:47</td><td style="padding: 12px 16px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: #07322f; border-bottom: 1px solid #f3f8f7;">VIS-2026-000127</td><td style="padding: 12px 16px; font-size: 13px; border-bottom: 1px solid #f3f8f7;">Anticipo 50 %</td><td style="padding: 12px 16px; text-align: right; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; border-bottom: 1px solid #f3f8f7;">2 100 CUP</td></tr>
+                  <tr><td style="padding: 12px 16px; font-size: 13px; color: #74857f; border-bottom: 1px solid #f3f8f7;">11:05</td><td style="padding: 12px 16px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: #07322f; border-bottom: 1px solid #f3f8f7;">VIS-2026-000130</td><td style="padding: 12px 16px; font-size: 13px; border-bottom: 1px solid #f3f8f7;">Saldo a la entrega</td><td style="padding: 12px 16px; text-align: right; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; border-bottom: 1px solid #f3f8f7;">5 600 CUP</td></tr>
+                  <tr><td style="padding: 12px 16px; font-size: 13px; color: #74857f; border-bottom: 1px solid #f3f8f7;">13:22</td><td style="padding: 12px 16px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: #07322f; border-bottom: 1px solid #f3f8f7;">VIS-2026-000131</td><td style="padding: 12px 16px; font-size: 13px; border-bottom: 1px solid #f3f8f7;">Anticipo · sin mínimo <span style="padding: 2px 7px; border-radius: 4px; background: #fff4e8; color: #a35a15; font-size: 10.5px; font-weight: 700;">EXCEPCIÓN</span></td><td style="padding: 12px 16px; text-align: right; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; border-bottom: 1px solid #f3f8f7;">1 000 CUP</td></tr>
+                  <tr style="background: #fbfefd;"><td style="padding: 12px 16px; font-size: 13px; color: #74857f;">17:40</td><td style="padding: 12px 16px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: #07322f;">VIS-2026-000128</td><td style="padding: 12px 16px; font-size: 13px;">Cobro posterior al cierre <span style="padding: 2px 7px; border-radius: 4px; background: #e2f4f1; color: #0d7a72; font-size: 10.5px; font-weight: 700;">COMPLEMENTARIO</span></td><td style="padding: 12px 16px; text-align: right; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600;">3 000 CUP</td></tr>
+                </tbody>
+              </table>
+              </div>
+            </div>
+
+            <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px 20px;">
+              <div style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #07322f;">Conteo declarado</div>
+              <div style="margin-top: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+                <div style="border: 1px solid #e3efed; border-radius: 9px; padding: 14px;">
+                  <div style="display: flex; justify-content: space-between; font-size: 12.5px; color: #74857f;"><span>CUP en caja</span><span>Sistema 8 700</span></div>
+                  <input value="8 700" style="margin-top: 8px; width: 100%; padding: 10px 12px; border: 1px solid #dcecea; border-radius: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: #07322f; background: #fbfefd;">
+                  <div style="margin-top: 7px; font-size: 12.5px; color: #0d7a72; font-weight: 600;">Sin diferencia</div>
+                </div>
+                <div style="border: 1px solid #ffd9cd; border-radius: 9px; padding: 14px; background: #fffaf8;">
+                  <div style="display: flex; justify-content: space-between; font-size: 12.5px; color: #74857f;"><span>USD en caja</span><span>Sistema 10</span></div>
+                  <input value="9" style="margin-top: 8px; width: 100%; padding: 10px 12px; border: 1px solid #ffd9cd; border-radius: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: #c23c1c; background: #fff;">
+                  <div style="margin-top: 7px; font-size: 12.5px; color: #c23c1c; font-weight: 600;">Diferencia ‑1 USD · exige nota</div>
+                </div>
+              </div>
+              <textarea placeholder="Nota del cierre (obligatoria si hay diferencia)" style="margin-top: 14px; width: 100%; min-height: 70px; padding: 11px 12px; border: 1px solid #dcecea; border-radius: 8px; font-size: 13.5px; resize: vertical; background: #fbfefd; box-sizing: border-box;"></textarea>
+              <div style="margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <button style="padding: 11px 18px; border: none; border-radius: 7px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; font-weight: 600; cursor: pointer;" style-hover="background: #07322f;">Cerrar caja del día</button>
+                <button style="padding: 11px 18px; border: 1px solid #dcecea; border-radius: 7px; background: #fff; font-size: 13.5px; font-weight: 600; color: #07322f; cursor: pointer;" style-hover="background: #f0fbf9;">Generar cierre complementario</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex: 1 1 280px; min-width: 260px; max-width: 360px; display: flex; flex-direction: column; gap: 16px;">
+            <div style="background: #07322f; border-radius: 10px; padding: 20px; color: #d8f0ed;">
+              <div style="font-size: 12.5px; color: #7fb3ac;">Total cobrado hoy</div>
+              <div style="margin-top: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; font-variant-numeric: tabular-nums;">11 700 CUP</div>
+              <div style="margin-top: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 600; color: #35c2a8;">+ 10 USD</div>
+              <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid #10463f; display: flex; flex-direction: column; gap: 9px; font-size: 13px;">
+                <div style="display: flex; justify-content: space-between;"><span style="color: #7fb3ac;">Cierre principal</span><span>8 700 CUP</span></div>
+                <div style="display: flex; justify-content: space-between;"><span style="color: #7fb3ac;">Complementario 1</span><span>3 000 CUP</span></div>
+                <div style="display: flex; justify-content: space-between;"><span style="color: #7fb3ac;">Pedidos cobrados</span><span>5</span></div>
+              </div>
+            </div>
+            <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 16px 18px;">
+              <div style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; color: #07322f; margin-bottom: 8px;">Cómo funciona tu caja</div>
+              <div style="font-size: 13px; line-height: 1.6; color: #4a5b58;">Cada vendedor cierra su propia caja, por sucursal y moneda. Cerrar no bloquea cobros posteriores: quedan marcados y entran en un cierre complementario que no modifica el anterior.</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ esPanel }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 18px;">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+            <span style="padding: 8px 14px; border-radius: 999px; background: #07322f; color: #fff; font-size: 12.5px; font-weight: 600;">Todas las sucursales</span>
+            <span style="padding: 8px 14px; border-radius: 999px; background: #fff; border: 1px solid #dcecea; color: #4a5b58; font-size: 12.5px;">Centro</span>
+            <span style="padding: 8px 14px; border-radius: 999px; background: #fff; border: 1px solid #dcecea; color: #4a5b58; font-size: 12.5px;">Playa</span>
+            <span style="width: 1px; height: 22px; background: #dcecea; margin: 0 4px;"></span>
+            <span style="padding: 8px 14px; border-radius: 999px; background: #fff; border: 1px solid #dcecea; color: #4a5b58; font-size: 12.5px;">Septiembre 2026</span>
+            <span style="padding: 8px 14px; border-radius: 999px; background: #fff; border: 1px solid #dcecea; color: #4a5b58; font-size: 12.5px;">Todos los vendedores</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;">
+            <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 16px 18px;"><div style="font-size: 12.5px; color: #74857f;">Ventas del mes</div><div style="margin-top: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; color: #07322f; font-variant-numeric: tabular-nums;">486 300 CUP</div><div style="font-size: 12px; color: #0d7a72;">+18 % vs agosto</div></div>
+            <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 16px 18px;"><div style="font-size: 12.5px; color: #74857f;">Cobrado</div><div style="margin-top: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; color: #07322f; font-variant-numeric: tabular-nums;">402 100 CUP</div><div style="font-size: 12px; color: #74857f;">83 % de lo vendido</div></div>
+            <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 16px 18px;"><div style="font-size: 12.5px; color: #74857f;">Saldos pendientes</div><div style="margin-top: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; color: #ff6b4a; font-variant-numeric: tabular-nums;">84 200 CUP</div><div style="font-size: 12px; color: #74857f;">en 19 pedidos</div></div>
+            <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 16px 18px;"><div style="font-size: 12.5px; color: #74857f;">Aceptación → entrega</div><div style="margin-top: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; color: #07322f;">6.4 <span style="font-size: 14px; font-weight: 500; color: #74857f;">días</span></div><div style="font-size: 12px; color: #74857f;">promedio de 41 entregas</div></div>
+          </div>
+
+          <div style="display: flex; gap: 18px; flex-wrap: wrap; align-items: flex-start;">
+            <div style="flex: 1 1 420px; min-width: 300px; background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px 20px;">
+              <div style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #07322f; margin-bottom: 16px;">Ventas por vendedor</div>
+              <div style="display: flex; flex-direction: column; gap: 14px;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;"><span>Yanet Pérez · Centro</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">198 400 CUP</span></div>
+                  <div style="height: 9px; border-radius: 999px; background: #eef5f4;"><div style="width: 82%; height: 9px; border-radius: 999px; background: #0d7a72;"></div></div>
+                </div>
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;"><span>Alejandro Mena · Centro</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">142 700 CUP</span></div>
+                  <div style="height: 9px; border-radius: 999px; background: #eef5f4;"><div style="width: 59%; height: 9px; border-radius: 999px; background: #35c2a8;"></div></div>
+                </div>
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;"><span>Dania Lorenzo · Playa</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">96 100 CUP</span></div>
+                  <div style="height: 9px; border-radius: 999px; background: #eef5f4;"><div style="width: 40%; height: 9px; border-radius: 999px; background: #35c2a8;"></div></div>
+                </div>
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;"><span>Yusnavy Cruz · Playa</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">49 100 CUP</span></div>
+                  <div style="height: 9px; border-radius: 999px; background: #eef5f4;"><div style="width: 20%; height: 9px; border-radius: 999px; background: #b9dfd9;"></div></div>
+                </div>
+              </div>
+              <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #eef5f4; display: flex; gap: 20px; flex-wrap: wrap;">
+                <div><div style="font-size: 12px; color: #74857f;">Diferencias de caja del mes</div><div style="font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: #c23c1c;">‑3 USD · ‑450 CUP</div></div>
+                <div><div style="font-size: 12px; color: #74857f;">Cierres complementarios</div><div style="font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: #07322f;">7</div></div>
+              </div>
+            </div>
+
+            <div style="flex: 1 1 300px; min-width: 280px; display: flex; flex-direction: column; gap: 16px;">
+              <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px 20px;">
+                <div style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #07322f; margin-bottom: 12px;">Pedidos por estado</div>
+                <div style="display: flex; flex-direction: column; gap: 9px; font-size: 13px;">
+                  <div style="display: flex; justify-content: space-between;"><span style="color: #4a5b58;">Esperando aceptación</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">6</span></div>
+                  <div style="display: flex; justify-content: space-between;"><span style="color: #4a5b58;">En fabricación</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">11</span></div>
+                  <div style="display: flex; justify-content: space-between;"><span style="color: #4a5b58;">En montaje</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">5</span></div>
+                  <div style="display: flex; justify-content: space-between;"><span style="color: #4a5b58;">Listos para recoger</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">4</span></div>
+                  <div style="display: flex; justify-content: space-between;"><span style="color: #c23c1c;">Incidencias abiertas</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #c23c1c;">2</span></div>
+                </div>
+              </div>
+              <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px 20px;">
+                <div style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #07322f; margin-bottom: 12px;">Más vendido</div>
+                <div style="display: flex; flex-direction: column; gap: 9px; font-size: 13px;">
+                  <div style="display: flex; justify-content: space-between;"><span style="color: #4a5b58;">Progresivo policarbonato</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">34 %</span></div>
+                  <div style="display: flex; justify-content: space-between;"><span style="color: #4a5b58;">Antirreflejo</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">71 %</span></div>
+                  <div style="display: flex; justify-content: space-between;"><span style="color: #4a5b58;">Filtro azul</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">48 %</span></div>
+                  <div style="display: flex; justify-content: space-between;"><span style="color: #4a5b58;">Bifocal CR-39</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">22 %</span></div>
+                </div>
+              </div>
+              <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px 20px;">
+                <div style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #07322f; margin-bottom: 12px;">Trabajos por proveedor</div>
+                <div style="display: flex; flex-direction: column; gap: 9px; font-size: 13px;">
+                  <div style="display: flex; justify-content: space-between;"><span style="color: #4a5b58;">Cristalería Rodríguez</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">18 · 1 incidencia</span></div>
+                  <div style="display: flex; justify-content: space-between;"><span style="color: #4a5b58;">Cristales del Este</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">7</span></div>
+                  <div style="display: flex; justify-content: space-between;"><span style="color: #4a5b58;">Montaje J. Suárez</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600;">21</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ esTaller }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 18px;">
+          <div style="display: flex; gap: 12px; align-items: center; padding: 14px 18px; background: #07322f; border-radius: 10px; color: #d8f0ed; flex-wrap: wrap;">
+            <div style="flex: 1 1 260px;">
+              <div style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #fff;">Acceso externo · Luis Rodríguez</div>
+              <div style="font-size: 12.5px; color: #7fb3ac;">Ve solo los trabajos que Óptica Almendares le asignó. Sin precios, sin datos de pago.</div>
+            </div>
+            <div style="display: flex; gap: 18px;">
+              <div><div style="font-size: 11.5px; color: #7fb3ac;">Asignados</div><div style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #fff;">6</div></div>
+              <div><div style="font-size: 11.5px; color: #7fb3ac;">En fabricación</div><div style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #35c2a8;">3</div></div>
+              <div><div style="font-size: 11.5px; color: #7fb3ac;">Incidencias</div><div style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #ff6b4a;">1</div></div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px;">
+            <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 16px 18px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; color: #07322f;">VIS-2026-000123</span>
+                <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #d9f5ee; color: #07655c;">En fabricación</span>
+              </div>
+              <div style="margin-top: 3px; font-size: 12.5px; color: #74857f;">Progresivo policarbonato 1.59 · antirreflejo · filtro azul</div>
+              <div style="margin-top: 12px; padding: 10px 12px; border-radius: 8px; background: #fbfefd; border: 1px solid #eef5f4; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-variant-numeric: tabular-nums; color: #07322f;">
+                <div style="display: flex; justify-content: space-between;"><span>OD</span><span>-2.25 / -0.75 × 175 · add +2.00</span></div>
+                <div style="display: flex; justify-content: space-between; margin-top: 4px;"><span>OI</span><span>-2.50 / -1.00 × 10 · add +2.00</span></div>
+                <div style="display: flex; justify-content: space-between; margin-top: 4px; color: #74857f;"><span>DP / altura</span><span>31.0 / 30.5 · 18</span></div>
+              </div>
+              <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+                <button style="flex: 1; min-width: 120px; padding: 10px; border: none; border-radius: 7px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 600; cursor: pointer;" style-hover="background: #07322f;">Marcar terminado</button>
+                <button style="padding: 10px 14px; border: 1px solid #ffd9cd; border-radius: 7px; background: #fff6f2; color: #c23c1c; font-size: 12.5px; font-weight: 600; cursor: pointer;">Incidencia</button>
+              </div>
+              <div style="margin-top: 10px; font-size: 11.5px; color: #74857f;">Enviado el 9 sep · 3 días en taller</div>
+            </div>
+
+            <div style="background: #ffffff; border: 1px solid #ffd9cd; border-radius: 10px; padding: 16px 18px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; color: #07322f;">VIS-2026-000129</span>
+                <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #ffe8e1; color: #c23c1c;">Incidencia</span>
+              </div>
+              <div style="margin-top: 3px; font-size: 12.5px; color: #74857f;">Lejos CR-39 · endurecido</div>
+              <div style="margin-top: 12px; padding: 11px 13px; border-radius: 8px; background: #fff6f2; font-size: 12.5px; line-height: 1.55; color: #7a3a26;">Cristal derecho con burbuja. Repetición vinculada al trabajo original; el costo se asigna al cristalero.</div>
+              <div style="margin-top: 12px; display: flex; gap: 8px;">
+                <button style="flex: 1; padding: 10px; border: none; border-radius: 7px; background: #07322f; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 600; cursor: pointer;">Aceptar repetición</button>
+                <button style="padding: 10px 14px; border: 1px solid #dcecea; border-radius: 7px; background: #fff; font-size: 12.5px; color: #4a5b58; cursor: pointer;">Comentar</button>
+              </div>
+            </div>
+
+            <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 16px 18px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; color: #07322f;">VIS-2026-000128</span>
+                <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #e2f4f1; color: #0d7a72;">Enviado</span>
+              </div>
+              <div style="margin-top: 3px; font-size: 12.5px; color: #74857f;">Progresivo alto índice 1.67 · fotocromático</div>
+              <div style="margin-top: 12px; padding: 10px 12px; border-radius: 8px; background: #fbfefd; border: 1px solid #eef5f4; font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: #07322f;">
+                <div style="display: flex; justify-content: space-between;"><span>OD</span><span>-4.75 / -1.25 × 90 · add +2.50</span></div>
+                <div style="display: flex; justify-content: space-between; margin-top: 4px;"><span>OI</span><span>-5.00 / -1.00 × 85 · add +2.50</span></div>
+              </div>
+              <div style="margin-top: 12px; display: flex; gap: 8px;">
+                <button style="flex: 1; padding: 10px; border: none; border-radius: 7px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 600; cursor: pointer;" style-hover="background: #07322f;">Empezar fabricación</button>
+              </div>
+              <div style="margin-top: 10px; font-size: 11.5px; color: #74857f;">Recibido hoy 07:50</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ esAdmin }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap;">
+          <div style="flex: 1 1 520px; min-width: 320px; background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; overflow: hidden;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #eef5f4;">
+              <span style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #07322f;">Organizaciones</span>
+              <span style="margin-left: auto; padding: 8px 14px; border-radius: 7px; background: #0d7a72; color: #fff; font-size: 12.5px; font-weight: 600; cursor: pointer;">+ Crear organización</span>
+            </div>
+            <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; min-width: 620px;">
+              <thead>
+                <tr style="background: #fbfefd;">
+                  <th style="text-align: left; padding: 9px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #74857f; border-bottom: 1px solid #e3efed;">Óptica</th>
+                  <th style="text-align: left; padding: 9px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #74857f; border-bottom: 1px solid #e3efed;">Suscripción</th>
+                  <th style="text-align: left; padding: 9px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #74857f; border-bottom: 1px solid #e3efed;">Módulos</th>
+                  <th style="text-align: right; padding: 9px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #74857f; border-bottom: 1px solid #e3efed;">Vence</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding: 13px 16px; border-bottom: 1px solid #f3f8f7;"><div style="font-size: 13.5px; font-weight: 600; color: #07322f;">Óptica Almendares</div><div style="font-size: 12px; color: #74857f;">ALM · 2 sucursales · 4 usuarios</div></td>
+                  <td style="padding: 13px 16px; border-bottom: 1px solid #f3f8f7;"><span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #e2f4f1; color: #0d7a72;">Activa · 40 USD/mes</span></td>
+                  <td style="padding: 13px 16px; border-bottom: 1px solid #f3f8f7; font-size: 12.5px; color: #4a5b58;">Núcleo · Ventas · Caja · Producción · WhatsApp · Multisucursal</td>
+                  <td style="padding: 13px 16px; border-bottom: 1px solid #f3f8f7; text-align: right; font-size: 13px;">31 dic 2026</td>
+                </tr>
+                <tr>
+                  <td style="padding: 13px 16px; border-bottom: 1px solid #f3f8f7;"><div style="font-size: 13.5px; font-weight: 600; color: #07322f;">Visión Camagüey</div><div style="font-size: 12px; color: #74857f;">VIS · 1 sucursal · 2 usuarios</div></td>
+                  <td style="padding: 13px 16px; border-bottom: 1px solid #f3f8f7;"><span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #fff4e8; color: #a35a15;">Prueba · día 11 de 15</span></td>
+                  <td style="padding: 13px 16px; border-bottom: 1px solid #f3f8f7; font-size: 12.5px; color: #4a5b58;">Núcleo · Ventas · Caja</td>
+                  <td style="padding: 13px 16px; border-bottom: 1px solid #f3f8f7; text-align: right; font-size: 13px;">16 sep 2026</td>
+                </tr>
+                <tr>
+                  <td style="padding: 13px 16px; border-bottom: 1px solid #f3f8f7;"><div style="font-size: 13.5px; font-weight: 600; color: #07322f;">Óptica Maceo</div><div style="font-size: 12px; color: #74857f;">MAC · 1 sucursal · 3 usuarios</div></td>
+                  <td style="padding: 13px 16px; border-bottom: 1px solid #f3f8f7;"><span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #ffe8e1; color: #c23c1c;">Vencida · solo lectura</span></td>
+                  <td style="padding: 13px 16px; border-bottom: 1px solid #f3f8f7; font-size: 12.5px; color: #4a5b58;">Núcleo · Ventas · Producción</td>
+                  <td style="padding: 13px 16px; border-bottom: 1px solid #f3f8f7; text-align: right; font-size: 13px; color: #c23c1c;">4 sep 2026</td>
+                </tr>
+                <tr>
+                  <td style="padding: 13px 16px;"><div style="font-size: 13.5px; font-weight: 600; color: #07322f;">Lentes del Sur</div><div style="font-size: 12px; color: #74857f;">LEN · 3 sucursales · 9 usuarios</div></td>
+                  <td style="padding: 13px 16px;"><span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #f2f6f5; color: #74857f;">Suspendida</span></td>
+                  <td style="padding: 13px 16px; font-size: 12.5px; color: #4a5b58;">Todos los módulos</td>
+                  <td style="padding: 13px 16px; text-align: right; font-size: 13px;">—</td>
+                </tr>
+              </tbody>
+            </table>
+            </div>
+          </div>
+
+          <div style="flex: 1 1 300px; min-width: 280px; max-width: 380px; display: flex; flex-direction: column; gap: 16px;">
+            <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px 20px;">
+              <div style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #07322f;">Módulos de Óptica Almendares</div>
+              <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 11px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;"><div><div style="font-size: 13.5px; color: #1c3a37;">Núcleo</div><div style="font-size: 11.5px; color: #74857f;">Obligatorio</div></div><span style="width: 38px; height: 22px; border-radius: 999px; background: #d5ebe7; display: flex; align-items: center; padding: 2px; justify-content: flex-end;"><span style="width: 18px; height: 18px; border-radius: 999px; background: #9aaba7;"></span></span></div>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;"><div><div style="font-size: 13.5px; color: #1c3a37;">Ventas ópticas</div><div style="font-size: 11.5px; color: #74857f;">Habilitado 1 feb 2026</div></div><span style="width: 38px; height: 22px; border-radius: 999px; background: #0d7a72; display: flex; align-items: center; padding: 2px; justify-content: flex-end;"><span style="width: 18px; height: 18px; border-radius: 999px; background: #fff;"></span></span></div>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;"><div><div style="font-size: 13.5px; color: #1c3a37;">Caja</div><div style="font-size: 11.5px; color: #74857f;">Depende de Ventas</div></div><span style="width: 38px; height: 22px; border-radius: 999px; background: #0d7a72; display: flex; align-items: center; padding: 2px; justify-content: flex-end;"><span style="width: 18px; height: 18px; border-radius: 999px; background: #fff;"></span></span></div>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;"><div><div style="font-size: 13.5px; color: #1c3a37;">WhatsApp</div><div style="font-size: 11.5px; color: #74857f;">OpenWA · VPS propia</div></div><span style="width: 38px; height: 22px; border-radius: 999px; background: #0d7a72; display: flex; align-items: center; padding: 2px; justify-content: flex-end;"><span style="width: 18px; height: 18px; border-radius: 999px; background: #fff;"></span></span></div>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;"><div><div style="font-size: 13.5px; color: #9aaba7;">Analítica</div><div style="font-size: 11.5px; color: #74857f;">No contratada</div></div><span style="width: 38px; height: 22px; border-radius: 999px; background: #eef5f4; display: flex; align-items: center; padding: 2px;"><span style="width: 18px; height: 18px; border-radius: 999px; background: #cfdcd9;"></span></span></div>
+              </div>
+            </div>
+            <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 10px; padding: 18px 20px;">
+              <div style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #07322f; margin-bottom: 10px;">Acceso asistido</div>
+              <div style="font-size: 13px; line-height: 1.6; color: #4a5b58;">Entrar a una organización exige motivo y queda auditado con identidad, fecha y acciones.</div>
+              <button style="margin-top: 12px; width: 100%; padding: 10px; border: 1px solid #dcecea; border-radius: 7px; background: #fbfefd; font-size: 13px; font-weight: 600; color: #07322f; cursor: pointer;" style-hover="background: #f0fbf9;">Entrar con motivo registrado</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ esMovil }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; gap: 26px; flex-wrap: wrap; align-items: flex-start;">
+
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-size: 12.5px; font-weight: 600; color: #74857f;">Bandeja</div>
+            <div style="width: 390px; height: 780px; border: 10px solid #07322f; border-radius: 34px; overflow: hidden; background: #f7fbfa; display: flex; flex-direction: column;">
+              <div style="padding: 12px 16px 10px; background: #07322f; color: #fff;">
+                <div style="display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; color: #7fb3ac;"><span>9:41</span><span>Óptica Almendares</span></div>
+                <div style="margin-top: 10px; font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700;">Mis pedidos</div>
+                <div style="margin-top: 10px; display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 8px; background: #10463f; font-size: 13px; color: #9fc3bd;">Buscar folio, cliente o teléfono</div>
+              </div>
+              <div style="display: flex; gap: 7px; padding: 12px 16px; overflow-x: auto;">
+                <span style="padding: 7px 13px; border-radius: 999px; background: #07322f; color: #fff; font-size: 12.5px; font-weight: 600; white-space: nowrap;">Activos</span>
+                <span style="padding: 7px 13px; border-radius: 999px; background: #fff; border: 1px solid #dcecea; color: #4a5b58; font-size: 12.5px; white-space: nowrap;">Con saldo</span>
+                <span style="padding: 7px 13px; border-radius: 999px; background: #fff; border: 1px solid #dcecea; color: #4a5b58; font-size: 12.5px; white-space: nowrap;">Listos</span>
+              </div>
+              <div style="flex: 1; overflow: hidden; padding: 0 16px; display: flex; flex-direction: column; gap: 10px;">
+                <div style="background: #fff; border: 1px solid #e3efed; border-radius: 11px; padding: 14px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; color: #07322f;">VIS-2026-000131</span><span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #35c2a8; color: #06302c;">Listo para recoger</span></div>
+                  <div style="margin-top: 5px; font-size: 14px; color: #1c3a37;">Marisol Cabrera</div>
+                  <div style="margin-top: 4px; display: flex; gap: 4px;"><span style="width: 9px; height: 9px; border-radius: 2px; background: #35c2a8;"></span><span style="width: 9px; height: 9px; border-radius: 2px; background: #35c2a8;"></span><span style="width: 9px; height: 9px; border-radius: 2px; background: #35c2a8;"></span><span style="width: 9px; height: 9px; border-radius: 2px; background: #35c2a8;"></span><span style="width: 9px; height: 9px; border-radius: 2px; background: #35c2a8;"></span><span style="width: 9px; height: 9px; border-radius: 2px; background: #0d7a72;"></span></div>
+                  <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 12.5px; color: #74857f;">Sin saldo</span><button style="padding: 9px 14px; border: none; border-radius: 7px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 600;">Notificar</button></div>
+                </div>
+                <div style="background: #fff; border: 1px solid #e3efed; border-radius: 11px; padding: 14px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; color: #07322f;">VIS-2026-000129</span><span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #ffe8e1; color: #c23c1c;">Incidencia</span></div>
+                  <div style="margin-top: 5px; font-size: 14px; color: #1c3a37;">Dayana Ortega</div>
+                  <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 12.5px; color: #74857f;">Saldo</span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; color: #07322f;">6 200 CUP</span></div>
+                </div>
+                <div style="background: #fff; border: 1px solid #e3efed; border-radius: 11px; padding: 14px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; color: #07322f;">VIS-2026-000128</span><span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #d9f5ee; color: #07655c;">En fabricación</span></div>
+                  <div style="margin-top: 5px; font-size: 14px; color: #1c3a37;">Roberto Figueras</div>
+                  <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 12.5px; color: #74857f;">Saldo</span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; color: #07322f;">12 800 CUP</span></div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 22px 18px; background: #fff; border-top: 1px solid #e3efed;">
+                <span style="font-size: 11.5px; color: #0d7a72; font-weight: 600;">Pedidos</span>
+                <span style="font-size: 11.5px; color: #9aaba7;">Clientes</span>
+                <span style="width: 48px; height: 48px; border-radius: 999px; background: #0d7a72; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-top: -34px; box-shadow: 0 6px 16px rgba(7,50,47,.28);">+</span>
+                <span style="font-size: 11.5px; color: #9aaba7;">Caja</span>
+                <span style="font-size: 11.5px; color: #9aaba7;">Más</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-size: 12.5px; font-weight: 600; color: #74857f;">Nueva venta · cotización</div>
+            <div style="width: 390px; height: 780px; border: 10px solid #07322f; border-radius: 34px; overflow: hidden; background: #f7fbfa; display: flex; flex-direction: column;">
+              <div style="padding: 12px 16px; background: #fff; border-bottom: 1px solid #e3efed;">
+                <div style="font-size: 11.5px; color: #74857f;">Paso 3 de 4</div>
+                <div style="margin-top: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: #07322f;">Configuración y precio</div>
+                <div style="margin-top: 10px; display: flex; gap: 5px;"><span style="flex: 1; height: 4px; border-radius: 999px; background: #35c2a8;"></span><span style="flex: 1; height: 4px; border-radius: 999px; background: #35c2a8;"></span><span style="flex: 1; height: 4px; border-radius: 999px; background: #0d7a72;"></span><span style="flex: 1; height: 4px; border-radius: 999px; background: #e3efed;"></span></div>
+              </div>
+              <div style="flex: 1; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                  <div style="padding: 12px; border: 1px solid #e3efed; border-radius: 9px; background: #fff; font-size: 13.5px; color: #4a5b58;">Cerca</div>
+                  <div style="padding: 12px; border: 1px solid #e3efed; border-radius: 9px; background: #fff; font-size: 13.5px; color: #4a5b58;">Lejos</div>
+                  <div style="padding: 12px; border: 1px solid #e3efed; border-radius: 9px; background: #fff; font-size: 13.5px; color: #4a5b58;">Bifocal</div>
+                  <div style="padding: 12px; border: 1.5px solid #0d7a72; border-radius: 9px; background: #f0fbf9; font-size: 13.5px; font-weight: 600; color: #07322f;">Progresivo</div>
+                </div>
+                <div style="display: flex; gap: 7px; flex-wrap: wrap;">
+                  <span style="padding: 9px 13px; border-radius: 999px; border: 1.5px solid #0d7a72; background: #f0fbf9; font-size: 12.5px; font-weight: 600; color: #07322f;">Antirreflejo ✓</span>
+                  <span style="padding: 9px 13px; border-radius: 999px; border: 1.5px solid #0d7a72; background: #f0fbf9; font-size: 12.5px; font-weight: 600; color: #07322f;">Filtro azul ✓</span>
+                  <span style="padding: 9px 13px; border-radius: 999px; border: 1px solid #e3efed; background: #fff; font-size: 12.5px; color: #4a5b58;">Fotocromático</span>
+                </div>
+                <div style="display: flex; gap: 10px; padding: 12px 13px; border-radius: 9px; background: #fff6f2; border: 1px solid #ffd9cd;">
+                  <span style="width: 18px; height: 18px; flex: 0 0 18px; border-radius: 999px; background: #ff6b4a; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">!</span>
+                  <div style="font-size: 12.5px; line-height: 1.5; color: #7a3a26;">Sugerencia orientativa: alto índice para esta graduación. Puedes continuar igual.</div>
+                </div>
+              </div>
+              <div style="background: #fff; border-top: 1px solid #e3efed; padding: 14px 16px 18px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                  <div><div style="font-size: 12px; color: #74857f;">Total</div><div style="font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #07322f; letter-spacing: -0.02em;">12 800 CUP</div><div style="font-size: 11.5px; color: #74857f;">incluye 20 USD a 420</div></div>
+                  <span style="font-size: 12.5px; font-weight: 600; color: #0d7a72;">Ver desglose ›</span>
+                </div>
+                <button style="margin-top: 12px; width: 100%; padding: 15px; border: none; border-radius: 9px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600;">Continuar</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-size: 12.5px; font-weight: 600; color: #74857f;">Detalle · cronología</div>
+            <div style="width: 390px; height: 780px; border: 10px solid #07322f; border-radius: 34px; overflow: hidden; background: #f7fbfa; display: flex; flex-direction: column;">
+              <div style="padding: 14px 16px; background: #fff; border-bottom: 1px solid #e3efed;">
+                <div style="font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700; color: #74857f;">VIS-2026-000123</div>
+                <div style="margin-top: 3px; font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 700; color: #07322f;">Marisol Cabrera</div>
+                <div style="margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                  <span style="padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; background: #d9f5ee; color: #07655c;">En fabricación</span>
+                  <span style="font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: #ff6b4a;">4 400 CUP</span>
+                </div>
+              </div>
+              <div style="display: flex; gap: 4px; padding: 10px 16px;">
+                <span style="flex: 1; text-align: center; padding: 8px; border-radius: 7px; background: #07322f; color: #fff; font-size: 12.5px; font-weight: 600;">Historial</span>
+                <span style="flex: 1; text-align: center; padding: 8px; border-radius: 7px; background: #fff; border: 1px solid #e3efed; color: #4a5b58; font-size: 12.5px;">Estados</span>
+                <span style="flex: 1; text-align: center; padding: 8px; border-radius: 7px; background: #fff; border: 1px solid #e3efed; color: #4a5b58; font-size: 12.5px;">Receta</span>
+              </div>
+              <div style="flex: 1; padding: 4px 16px; overflow: hidden;">
+                <div style="display: flex; gap: 12px;">
+                  <div style="display: flex; flex-direction: column; align-items: center; flex: 0 0 11px;"><span style="width: 11px; height: 11px; border-radius: 999px; background: #35c2a8; margin-top: 4px;"></span><span style="width: 1.5px; flex: 1; background: #e4f0ee;"></span></div>
+                  <div style="padding-bottom: 16px;"><div style="font-size: 11.5px; color: #74857f;">12 sep · 08:30 · Pago</div><div style="margin-top: 3px; font-size: 14px; font-weight: 600; color: #07322f;">Pago parcial en USD</div><div style="font-size: 12.5px; color: #4a5b58;">10 USD a 420 · saldo 4 400 CUP</div></div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                  <div style="display: flex; flex-direction: column; align-items: center; flex: 0 0 11px;"><span style="width: 11px; height: 11px; border-radius: 999px; background: #35c2a8; margin-top: 4px;"></span><span style="width: 1.5px; flex: 1; background: #e4f0ee;"></span></div>
+                  <div style="padding-bottom: 16px;"><div style="font-size: 11.5px; color: #74857f;">11 sep · 12:12 · Comercial</div><div style="margin-top: 3px; font-size: 14px; font-weight: 600; color: #07322f;">Nueva confirmación</div><div style="font-size: 12.5px; color: #4a5b58;">El total subió a 15 000 CUP</div></div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                  <div style="display: flex; flex-direction: column; align-items: center; flex: 0 0 11px;"><span style="width: 11px; height: 11px; border-radius: 999px; background: #0d7a72; margin-top: 4px;"></span><span style="width: 1.5px; flex: 1; background: #e4f0ee;"></span></div>
+                  <div style="padding-bottom: 16px;"><div style="font-size: 11.5px; color: #74857f;">10 sep · 16:45 · Cristales</div><div style="margin-top: 3px; font-size: 14px; font-weight: 600; color: #07322f;">En fabricación</div><div style="font-size: 12.5px; color: #4a5b58;">Luis Rodríguez (cristalero)</div></div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                  <div style="display: flex; flex-direction: column; align-items: center; flex: 0 0 11px;"><span style="width: 11px; height: 11px; border-radius: 999px; background: #35c2a8; margin-top: 4px;"></span></div>
+                  <div><div style="font-size: 11.5px; color: #74857f;">9 sep · 09:20 · Cristales</div><div style="margin-top: 3px; font-size: 14px; font-weight: 600; color: #07322f;">Enviado al taller</div><div style="font-size: 12.5px; color: #4a5b58;">Datos bloqueados</div></div>
+                </div>
+              </div>
+              <div style="background: #fff; border-top: 1px solid #e3efed; padding: 12px 16px 18px; display: flex; gap: 8px;">
+                <button style="flex: 1; padding: 14px; border: none; border-radius: 9px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600;">Registrar pago</button>
+                <button style="padding: 14px 16px; border: 1px solid #dcecea; border-radius: 9px; background: #fff; font-size: 14px; font-weight: 600; color: #07322f;">WhatsApp</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+      <!--SCREENS-->
+    </div>
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:960},&quot;varianteInicial&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;unificada&quot;,&quot;dimensiones&quot;],&quot;default&quot;:&quot;unificada&quot;,&quot;tsType&quot;:&quot;'unificada' | 'dimensiones'&quot;,&quot;section&quot;:&quot;Detalle de pedido&quot;},&quot;densidad&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;cómoda&quot;,&quot;compacta&quot;],&quot;default&quot;:&quot;cómoda&quot;,&quot;tsType&quot;:&quot;'cómoda' | 'compacta'&quot;,&quot;section&quot;:&quot;Bandeja&quot;}}">
+const T = { ink: '#07322f', teal: '#0d7a72', mint: '#35c2a8', coral: '#ff6b4a', wash: '#f0fbf9', border: '#dcecea', muted: '#74857f', text: '#1c3a37' };
+
+const NAV = {
+  vendedor: [
+    ['pedidos', 'Bandeja de pedidos'],
+    ['nueva', 'Nueva venta'],
+    ['detalle', 'VIS-2026-000123'],
+    ['caja', 'Caja y cobros'],
+  ],
+  direccion: [
+    ['panel', 'Panel del dueño'],
+    ['taller', 'Taller y proveedores'],
+  ],
+  plataforma: [
+    ['admin', 'Superadmin'],
+    ['movil', 'Vistas móvil'],
+  ],
+};
+
+const TITULOS = {
+  pedidos: ['Bandeja de pedidos', 'Yanet Pérez · Sucursal Centro · 14 pedidos activos'],
+  nueva: ['Nueva venta', 'Cliente, receta, configuración y cotización en un solo flujo'],
+  detalle: ['Pedido VIS-2026-000123', 'Marisol Cabrera · Aceptado el 8 sep 2026 · Sucursal Centro'],
+  caja: ['Caja y cobros', 'Cierre diario del 12 sep 2026 · Caja Yanet Pérez'],
+  panel: ['Panel del dueño', 'Consolidado de 2 sucursales · Septiembre 2026'],
+  taller: ['Taller y proveedores', 'Cristalería Rodríguez · 6 trabajos asignados'],
+  admin: ['Administración de la plataforma', 'Superadministrador · 18 organizaciones'],
+  movil: ['Vistas móvil', 'Las mismas pantallas en 390 px: bandeja, nueva venta y detalle'],
+};
+
+const chip = (bg, fg) => `display:inline-block;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:600;background:${bg};color:${fg};white-space:nowrap;`;
+const CHIPS = {
+  cotizado: chip('#eef3f2', '#4a5b58'),
+  espera: chip('#fff4e8', '#a35a15'),
+  aceptado: chip('#e2f4f1', '#0d7a72'),
+  fabricacion: chip('#d9f5ee', '#07655c'),
+  montaje: chip('#d9f5ee', '#07655c'),
+  listo: chip('#35c2a8', '#06302c'),
+  incidencia: chip('#ffe8e1', '#c23c1c'),
+  entregado: chip('#f2f6f5', '#74857f'),
+};
+
+const DOT = { hecho: '#35c2a8', activo: '#0d7a72', pendiente: '#d5ebe7', alerta: '#ff6b4a' };
+
+const ORDENES = [
+  ['VIS-2026-000131', 'Marisol Cabrera', 'Progresivo', 'listo', 'Listo para recoger', '0', 'Sin saldo', 'hace 20 min', ['hecho','hecho','hecho','hecho','hecho','activo']],
+  ['VIS-2026-000130', 'Idalberto Cruz', 'Bifocal', 'montaje', 'En montaje', '3 400 CUP', 'Saldo', 'hace 2 h', ['hecho','activo','hecho','hecho','activo','pendiente']],
+  ['VIS-2026-000129', 'Dayana Ortega', 'Lejos', 'incidencia', 'Incidencia cristal', '6 200 CUP', 'Saldo', 'hace 3 h', ['hecho','activo','alerta','hecho','pendiente','pendiente']],
+  ['VIS-2026-000128', 'Roberto Figueras', 'Progresivo', 'fabricacion', 'En fabricación', '12 800 CUP', 'Saldo', 'ayer', ['hecho','activo','activo','hecho','pendiente','pendiente']],
+  ['VIS-2026-000127', 'Lisset Marrero', 'Cerca', 'aceptado', 'Aceptado', '2 100 CUP', 'Saldo', 'ayer', ['hecho','activo','activo','activo','pendiente','pendiente']],
+  ['VIS-2026-000126', 'Ernesto Valdés', 'Lejos', 'espera', 'Esperando aceptación', '9 500 CUP', 'Total', '9 sep', ['activo','pendiente','pendiente','pendiente','pendiente','pendiente']],
+  ['VIS-2026-000123', 'Marisol Cabrera', 'Progresivo', 'fabricacion', 'En fabricación', '4 200 CUP', 'Saldo', '8 sep', ['hecho','activo','activo','hecho','pendiente','pendiente']],
+  ['VIS-2026-000119', 'Ana Lucía Prieto', 'Bifocal', 'entregado', 'Entregado', '0', 'Sin saldo', '5 sep', ['hecho','hecho','hecho','hecho','hecho','hecho']],
+];
+
+const CRONOLOGIA = [
+  ['8 sep · 10:14', 'Comercial', 'Cotización creada', 'Progresivo policarbonato · antirreflejo · filtro azul', 'Yanet Pérez', 'hecho'],
+  ['8 sep · 10:31', 'Comercial', 'Cotización enviada por WhatsApp', 'Plantilla “Cotización lista” · entregado al destinatario', 'Yanet Pérez', 'hecho'],
+  ['8 sep · 11:02', 'Comercial', 'Aceptada por la clienta', 'Total 12 800 CUP · tasa fijada 420 CUP/USD', 'Yanet Pérez', 'hecho'],
+  ['8 sep · 11:04', 'Pago', 'Anticipo en efectivo', '6 400 CUP · caja Yanet Pérez · saldo 6 400 CUP', 'Yanet Pérez', 'hecho'],
+  ['9 sep · 09:20', 'Cristales', 'Trabajo enviado a Cristalería Rodríguez', 'Datos productivos y comerciales bloqueados', 'Yanet Pérez', 'hecho'],
+  ['10 sep · 16:45', 'Cristales', 'En fabricación', 'Actualizado por el cristalero desde su acceso externo', 'Luis Rodríguez (cristalero)', 'activo'],
+  ['11 sep · 12:10', 'Armadura', 'Armadura seleccionada', 'Acetato carey · 2 200 CUP · añadida al pedido', 'Yanet Pérez', 'hecho'],
+  ['11 sep · 12:12', 'Comercial', 'Nueva confirmación requerida', 'El total subió a 15 000 CUP · confirmada por la clienta', 'Yanet Pérez', 'hecho'],
+  ['12 sep · 08:30', 'Pago', 'Pago parcial en USD', '10 USD a 420 · equivale a 4 200 CUP · saldo 4 400 CUP', 'Yanet Pérez', 'hecho'],
+];
+
+const DIMENSIONES = [
+  ['Comercial', 'Aceptado', 'aceptado', [['Borrador', 'hecho', '8 sep'], ['Cotizado', 'hecho', '8 sep'], ['Esperando aceptación', 'hecho', '8 sep'], ['Aceptado', 'activo', '8 sep'], ['Entregado', 'pendiente', ''], ['Cerrado', 'pendiente', '']]],
+  ['Pago', 'Parcial', 'espera', [['Sin pago', 'hecho', '8 sep'], ['Parcial', 'activo', '12 sep'], ['Pagado', 'pendiente', '']]],
+  ['Cristales', 'En fabricación', 'fabricacion', [['Pendiente', 'hecho', '8 sep'], ['Listo para enviar', 'hecho', '9 sep'], ['Enviado', 'hecho', '9 sep'], ['En fabricación', 'activo', '10 sep'], ['Terminado', 'pendiente', ''], ['Recibido', 'pendiente', '']]],
+  ['Armadura', 'Seleccionada', 'aceptado', [['Pendiente de selección', 'hecho', '8 sep'], ['Seleccionada', 'activo', '11 sep'], ['Disponible', 'pendiente', '']]],
+  ['Montaje', 'Pendiente', 'cotizado', [['Pendiente', 'activo', ''], ['Listo para enviar', 'pendiente', ''], ['Enviado', 'pendiente', ''], ['En montaje', 'pendiente', ''], ['Terminado', 'pendiente', ''], ['Recibido', 'pendiente', ''], ['Revisado', 'pendiente', '']]],
+  ['Entrega', 'No listo', 'cotizado', [['No listo', 'activo', ''], ['Listo para recoger', 'pendiente', ''], ['Cliente notificado', 'pendiente', ''], ['Entregado', 'pendiente', '']]],
+];
+
+class Component extends DCLogic {
+  state = { screen: 'pedidos', variante: 'unificada', desglose: false, paso: 3, dimAbierta: 'cristales' };
+
+  componentDidMount() {
+    if (this.props.varianteInicial) this.setState({ variante: this.props.varianteInicial });
+  }
+
+  navGroup(items) {
+    return items.map(([id, label]) => {
+      const activo = this.state.screen === id;
+      return {
+        id, label,
+        style: 'display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:7px;font-size:13.5px;font-weight:' + (activo ? '600' : '400') + ';cursor:pointer;border:none;width:100%;text-align:left;font-family:inherit;transition:background .15s;background:' + (activo ? '#0d7a72' : 'transparent') + ';color:' + (activo ? '#ffffff' : '#9fc3bd') + ';',
+        dot: 'width:6px;height:6px;border-radius:999px;flex:0 0 6px;background:' + (activo ? '#ff6b4a' : '#2b5c56') + ';',
+        go: () => this.setState({ screen: id }),
+      };
+    });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const densidad = this.props.densidad ?? 'cómoda';
+    const padFila = densidad === 'compacta' ? '9px 14px' : '14px 14px';
+    const [titulo, subtitulo] = TITULOS[s.screen] || TITULOS.pedidos;
+
+    const ordenes = ORDENES.map(([folio, cliente, tipo, chipKey, estado, saldo, saldoLabel, actualizado, dims]) => ({
+      folio, cliente, tipo, estado, saldo, saldoLabel, actualizado,
+      chipStyle: CHIPS[chipKey],
+      saldoStyle: "font-family:'Space Grotesk',sans-serif;font-size:14.5px;font-weight:600;font-variant-numeric:tabular-nums;color:" + (saldo === '0' ? '#74857f' : '#07322f') + ';',
+      celdaStyle: 'padding:' + padFila + ';border-bottom:1px solid #eef5f4;vertical-align:middle;',
+      abrir: () => this.setState({ screen: 'detalle' }),
+      dots: dims.map((d) => ({ style: 'width:9px;height:9px;border-radius:2px;background:' + DOT[d] + ';' })),
+    }));
+
+    const pasos = ['Cliente', 'Receta', 'Configuración y precio', 'Aceptación'].map((label, i) => {
+      const n = i + 1;
+      const activo = n === s.paso, hecho = n < s.paso;
+      return {
+        label, n: String(n), activo, hecho,
+        style: 'display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;border:1px solid ' + (activo ? '#0d7a72' : '#e3efed') + ';background:' + (activo ? '#f0fbf9' : '#ffffff') + ';cursor:pointer;font-family:inherit;text-align:left;flex:1;min-width:0;',
+        numStyle: "width:22px;height:22px;flex:0 0 22px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:11.5px;font-weight:700;background:" + (hecho ? '#35c2a8' : activo ? '#0d7a72' : '#eef5f4') + ';color:' + (hecho || activo ? '#ffffff' : '#9aaba7') + ';',
+        labelStyle: 'font-size:13px;font-weight:' + (activo ? '600' : '400') + ';color:' + (activo ? '#07322f' : '#74857f') + ';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;',
+        ir: () => this.setState({ paso: n }),
+      };
+    });
+
+    const tabBtn = (on) => 'padding:7px 14px;border-radius:6px;border:none;cursor:pointer;font-family:\'Space Grotesk\',sans-serif;font-size:12.5px;font-weight:600;background:' + (on ? '#ffffff' : 'transparent') + ';color:' + (on ? '#07322f' : '#74857f') + ';box-shadow:' + (on ? '0 1px 3px rgba(7,50,47,.12)' : 'none') + ';';
+
+    const cronologia = CRONOLOGIA.slice().reverse().map(([cuando, dim, titulo, detalle, actor, tipo]) => ({
+      cuando, dim, titulo, detalle, actor,
+      puntoStyle: 'width:11px;height:11px;border-radius:999px;flex:0 0 11px;margin-top:4px;background:' + (tipo === 'activo' ? '#0d7a72' : tipo === 'alerta' ? '#ff6b4a' : '#35c2a8') + ';box-shadow:0 0 0 3px ' + (tipo === 'activo' ? '#d9f1ee' : tipo === 'alerta' ? '#ffe0d6' : '#e4f7f2') + ';',
+      dimStyle: 'display:inline-block;padding:2px 7px;border-radius:4px;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:' + (tipo === 'alerta' ? '#ffe8e1' : '#eef5f4') + ';color:' + (tipo === 'alerta' ? '#c23c1c' : '#4a5b58') + ';',
+    }));
+
+    const dimensiones = DIMENSIONES.map(([nombre, actual, chipKey, pasosDim]) => ({
+      nombre, actual,
+      chipStyle: CHIPS[chipKey],
+      pasos: pasosDim.map(([label, estado, fecha]) => ({
+        label, fecha,
+        puntoStyle: 'width:10px;height:10px;border-radius:999px;flex:0 0 10px;background:' + (estado === 'hecho' ? '#35c2a8' : estado === 'activo' ? '#0d7a72' : '#ffffff') + ';border:' + (estado === 'pendiente' ? '1.5px solid #d5ebe7' : 'none') + ';',
+        lineaStyle: 'width:1.5px;flex:1;min-height:12px;background:' + (estado === 'pendiente' ? '#eef5f4' : '#bfe8e0') + ';',
+        labelStyle: 'font-size:12.5px;font-weight:' + (estado === 'activo' ? '600' : '400') + ';color:' + (estado === 'pendiente' ? '#9aaba7' : estado === 'activo' ? '#07322f' : '#4a5b58') + ';',
+      })),
+    }));
+
+    return {
+      cronologia,
+      dimensiones,
+      navVendedor: this.navGroup(NAV.vendedor),
+      navDireccion: this.navGroup(NAV.direccion),
+      navPlataforma: this.navGroup(NAV.plataforma),
+      tituloPantalla: titulo,
+      subtituloPantalla: subtitulo,
+      irNueva: () => this.setState({ screen: 'nueva', paso: 1 }),
+      esPedidos: s.screen === 'pedidos',
+      esNueva: s.screen === 'nueva',
+      esDetalle: s.screen === 'detalle',
+      esCaja: s.screen === 'caja',
+      esPanel: s.screen === 'panel',
+      esTaller: s.screen === 'taller',
+      esAdmin: s.screen === 'admin',
+      esMovil: s.screen === 'movil',
+      ordenes,
+      pasos,
+      paso1: s.paso === 1, paso2: s.paso === 2, paso3: s.paso === 3, paso4: s.paso === 4,
+      siguientePaso: () => this.setState({ paso: Math.min(4, s.paso + 1) }),
+      pasoAnterior: () => this.setState({ paso: Math.max(1, s.paso - 1) }),
+      desglose: s.desglose,
+      textoDesglose: s.desglose ? 'Ocultar desglose' : 'Ver desglose',
+      alternarDesglose: () => this.setState({ desglose: !s.desglose }),
+      varianteUnificada: s.variante === 'unificada',
+      varianteDimensiones: s.variante === 'dimensiones',
+      estiloTabUnificada: tabBtn(s.variante === 'unificada'),
+      estiloTabDimensiones: tabBtn(s.variante === 'dimensiones'),
+      verUnificada: () => this.setState({ variante: 'unificada' }),
+      verDimensiones: () => this.setState({ variante: 'dimensiones' }),
+      abrirDetalle: () => this.setState({ screen: 'detalle' }),
+    };
+  }
+}
+</script>
+</body>
+</html>

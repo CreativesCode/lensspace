@@ -5,7 +5,10 @@ import { fixupConfigRules } from '@eslint/compat'
 const config = [
   // Some bundled React/import rules still use the older context API.
   ...fixupConfigRules([...nextVitals, ...nextTypescript]),
-  { ignores: ['.next/**', 'out/**', 'next-env.d.ts'] },
+  {
+    // Design Canvas exports are immutable visual references with their own runtime.
+    ignores: ['.next/**', 'out/**', 'next-env.d.ts', 'docs/design/**'],
+  },
 ]
 
 export default config

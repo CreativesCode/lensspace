@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useMemo, useState, type FormEvent } from 'react'
 
 import { createClient } from '@/lib/supabase/client'
+import { PasswordInput } from '@/shared/components'
 
 const optionalModules = [
   { key: 'optical_sales', label: 'Ventas ópticas' },
@@ -163,10 +164,9 @@ export function OrganizationOnboardingForm() {
         </label>
         <label className="text-sm font-medium text-slate-700 md:col-span-2">
           Contraseña inicial
-          <input
+          <PasswordInput
             className={inputClass}
             name="ownerPassword"
-            type="password"
             minLength={10}
             autoComplete="new-password"
             required

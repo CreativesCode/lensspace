@@ -2,7 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
- * Personaliza tu tema aquí
- * Documentation: https://v3.tailwindcss.com/docs/theme
- */
+@layer base {
+  :root {
+    color-scheme: light;
+    --vs-ink: #07322f;
+    --vs-action: #0d7a72;
+    --vs-mint: #35c2a8;
+    --vs-coral: #ff6b4a;
+    --vs-highlight: #f0fbf9;
+    --vs-canvas: #f7fbfa;
+    --vs-border: #dcecea;
+  }
+
+  html { background: var(--vs-canvas); }
+  body {
+    min-height: 100vh;
+    background: var(--vs-canvas);
+    color: #1c3a37;
+    font-family: var(--font-source-sans), system-ui, sans-serif;
+  }
+  h1, h2, h3, legend, button {
+    font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  }
+  input, select, textarea { background-color: #fbfefd; }
+  :focus-visible { outline: 2px solid var(--vs-action); outline-offset: 2px; }
+}
+@layer utilities {
+  .tabular-nums { font-variant-numeric: tabular-nums; }
+}

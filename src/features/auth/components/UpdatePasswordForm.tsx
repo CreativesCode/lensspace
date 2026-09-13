@@ -3,6 +3,7 @@
 import { useActionState } from 'react'
 
 import { updatePassword, type PasswordState } from '../actions'
+import { PasswordInput } from '@/shared/components'
 
 const initialState: PasswordState = { error: null }
 
@@ -16,9 +17,8 @@ export function UpdatePasswordForm() {
     <form action={formAction} className="space-y-5">
       <label className="block text-sm font-medium text-slate-700">
         Nueva contraseña
-        <input
+        <PasswordInput
           name="password"
-          type="password"
           minLength={10}
           autoComplete="new-password"
           required
@@ -27,9 +27,8 @@ export function UpdatePasswordForm() {
       </label>
       <label className="block text-sm font-medium text-slate-700">
         Repite la contraseña
-        <input
+        <PasswordInput
           name="passwordConfirmation"
-          type="password"
           minLength={10}
           autoComplete="new-password"
           required

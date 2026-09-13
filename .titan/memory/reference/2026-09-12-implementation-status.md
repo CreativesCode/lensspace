@@ -2,6 +2,9 @@
 
 Date: 2026-09-12
 
+Status: Superseded by `2026-09-13-project-status.md`. Retained as historical
+context; do not use it as the current handoff state.
+
 ## Completed foundation
 
 - The technical PRP lives at `.titan/plans/prp-vision-studio-mvp.md`.
@@ -21,6 +24,17 @@ Date: 2026-09-12
   and operational/read-only state after login.
 - Expired or suspended organizations remain visible, while owner team mutations
   are blocked in both the UI and the server authorization check.
+- Owners can deactivate/reactivate managed members and reassign active sellers to
+  another active branch through an audited database function. Direct membership
+  updates are unavailable to authenticated clients.
+- Phase 3 database foundations now cover customers, non-unique normalized phone
+  records, prescriptions, immutable clinical revisions and private-file metadata.
+  Branch-scoped RLS allows owners and same-branch sellers while excluding external
+  providers and unrelated users.
+- The approved docs/design/ system is now the mandatory visual source of truth.
+  Existing auth/dashboard views use its logo, palette, typography, radii and
+  responsive application shell. Password fields expose an accessible reveal
+  control.
 
 ## Verification state
 
@@ -35,9 +49,10 @@ Date: 2026-09-12
 
 ## Next implementation work
 
-1. Add owner controls for deactivation and seller branch reassignment.
+1. Apply the docs/design/ precedence and component library to every future view.
 2. Apply the operational/read-only guard to each future write feature as it is added.
-3. Begin Phase 3 with customers, phone records, duplicate warnings and prescription
-   data/revision design before catalog and pricing.
+3. Build the customer search/create UI with duplicate warnings and atomic writes.
+4. Add prescription entry/revision UI and private Storage bucket policies.
+5. Continue Phase 3 with catalog, pricing and graduation-rule fixtures.
 
 No credentials or private connection secrets are stored in project memory.
