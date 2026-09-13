@@ -121,6 +121,17 @@ Date: 2026-09-13
   or failed outcomes; missing consent and recipients are explicit failure states.
 - The Phase 6 migration is applied remotely and its rollback fixture passed.
 
+## Platform administration and pilot safeguards
+
+- The superadministrator can atomically change tenant status, negotiated subscription
+  fields and enabled modules with a mandatory audit reason.
+- Direct organization-status changes are guarded in the database and limited to the
+  platform administrator even though the RPC has the necessary column privilege.
+- Tenant cards expose usage counters and active time-bounded assistance sessions.
+  Assistance start/end and contract changes are recorded in the organization audit.
+- Base catalog maintenance reuses the established `/catalog` platform-admin path.
+- Phase 7 migrations are deployed and the remote rollback fixture passed.
+
 ## Mandatory design rule
 
 - `docs/design/` is the visual source of truth for every existing and future view.
@@ -156,7 +167,7 @@ Date: 2026-09-13
 3. Complete interactive responsive/mobile QA for the refreshed views, including
    the customer, prescription, catalog, sales and order/payment workspaces.
 4. Validate production with real seller/owner/provider sessions.
-5. Begin Phase 7 platform administration and pilot hardening.
+5. Run the authenticated Cuba pilot acceptance script and close its findings.
 
 ## Evidence
 

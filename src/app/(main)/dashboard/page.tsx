@@ -1,4 +1,4 @@
-import { OrganizationOnboardingForm } from '@/features/admin/components'
+import { OrganizationOnboardingForm, PlatformAdminWorkspace } from '@/features/admin/components'
 import { OwnerAnalyticsDashboard } from '@/features/analytics/components'
 import { OrganizationTeamManager } from '@/features/team/components'
 import type { Tables } from '@/lib/supabase/database.types'
@@ -38,7 +38,7 @@ export default async function DashboardPage() {
             Crea la óptica, su primera sucursal, suscripción, módulos y cuenta de
             propietario en una sola operación.
           </p>
-          <OrganizationList organizations={organizations} />
+          <PlatformAdminWorkspace organizations={organizations} />
           <OrganizationOnboardingForm />
         </>
       ) : (
@@ -361,7 +361,7 @@ async function loadOrganizations(supabase: SupabaseServerClient) {
     .select('id, organization_id, name, is_active')
   const { data: subscriptions } = await supabase
     .from('subscriptions')
-    .select('organization_id, status, expires_on, amount, currency')
+    .select('organization_id, status, expires_on, starts_on, amount, currency, billing_period')
   const { data: entitlements } = await supabase
     .from('organization_modules')
     .select('organization_id, module_key, is_enabled')
@@ -370,6 +370,12 @@ async function loadOrganizations(supabase: SupabaseServerClient) {
     .select('organization_id, user_id')
     .eq('role', 'owner')
     .eq('status', 'active')
+  const { data: usageData } = await supabase.rpc('get_platform_usage')
+  const { data: supportData } = await supabase
+    .from('platform_support_sessions')
+    .select('id, organization_id, reason, started_at, expires_at')
+    .is('ended_at', null)
+    .gt('expires_at', new Date().toISOString())
 
   const membershipRows = (ownerMemberships ?? []) as Pick<
     Tables<'organization_memberships'>,
@@ -393,7 +399,7 @@ async function loadOrganizations(supabase: SupabaseServerClient) {
   >[]
   const subscriptionRows = (subscriptions ?? []) as Pick<
     Tables<'subscriptions'>,
-    'organization_id' | 'status' | 'expires_on' | 'amount' | 'currency'
+    'organization_id' | 'status' | 'expires_on' | 'starts_on' | 'amount' | 'currency' | 'billing_period'
   >[]
   const entitlementRows = (entitlements ?? []) as Pick<
     Tables<'organization_modules'>,
@@ -403,6 +409,13 @@ async function loadOrganizations(supabase: SupabaseServerClient) {
     Tables<'profiles'>,
     'user_id' | 'display_name'
   >[]
+  const usageRows = (usageData ?? []) as unknown as {
+    organizationId: number; customers: number; orders: number; members: number
+    openProductionJobs: number; notificationAttempts: number; lastActivityAt: string | null
+  }[]
+  const supportRows = (supportData ?? []) as {
+    id: number; organization_id: number; reason: string; started_at: string; expires_at: string
+  }[]
 
   return organizationRows.map((organization) => ({
     ...organization,
@@ -427,12 +440,14 @@ async function loadOrganizations(supabase: SupabaseServerClient) {
         ),
       )
       .filter((profile): profile is NonNullable<typeof profile> => Boolean(profile)),
+    usage: usageRows.find((usage) => usage.organizationId === organization.id),
+    supportSession: supportRows.find((session) => session.organization_id === organization.id),
   }))
 }
 
 type OrganizationSummary = Awaited<ReturnType<typeof loadOrganizations>>[number]
 
-function OrganizationList({
+export function OrganizationList({
   organizations,
 }: {
   organizations: OrganizationSummary[]
