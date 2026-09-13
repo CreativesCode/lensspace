@@ -4,12 +4,15 @@ Read relevant entries only. Store decisions with dates and evidence.
 
 ## User and team
 
+- [2026-09-13 — Continuous implementation memory](user/2026-09-13-continuous-implementation-memory.md)
+
 ## Feedback
 
 - [2026-09-12 — Invitation and member dashboard corrections](feedback/2026-09-12-invitation-member-dashboard.md)
 
 ## Project decisions
 
+- [2026-09-13 — Catalog pricing and advisory rules](project/2026-09-13-catalog-pricing.md)
 - [2026-09-13 — Design system and view precedence](project/2026-09-13-design-system.md)
 - [2026-09-12 — Application stack](project/2026-09-12-application-stack.md)
 - [2026-09-12 — Vision Studio product scope](project/2026-09-12-vision-studio-scope.md)

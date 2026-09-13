@@ -28,6 +28,32 @@ Date: 2026-09-13
 - Covering indexes were added for the clinical foreign keys flagged by advisors.
 - Remote transactional fixtures verified tenant isolation, duplicate-phone
   retention and immutable revisions, then rolled back.
+- Customer search/create is available at `/customers`. It supports name and
+  normalized-phone lookup, existing-customer reuse, duplicate review and atomic
+  creation of a customer with up to five phones. Transactional remote fixtures
+  verified shared-phone retention and rollback on a failed phone insert.
+- Prescription entry and immutable corrections are available at `/prescriptions`.
+  The private `prescription-originals` bucket accepts JPEG, PNG, WebP and PDF up
+  to 10 MB; object paths are authorized against organization, branch,
+  prescription and revision. Failed metadata writes can remove only their own
+  still-unregistered object.
+
+## Commercial catalog foundation
+
+- Catalog and price simulation are available at `/catalog` for owners and
+  sellers with operational `optical_sales` access. Owners can create tenant
+  items and override base-item availability, cost, sale price and currency;
+  sellers have calculation-only access.
+- The catalog uses a global base plus organization-specific items and overrides.
+  Exact numeric amounts and each line's original currency are preserved. An
+  explicitly supplied USD-to-CUP rate produces only a summary equivalent.
+- The database pricing function resolves effective prices, validates access and
+  returns deterministic line items, totals, clinical metrics and non-blocking
+  compatibility/graduation warnings. Graduation rules may add a disclosed
+  surcharge but never silently block a sale.
+- Remote transactional fixtures verified a high-graduation surcharge, mixed CUP
+  and USD totals, tenant overrides, seller calculation access and denial of
+  seller price changes. All fixture data was rolled back.
 
 ## Mandatory design rule
 
@@ -61,16 +87,17 @@ Date: 2026-09-13
 
 1. Apply the design precedence and shared component library to every new view.
 2. Carry the operational/read-only guard into each future write feature.
-3. Build customer search/create UI with duplicate-candidate warnings and atomic
-   writes.
-4. Build prescription entry and revision UI plus private Storage bucket policies.
-5. Continue Phase 3 with catalog, pricing and graduation-rule fixtures.
-6. Complete interactive responsive/mobile QA for the refreshed views.
+3. Start Phase 4 with quotations, immutable price/exchange snapshots and order
+   confirmation.
+4. Complete interactive responsive/mobile QA for the refreshed views, including
+   the customer, prescription and catalog workspaces.
 
 ## Evidence
 
 - `.titan/qa/2026-09-13-owner-member-management.md`
 - `.titan/qa/2026-09-13-clinical-foundation.md`
+- `.titan/qa/2026-09-13-prescription-workflow.md`
+- `.titan/qa/2026-09-13-catalog-pricing.md`
 - `.titan/qa/design-refresh/2026-09-13-design-refresh.md`
 
 No credentials, connection strings or private user data are stored here.

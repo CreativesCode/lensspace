@@ -27,6 +27,18 @@ async function AuthenticatedLayout({ children }: { children: React.ReactNode }) 
             <span className="h-2 w-2 rounded-full bg-[#35C2A8]" />
             Panel principal
           </Link>
+          <Link href="/prescriptions" className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[#A7CFC9] transition hover:bg-[#10463F] hover:text-[#D8F5EF]">
+            <span className="h-2 w-2 rounded-full border border-[#6F9C96]" />
+            Recetas
+          </Link>
+          <Link href="/catalog" className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[#A7CFC9] transition hover:bg-[#10463F] hover:text-[#D8F5EF]">
+            <span className="h-2 w-2 rounded-full border border-[#6F9C96]" />
+            Catálogo y precios
+          </Link>
+          <Link href="/customers" className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-[#A7CFC9] transition hover:bg-[#10463F] hover:text-[#D8F5EF]">
+            <span className="h-2 w-2 rounded-full border border-[#6F9C96]" />
+            Clientes
+          </Link>
         </nav>
         <div className="mt-auto border-t border-[#10463F] pt-4">
           <p className="truncate text-sm font-semibold text-[#E6F5F3]">{user.email}</p>

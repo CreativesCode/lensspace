@@ -102,6 +102,109 @@ export type Database = {
           },
         ]
       }
+      catalog_item_compatibilities: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: number
+          is_allowed: boolean
+          left_item_id: number
+          message: string
+          organization_id: number | null
+          right_item_id: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: never
+          is_allowed?: boolean
+          left_item_id: number
+          message: string
+          organization_id?: number | null
+          right_item_id: number
+          updated_at?: string
+        }
+        Update: {
+          is_allowed?: boolean
+          message?: string
+        }
+        Relationships: []
+      }
+      catalog_item_overrides: {
+        Row: {
+          catalog_item_id: number
+          changed_at: string
+          changed_by: string
+          cost_amount: number
+          currency: string
+          is_enabled: boolean
+          organization_id: number
+          sale_price: number
+        }
+        Insert: {
+          catalog_item_id: number
+          changed_at?: string
+          changed_by: string
+          cost_amount: number
+          currency: string
+          is_enabled?: boolean
+          organization_id: number
+          sale_price: number
+        }
+        Update: {
+          changed_at?: string
+          changed_by?: string
+          cost_amount?: number
+          currency?: string
+          is_enabled?: boolean
+          sale_price?: number
+        }
+        Relationships: []
+      }
+      catalog_items: {
+        Row: {
+          category: string
+          code: string
+          cost_amount: number
+          created_at: string
+          created_by: string | null
+          currency: string
+          description: string | null
+          id: number
+          is_active: boolean
+          name: string
+          organization_id: number | null
+          sale_price: number
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          code: string
+          cost_amount?: number
+          created_at?: string
+          created_by?: string | null
+          currency: string
+          description?: string | null
+          id?: never
+          is_active?: boolean
+          name: string
+          organization_id?: number | null
+          sale_price: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          code?: string
+          cost_amount?: number
+          currency?: string
+          description?: string | null
+          is_active?: boolean
+          name?: string
+          sale_price?: number
+        }
+        Relationships: []
+      }
       customer_phones: {
         Row: {
           branch_id: number
@@ -221,6 +324,58 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      graduation_rules: {
+        Row: {
+          applies_to_item_id: number | null
+          code: string
+          created_at: string
+          created_by: string | null
+          id: number
+          is_active: boolean
+          message: string
+          minimum_absolute_cylinder: number | null
+          minimum_absolute_sphere: number | null
+          minimum_addition: number | null
+          name: string
+          organization_id: number | null
+          recommended_item_id: number | null
+          surcharge_amount: number
+          surcharge_currency: string | null
+          updated_at: string
+        }
+        Insert: {
+          applies_to_item_id?: number | null
+          code: string
+          created_at?: string
+          created_by?: string | null
+          id?: never
+          is_active?: boolean
+          message: string
+          minimum_absolute_cylinder?: number | null
+          minimum_absolute_sphere?: number | null
+          minimum_addition?: number | null
+          name: string
+          organization_id?: number | null
+          recommended_item_id?: number | null
+          surcharge_amount?: number
+          surcharge_currency?: string | null
+          updated_at?: string
+        }
+        Update: {
+          applies_to_item_id?: number | null
+          code?: string
+          is_active?: boolean
+          message?: string
+          minimum_absolute_cylinder?: number | null
+          minimum_absolute_sphere?: number | null
+          minimum_addition?: number | null
+          name?: string
+          recommended_item_id?: number | null
+          surcharge_amount?: number
+          surcharge_currency?: string | null
+        }
+        Relationships: []
       }
       module_dependencies: {
         Row: {
@@ -754,6 +909,59 @@ export type Database = {
         }
         Returns: number
       }
+      calculate_catalog_price: {
+        Args: {
+          selected_item_ids: number[]
+          target_organization_id: number
+          target_prescription_revision_id: number | null
+          usd_to_cup_rate: number | null
+        }
+        Returns: Json
+      }
+      create_customer_with_phones: {
+        Args: {
+          customer_address?: string
+          customer_birth_date?: string
+          customer_full_name: string
+          customer_messaging_consent?: boolean
+          customer_national_id?: string
+          customer_notes?: string
+          phone_entries?: Json
+          target_branch_id: number
+          target_organization_id: number
+        }
+        Returns: number
+      }
+      create_prescription_revision: {
+        Args: {
+          revision_change_reason: string | null
+          revision_left_addition: number | null
+          revision_left_axis: number | null
+          revision_left_cylinder: number | null
+          revision_left_height: number | null
+          revision_left_prism: number | null
+          revision_left_prism_base: string | null
+          revision_left_pupillary_distance: number | null
+          revision_left_sphere: number | null
+          revision_notes: string | null
+          revision_prescriber_name: string | null
+          revision_prescription_date: string
+          revision_pupillary_distance_total: number | null
+          revision_right_addition: number | null
+          revision_right_axis: number | null
+          revision_right_cylinder: number | null
+          revision_right_height: number | null
+          revision_right_prism: number | null
+          revision_right_prism_base: string | null
+          revision_right_pupillary_distance: number | null
+          revision_right_sphere: number | null
+          target_branch_id: number
+          target_customer_id: number
+          target_organization_id: number
+          target_prescription_id: number | null
+        }
+        Returns: Json
+      }
       current_user_can_manage_organization: {
         Args: { target_organization_id: number }
         Returns: boolean
@@ -910,4 +1118,3 @@ export const Constants = {
     Enums: {},
   },
 } as const
-

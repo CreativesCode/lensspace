@@ -84,9 +84,15 @@ Outcome: branch-shared customer/prescription lookup, revision audit, private fil
 
 Verification: duplicate warnings, prescription revision preservation, private-file policies, deterministic price fixtures and cross-seller commercial isolation.
 
-Progress 2026-09-13: customer, non-unique phone, prescription, immutable revision
-and private-file metadata tables are deployed with tenant/branch RLS. The
-customer UI, Storage bucket policies, catalog and pricing remain pending.
+Completed 2026-09-13: customer, non-unique phone, prescription, immutable revision
+and private-file metadata tables are deployed with tenant/branch RLS. Customer
+search/create supports duplicate review, existing-customer reuse and atomic
+customer/phone writes. Prescription entry, immutable corrections and private
+original-file Storage are implemented. The catalog combines global base items,
+tenant items and tenant overrides; its database pricing engine preserves original
+currencies, calculates an explicit CUP equivalent and emits advisory graduation
+and compatibility warnings. Owner management and seller calculation paths are
+available at `/catalog`. Interactive responsive QA remains part of pilot hardening.
 
 ### Phase 4 — Quotations, orders, payments and cashbox
 
@@ -132,6 +138,14 @@ Verification: full role matrix, tenant-isolation suite, accessibility/responsive
 - 2026-09-12: seller/provider dashboard implemented with organization, branch, role, module and operational-state visibility. Expired/suspended tenants cannot mutate team membership.
 - 2026-09-13: owner controls for member deactivation/reactivation and seller branch reassignment implemented through an authenticated, audited database function. Direct membership updates were revoked from authenticated clients; authorized and denied paths passed transactional remote checks.
 - 2026-09-13: Phase 3 clinical foundation deployed. Transactional fixtures proved same-branch seller access, cross-branch and unrelated-user isolation, non-unique normalized phone matching, and append-only prescription revisions.
+- 2026-09-13: prescription entry and immutable correction UI deployed with private
+  original-file Storage. Transactional fixtures verified sequential revisions,
+  required correction reasons and tenant/branch/path authorization.
+- 2026-09-13: Phase 3 catalog/pricing deployed. Transactional fixtures verified
+  effective organization overrides, mixed-currency totals, an explicit CUP
+  equivalent, high-graduation surcharge warnings, seller calculation access and
+  seller denial on price mutation; all fixtures were rolled back. TypeScript,
+  ESLint and the Next.js production build passed with `/catalog` included.
 
 ## Decisions and open questions
 
