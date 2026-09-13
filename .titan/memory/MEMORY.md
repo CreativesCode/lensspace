@@ -12,6 +12,7 @@ Read relevant entries only. Store decisions with dates and evidence.
 
 ## Project decisions
 
+- [2026-09-13 — Order history, analytics and manual notifications](project/2026-09-13-history-analytics-notifications.md)
 - [2026-09-13 — Production, provider access and linked rework](project/2026-09-13-production-provider-workflows.md)
 - [2026-09-13 — Seller cashboxes and immutable closures](project/2026-09-13-cashbox-closures.md)
 - [2026-09-13 — Cash payments, balances and delivery](project/2026-09-13-payments-balances-delivery.md)

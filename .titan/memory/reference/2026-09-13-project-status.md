@@ -109,6 +109,18 @@ Date: 2026-09-13
 - Local and hosted transactional fixtures and hosted advisors passed. Interactive
   multi-role browser QA remains pending.
 
+## History, analytics and manual notifications
+
+- `/orders` now presents a unified chronological history from immutable commercial,
+  payment, production, incident, notification and delivery records with actor attribution.
+- Owners can calculate dashboard metrics by branch, seller and date range, including
+  sales, collections, balances, incidents, delivery time, cash differences, provider
+  loads and top products.
+- Manual WhatsApp preparation uses active templates through a replaceable TypeScript
+  provider adapter. Attempts preserve recipient/message snapshots and immutable opened
+  or failed outcomes; missing consent and recipients are explicit failure states.
+- The Phase 6 migration is applied remotely and its rollback fixture passed.
+
 ## Mandatory design rule
 
 - `docs/design/` is the visual source of truth for every existing and future view.
@@ -144,7 +156,7 @@ Date: 2026-09-13
 3. Complete interactive responsive/mobile QA for the refreshed views, including
    the customer, prescription, catalog, sales and order/payment workspaces.
 4. Validate production with real seller/owner/provider sessions.
-5. Begin Phase 6 order history, owner dashboards and the manual WhatsApp boundary.
+5. Begin Phase 7 platform administration and pilot hardening.
 
 ## Evidence
 

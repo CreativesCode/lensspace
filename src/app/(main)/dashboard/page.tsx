@@ -1,9 +1,14 @@
 import { OrganizationOnboardingForm } from '@/features/admin/components'
+import { OwnerAnalyticsDashboard } from '@/features/analytics/components'
 import { OrganizationTeamManager } from '@/features/team/components'
 import type { Tables } from '@/lib/supabase/database.types'
 import { createClient } from '@/lib/supabase/server'
 
 export default async function DashboardPage() {
+  const defaultTo = new Date().toISOString().slice(0, 10)
+  const fromDate = new Date()
+  fromDate.setUTCDate(fromDate.getUTCDate() - 29)
+  const defaultFrom = fromDate.toISOString().slice(0, 10)
   const supabase = await createClient()
   const { data: isPlatformAdmin } = await supabase.rpc(
     'current_user_is_platform_admin',
@@ -43,14 +48,24 @@ export default async function DashboardPage() {
           </p>
           {ownedOrganizations.length ? (
             ownedOrganizations.map((organization) => (
-              <OrganizationTeamManager
-                key={organization.id}
-                organizationId={organization.id}
-                organizationName={organization.name}
-                branches={organization.branches}
-                members={organization.members}
-                canManage={organization.canManage}
-              />
+              <div key={organization.id}>
+                {organization.analyticsEnabled ? <OwnerAnalyticsDashboard
+                    organizationId={organization.id}
+                    branches={organization.branches}
+                    sellers={organization.members
+                      .filter((member) => member.role === 'seller' && member.status === 'active')
+                      .map((member) => ({ id: member.userId, name: member.displayName, branchId: member.branchId }))}
+                    defaultFrom={defaultFrom}
+                    defaultTo={defaultTo}
+                  /> : null}
+                <OrganizationTeamManager
+                  organizationId={organization.id}
+                  organizationName={organization.name}
+                  branches={organization.branches}
+                  members={organization.members}
+                  canManage={organization.canManage}
+                />
+              </div>
             ))
           ) : memberAccess.length ? (
             <MemberAccessList access={memberAccess} />
@@ -263,6 +278,12 @@ async function loadOwnedOrganizations(supabase: SupabaseServerClient) {
     .from('organization_memberships')
     .select('id, organization_id, user_id, branch_id, role, status')
     .in('organization_id', organizationIds)
+  const { data: analyticsData } = await supabase
+    .from('organization_modules')
+    .select('organization_id')
+    .in('organization_id', organizationIds)
+    .eq('module_key', 'analytics')
+    .eq('is_enabled', true)
 
   const memberships = (membershipData ?? []) as Pick<
     Tables<'organization_memberships'>,
@@ -297,6 +318,10 @@ async function loadOwnedOrganizations(supabase: SupabaseServerClient) {
     )
     result.push({
       ...organization,
+      analyticsEnabled: ((analyticsData ?? []) as Pick<
+        Tables<'organization_modules'>,
+        'organization_id'
+      >[]).some((entitlement) => entitlement.organization_id === organization.id),
       canManage: Boolean(canManage),
       branches: branches
         .filter((branch) => branch.organization_id === organization.id)
@@ -307,6 +332,7 @@ async function loadOwnedOrganizations(supabase: SupabaseServerClient) {
         )
         .map((membership) => ({
           id: membership.id,
+          userId: membership.user_id,
           displayName:
             profiles.find((profile) => profile.user_id === membership.user_id)
               ?.display_name ?? 'Usuario',
