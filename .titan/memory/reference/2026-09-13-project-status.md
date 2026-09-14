@@ -1,6 +1,7 @@
 # Current implementation status
 
 Date: 2026-09-13
+Last updated: 2026-09-14
 
 ## Product and platform foundation
 
@@ -132,6 +133,23 @@ Date: 2026-09-13
 - Base catalog maintenance reuses the established `/catalog` platform-admin path.
 - Phase 7 migrations are deployed and the remote rollback fixture passed.
 
+## Visual QA and information architecture follow-up
+
+- Route-aware desktop and mobile navigation now share permission/module-filtered
+  links. The active sidebar item follows the pathname, and mobile exposes the same
+  navigation through a dismissible hamburger drawer.
+- The platform administrator dashboard now presents real aggregate operational data.
+  Organization administration lives at `/organizations`, with search, status filters
+  and dialog-based create/detail/edit flows suitable for a larger tenant directory.
+- Platform administrators manage the global base catalog directly without requiring
+  commercial membership. Catalog cards distinguish sale price from internal cost,
+  restrict cost visibility by role and move edits into labeled dialogs.
+- Targeted migration `20260913224717_repair_catalog_utf8_text.sql` repaired the known
+  persisted catalog and graduation-rule mojibake; remote verification returned no
+  remaining affected rows.
+- Every application selector now uses the contained shared `FormSelect`; no native
+  `<select>` remains under `src`. Its arrow is a stable SVG rather than a font glyph.
+
 ## Mandatory design rule
 
 - `docs/design/` is the visual source of truth for every existing and future view.
@@ -148,7 +166,7 @@ Date: 2026-09-13
 ## Verification and known warnings
 
 - Lint, TypeScript checking and the Next.js production build passed after the
-  current implementation and design refresh.
+  current implementation, design refresh and 2026-09-14 visual QA corrections.
 - Desktop login returned HTTP 200 and was visually inspected. Interactive mobile
   QA remains pending because the automated browser capture did not initialize
   reliably; no failed mobile image was retained as evidence.
@@ -165,7 +183,8 @@ Date: 2026-09-13
 1. Apply the design precedence and shared component library to every new view.
 2. Carry the operational/read-only guard into each future write feature.
 3. Complete interactive responsive/mobile QA for the refreshed views, including
-   the customer, prescription, catalog, sales and order/payment workspaces.
+   the mobile drawer, organization dialogs, custom selects, customer, prescription,
+   catalog, sales and order/payment workspaces.
 4. Validate production with real seller/owner/provider sessions.
 5. Run the authenticated Cuba pilot acceptance script and close its findings.
 
@@ -177,6 +196,7 @@ Date: 2026-09-13
 - `.titan/qa/2026-09-13-catalog-pricing.md`
 - `.titan/qa/2026-09-13-quotation-order-snapshots.md`
 - `.titan/qa/2026-09-13-payments-balances-delivery.md`
+- `.titan/qa/2026-09-13-platform-admin-information-architecture.md`
 - `.titan/qa/design-refresh/2026-09-13-design-refresh.md`
 
 No credentials, connection strings or private user data are stored here.

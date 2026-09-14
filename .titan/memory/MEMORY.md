@@ -12,6 +12,7 @@ Read relevant entries only. Store decisions with dates and evidence.
 
 ## Project decisions
 
+- [2026-09-14 — Navigation, platform administration and catalog QA refinements](project/2026-09-14-navigation-admin-catalog-qa.md)
 - [2026-09-13 — Platform administration and pilot safeguards](project/2026-09-13-platform-admin-pilot.md)
 - [2026-09-13 — Order history, analytics and manual notifications](project/2026-09-13-history-analytics-notifications.md)
 - [2026-09-13 — Production, provider access and linked rework](project/2026-09-13-production-provider-workflows.md)
@@ -25,7 +26,7 @@ Read relevant entries only. Store decisions with dates and evidence.
 
 ## References
 
-- [2026-09-13 — Next implementation block](reference/2026-09-13-next-work.md)
-- [2026-09-13 — Current implementation status](reference/2026-09-13-project-status.md)
+- [2026-09-14 — Next implementation block](reference/2026-09-13-next-work.md)
+- [2026-09-14 — Current implementation status](reference/2026-09-13-project-status.md)
 - [2026-09-12 — Development setup and handoff](reference/2026-09-12-development-setup.md)
 - [2026-09-12 — Earlier implementation status (superseded)](reference/2026-09-12-implementation-status.md)

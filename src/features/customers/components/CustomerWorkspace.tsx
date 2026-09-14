@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState, type FormEvent } from 'react'
 
 import { createClient } from '@/lib/supabase/client'
 import type { Tables } from '@/lib/supabase/database.types'
+import { FormSelect } from '@/shared/components'
 
 type AccessScope = {
   organizationId: number
@@ -343,13 +344,7 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               <label className="text-xs font-medium text-[#4A5B58]">
                 Organización y sucursal
-                <select className={fieldClass} value={target} onChange={(event) => setTarget(event.target.value)}>
-                  {scopes.map((scope) => (
-                    <option key={`${scope.organizationId}:${scope.branchId}`} value={`${scope.organizationId}:${scope.branchId}`}>
-                      {scope.organizationName} · {scope.branchName}{scope.canWrite ? '' : ' (solo lectura)'}
-                    </option>
-                  ))}
-                </select>
+                <FormSelect className="mt-1" ariaLabel="Organización y sucursal" value={target} onValueChange={setTarget} options={scopes.map((scope) => ({ value: `${scope.organizationId}:${scope.branchId}`, label: `${scope.organizationName} · ${scope.branchName}${scope.canWrite ? '' : ' (solo lectura)'}` }))} />
               </label>
               <label className="text-xs font-medium text-[#4A5B58]">
                 Nombre completo

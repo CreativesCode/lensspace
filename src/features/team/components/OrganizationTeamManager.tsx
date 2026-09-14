@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useMemo, useState, type FormEvent } from 'react'
 
 import { createClient } from '@/lib/supabase/client'
+import { FormSelect } from '@/shared/components'
 
 type ManagedRole = 'seller' | 'lens_provider' | 'mounting_provider'
 type TeamMember = {
@@ -143,29 +144,24 @@ export function OrganizationTeamManager({
                   ) : (
                     <div className="flex min-w-56 flex-wrap items-center gap-2">
                       {member.role === 'seller' ? (
-                        <select
-                          aria-label={`Sucursal de ${member.displayName}`}
-                          className="rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-700"
-                          value={member.branchId ?? ''}
+                        <FormSelect
+                          ariaLabel={`Sucursal de ${member.displayName}`}
+                          className="min-w-40"
+                          value={String(member.branchId ?? '')}
                           disabled={
                             !canManage ||
                             member.status === 'invited' ||
                             pendingMemberId === member.id
                           }
-                          onChange={(event) =>
+                          onValueChange={(value) =>
                             void manageMember(
                               member,
                               member.status === 'inactive' ? 'inactive' : 'active',
-                              Number(event.target.value),
+                              Number(value),
                             )
                           }
-                        >
-                          {branches.map((branch) => (
-                            <option key={branch.id} value={branch.id}>
-                              {branch.name}
-                            </option>
-                          ))}
-                        </select>
+                          options={branches.map((branch) => ({ value: String(branch.id), label: branch.name }))}
+                        />
                       ) : null}
                       <button
                         type="button"
@@ -211,26 +207,12 @@ export function OrganizationTeamManager({
         </label>
         <label className="text-sm font-medium text-slate-700">
           Rol
-          <select
-            className={inputClass}
-            value={role}
-            onChange={(event) => setRole(event.target.value as ManagedRole)}
-          >
-            <option value="seller">Vendedor</option>
-            <option value="lens_provider">Cristalero/laboratorio</option>
-            <option value="mounting_provider">Montador</option>
-          </select>
+          <FormSelect className="mt-1" ariaLabel="Rol" value={role} onValueChange={(value) => setRole(value as ManagedRole)} options={[{ value: 'seller', label: 'Vendedor' }, { value: 'lens_provider', label: 'Cristalero/laboratorio' }, { value: 'mounting_provider', label: 'Montador' }]} />
         </label>
         {role === 'seller' ? (
           <label className="text-sm font-medium text-slate-700">
             Sucursal
-            <select className={inputClass} name="branchId" required>
-              {branches.map((branch) => (
-                <option key={branch.id} value={branch.id}>
-                  {branch.name}
-                </option>
-              ))}
-            </select>
+            <FormSelect className="mt-1" name="branchId" ariaLabel="Sucursal" required options={branches.map((branch) => ({ value: String(branch.id), label: branch.name }))} />
           </label>
         ) : null}
         {message ? (

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useMemo, useState, type FormEvent } from 'react'
 
 import { createClient } from '@/lib/supabase/client'
-import { PasswordInput } from '@/shared/components'
+import { FormSelect, PasswordInput } from '@/shared/components'
 
 const optionalModules = [
   { key: 'optical_sales', label: 'Ventas ópticas' },
@@ -19,7 +19,7 @@ function toIsoDate(date: Date) {
   return date.toISOString().slice(0, 10)
 }
 
-export function OrganizationOnboardingForm() {
+export function OrganizationOnboardingForm({ onCreated }: { onCreated?: () => void }) {
   const router = useRouter()
   const supabase = useMemo(() => createClient(), [])
   const today = useMemo(() => new Date(), [])
@@ -90,6 +90,7 @@ export function OrganizationOnboardingForm() {
     })
     form.reset()
     router.refresh()
+    onCreated?.()
     setPending(false)
   }
 
@@ -180,10 +181,7 @@ export function OrganizationOnboardingForm() {
         </legend>
         <label className="text-sm font-medium text-slate-700">
           Estado
-          <select className={inputClass} name="subscriptionStatus" defaultValue="trial">
-            <option value="trial">Prueba</option>
-            <option value="active">Activa</option>
-          </select>
+          <FormSelect className="mt-1" name="subscriptionStatus" ariaLabel="Estado de la suscripción" defaultValue="trial" options={[{ value: 'trial', label: 'Prueba' }, { value: 'active', label: 'Activa' }]} />
         </label>
         <label className="text-sm font-medium text-slate-700">
           Importe
@@ -209,13 +207,7 @@ export function OrganizationOnboardingForm() {
         </label>
         <label className="text-sm font-medium text-slate-700">
           Periodicidad
-          <select className={inputClass} name="billingPeriod" defaultValue="monthly">
-            <option value="monthly">Mensual</option>
-            <option value="quarterly">Trimestral</option>
-            <option value="semiannual">Semestral</option>
-            <option value="annual">Anual</option>
-            <option value="custom">Personalizada</option>
-          </select>
+          <FormSelect className="mt-1" name="billingPeriod" ariaLabel="Periodicidad" defaultValue="monthly" options={[{ value: 'monthly', label: 'Mensual' }, { value: 'quarterly', label: 'Trimestral' }, { value: 'semiannual', label: 'Semestral' }, { value: 'annual', label: 'Anual' }, { value: 'custom', label: 'Personalizada' }]} />
         </label>
         <label className="text-sm font-medium text-slate-700">
           Inicio

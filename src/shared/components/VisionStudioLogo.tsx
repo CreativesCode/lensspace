@@ -6,7 +6,7 @@ export function VisionStudioLogo({ compact = false, inverse = false, subtitle }:
     <div className="flex items-center gap-3">
       <svg aria-hidden="true" width={compact ? 34 : 42} height={compact ? 22 : 28} viewBox="0 0 76 48" fill="none">
         <path d="M6 24c10-13 22-19.5 32-19.5S60 11 70 24c-10 13-22 19.5-32 19.5S16 37 6 24z" stroke={ink} strokeWidth="4" strokeLinejoin="round" />
-        {!compact ? <path d="M38 12v24" stroke={ink} strokeWidth="4" /> : null}
+        <path d="M38 12v24" stroke={ink} strokeWidth="4" />
         <circle cx="38" cy="24" r="7.5" fill="#FF6B4A" />
       </svg>
       <div className="min-w-0">

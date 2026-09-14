@@ -2,6 +2,7 @@
 
 import { FormEvent, useMemo, useState, useTransition } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { FormSelect } from '@/shared/components'
 
 type Option = { id: number; name: string }
 type Seller = { id: string; name: string; branchId: number | null }
@@ -41,8 +42,8 @@ export function OwnerAnalyticsDashboard({ organizationId, branches, sellers, def
   return <section className="mt-7 rounded-[10px] border border-[#E3EFED] bg-white p-5">
     <div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D7A72]">Analítica</p><h2 className="mt-1 font-display text-xl font-bold text-[#07322F]">Pulso del negocio</h2></div></div>
     <form onSubmit={load} className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-      <select name="branch" className="rounded-[7px] border border-[#DCECEA] bg-[#FBFEFD] px-3 py-2.5 text-sm"><option value="">Todas las sucursales</option>{branches.map(x => <option key={x.id} value={x.id}>{x.name}</option>)}</select>
-      <select name="seller" className="rounded-[7px] border border-[#DCECEA] bg-[#FBFEFD] px-3 py-2.5 text-sm"><option value="">Todos los vendedores</option>{sellers.map(x => <option key={x.id} value={x.id}>{x.name}</option>)}</select>
+      <FormSelect name="branch" ariaLabel="Sucursal" options={[{ value: '', label: 'Todas las sucursales' }, ...branches.map(x => ({ value: String(x.id), label: x.name }))]} />
+      <FormSelect name="seller" ariaLabel="Vendedor" options={[{ value: '', label: 'Todos los vendedores' }, ...sellers.map(x => ({ value: x.id, label: x.name }))]} />
       <input aria-label="Desde" name="from" type="date" defaultValue={defaultFrom} className="rounded-[7px] border border-[#DCECEA] bg-[#FBFEFD] px-3 py-2.5 text-sm" />
       <input aria-label="Hasta" name="to" type="date" defaultValue={defaultTo} className="rounded-[7px] border border-[#DCECEA] bg-[#FBFEFD] px-3 py-2.5 text-sm" />
       <button disabled={pending} className="rounded-[7px] bg-[#0D7A72] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">{pending ? 'Calculando…' : 'Actualizar métricas'}</button>

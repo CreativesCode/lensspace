@@ -1,4 +1,4 @@
-import { OrganizationOnboardingForm, PlatformAdminWorkspace } from '@/features/admin/components'
+import { PlatformAdminDashboard } from '@/features/admin/components'
 import { OwnerAnalyticsDashboard } from '@/features/analytics/components'
 import { OrganizationTeamManager } from '@/features/team/components'
 import type { Tables } from '@/lib/supabase/database.types'
@@ -33,14 +33,7 @@ export default async function DashboardPage() {
         {isPlatformAdmin ? 'Administración de organizaciones' : 'Vision Studio'}
       </h1>
       {isPlatformAdmin ? (
-        <>
-          <p className="mt-4 max-w-2xl text-slate-600">
-            Crea la óptica, su primera sucursal, suscripción, módulos y cuenta de
-            propietario en una sola operación.
-          </p>
-          <PlatformAdminWorkspace organizations={organizations} />
-          <OrganizationOnboardingForm />
-        </>
+        <><p className="mt-3 max-w-2xl text-slate-600">Panorama operativo y crecimiento de Vision Studio.</p><PlatformAdminDashboard organizations={organizations} /></>
       ) : (
         <>
           <p className="mt-4 max-w-2xl text-slate-600">

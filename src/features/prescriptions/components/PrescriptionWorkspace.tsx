@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react'
 
 import { createClient } from '@/lib/supabase/client'
 import type { Tables } from '@/lib/supabase/database.types'
+import { FormSelect } from '@/shared/components'
 
 type AccessScope = {
   organizationId: number
@@ -260,24 +261,11 @@ export function PrescriptionWorkspace({
         <div className="grid gap-4 md:grid-cols-2">
           <label className="text-xs font-medium text-[#4A5B58]">
             Cliente
-            <select className={fieldClass} value={customerId} onChange={(event) => { setCustomerId(Number(event.target.value)); setMode('new'); setMessage(null) }}>
-              {customers.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.full_name} · {option.customer_phones[0]?.phone_number ?? 'sin teléfono'}
-                </option>
-              ))}
-            </select>
+            <FormSelect className="mt-1" ariaLabel="Cliente" value={String(customerId)} onValueChange={(value) => { setCustomerId(Number(value)); setMode('new'); setMessage(null) }} options={customers.map((option) => ({ value: String(option.id), label: `${option.full_name} · ${option.customer_phones[0]?.phone_number ?? 'sin teléfono'}` }))} />
           </label>
           <label className="text-xs font-medium text-[#4A5B58]">
             Receta existente
-            <select className={fieldClass} value={selectedPrescriptionId ?? ''} disabled={!records.length} onChange={(event) => { setSelectedPrescriptionId(Number(event.target.value)); setMode('revision') }}>
-              {!records.length ? <option value="">Sin recetas previas</option> : null}
-              {records.map((record) => (
-                <option key={record.id} value={record.id}>
-                  Receta #{record.id} · {record.prescription_revisions.length} revisión(es)
-                </option>
-              ))}
-            </select>
+            <FormSelect className="mt-1" ariaLabel="Receta existente" value={String(selectedPrescriptionId ?? '')} disabled={!records.length} onValueChange={(value) => { setSelectedPrescriptionId(Number(value)); setMode('revision') }} options={!records.length ? [{ value: '', label: 'Sin recetas previas' }] : records.map((record) => ({ value: String(record.id), label: `Receta #${record.id} · ${record.prescription_revisions.length} revisión(es)` }))} />
           </label>
         </div>
       </section>
@@ -322,7 +310,7 @@ export function PrescriptionWorkspace({
             {(['right', 'left'] as const).map((eye) => (
               <div key={eye} className="grid grid-cols-2 gap-2">
                 <label className="text-xs font-medium text-[#4A5B58]">Prisma {eye === 'right' ? 'OD' : 'OI'}<input className={fieldClass} name={`${eye}Prism`} type="number" min="0" max="20" step="0.25" /></label>
-                <label className="text-xs font-medium text-[#4A5B58]">Base<select className={fieldClass} name={`${eye}PrismBase`}><option value="">Sin base</option><option value="up">Arriba</option><option value="down">Abajo</option><option value="in">Interna</option><option value="out">Externa</option></select></label>
+                <label className="text-xs font-medium text-[#4A5B58]">Base<FormSelect className="mt-1" name={`${eye}PrismBase`} ariaLabel={`Base del prisma ${eye === 'right' ? 'OD' : 'OI'}`} options={[{ value: '', label: 'Sin base' }, { value: 'up', label: 'Arriba' }, { value: 'down', label: 'Abajo' }, { value: 'in', label: 'Interna' }, { value: 'out', label: 'Externa' }]} /></label>
               </div>
             ))}
             <label className="text-xs font-medium text-[#4A5B58]">Fecha de la receta<input className={fieldClass} name="prescriptionDate" type="date" required defaultValue={new Date().toISOString().slice(0, 10)} /></label>

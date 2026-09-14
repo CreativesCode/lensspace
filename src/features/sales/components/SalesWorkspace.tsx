@@ -2,6 +2,7 @@
 
 import { FormEvent, useMemo, useState, useTransition } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { FormSelect } from '@/shared/components'
 
 type Organization = { id: number; name: string; branchId: number; branchName: string; canOperate: boolean }
 type Customer = { id: number; organizationId: number; branchId: number; name: string }
@@ -61,9 +62,9 @@ export function SalesWorkspace({ organizations, customers, revisions, items }: {
         <div className="mb-4 flex gap-2">{[1,2,3,4].map((step) => <span key={step} className={`h-1.5 flex-1 rounded-full ${step <= 3 ? 'bg-[#35C2A8]' : 'bg-[#E3EFED]'}`} />)}</div>
         <h2 className="font-display text-lg font-semibold text-[#07322F]">Cliente y receta</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
-          <select className={inputClass} value={organizationId} onChange={(event) => { setOrganizationId(Number(event.target.value)); setCustomerId(0); setRevisionId(0); resetQuote() }}>{organizations.map((entry) => <option key={`${entry.id}:${entry.branchId}`} value={entry.id}>{entry.name} · {entry.branchName}</option>)}</select>
-          <select className={inputClass} value={customerId} onChange={(event) => { setCustomerId(Number(event.target.value)); setRevisionId(0); resetQuote() }} required><option value={0}>Selecciona cliente</option>{availableCustomers.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}</select>
-          <select className={inputClass} value={revisionId} onChange={(event) => { setRevisionId(Number(event.target.value)); resetQuote() }}><option value={0}>Sin receta asociada</option>{availableRevisions.map((entry) => <option key={entry.id} value={entry.id}>{entry.label}</option>)}</select>
+          <FormSelect ariaLabel="Organización y sucursal" value={String(organizationId)} onValueChange={(value) => { setOrganizationId(Number(value)); setCustomerId(0); setRevisionId(0); resetQuote() }} options={organizations.map((entry) => ({ value: String(entry.id), label: `${entry.name} · ${entry.branchName}` }))} />
+          <FormSelect ariaLabel="Cliente" value={String(customerId)} onValueChange={(value) => { setCustomerId(Number(value)); setRevisionId(0); resetQuote() }} options={[{ value: '0', label: 'Selecciona cliente' }, ...availableCustomers.map((entry) => ({ value: String(entry.id), label: entry.name }))]} />
+          <FormSelect ariaLabel="Receta asociada" value={String(revisionId)} onValueChange={(value) => { setRevisionId(Number(value)); resetQuote() }} options={[{ value: '0', label: 'Sin receta asociada' }, ...availableRevisions.map((entry) => ({ value: String(entry.id), label: entry.label }))]} />
           <label className="text-xs font-semibold text-[#4A5B58]">Tasa USD → CUP<input className={`${inputClass} mt-1`} value={rate} onChange={(event) => { setRate(event.target.value); resetQuote() }} type="number" min="0.0001" step="0.0001" required /></label>
         </div>
       </section>
