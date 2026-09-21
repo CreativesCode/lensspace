@@ -10,3 +10,9 @@ El contenido inicial documenta panel y navegación, clientes, recetas, catálogo
 
 Evidencia detallada: `.titan/qa/2026-09-21-manual-generator.md`.
 
+Verificación local: lint y TypeScript pasaron después de la integración.
+Playwright confirmó la redirección anónima en escritorio y móvil y la entrega de
+las dos imágenes. No se declara un build de producción posterior al manual: el
+que estaba en curso compiló y fue detenido durante la generación de páginas por
+petición explícita del usuario. La revisión autenticada del editor y de los PDF
+continúa pendiente.

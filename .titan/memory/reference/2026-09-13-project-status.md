@@ -191,6 +191,25 @@ Last updated: 2026-09-21
   requires an invited authenticated account; a copyable expiring passwordless
   workshop link has not been implemented.
 
+## Integrated system manual
+
+- `/manual` provides an internal Spanish documentation generator with editable
+  source data, live section preview and separate operational/administrative
+  variants from one schema.
+- The initial content documents ten functional areas, all five application roles,
+  complete sale/production/incident/cashbox/onboarding workflows, FAQs and usage
+  policies. Real landing and login captures are embedded from `public/manual/`.
+- Owners and platform administrators are authorized server-side; anonymous users
+  are redirected to login and other authenticated roles return to the dashboard.
+  The print route enforces the same authorization, and navigation exposes the
+  manual only to the authorized roles.
+- Markdown download and a branded A4 print view are implemented. The latter uses
+  a cover, index, section page breaks and page margin labels for PDF saving.
+- Playwright dependencies and reusable capture/verification scripts are included.
+  Anonymous desktop/mobile redirects and screenshot asset delivery passed. Full
+  editor, authenticated screenshots and rendered-PDF inspection remain pending
+  until authorized owner/platform-admin test sessions are available.
+
 ## Mandatory design rule
 
 - `docs/design/` is the visual source of truth for every existing and future view.
@@ -208,6 +227,11 @@ Last updated: 2026-09-21
 
 - Lint, TypeScript checking and the Next.js production build passed after the
   current implementation, design refresh and 2026-09-14 visual QA corrections.
+- After the manual implementation, lint and TypeScript checking passed again.
+  A production build was started and compiled but deliberately stopped during
+  page generation at the user's request; no completed post-manual build is claimed.
+- Playwright verified the manual's anonymous access gate at desktop and mobile
+  sizes and HTTP 200 delivery for the two real screenshot assets.
 - Desktop login returned HTTP 200 and was visually inspected. Interactive mobile
   QA remains pending because the automated browser capture did not initialize
   reliably; no failed mobile image was retained as evidence.
@@ -229,6 +253,9 @@ Last updated: 2026-09-21
 4. Validate the full workflow with real seller/owner/cristalero/montador sessions.
 5. Decide whether providers need a copyable expiring passwordless access link.
 6. Run the authenticated Cuba pilot acceptance script and close its findings.
+7. Validate `/manual` with owner and platform-admin sessions, exercise editor and
+   exports, capture authenticated application views and render both PDF variants
+   to inspect pagination and clipping.
 
 ## Evidence
 
