@@ -36,6 +36,27 @@ function isValidRequest(value: unknown): value is InvitationRequest {
   )
 }
 
+function getInviteRedirectUrl(request: Request) {
+  const configuredUrl = Deno.env.get('INVITE_REDIRECT_URL')
+  const requestOrigin = request.headers.get('origin')
+  if (!configuredUrl && !requestOrigin) return null
+
+  try {
+    const url = configuredUrl
+      ? new URL(configuredUrl)
+      : new URL('/auth/callback', requestOrigin!)
+    const isLocalHttp =
+      url.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(url.hostname)
+    if (url.protocol !== 'https:' && !isLocalHttp) return null
+    if (url.pathname !== '/auth/callback') return null
+    url.hash = ''
+    url.search = ''
+    return url.toString()
+  } catch {
+    return null
+  }
+}
+
 Deno.serve(async (request) => {
   if (request.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -51,7 +72,8 @@ Deno.serve(async (request) => {
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const anonKey = Deno.env.get('SUPABASE_ANON_KEY')
   const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-  if (!supabaseUrl || !anonKey || !serviceRoleKey) {
+  const inviteRedirectUrl = getInviteRedirectUrl(request)
+  if (!supabaseUrl || !anonKey || !serviceRoleKey || !inviteRedirectUrl) {
     return jsonResponse({ error: 'Configuración del servidor incompleta.' }, 500)
   }
 
@@ -105,9 +127,28 @@ Deno.serve(async (request) => {
   if (!targetUserId) {
     const { data, error } = await adminClient.auth.admin.inviteUserByEmail(
       normalizedEmail,
-      { data: { display_name: payload.displayName.trim() } },
+      {
+        data: { display_name: payload.displayName.trim() },
+        redirectTo: inviteRedirectUrl,
+      },
     )
     if (error || !data.user) {
+      if (error) {
+        console.error('Supabase Auth rejected an organization invitation.', {
+          code: error.code,
+          status: error.status,
+          message: error.message,
+        })
+      }
+      if (error?.status === 429 || error?.code === 'over_email_send_rate_limit') {
+        return jsonResponse(
+          {
+            error:
+              'Se alcanzó el límite temporal de correos de Supabase. Espera hasta una hora o configura un proveedor SMTP propio antes de reenviar la invitación.',
+          },
+          429,
+        )
+      }
       return jsonResponse({ error: 'No se pudo enviar la invitación.' }, 400)
     }
 

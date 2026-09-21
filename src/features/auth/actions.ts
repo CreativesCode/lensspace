@@ -13,6 +13,12 @@ export type PasswordState = {
   error: string | null
 }
 
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
+function isValidEmail(value: string) {
+  return value.length <= 254 && emailPattern.test(value)
+}
+
 function safeNextPath(value: FormDataEntryValue | null) {
   if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//')) {
     return '/dashboard'
@@ -32,9 +38,14 @@ export async function login(
     return { error: 'Completa el correo y la contraseña.' }
   }
 
+  const normalizedEmail = email.trim()
+  if (!isValidEmail(normalizedEmail)) {
+    return { error: 'Escribe un correo electrónico válido.' }
+  }
+
   const supabase = await createClient()
   const { error } = await supabase.auth.signInWithPassword({
-    email: email.trim(),
+    email: normalizedEmail,
     password,
   })
 

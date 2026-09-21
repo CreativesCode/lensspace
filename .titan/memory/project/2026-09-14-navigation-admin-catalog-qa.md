@@ -18,6 +18,11 @@ Source: visual QA feedback and implementation performed on 2026-09-13/14.
 - Mobile uses the same allowed navigation in an off-canvas sidebar opened by a
   hamburger button. It closes after navigation, backdrop click, close action or
   Escape and prevents background scrolling while open.
+- The sidebar prioritizes frequency of use. `Nueva venta` remains the primary
+  action above the menu. `Operación` is ordered as Panel principal, Pedidos y
+  cobros, Clientes, Recetas, Producción and Caja y cierres. Less frequent setup
+  destinations live under `Gestión`: Catálogo y precios, Equipo and
+  Organizaciones. Empty groups disappear automatically for restricted roles.
 
 ## Platform administration information architecture
 

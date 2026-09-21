@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { signOut } from '@/features/auth/actions'
@@ -15,6 +16,7 @@ async function AuthenticatedLayout({ children }: { children: React.ReactNode }) 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
   const allowedHrefs = await loadAllowedNavigation(supabase, user.id)
+  const canCreateSale = allowedHrefs.includes('/sales')
 
   return (
     <div className="min-h-screen bg-slate-50 md:flex">
@@ -37,7 +39,19 @@ async function AuthenticatedLayout({ children }: { children: React.ReactNode }) 
       <div className="min-w-0 flex-1">
         <header className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-5 py-4 md:hidden">
           <VisionStudioLogo compact />
-          <MobileSidebar allowedHrefs={allowedHrefs} email={user.email ?? 'Usuario'} />
+          <div className="flex items-center gap-2">
+            {canCreateSale ? (
+              <Link
+                href="/sales"
+                aria-label="Crear nueva venta"
+                title="Nueva venta"
+                className="grid h-11 w-11 place-items-center rounded-lg bg-[#0D7A72] text-2xl font-semibold leading-none text-white shadow-[0_6px_18px_rgba(13,122,114,0.22)] transition hover:bg-[#07322F] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#B9DFD9]"
+              >
+                <span aria-hidden="true">+</span>
+              </Link>
+            ) : null}
+            <MobileSidebar allowedHrefs={allowedHrefs} email={user.email ?? 'Usuario'} />
+          </div>
         </header>
         <main>{children}</main>
       </div>
@@ -83,6 +97,7 @@ async function loadAllowedNavigation(supabase: SupabaseServerClient, userId: str
     )
 
   const allowed = ['/dashboard']
+  if (memberships.some((membership) => membership.role === 'owner')) allowed.push('/team')
   if (hasAccess(['owner', 'seller'], 'optical_sales')) allowed.push(...commercialHrefs)
   if (hasAccess(['owner', 'seller'], 'cashbox')) allowed.push('/cashbox')
   if (hasAccess(['owner', 'seller', 'lens_provider', 'mounting_provider'], 'production')) {

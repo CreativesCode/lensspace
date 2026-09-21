@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { FormSelect } from '@/shared/components'
+import { FilterPanel, FormSelect } from '@/shared/components'
 import { OrganizationOnboardingForm } from './OrganizationOnboardingForm'
 
 const modules = [
@@ -43,6 +43,8 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
     const matchesQuery = !term || [organization.name, organization.order_prefix, ...organization.owners.map(({ display_name }) => display_name)].some((value) => value.toLocaleLowerCase('es').includes(term))
     return matchesQuery && (statusFilter === 'all' || organization.status === statusFilter)
   })
+  const activeFilterCount = Number(Boolean(query.trim())) + Number(statusFilter !== 'all')
+  const clearFilters = () => { setQuery(''); setStatusFilter('all') }
 
   useEffect(() => {
     function closeOnEscape(event: KeyboardEvent) {
@@ -101,7 +103,7 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
 
   return <section className="mt-8">
     <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D7A72]">Control de plataforma</p><h2 className="mt-1 font-display text-xl font-bold text-[#07322F]">Directorio de organizaciones</h2></div><button type="button" onClick={() => setCreateOpen(true)} className="rounded-[7px] bg-[#0D7A72] px-4 py-2.5 text-sm font-semibold text-white">+ Nueva organización</button></div>
-    <div className="mt-5 grid gap-3 rounded-[10px] border border-[#E3EFED] bg-white p-4 sm:grid-cols-[1fr_220px_auto]"><input value={query} onChange={(event) => setQuery(event.target.value)} className={field} type="search" placeholder="Buscar por nombre, prefijo o propietario" aria-label="Buscar organizaciones" /><FormSelect ariaLabel="Filtrar por estado" value={statusFilter} onValueChange={setStatusFilter} options={[{ value: 'all', label: 'Todos los estados' }, { value: 'active', label: 'Activas' }, { value: 'suspended', label: 'Suspendidas' }, { value: 'archived', label: 'Archivadas' }]} /><span className="self-center text-sm font-semibold text-[#0D7A72]">{filteredOrganizations.length} de {organizations.length}</span></div>
+    <div className="mt-5"><FilterPanel title="Filtrar organizaciones" eyebrow="Administración" activeFilterCount={activeFilterCount} resultCount={filteredOrganizations.length} onClear={clearFilters}><div className="grid gap-3"><label className="text-xs font-semibold text-[#4A5B58]">Organización<input value={query} onChange={(event) => setQuery(event.target.value)} className={`${field} mt-1`} type="search" placeholder="Nombre, prefijo o propietario" aria-label="Buscar organizaciones" /></label><label className="text-xs font-semibold text-[#4A5B58]">Estado<FormSelect className="mt-1" ariaLabel="Filtrar por estado" value={statusFilter} onValueChange={setStatusFilter} options={[{ value: 'all', label: 'Todos los estados' }, { value: 'active', label: 'Activas' }, { value: 'suspended', label: 'Suspendidas' }, { value: 'archived', label: 'Archivadas' }]} /></label></div></FilterPanel></div>
     <div className="mt-4 space-y-3">{filteredOrganizations.map(organization => {
       const subscription = organization.subscription
       const isOpen = openId === organization.id

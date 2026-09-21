@@ -32,8 +32,6 @@ values (920000001, 'PRDQA-2092-000001', 920000001, 920000001, 920000001, 9200000
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '20000000-0000-0000-0000-000000000001', true);
 select public.assign_production_job(920000001, 'lens', '20000000-0000-0000-0000-000000000004');
-select public.transition_production_job((select id from public.production_jobs), 'ready_to_send', null);
-select public.transition_production_job((select id from public.production_jobs), 'dispatched', 'Sent to provider');
 
 select set_config('request.jwt.claim.sub', '20000000-0000-0000-0000-000000000004', true);
 do $$ begin
@@ -41,8 +39,8 @@ do $$ begin
     raise exception 'Assigned provider cannot see the job';
   end if;
 end $$;
-select public.transition_production_job((select id from public.production_jobs), 'in_production', null);
-select public.transition_production_job((select id from public.production_jobs), 'completed', null);
+select public.transition_production_job((select id from public.production_jobs), 'in_production', 'Provider started manufacturing');
+select public.transition_production_job((select id from public.production_jobs), 'completed', 'Provider marked the work ready');
 select public.report_production_incident((select id from public.production_jobs), 'Right lens has a visible bubble.', 'lens_provider');
 
 select set_config('request.jwt.claim.sub', '20000000-0000-0000-0000-000000000002', true);
@@ -59,7 +57,7 @@ do $$ begin
     or (select count(*) from public.production_jobs where not is_current and status = 'incident') <> 1 then
     raise exception 'Rework did not supersede the incident job correctly';
   end if;
-  if (select count(*) from public.production_job_events) <> 7 then
+  if (select count(*) from public.production_job_events) <> 5 then
     raise exception 'Unexpected production event history';
   end if;
   if (select cost_responsibility from public.production_incidents) <> 'lens_provider' then

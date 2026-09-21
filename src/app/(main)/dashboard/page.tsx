@@ -1,6 +1,6 @@
 import { PlatformAdminDashboard } from '@/features/admin/components'
 import { OwnerAnalyticsDashboard } from '@/features/analytics/components'
-import { OrganizationTeamManager } from '@/features/team/components'
+import { loadOwnedOrganizations } from '@/features/team/load-owned-organizations'
 import type { Tables } from '@/lib/supabase/database.types'
 import { createClient } from '@/lib/supabase/server'
 
@@ -37,26 +37,30 @@ export default async function DashboardPage() {
       ) : (
         <>
           <p className="mt-4 max-w-2xl text-slate-600">
-            Administra el equipo autorizado de tu óptica.
+            Tu actividad, accesos directos y estado operativo en un solo lugar.
           </p>
           {ownedOrganizations.length ? (
             ownedOrganizations.map((organization) => (
-              <div key={organization.id}>
+              <div key={organization.id} className="mt-4 space-y-4">
                 {organization.analyticsEnabled ? <OwnerAnalyticsDashboard
-                    organizationId={organization.id}
-                    branches={organization.branches}
-                    sellers={organization.members
-                      .filter((member) => member.role === 'seller' && member.status === 'active')
-                      .map((member) => ({ id: member.userId, name: member.displayName, branchId: member.branchId }))}
-                    defaultFrom={defaultFrom}
-                    defaultTo={defaultTo}
-                  /> : null}
-                <OrganizationTeamManager
                   organizationId={organization.id}
-                  organizationName={organization.name}
                   branches={organization.branches}
-                  members={organization.members}
-                  canManage={organization.canManage}
+                  sellers={organization.members
+                    .filter((member) => member.role === 'seller' && member.status === 'active')
+                    .map((member) => ({ id: member.userId, name: member.displayName, branchId: member.branchId }))}
+                  defaultFrom={defaultFrom}
+                  defaultTo={defaultTo}
+                /> : null}
+                <DashboardCard
+                  organizationName={organization.name}
+                  role="Propietario"
+                  branch="Todas las sucursales"
+                  links={[
+                    { href: '/sales', label: 'Nueva venta' },
+                    { href: '/orders', label: 'Pedidos y cobros' },
+                    { href: '/team', label: 'Administrar equipo' },
+                    { href: '/catalog', label: 'Catálogo y precios' },
+                  ]}
                 />
               </div>
             ))
@@ -230,116 +234,38 @@ function MemberAccessList({ access }: { access: MemberAccess[] }) {
               ))}
             </div>
           </div>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {dashboardLinks(organization.roles, organization.modules).map((link) => (
+              <a key={link.href} href={link.href} className="rounded-[7px] bg-[#07322F] px-4 py-2.5 text-sm font-semibold text-white">
+                {link.label}
+              </a>
+            ))}
+          </div>
         </article>
       ))}
     </div>
   )
 }
 
-async function loadOwnedOrganizations(supabase: SupabaseServerClient) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) return []
-
-  const { data: ownerMembershipData } = await supabase
-    .from('organization_memberships')
-    .select('organization_id')
-    .eq('user_id', user.id)
-    .eq('role', 'owner')
-    .eq('status', 'active')
-
-  const ownerMemberships = (ownerMembershipData ?? []) as Pick<
-    Tables<'organization_memberships'>,
-    'organization_id'
-  >[]
-  const organizationIds = ownerMemberships.map(
-    ({ organization_id }) => organization_id,
-  )
-  if (!organizationIds.length) return []
-
-  const { data: organizationData } = await supabase
-    .from('organizations')
-    .select('id, name')
-    .in('id', organizationIds)
-  const { data: branchData } = await supabase
-    .from('branches')
-    .select('id, organization_id, name')
-    .in('organization_id', organizationIds)
-    .eq('is_active', true)
-  const { data: membershipData } = await supabase
-    .from('organization_memberships')
-    .select('id, organization_id, user_id, branch_id, role, status')
-    .in('organization_id', organizationIds)
-  const { data: analyticsData } = await supabase
-    .from('organization_modules')
-    .select('organization_id')
-    .in('organization_id', organizationIds)
-    .eq('module_key', 'analytics')
-    .eq('is_enabled', true)
-
-  const memberships = (membershipData ?? []) as Pick<
-    Tables<'organization_memberships'>,
-    'id' | 'organization_id' | 'user_id' | 'branch_id' | 'role' | 'status'
-  >[]
-  const memberIds = [...new Set(memberships.map(({ user_id }) => user_id))]
-  const { data: profileData } = memberIds.length
-    ? await supabase
-        .from('profiles')
-        .select('user_id, display_name')
-        .in('user_id', memberIds)
-    : { data: [] }
-
-  const organizations = (organizationData ?? []) as Pick<
-    Tables<'organizations'>,
-    'id' | 'name'
-  >[]
-  const branches = (branchData ?? []) as Pick<
-    Tables<'branches'>,
-    'id' | 'organization_id' | 'name'
-  >[]
-  const profiles = (profileData ?? []) as Pick<
-    Tables<'profiles'>,
-    'user_id' | 'display_name'
-  >[]
-
-  const result = []
-  for (const organization of organizations) {
-    const { data: canManage } = await supabase.rpc(
-      'current_user_can_manage_organization',
-      { target_organization_id: organization.id } as never,
-    )
-    result.push({
-      ...organization,
-      analyticsEnabled: ((analyticsData ?? []) as Pick<
-        Tables<'organization_modules'>,
-        'organization_id'
-      >[]).some((entitlement) => entitlement.organization_id === organization.id),
-      canManage: Boolean(canManage),
-      branches: branches
-        .filter((branch) => branch.organization_id === organization.id)
-        .map(({ id, name }) => ({ id, name })),
-      members: memberships
-        .filter(
-          (membership) => membership.organization_id === organization.id,
-        )
-        .map((membership) => ({
-          id: membership.id,
-          userId: membership.user_id,
-          displayName:
-            profiles.find((profile) => profile.user_id === membership.user_id)
-              ?.display_name ?? 'Usuario',
-          role: membership.role,
-          status: membership.status,
-          branchId: membership.branch_id,
-          branchName:
-            branches.find((branch) => branch.id === membership.branch_id)?.name ??
-            null,
-        })),
-    })
+function dashboardLinks(roles: string[], modules: string[]) {
+  const links: { href: string; label: string }[] = []
+  if (roles.includes('seller') && modules.includes('optical_sales')) {
+    links.push({ href: '/sales', label: 'Nueva venta' }, { href: '/orders', label: 'Ver pedidos' }, { href: '/customers', label: 'Buscar clientes' })
   }
+  if (roles.includes('seller') && modules.includes('cashbox')) links.push({ href: '/cashbox', label: 'Mi caja' })
+  if (roles.some((role) => role === 'lens_provider' || role === 'mounting_provider') && modules.includes('production')) {
+    links.push({ href: '/production', label: 'Ver trabajos asignados' })
+  }
+  return links
+}
 
-  return result
+function DashboardCard({ organizationName, role, branch, links }: { organizationName: string; role: string; branch: string; links: { href: string; label: string }[] }) {
+  return <article className="rounded-[10px] border border-[#E3EFED] bg-white p-6 shadow-sm">
+    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#0D7A72]">{role}</p>
+    <h2 className="mt-2 font-display text-xl font-bold text-[#07322F]">{organizationName}</h2>
+    <p className="mt-1 text-sm text-[#74857F]">{branch}</p>
+    <div className="mt-5 flex flex-wrap gap-2">{links.map((link) => <a key={link.href} href={link.href} className="rounded-[7px] bg-[#07322F] px-4 py-2.5 text-sm font-semibold text-white">{link.label}</a>)}</div>
+  </article>
 }
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>
@@ -377,9 +303,9 @@ async function loadOrganizations(supabase: SupabaseServerClient) {
   const ownerIds = [...new Set(membershipRows.map(({ user_id }) => user_id))]
   const { data: ownerProfiles } = ownerIds.length
     ? await supabase
-        .from('profiles')
-        .select('user_id, display_name')
-        .in('user_id', ownerIds)
+      .from('profiles')
+      .select('user_id, display_name')
+      .in('user_id', ownerIds)
     : { data: [] }
 
   const organizationRows = (organizations ?? []) as Pick<

@@ -1,7 +1,7 @@
 # Current implementation status
 
 Date: 2026-09-13
-Last updated: 2026-09-14
+Last updated: 2026-09-21
 
 ## Product and platform foundation
 
@@ -110,16 +110,17 @@ Last updated: 2026-09-14
 - Local and hosted transactional fixtures and hosted advisors passed. Interactive
   multi-role browser QA remains pending.
 
-## History, analytics and manual notifications
+## History, analytics and notifications
 
 - `/orders` now presents a unified chronological history from immutable commercial,
   payment, production, incident, notification and delivery records with actor attribution.
 - Owners can calculate dashboard metrics by branch, seller and date range, including
   sales, collections, balances, incidents, delivery time, cash differences, provider
   loads and top products.
-- Manual WhatsApp preparation uses active templates through a replaceable TypeScript
-  provider adapter. Attempts preserve recipient/message snapshots and immutable opened
-  or failed outcomes; missing consent and recipients are explicit failure states.
+- OpenWA sends the four order notifications automatically from database-triggered
+  queue entries through the `send-whatsapp-notification` Edge Function. Attempts
+  preserve recipient/message snapshots, provider identifiers and immutable sent or
+  failed outcomes; missing consent, recipient or configuration remains explicit.
 - The Phase 6 migration is applied remotely and its rollback fixture passed.
 
 ## Platform administration and pilot safeguards
@@ -149,6 +150,32 @@ Last updated: 2026-09-14
   remaining affected rows.
 - Every application selector now uses the contained shared `FormSelect`; no native
   `<select>` remains under `src`. Its arrow is a stable SVG rather than a font glyph.
+
+## Operational refinements completed on 2026-09-20/21
+
+- The base catalog was replaced with the agreed optical packages and prices.
+  Sales can adjust a line price upward or downward while preserving the catalog
+  amount, adjusted amount, reason and actor in the accepted snapshot.
+- Customer creation in `/customers` and `/sales` reuses the same complete Spanish
+  form. Existing records are editable atomically with their phone list. Search
+  results show total, open and finished work and link to `/orders` using the exact
+  customer identifier to avoid mixing homonyms.
+- Prescription entry is shared between the prescription workspace and New Sale,
+  including Spanish validation and the wider dialog composition.
+- Production assignment and filtering use dialogs. Provider roles see only their
+  assigned jobs, can inspect the prescription required for fabrication and can
+  execute only their own transitions. Optical preparation, dispatch, receipt and
+  review remain optical-side actions. Timeline and filters present Spanish,
+  role-attributed state labels instead of internal status/job codes.
+- `FilterPanel` standardizes the Lucide filter button, active-count badge, clear
+  action, modal and result count across Production, Orders, Cashbox and the
+  organization directory.
+- The sidebar prioritizes daily work: New Sale, Dashboard, Orders, Customers,
+  Prescriptions, Production and Cashbox. Catalog, Team and Organizations are
+  grouped afterward under Gestión, with permission-empty groups omitted.
+- Team invitations use the password-setup callback flow. Provider access still
+  requires an invited authenticated account; a copyable expiring passwordless
+  workshop link has not been implemented.
 
 ## Mandatory design rule
 
@@ -183,10 +210,11 @@ Last updated: 2026-09-14
 1. Apply the design precedence and shared component library to every new view.
 2. Carry the operational/read-only guard into each future write feature.
 3. Complete interactive responsive/mobile QA for the refreshed views, including
-   the mobile drawer, organization dialogs, custom selects, customer, prescription,
-   catalog, sales and order/payment workspaces.
-4. Validate production with real seller/owner/provider sessions.
-5. Run the authenticated Cuba pilot acceptance script and close its findings.
+   filter dialogs, mobile drawer, customer history links, production transitions
+   and automatic WhatsApp outcomes.
+4. Validate the full workflow with real seller/owner/cristalero/montador sessions.
+5. Decide whether providers need a copyable expiring passwordless access link.
+6. Run the authenticated Cuba pilot acceptance script and close its findings.
 
 ## Evidence
 

@@ -1,10 +1,12 @@
 'use client'
 
+import Link from 'next/link'
 import { useCallback, useMemo, useState, type FormEvent } from 'react'
 
 import { createClient } from '@/lib/supabase/client'
 import type { Tables } from '@/lib/supabase/database.types'
 import { FormSelect } from '@/shared/components'
+import { CustomerFormFields, customerFormValues, type CustomerPhoneDraft } from './CustomerFormFields'
 
 type AccessScope = {
   organizationId: number
@@ -16,7 +18,7 @@ type AccessScope = {
 
 type CustomerPhone = Pick<
   Tables<'customer_phones'>,
-  'id' | 'phone_number' | 'normalized_phone' | 'label' | 'is_primary'
+  'id' | 'phone_number' | 'normalized_phone' | 'label' | 'is_primary' | 'whatsapp_enabled'
 >
 
 type CustomerResult = Pick<
@@ -30,12 +32,15 @@ type CustomerResult = Pick<
   | 'birth_date'
   | 'notes'
   | 'messaging_consent'
-> & { customer_phones: CustomerPhone[] }
+> & {
+  customer_phones: CustomerPhone[]
+  orderSummary?: { total: number; open: number; completed: number }
+}
 
-type PhoneDraft = { number: string; label: string; whatsappEnabled: boolean }
+type CustomerOrder = { customerId: number; commercialStatus: string }
 
 const customerSelect =
-  'id, organization_id, branch_id, full_name, national_id, address, birth_date, notes, messaging_consent, customer_phones(id, phone_number, normalized_phone, label, is_primary)'
+  'id, organization_id, branch_id, full_name, national_id, address, birth_date, notes, messaging_consent, customer_phones(id, phone_number, normalized_phone, label, is_primary, whatsapp_enabled)'
 
 function normalizePhone(value: string) {
   return value.replace(/\D/g, '')
@@ -56,6 +61,7 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
   const [results, setResults] = useState<CustomerResult[]>([])
   const [selected, setSelected] = useState<CustomerResult | null>(null)
   const [showForm, setShowForm] = useState(false)
+  const [editingCustomer, setEditingCustomer] = useState<CustomerResult | null>(null)
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -65,13 +71,36 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
     scopes[0] ? `${scopes[0].organizationId}:${scopes[0].branchId}` : '',
   )
   const [fullName, setFullName] = useState('')
-  const [phones, setPhones] = useState<PhoneDraft[]>([
+  const [phones, setPhones] = useState<CustomerPhoneDraft[]>([
     { number: '', label: 'Principal', whatsappEnabled: true },
   ])
 
   const activeScope = scopes.find(
     (scope) => `${scope.organizationId}:${scope.branchId}` === target,
   )
+
+  const withOrderSummaries = useCallback(async (customers: CustomerResult[]) => {
+    const ids = customers.map(({ id }) => id)
+    if (!ids.length) return customers
+    const { data, error } = await supabase.rpc('list_accessible_orders')
+    if (error) return customers
+
+    const orders = (data ?? []) as CustomerOrder[]
+    return customers.map((customer) => {
+      const customerOrders = orders.filter(({ customerId }) => customerId === customer.id)
+      const completed = customerOrders.filter(({ commercialStatus }) =>
+        ['delivered', 'closed'].includes(commercialStatus),
+      ).length
+      return {
+        ...customer,
+        orderSummary: {
+          total: customerOrders.length,
+          open: customerOrders.length - completed,
+          completed,
+        },
+      }
+    })
+  }, [supabase])
 
   const searchCustomers = useCallback(
     async (rawQuery: string) => {
@@ -110,11 +139,12 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
         setResults([])
         setMessage('No pudimos consultar los clientes. Intenta nuevamente.')
       } else {
-        setResults((data ?? []) as CustomerResult[])
+        const customers = (data ?? []) as CustomerResult[]
+        setResults(await withOrderSummaries(customers))
       }
       setLoading(false)
     },
-    [supabase],
+    [supabase, withOrderSummaries],
   )
 
   const duplicateCandidates = useMemo(() => {
@@ -139,23 +169,16 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
     await searchCustomers(query)
   }
 
-  function updatePhone(index: number, patch: Partial<PhoneDraft>) {
-    setDuplicateReviewed(false)
-    setPhones((current) =>
-      current.map((phone, phoneIndex) =>
-        phoneIndex === index ? { ...phone, ...patch } : phone,
-      ),
-    )
-  }
-
-  async function createCustomer(event: FormEvent<HTMLFormElement>) {
+  async function saveCustomer(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!activeScope?.canWrite) {
       setMessage('Esta organización está en modo de solo lectura.')
       return
     }
 
-    const validPhones = phones.filter(({ number }) => normalizePhone(number).length >= 5)
+    const form = new FormData(event.currentTarget)
+    const values = customerFormValues(form, fullName, phones)
+    const validPhones = values.phones
     if (validPhones.length !== phones.length || !fullName.trim()) {
       setMessage('Completa el nombre y usa teléfonos de al menos cinco dígitos.')
       return
@@ -163,7 +186,6 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
 
     setSaving(true)
     setMessage(null)
-    const form = new FormData(event.currentTarget)
     const normalizedPhones = validPhones.map(({ number }) => normalizePhone(number))
     const [{ data: phoneMatches }, { data: nameMatches }] = await Promise.all([
       supabase
@@ -183,13 +205,14 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
       ]),
     ]
 
-    if (possibleDuplicateIds.length && !duplicateReviewed) {
+    const otherDuplicateIds = possibleDuplicateIds.filter((id) => id !== editingCustomer?.id)
+    if (otherDuplicateIds.length && !duplicateReviewed) {
       const { data: matches } = await supabase
         .from('customers')
         .select(customerSelect)
-        .in('id', possibleDuplicateIds)
+        .in('id', otherDuplicateIds)
         .is('archived_at', null)
-      setResults((matches ?? []) as CustomerResult[])
+      setResults(await withOrderSummaries((matches ?? []) as CustomerResult[]))
       setSearched(true)
       setQuery(fullName.trim())
       setDuplicateReviewed(true)
@@ -198,17 +221,28 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
       return
     }
 
-    const { data, error } = await supabase.rpc('create_customer_with_phones', {
-      target_organization_id: activeScope.organizationId,
-      target_branch_id: activeScope.branchId,
-      customer_full_name: fullName.trim(),
-      customer_national_id: String(form.get('nationalId') ?? ''),
-      customer_address: String(form.get('address') ?? ''),
-      customer_birth_date: String(form.get('birthDate') ?? '') || undefined,
-      customer_notes: String(form.get('notes') ?? ''),
-      customer_messaging_consent: form.get('messagingConsent') === 'on',
-      phone_entries: validPhones,
-    } as never)
+    const { data, error } = editingCustomer
+      ? await supabase.rpc('update_customer_with_phones', {
+          target_customer_id: editingCustomer.id,
+          customer_full_name: values.fullName,
+          customer_national_id: values.nationalId,
+          customer_address: values.address,
+          customer_birth_date: values.birthDate,
+          customer_notes: values.notes,
+          customer_messaging_consent: values.messagingConsent,
+          phone_entries: validPhones,
+        } as never)
+      : await supabase.rpc('create_customer_with_phones', {
+          target_organization_id: activeScope.organizationId,
+          target_branch_id: activeScope.branchId,
+          customer_full_name: values.fullName,
+          customer_national_id: values.nationalId,
+          customer_address: values.address,
+          customer_birth_date: values.birthDate,
+          customer_notes: values.notes,
+          customer_messaging_consent: values.messagingConsent,
+          phone_entries: validPhones,
+        } as never)
 
     if (error) {
       setMessage(error.message || 'No se pudo registrar el cliente.')
@@ -218,10 +252,12 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
 
     setQuery(fullName.trim())
     setShowForm(false)
+    setEditingCustomer(null)
     setFullName('')
     setPhones([{ number: '', label: 'Principal', whatsappEnabled: true }])
     await searchCustomers(fullName.trim())
-    setMessage(`Cliente #${data} registrado correctamente.`)
+    setSelected(null)
+    setMessage(editingCustomer ? 'Ficha del cliente actualizada correctamente.' : `Cliente #${data} registrado correctamente.`)
     setDuplicateReviewed(false)
     setSaving(false)
   }
@@ -296,6 +332,17 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
                         {customer.customer_phones.map(({ phone_number }) => phone_number).join(' · ')}
                         {scope ? ` · ${scope.branchName}` : ''}
                       </span>
+                      <span className="mt-2 flex flex-wrap gap-1.5 text-[11px] font-semibold">
+                        <span className="rounded bg-[#EEF5F4] px-2 py-1 text-[#4A5B58]">
+                          {customer.orderSummary?.total ?? 0} {(customer.orderSummary?.total ?? 0) === 1 ? 'trabajo' : 'trabajos'}
+                        </span>
+                        <span className={`rounded px-2 py-1 ${(customer.orderSummary?.open ?? 0) > 0 ? 'bg-[#FFF0EB] text-[#A34732]' : 'bg-[#F4F7F6] text-[#74857F]'}`}>
+                          {customer.orderSummary?.open ?? 0} abiertos
+                        </span>
+                        <span className="rounded bg-[#D9F5EE] px-2 py-1 text-[#07655C]">
+                          {customer.orderSummary?.completed ?? 0} finalizados
+                        </span>
+                      </span>
                     </span>
                     <span className="text-xs font-semibold text-[#0D7A72]">
                       {isSelected ? 'Seleccionado' : 'Usar ficha'}
@@ -317,6 +364,7 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
           <button
             type="button"
             onClick={() => {
+              setEditingCustomer(null)
               setShowForm((visible) => !visible)
               if (!showForm && query && !normalizePhone(query)) setFullName(query)
               if (!showForm && normalizePhone(query).length >= 5) {
@@ -330,55 +378,24 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
         </section>
 
         {showForm ? (
-          <form onSubmit={createCustomer} className="rounded-[10px] border border-[#E3EFED] bg-white p-5 shadow-[0_8px_24px_rgba(7,50,47,0.04)]">
+          <form key={editingCustomer?.id ?? 'new'} onSubmit={saveCustomer} className="rounded-[10px] border border-[#E3EFED] bg-white p-5 shadow-[0_8px_24px_rgba(7,50,47,0.04)]">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h2 className="font-display text-base font-semibold text-[#07322F]">Nueva ficha</h2>
-                <p className="mt-1 text-[13px] text-[#74857F]">Revisa las coincidencias antes de guardar.</p>
+                <h2 className="font-display text-base font-semibold text-[#07322F]">{editingCustomer ? 'Editar ficha' : 'Nueva ficha'}</h2>
+                <p className="mt-1 text-[13px] text-[#74857F]">{editingCustomer ? 'Actualiza los datos vigentes del cliente.' : 'Revisa las coincidencias antes de guardar.'}</p>
               </div>
               {!activeScope?.canWrite ? (
                 <span className="rounded-[5px] bg-[#FFF4E8] px-2 py-1 text-xs font-semibold text-[#A35A15]">Solo lectura</span>
               ) : null}
             </div>
 
-            <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <div className="mt-4">
               <label className="text-xs font-medium text-[#4A5B58]">
                 Organización y sucursal
-                <FormSelect className="mt-1" ariaLabel="Organización y sucursal" value={target} onValueChange={setTarget} options={scopes.map((scope) => ({ value: `${scope.organizationId}:${scope.branchId}`, label: `${scope.organizationName} · ${scope.branchName}${scope.canWrite ? '' : ' (solo lectura)'}` }))} />
-              </label>
-              <label className="text-xs font-medium text-[#4A5B58]">
-                Nombre completo
-                <input className={fieldClass} value={fullName} onChange={(event) => { setFullName(event.target.value); setDuplicateReviewed(false) }} required minLength={2} maxLength={160} />
-              </label>
-              <label className="text-xs font-medium text-[#4A5B58]">
-                Carné o identificador <span className="font-normal text-[#9AABA7]">(opcional)</span>
-                <input className={fieldClass} name="nationalId" maxLength={40} />
-              </label>
-              <label className="text-xs font-medium text-[#4A5B58]">
-                Fecha de nacimiento <span className="font-normal text-[#9AABA7]">(opcional)</span>
-                <input className={fieldClass} name="birthDate" type="date" max={new Date().toISOString().slice(0, 10)} />
-              </label>
-              <label className="text-xs font-medium text-[#4A5B58] md:col-span-2">
-                Dirección <span className="font-normal text-[#9AABA7]">(opcional)</span>
-                <input className={fieldClass} name="address" />
+                <FormSelect className="mt-1" ariaLabel="Organización y sucursal" value={target} disabled={Boolean(editingCustomer)} onValueChange={setTarget} options={scopes.map((scope) => ({ value: `${scope.organizationId}:${scope.branchId}`, label: `${scope.organizationName} · ${scope.branchName}${scope.canWrite ? '' : ' (solo lectura)'}` }))} />
               </label>
             </div>
-
-            <fieldset className="mt-5 space-y-3">
-              <legend className="font-display text-sm font-semibold text-[#07322F]">Teléfonos</legend>
-              {phones.map((phone, index) => (
-                <div key={index} className="grid gap-2 rounded-lg border border-[#E3EFED] bg-[#FBFEFD] p-3 sm:grid-cols-[1fr_150px_auto]">
-                  <input aria-label={`Teléfono ${index + 1}`} className={fieldClass.replace('mt-1 ', '')} value={phone.number} onChange={(event) => updatePhone(index, { number: event.target.value })} placeholder="+53 5218 4477" required />
-                  <input aria-label={`Etiqueta del teléfono ${index + 1}`} className={fieldClass.replace('mt-1 ', '')} value={phone.label} onChange={(event) => updatePhone(index, { label: event.target.value })} maxLength={40} />
-                  {index ? (
-                    <button type="button" onClick={() => setPhones((current) => current.filter((_, phoneIndex) => phoneIndex !== index))} className="px-2 text-xs font-semibold text-[#C23C1C]">Quitar</button>
-                  ) : <span className="self-center px-2 text-xs text-[#74857F]">Principal</span>}
-                </div>
-              ))}
-              {phones.length < 5 ? (
-                <button type="button" onClick={() => setPhones((current) => [...current, { number: '', label: 'Otro', whatsappEnabled: true }])} className="text-sm font-semibold text-[#0D7A72]">+ Añadir otro teléfono</button>
-              ) : null}
-            </fieldset>
+            <div className="mt-4"><CustomerFormFields fullName={fullName} onFullNameChange={(value) => { setFullName(value); setDuplicateReviewed(false) }} phones={phones} onPhonesChange={(value) => { setPhones(value); setDuplicateReviewed(false) }} fieldClass={fieldClass} initialValues={editingCustomer ? { nationalId: editingCustomer.national_id, birthDate: editingCustomer.birth_date, address: editingCustomer.address, notes: editingCustomer.notes, messagingConsent: editingCustomer.messaging_consent } : undefined} /></div>
 
             {duplicateCandidates.length ? (
               <div className="mt-5 rounded-lg border border-[#FFD9CD] bg-[#FFF6F2] p-4 text-sm text-[#7A3A26]">
@@ -387,16 +404,8 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
               </div>
             ) : null}
 
-            <label className="mt-5 flex items-center gap-2 text-sm text-[#4A5B58]">
-              <input name="messagingConsent" type="checkbox" className="h-4 w-4 accent-[#0D7A72]" />
-              Consentimiento para mensajes por WhatsApp
-            </label>
-            <label className="mt-4 block text-xs font-medium text-[#4A5B58]">
-              Notas <span className="font-normal text-[#9AABA7]">(opcional)</span>
-              <textarea className={fieldClass} name="notes" rows={3} />
-            </label>
             <button disabled={saving || !activeScope?.canWrite} className="mt-5 rounded-[7px] bg-[#0D7A72] px-4 py-2.5 font-display text-sm font-semibold text-white transition hover:bg-[#07322F] disabled:cursor-not-allowed disabled:opacity-50">
-              {saving ? 'Guardando…' : duplicateReviewed ? 'Confirmar cliente distinto' : 'Guardar cliente'}
+              {saving ? 'Guardando…' : editingCustomer ? 'Guardar cambios' : duplicateReviewed ? 'Confirmar cliente distinto' : 'Guardar cliente'}
             </button>
           </form>
         ) : null}
@@ -407,13 +416,14 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
       <aside className="rounded-[10px] border border-[#E3EFED] bg-white p-5 shadow-[0_8px_24px_rgba(7,50,47,0.04)] xl:sticky xl:top-6">
         <h2 className="font-display text-[15px] font-semibold text-[#07322F]">Ficha seleccionada</h2>
         {selected ? (
-          <dl className="mt-4 space-y-4 text-sm">
+          <><dl className="mt-4 space-y-4 text-sm">
             <div><dt className="text-xs text-[#74857F]">Cliente</dt><dd className="mt-1 font-semibold text-[#07322F]">{selected.full_name}</dd></div>
             <div><dt className="text-xs text-[#74857F]">Teléfonos</dt><dd className="mt-1 text-[#1C3A37]">{selected.customer_phones.map(({ phone_number }) => phone_number).join(' · ')}</dd></div>
             <div><dt className="text-xs text-[#74857F]">Dirección</dt><dd className="mt-1 text-[#1C3A37]">{selected.address || '—'}</dd></div>
             <div><dt className="text-xs text-[#74857F]">Nacimiento</dt><dd className="mt-1 text-[#1C3A37]">{selected.birth_date || '—'}</dd></div>
             <div><dt className="text-xs text-[#74857F]">WhatsApp</dt><dd className={`mt-1 font-semibold ${selected.messaging_consent ? 'text-[#0D7A72]' : 'text-[#74857F]'}`}>{selected.messaging_consent ? 'Consentimiento otorgado' : 'Sin consentimiento'}</dd></div>
-          </dl>
+            <div><dt className="text-xs text-[#74857F]">Trabajos</dt><dd className="mt-2 grid grid-cols-3 gap-2 text-center"><span className="rounded-lg bg-[#EEF5F4] px-2 py-2"><strong className="block text-base text-[#07322F]">{selected.orderSummary?.total ?? 0}</strong><small className="text-[#74857F]">Total</small></span><span className="rounded-lg bg-[#FFF0EB] px-2 py-2"><strong className="block text-base text-[#A34732]">{selected.orderSummary?.open ?? 0}</strong><small className="text-[#A34732]">Abiertos</small></span><span className="rounded-lg bg-[#D9F5EE] px-2 py-2"><strong className="block text-base text-[#07655C]">{selected.orderSummary?.completed ?? 0}</strong><small className="text-[#07655C]">Finalizados</small></span></dd></div>
+          </dl><div className="mt-5 grid gap-2"><Link href={`/orders?clienteId=${selected.id}&cliente=${encodeURIComponent(selected.full_name)}`} className="w-full rounded-[7px] bg-[#0D7A72] px-4 py-2.5 text-center text-sm font-semibold text-white">Ver pedidos de este cliente</Link><button type="button" onClick={() => { setEditingCustomer(selected); setTarget(`${selected.organization_id}:${selected.branch_id}`); setFullName(selected.full_name); setPhones([...selected.customer_phones].sort((a, b) => Number(b.is_primary) - Number(a.is_primary)).map((phone) => ({ number: phone.phone_number, label: phone.label, whatsappEnabled: phone.whatsapp_enabled }))); setDuplicateReviewed(false); setShowForm(true); setMessage(null) }} className="w-full rounded-[7px] border border-[#9BCDC6] px-4 py-2.5 text-sm font-semibold text-[#0D7A72]">Editar cliente</button></div></>
         ) : (
           <p className="mt-4 text-sm leading-6 text-[#74857F]">Selecciona una coincidencia para revisar su ficha y reutilizarla.</p>
         )}

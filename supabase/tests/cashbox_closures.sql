@@ -67,9 +67,16 @@ do $$ begin
 end $$;
 
 select set_config('request.jwt.claim.sub', '10000000-0000-0000-0000-000000000003', true);
+select public.register_cash_payment(910000001, 100, 'CUP', 1, 'owner payment');
 do $$ begin
-  if (select count(*) from public.seller_cashboxes) <> 1 then
-    raise exception 'Owner cannot review organization cashboxes';
+  if (select count(*) from public.seller_cashboxes) <> 2 then
+    raise exception 'Owner cannot receive cash or review organization cashboxes';
+  end if;
+  if not exists (
+    select 1 from public.seller_cashboxes
+    where seller_id = '10000000-0000-0000-0000-000000000003'
+  ) then
+    raise exception 'Owner payment was not attributed to the owner cashbox';
   end if;
 end $$;
 

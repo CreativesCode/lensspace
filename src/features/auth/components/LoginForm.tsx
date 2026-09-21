@@ -23,6 +23,10 @@ export function LoginForm({ next = '/dashboard' }: { next?: string }) {
           name="email"
           type="email"
           autoComplete="email"
+          inputMode="email"
+          maxLength={254}
+          pattern="[^\s@]+@[^\s@]+\.[^\s@]{2,}"
+          title="Escribe un correo válido, por ejemplo nombre@dominio.com"
           required
           className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-sky-600 focus:ring-4 focus:ring-sky-100"
         />

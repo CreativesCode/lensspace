@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, useMemo, useState, useTransition } from 'react'
+import { FormEvent, useEffect, useMemo, useState, useTransition } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { FormSelect } from '@/shared/components'
 
@@ -23,20 +23,36 @@ export function OwnerAnalyticsDashboard({ organizationId, branches, sellers, def
   const [message, setMessage] = useState('')
   const [pending, startTransition] = useTransition()
 
-  function load(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    const form = new FormData(event.currentTarget)
+  function requestMetrics(branchId: number | null, sellerId: string | null, from: string, to: string) {
     startTransition(async () => {
       const { data, error } = await supabase.rpc('get_owner_dashboard', {
         target_organization_id: organizationId,
-        target_branch_id: form.get('branch') ? Number(form.get('branch')) : null,
-        target_seller_id: form.get('seller') || null,
-        date_from: String(form.get('from')),
-        date_to: String(form.get('to')),
+        target_branch_id: branchId,
+        target_seller_id: sellerId,
+        date_from: from,
+        date_to: to,
       } as never)
       if (error) return setMessage(error.message)
-      setMetrics(data as unknown as Metrics); setMessage('')
+      setMetrics(data as unknown as Metrics)
+      setMessage('')
     })
+  }
+
+  useEffect(() => {
+    requestMetrics(null, null, defaultFrom, defaultTo)
+  // The initial query must run once for the server-provided default range.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [organizationId, defaultFrom, defaultTo])
+
+  function load(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const form = new FormData(event.currentTarget)
+    requestMetrics(
+      form.get('branch') ? Number(form.get('branch')) : null,
+      form.get('seller') ? String(form.get('seller')) : null,
+      String(form.get('from')),
+      String(form.get('to')),
+    )
   }
 
   return <section className="mt-7 rounded-[10px] border border-[#E3EFED] bg-white p-5">
@@ -54,7 +70,7 @@ export function OwnerAnalyticsDashboard({ organizationId, branches, sellers, def
       ].map(([label, value]) => <div key={label} className="rounded-lg bg-[#F0FBF9] p-4"><p className="text-xs text-[#74857F]">{label}</p><p className="mt-1 font-display text-xl font-bold text-[#07322F]">{value}</p></div>)}</div>
       <div className="grid gap-4 lg:grid-cols-3"><MetricList title="Por vendedor" rows={metrics.bySeller.map(x => [x.seller_name, `${money(x.sales_cup)} CUP · ${x.order_count}`])} /><MetricList title="Carga de proveedores" rows={metrics.providerLoads.map(x => [x.provider_name, `${x.active_jobs} · ${x.job_type}`])} /><MetricList title="Productos destacados" rows={metrics.topItems.map(x => [x.name, String(x.quantity)])} /></div>
       <p className="text-xs text-[#74857F]">Incidencias: {metrics.orders.withIncidents} · Diferencia de caja: {money(metrics.cashDifferenceCup)} CUP · Promedio hasta entrega: {metrics.averageDeliveryHours ?? '—'} h</p>
-    </div> : <p className="mt-5 text-sm text-[#74857F]">Selecciona el rango y actualiza para calcular indicadores.</p>}
+    </div> : <p className="mt-5 text-sm text-[#74857F]">{pending ? 'Cargando indicadores…' : 'No fue posible cargar los indicadores.'}</p>}
     {message ? <p role="status" className="mt-3 text-sm text-[#C23C1C]">{message}</p> : null}
   </section>
 }
