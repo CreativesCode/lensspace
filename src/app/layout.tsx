@@ -15,7 +15,7 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: 'Vision Studio',
+  title: 'LensSpace',
   description: 'Gestión integral para ópticas',
 }
 export default function RootLayout({ children }: { children: React.ReactNode }) {

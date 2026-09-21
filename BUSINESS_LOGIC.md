@@ -1,8 +1,8 @@
-# Vision Studio — Lógica de negocio
+# LensSpace — Lógica de negocio
 
 ## Visión
 
-Vision Studio será un SaaS multiempresa para gestionar el ciclo completo de una
+LensSpace será un SaaS multiempresa para gestionar el ciclo completo de una
 óptica, desde la recepción de una receta hasta la entrega de los espejuelos. El
 mercado inicial es Cuba. Cada organización empieza con una sucursal y puede crear
 más; ningún cliente SaaS puede acceder a los datos de otro.
@@ -181,7 +181,7 @@ urgencias ni indicadores de atraso.
   y su primera cuenta de dueño.
 - La autenticación de dueños, vendedores y proveedores usa correo y contraseña.
 - El dueño crea o invita a sus vendedores y vincula a sus proveedores externos.
-- El propietario de Vision Studio será el superadministrador de la plataforma.
+- El propietario de LensSpace será el superadministrador de la plataforma.
 - El superadministrador puede crear, activar, suspender y consultar organizaciones;
   mantener el catálogo base; consultar uso y estado técnico; y prestar soporte.
 - El acceso asistido a una organización debe quedar auditado con identidad, fecha,

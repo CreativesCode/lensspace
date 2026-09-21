@@ -30,10 +30,10 @@ export default async function DashboardPage() {
         Panel principal
       </p>
       <h1 className="mt-2 font-display text-[26px] font-bold tracking-[-0.02em] text-slate-950">
-        {isPlatformAdmin ? 'Administración de organizaciones' : 'Vision Studio'}
+        {isPlatformAdmin ? 'Administración de organizaciones' : 'LensSpace'}
       </h1>
       {isPlatformAdmin ? (
-        <><p className="mt-3 max-w-2xl text-slate-600">Panorama operativo y crecimiento de Vision Studio.</p><PlatformAdminDashboard organizations={organizations} /></>
+        <><p className="mt-3 max-w-2xl text-slate-600">Panorama operativo y crecimiento de LensSpace.</p><PlatformAdminDashboard organizations={organizations} /></>
       ) : (
         <>
           <p className="mt-4 max-w-2xl text-slate-600">

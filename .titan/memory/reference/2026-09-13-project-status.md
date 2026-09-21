@@ -3,6 +3,12 @@
 Date: 2026-09-13
 Last updated: 2026-09-21
 
+## Product identity
+
+- The product brand is LensSpace. The rename was completed before the initial
+  Vercel deployment; deployed Supabase integration keys retain their historical
+  `vision_studio` prefix for compatibility.
+
 ## Product and platform foundation
 
 - The implementation plan is `.titan/plans/prp-vision-studio-mvp.md`.

@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import { signOut } from '@/features/auth/actions'
 import type { Tables } from '@/lib/supabase/database.types'
 import { createClient } from '@/lib/supabase/server'
-import { MainNavigation, MobileSidebar, VisionStudioLogo } from '@/shared/components'
+import { LensSpaceLogo, MainNavigation, MobileSidebar } from '@/shared/components'
 
 const commercialHrefs = ['/prescriptions', '/catalog', '/orders', '/sales', '/customers']
 
@@ -22,7 +22,7 @@ async function AuthenticatedLayout({ children }: { children: React.ReactNode }) 
     <div className="min-h-screen bg-slate-50 md:flex">
       <aside className="hidden w-[244px] shrink-0 flex-col bg-slate-950 px-4 py-6 md:sticky md:top-0 md:flex md:h-screen">
         <div className="px-1">
-          <VisionStudioLogo inverse subtitle="Gestión óptica" />
+          <LensSpaceLogo inverse subtitle="Gestión óptica" />
         </div>
         <MainNavigation allowedHrefs={allowedHrefs} />
         <div className="mt-auto border-t border-[#10463F] pt-4">
@@ -38,7 +38,7 @@ async function AuthenticatedLayout({ children }: { children: React.ReactNode }) 
 
       <div className="min-w-0 flex-1">
         <header className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-5 py-4 md:hidden">
-          <VisionStudioLogo compact />
+          <LensSpaceLogo compact />
           <div className="flex items-center gap-2">
             {canCreateSale ? (
               <Link

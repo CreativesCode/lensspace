@@ -1,4 +1,4 @@
-export { VisionStudioLogo } from './VisionStudioLogo'
+export { LensSpaceLogo } from './LensSpaceLogo'
 export { PasswordInput } from './PasswordInput'
 export { MainNavigation } from './MainNavigation'
 export { MobileSidebar } from './MobileSidebar'

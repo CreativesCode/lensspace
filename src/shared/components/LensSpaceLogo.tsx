@@ -1,6 +1,6 @@
 type Props = { compact?: boolean; inverse?: boolean; subtitle?: string }
 
-export function VisionStudioLogo({ compact = false, inverse = false, subtitle }: Props) {
+export function LensSpaceLogo({ compact = false, inverse = false, subtitle }: Props) {
   const ink = inverse ? '#35C2A8' : '#0D7A72'
   return (
     <div className="flex items-center gap-3">
@@ -10,7 +10,7 @@ export function VisionStudioLogo({ compact = false, inverse = false, subtitle }:
         <circle cx="38" cy="24" r="7.5" fill="#FF6B4A" />
       </svg>
       <div className="min-w-0">
-        <p className={inverse ? 'font-display text-[15.5px] font-bold tracking-tight text-[#F2FBF9]' : 'font-display text-lg font-bold tracking-tight text-slate-950'}>Vision Studio</p>
+        <p className={inverse ? 'font-display text-[15.5px] font-bold tracking-tight text-[#F2FBF9]' : 'font-display text-lg font-bold tracking-tight text-slate-950'}>LensSpace</p>
         {subtitle ? <p className={inverse ? 'truncate text-[11px] text-[#6F9C96]' : 'truncate text-xs text-slate-500'}>{subtitle}</p> : null}
       </div>
     </div>

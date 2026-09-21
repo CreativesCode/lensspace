@@ -1,6 +1,6 @@
-# Optional Next.js / Supabase starter
+# LensSpace
 
-This is a source scaffold, not a finished SaaS. It contains App Router routes, feature-first directories, Supabase client helpers and basic pages. Login/signup/dashboard pages are scaffold placeholders and do not implement authentication or authorization. Use tf-add-login for actual auth when requested.
+LensSpace is a multi-tenant SaaS for optical stores. It manages the complete workflow from customers and prescriptions through sales, payments, production, notifications and delivery.
 
 Preferred deployment: Vercel. Alternative: tf-easypanel-deploy with the Supabase path. AI, payments, email, PWA and n8n are optional and their dependencies are installed only when needed.
 
