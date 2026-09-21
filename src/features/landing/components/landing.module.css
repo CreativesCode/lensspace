@@ -1,0 +1,42 @@
+.page { --landing-ink: #07322f; scroll-behavior: smooth; }
+.headerGlass { border: 1px solid rgba(185,223,216,.72); background: rgba(248,252,251,.86); box-shadow: 0 12px 38px rgba(7,50,47,.09); backdrop-filter: blur(18px); }
+.hero { background: radial-gradient(circle at 78% 18%,rgba(53,194,168,.17),transparent 32%),radial-gradient(circle at 12% 34%,rgba(255,107,74,.08),transparent 25%),linear-gradient(180deg,#f7fbfa 0%,#eef8f6 100%); }
+.hero::before { position:absolute; inset:0; background-image:linear-gradient(rgba(13,122,114,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(13,122,114,.035) 1px,transparent 1px); background-size:42px 42px; content:''; mask-image:linear-gradient(to bottom,black,transparent 84%); pointer-events:none; }
+.heroCopy { position:relative; z-index:2; animation:rise-in 700ms cubic-bezier(.2,.75,.25,1) both; }
+.heroVisual { z-index:1; animation:rise-in 850ms 100ms cubic-bezier(.2,.75,.25,1) both; }
+.productWindow { animation:window-float 7s ease-in-out infinite; }
+.orbitOne,.orbitTwo { position:absolute; border:1px solid rgba(13,122,114,.18); border-radius:999px; pointer-events:none; }
+.orbitOne { inset:-9% -7%; animation:orbit-spin 24s linear infinite; }
+.orbitTwo { inset:-2% 4%; border-color:rgba(255,107,74,.16); transform:rotate(12deg); animation:orbit-spin-reverse 19s linear infinite; }
+.orbitOne::after,.orbitTwo::after { position:absolute; top:50%; left:-5px; width:10px; height:10px; border-radius:50%; background:#35c2a8; box-shadow:0 0 0 7px rgba(53,194,168,.12); content:''; }
+.orbitTwo::after { right:-5px; left:auto; background:#ff6b4a; box-shadow:0 0 0 7px rgba(255,107,74,.1); }
+.floatingBadge { position:absolute; z-index:4; display:flex; align-items:center; gap:8px; border:1px solid rgba(185,223,216,.8); border-radius:12px; background:rgba(255,255,255,.92); padding:10px 13px; color:#0d7a72; font-size:12px; font-weight:700; box-shadow:0 14px 35px rgba(7,50,47,.13); backdrop-filter:blur(10px); }
+.badgeTop { top:7%; right:-4%; animation:badge-float 5s ease-in-out infinite; }
+.badgeBottom { bottom:7%; left:-5%; animation:badge-float 5s 1.2s ease-in-out infinite; }
+.activeStep { animation:focus-pulse 2.1s ease-out infinite; }
+.progressBar { width:68%; animation:progress-in 1.4s 600ms cubic-bezier(.2,.75,.25,1) both; }
+.workflowLine { position:absolute; top:50%; right:5%; left:5%; height:1px; background:linear-gradient(90deg,transparent,#b9dfd8 12%,#b9dfd8 88%,transparent); }
+.workflowCard { transition:transform 220ms ease,box-shadow 220ms ease,border-color 220ms ease; }
+.workflowCard:hover { z-index:2; border-color:#9bcdc6; box-shadow:0 22px 55px rgba(7,50,47,.1); transform:translateY(-5px); }
+.capabilityCard { border-color:rgba(127,216,200,.15); background:rgba(255,255,255,.04); transition:transform 220ms ease,background 220ms ease,border-color 220ms ease; }
+.capabilityCard:hover { border-color:rgba(127,216,200,.38); background:rgba(255,255,255,.07); transform:translateY(-5px); }
+.capabilityFeatured { border-color:rgba(53,194,168,.45); background:linear-gradient(180deg,rgba(53,194,168,.14),rgba(255,255,255,.04)); }
+.roleCard { min-height:270px; transition:transform 220ms ease,border-color 220ms ease,box-shadow 220ms ease; --role-soft:#e6f7f3; --role-ink:#0d7a72; }
+.roleCard:hover { border-color:var(--role-ink); box-shadow:0 18px 45px rgba(7,50,47,.08); transform:translateY(-5px); }
+.sky { --role-soft:#eaf5fb; --role-ink:#2679a3; }
+.coral { --role-soft:#fff0ec; --role-ink:#c75539; }
+.violet { --role-soft:#f2eefb; --role-ink:#7655a6; }
+.sand { --role-soft:#f7f1df; --role-ink:#8a6c20; }
+.mint { --role-soft:#e6f7f3; --role-ink:#0d7a72; }
+.trustPanel { position:relative; }
+.trustPanel::after { position:absolute; right:-100px; bottom:-180px; width:430px; height:430px; border:1px solid rgba(127,216,200,.18); border-radius:50%; box-shadow:0 0 0 60px rgba(127,216,200,.035),0 0 0 120px rgba(127,216,200,.02); content:''; pointer-events:none; }
+.ctaGlow { position:absolute; top:-180px; left:50%; width:480px; height:320px; border-radius:50%; background:rgba(53,194,168,.2); filter:blur(60px); transform:translateX(-50%); }
+@keyframes rise-in { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+@keyframes window-float { 0%,100% { transform:translateY(0) rotate(-.25deg); } 50% { transform:translateY(-8px) rotate(.25deg); } }
+@keyframes badge-float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-7px); } }
+@keyframes orbit-spin { to { transform:rotate(360deg); } }
+@keyframes orbit-spin-reverse { to { transform:rotate(-348deg); } }
+@keyframes focus-pulse { 0% { box-shadow:0 0 0 0 rgba(255,107,74,.42); } 70%,100% { box-shadow:0 0 0 10px rgba(255,107,74,0); } }
+@keyframes progress-in { from { width:0; } to { width:68%; } }
+@media (max-width:767px) { .badgeTop { top:-17px; right:6px; } .badgeBottom { bottom:-20px; left:6px; } .orbitOne { inset:-5% -2%; } .orbitTwo { display:none; } .roleCard { min-height:auto; } }
+@media (prefers-reduced-motion:reduce) { .page { scroll-behavior:auto; } .heroCopy,.heroVisual,.productWindow,.orbitOne,.orbitTwo,.floatingBadge,.activeStep,.progressBar { animation:none!important; } .workflowCard,.capabilityCard,.roleCard { transition:none; } }

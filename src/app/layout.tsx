@@ -1,5 +1,8 @@
 import type { Metadata } from 'next'
 import { Source_Sans_3, Space_Grotesk } from 'next/font/google'
+
+import { siteConfig } from '@/shared/config/site'
+
 import './globals.css'
 
 const sourceSans = Source_Sans_3({
@@ -15,8 +18,25 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: 'LensSpace',
-  description: 'Gestión integral para ópticas',
+  metadataBase: new URL(siteConfig.url),
+  applicationName: 'LensSpace',
+  title: {
+    default: `${siteConfig.title} | LensSpace`,
+    template: '%s | LensSpace',
+  },
+  description: siteConfig.description,
+  generator: 'Next.js',
+  category: 'business software',
+  referrer: 'origin-when-cross-origin',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  icons: {
+    icon: '/icon.svg',
+    apple: '/apple-icon.png',
+  },
 }
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

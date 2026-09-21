@@ -8,6 +8,14 @@ Last updated: 2026-09-21
 - The product brand is LensSpace. The rename was completed before the initial
   Vercel deployment; deployed Supabase integration keys retain their historical
   `vision_studio` prefix for compatibility.
+- The approved D2 logo system and responsive public landing are implemented
+  locally. The landing covers the complete order journey, real capabilities,
+  role-specific access and provider privacy without pricing.
+- Public SEO is implemented locally with `https://lensspace.vercel.app` as the
+  canonical origin, a root-only sitemap, crawler exclusions and `noindex` for
+  authentication/private route groups, Open Graph/Twitter imagery and factual
+  Organization/WebSite/WebApplication JSON-LD. Production verification remains
+  pending until these local changes are deployed.
 
 ## Product and platform foundation
 
@@ -189,7 +197,7 @@ Last updated: 2026-09-21
 - Use a concrete composition from `Vision Studio.dc.html` when available. For
   undesigned screens, assemble the patterns in `Componentes Vision Studio.dc.html`;
   identity always follows `Identidad Vision Studio.dc.html`.
-- Reuse the extracted Vision Studio logo and shared components. Do not introduce a
+- Reuse the official LensSpace D2 logo and shared components. Do not introduce a
   parallel generic design language.
 - Existing authentication and dashboard views now inherit the Caribe moderno
   palette, Space Grotesk/Source Sans 3 typography, radii, shadows and responsive

@@ -1,5 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 188 188">
-  <rect width="188" height="188" rx="44" fill="#07322F"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 188 188" role="img" aria-labelledby="title">
+  <title id="title">LensSpace</title>
+  <rect width="188" height="188" fill="#07322F"/>
   <path d="M29 92C48 61 71 47 94 47s46 14 65 45" fill="none" stroke="#7FD8C8" stroke-width="10" stroke-linecap="round"/>
   <path d="M29 96C48 127 71 141 94 141s46-14 65-45" fill="none" stroke="#F0FBF9" stroke-width="10" stroke-linecap="round"/>
   <path d="M94 64A30 30 0 0 0 94 124" fill="none" stroke="#35C2A8" stroke-width="7" stroke-linecap="round"/>

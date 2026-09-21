@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -7,6 +8,14 @@ import { createClient } from '@/lib/supabase/server'
 import { LensSpaceLogo, MainNavigation, MobileSidebar } from '@/shared/components'
 
 const commercialHrefs = ['/prescriptions', '/catalog', '/orders', '/sales', '/customers']
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+  },
+}
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return <AuthenticatedLayout>{children}</AuthenticatedLayout>
