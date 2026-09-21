@@ -72,7 +72,7 @@ type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>
 
 async function loadAllowedNavigation(supabase: SupabaseServerClient, userId: string) {
   const { data: isPlatformAdmin } = await supabase.rpc('current_user_is_platform_admin')
-  if (isPlatformAdmin) return ['/dashboard', '/organizations', '/catalog']
+  if (isPlatformAdmin) return ['/dashboard', '/organizations', '/catalog', '/manual']
 
   const { data: membershipData } = await supabase
     .from('organization_memberships')
@@ -106,7 +106,7 @@ async function loadAllowedNavigation(supabase: SupabaseServerClient, userId: str
     )
 
   const allowed = ['/dashboard']
-  if (memberships.some((membership) => membership.role === 'owner')) allowed.push('/team')
+  if (memberships.some((membership) => membership.role === 'owner')) allowed.push('/team', '/manual')
   if (hasAccess(['owner', 'seller'], 'optical_sales')) allowed.push(...commercialHrefs)
   if (hasAccess(['owner', 'seller'], 'cashbox')) allowed.push('/cashbox')
   if (hasAccess(['owner', 'seller', 'lens_provider', 'mounting_provider'], 'production')) {

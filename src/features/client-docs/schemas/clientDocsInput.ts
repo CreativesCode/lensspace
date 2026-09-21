@@ -1,0 +1,96 @@
+import type { ClientDocsInput } from '../generators/types'
+
+export const clientDocsInput = {
+  appName: 'LensSpace',
+  clientName: 'la óptica',
+  appUrl: 'https://lensspace.vercel.app',
+  modules: [
+    {
+      name: 'Panel principal y navegación',
+      description: 'Presenta los accesos permitidos para cada rol y, para el dueño, los indicadores consolidados del negocio.',
+      image: { src: '/manual/portada.png', alt: 'Portada pública de LensSpace y resumen visual del recorrido del pedido' },
+      endUserActions: ['Abre una sección desde el menú lateral.', 'Abre el menú principal desde el botón de navegación en móvil.', 'Inicia una venta desde «Nueva venta».', 'Cierra tu sesión al terminar.'],
+      adminActions: ['Filtra las métricas por sucursal, vendedor y período.', 'Actualiza las métricas del negocio.', 'Revisa ventas, cobros, saldos, incidencias, tiempos, diferencias de caja, carga de proveedores y productos destacados.'],
+    },
+    {
+      name: 'Clientes',
+      description: 'Permite buscar, registrar, revisar y actualizar fichas de clientes sin confundir personas con nombres o teléfonos compartidos.',
+      endUserActions: ['Selecciona la organización y la sucursal de trabajo.', 'Busca por nombre o teléfono.', 'Revisa las coincidencias antes de crear una ficha.', 'Abre una ficha existente.', 'Registra nombre, teléfonos, dirección, fecha de nacimiento, identificación, notas y consentimiento de WhatsApp.', 'Añade hasta cinco teléfonos.', 'Edita la ficha seleccionada.', 'Abre los pedidos exactos del cliente seleccionado.'],
+      adminActions: ['Consulta clientes de las sucursales autorizadas.', 'Comprueba el resumen de trabajos abiertos y terminados de cada cliente.'],
+    },
+    {
+      name: 'Recetas',
+      description: 'Conserva recetas ópticas, archivos originales y un historial inmutable de correcciones.',
+      endUserActions: ['Selecciona la organización, sucursal y cliente.', 'Registra esfera, cilindro, eje, adición, distancia pupilar y altura por ojo.', 'Registra prisma, base, fecha, profesional y observaciones.', 'Adjunta una imagen o un PDF de hasta 10 MB.', 'Guarda una receta nueva.', 'Selecciona «Corregir» para crear una revisión sin sobrescribir el original.', 'Descarga un archivo original desde el historial.'],
+      adminActions: ['Revisa todas las revisiones preservadas y su autoría.', 'Verifica que la ficha quede en solo lectura cuando la organización no pueda operar.'],
+    },
+    {
+      name: 'Catálogo y precios',
+      description: 'Gestiona productos ópticos y calcula combinaciones manteniendo el precio y la moneda de cada componente.',
+      endUserActions: ['Selecciona una organización disponible.', 'Selecciona artículos para simular una combinación.', 'Introduce la tasa USD a CUP de la operación.', 'Selecciona una receta para aplicar reglas de graduación.', 'Revisa subtotales, equivalencia total y advertencias antes de vender.'],
+      adminActions: ['Crea artículos propios de la organización.', 'Edita disponibilidad, costo, precio de venta y moneda.', 'Configura sustituciones o ajustes sobre artículos base.', 'Mantén el catálogo base global desde una cuenta de plataforma.'],
+    },
+    {
+      name: 'Nueva venta',
+      description: 'Guía la creación de una cotización, la confirmación verbal del cliente y la conversión atómica en pedido.',
+      endUserActions: ['Selecciona la organización y sucursal.', 'Busca y selecciona al cliente.', 'Crea una ficha sin salir de la venta cuando el cliente no exista.', 'Selecciona una receta o registra una nueva.', 'Introduce la tasa USD a CUP.', 'Selecciona los productos de la propuesta.', 'Ajusta el precio de una línea y registra el motivo cuando corresponda.', 'Añade notas comerciales.', 'Calcula y revisa la cotización.', 'Guarda la cotización.', 'Confirma la aceptación verbal del cliente.', 'Registra un primer cobro en efectivo después de crear el pedido.', 'Comienza otra venta desde la confirmación final.'],
+      adminActions: ['Revisa los importes originales, ajustados y la razón de cada ajuste.', 'Comprueba que un cambio de catálogo obligue a recalcular y reconfirmar.'],
+    },
+    {
+      name: 'Pedidos, cobros e historial',
+      description: 'Reúne saldos, pagos, producción, incidencias, notificaciones y entrega en una cronología verificable.',
+      endUserActions: ['Busca pedidos por cliente.', 'Filtra por estado y rango de fechas.', 'Abre el detalle de un pedido.', 'Revisa el total, lo cobrado y el saldo pendiente.', 'Registra un pago en CUP o USD.', 'Indica la tasa aplicada cuando el pago sea en USD.', 'Consulta los pagos y su equivalencia en CUP.', 'Revisa el historial completo y el actor de cada evento.', 'Marca el pedido como entregado cuando el saldo sea cero.'],
+      adminActions: ['Consulta los pedidos de la organización según tu alcance.', 'Identifica cobros realizados después de un cierre de caja.', 'Verifica que una entrega con saldo pendiente permanezca bloqueada.'],
+    },
+    {
+      name: 'Producción y proveedores',
+      description: 'Coordina cristales y montaje mediante asignaciones, transiciones controladas, incidencias y repeticiones vinculadas.',
+      endUserActions: ['Abre el trabajo que te fue asignado.', 'Revisa la configuración y la receta necesarias para fabricar.', 'Ejecuta la siguiente transición permitida para tu rol.', 'Registra una incidencia con descripción y responsable del costo.', 'Filtra trabajos por estado y fechas.'],
+      adminActions: ['Asigna cristales o montaje a un proveedor activo.', 'Selecciona pedido, tipo de trabajo y proveedor.', 'Ejecuta las transiciones que corresponden a la óptica.', 'Acepta una repetición vinculada a una incidencia.', 'Revisa cliente, proveedor, estado y cronología sin exponer importes a proveedores.'],
+    },
+    {
+      name: 'Caja y cierres',
+      description: 'Agrupa el efectivo por vendedor, fecha y moneda, y conserva cierres principales y complementarios.',
+      endUserActions: ['Selecciona tu caja del día y la moneda.', 'Revisa el efectivo esperado.', 'Introduce el efectivo declarado.', 'Cierra la caja del día.', 'Genera un cierre complementario cuando existan cobros posteriores.'],
+      adminActions: ['Filtra cajas por fecha, sucursal y vendedor.', 'Revisa importes cobrados, consolidados y diferencias.', 'Consulta el historial inmutable de cierres.', 'Distingue cobros posteriores al cierre principal.'],
+    },
+    {
+      name: 'Equipo',
+      description: 'Permite al dueño invitar vendedores y proveedores, asignar vendedores a sucursales y controlar accesos.',
+      endUserActions: [],
+      adminActions: ['Invita un vendedor, cristalero o montador.', 'Asigna una sucursal al vendedor.', 'Copia o reenvía la invitación según el canal disponible.', 'Cambia la sucursal de un vendedor.', 'Desactiva un acceso que ya no corresponda.', 'Reactiva un miembro previamente desactivado.'],
+      audience: 'admin',
+    },
+    {
+      name: 'Organizaciones y plataforma',
+      description: 'Ofrece al superadministrador control auditado sobre ópticas, contratos, módulos y asistencia.',
+      endUserActions: [],
+      adminActions: ['Busca y filtra organizaciones.', 'Crea una organización, primera sucursal y cuenta del dueño.', 'Configura prueba, suscripción, fechas, moneda, importe y módulos.', 'Abre el detalle de una organización.', 'Actualiza el estado y las condiciones con un motivo obligatorio.', 'Revisa contadores de uso.', 'Inicia o finaliza una sesión de asistencia auditada.', 'Mantén el catálogo base de la plataforma.'],
+      audience: 'admin',
+    },
+  ],
+  roles: [
+    { name: 'Superadministrador', description: 'Administra la plataforma LensSpace, pero no actúa como miembro operativo de una óptica.', permissions: ['Crear y mantener organizaciones.', 'Configurar contratos y módulos.', 'Consultar uso y estado técnico.', 'Mantener el catálogo base.', 'Iniciar asistencia auditada.'] },
+    { name: 'Dueño', description: 'Administra su organización y consulta todas las sucursales autorizadas.', permissions: ['Gestionar equipo y proveedores.', 'Configurar catálogo y precios.', 'Consultar ventas, cobros, producción, caja y analítica.', 'Operar los módulos habilitados.'] },
+    { name: 'Vendedor', description: 'Realiza el recorrido comercial y operativo de sus propios pedidos.', permissions: ['Gestionar clientes y recetas de su sucursal.', 'Crear ventas y aceptar cotizaciones.', 'Registrar pagos y entregar pedidos pagados.', 'Cerrar su propia caja.', 'Actualizar estados ópticos permitidos.'] },
+    { name: 'Cristalero / laboratorio', description: 'Trabaja únicamente sobre los trabajos de cristales que le fueron asignados.', permissions: ['Consultar la receta y configuración necesarias.', 'Actualizar sus propios estados de fabricación.', 'Registrar incidencias.', 'No consultar identidad del cliente, precios ni pagos.'] },
+    { name: 'Montador', description: 'Trabaja únicamente sobre los montajes que le fueron asignados.', permissions: ['Consultar la configuración necesaria para montar.', 'Actualizar sus propios estados de montaje.', 'Registrar incidencias.', 'No consultar identidad del cliente, precios ni pagos.'] },
+  ],
+  workflows: [
+    { title: 'Procesar una venta completa', audience: 'end-user', steps: ['Abre «Nueva venta».', 'Selecciona organización y sucursal.', 'Busca y selecciona al cliente o crea su ficha.', 'Selecciona una receta o registra una nueva.', 'Introduce la tasa USD a CUP.', 'Selecciona productos y revisa advertencias.', 'Ajusta precios únicamente cuando corresponda y explica el motivo.', 'Calcula la cotización.', 'Revisa el desglose con el cliente.', 'Guarda la cotización.', 'Confirma la aceptación verbal.', 'Registra el anticipo o primer cobro si el cliente paga.', 'Anota el número de pedido generado.'] },
+    { title: 'Completar producción y entrega', audience: 'end-user', steps: ['Abre «Producción».', 'Asigna el trabajo de cristales a un cristalero activo.', 'Envía el trabajo cuando esté preparado.', 'Permite que el cristalero actualice la fabricación.', 'Registra la recepción y revisión de los cristales.', 'Asigna el montaje cuando cristales y armadura estén disponibles.', 'Permite que el montador actualice su progreso.', 'Registra la recepción y revisión del montaje.', 'Abre «Pedidos y cobros».', 'Registra cualquier saldo pendiente.', 'Confirma que el saldo sea cero.', 'Marca el pedido como entregado.'] },
+    { title: 'Resolver una incidencia con repetición', audience: 'end-user', steps: ['Abre el trabajo afectado en «Producción».', 'Pulsa «Incidencia».', 'Describe qué ocurrió.', 'Selecciona al responsable del costo.', 'Confirma la incidencia.', 'Solicita al dueño o vendedor autorizado que acepte la repetición.', 'Revisa el nuevo trabajo vinculado.', 'Asigna el proveedor responsable.', 'Completa las transiciones del nuevo trabajo.', 'Conserva el trabajo original para la auditoría.'] },
+    { title: 'Cerrar la caja diaria', audience: 'end-user', steps: ['Abre «Caja y cierres».', 'Selecciona la caja y moneda del día.', 'Cuenta el efectivo físico.', 'Compara el efectivo con el importe esperado.', 'Introduce el importe declarado.', 'Pulsa «Cerrar caja del día».', 'Revisa la diferencia registrada.', 'Si recibes pagos posteriores, vuelve a la caja.', 'Genera un cierre complementario sin modificar el cierre principal.'] },
+    { title: 'Incorporar una óptica', audience: 'admin', steps: ['Abre «Organizaciones».', 'Pulsa la acción para crear una organización.', 'Registra los datos de la óptica y su primera sucursal.', 'Define el código de numeración antes del primer pedido.', 'Registra el dueño y su correo.', 'Configura período de prueba o contrato.', 'Selecciona los módulos habilitados.', 'Confirma la creación.', 'Verifica que el dueño reciba la invitación.', 'Comprueba los contadores y el estado en el detalle.'] },
+  ],
+  faqs: [
+    { question: '¿Por qué no veo una opción del menú?', answer: 'El menú se adapta a tu rol, a los módulos contratados y al estado de la organización. Pide al dueño que compruebe tu membresía; si eres dueño, revisa el contrato con el superadministrador.' },
+    { question: '¿Puedo entregar un pedido con saldo pendiente?', answer: 'No. LensSpace bloquea la entrega mientras exista cualquier saldo pendiente.' },
+    { question: '¿Puedo corregir una receta existente?', answer: 'Sí, mediante una nueva revisión. El sistema preserva el contenido anterior y registra quién realizó la corrección.' },
+    { question: '¿Qué ocurre si cambia un precio después de cotizar?', answer: 'La aceptación se rechaza si la cotización ya no coincide con el catálogo. Debes recalcular, revisar el nuevo total con el cliente y volver a confirmar.' },
+    { question: '¿Puede un proveedor ver el nombre o los pagos del cliente?', answer: 'No. Cristaleros y montadores reciben solamente la información operativa necesaria para su trabajo.' },
+    { question: '¿Cerrar caja impide registrar más cobros?', answer: 'No. Los cobros posteriores quedan identificados y se incluyen en un cierre complementario.' },
+    { question: '¿Se pueden borrar clientes, recetas o pedidos?', answer: 'No desde la operación normal. LensSpace preserva los datos históricos y utiliza estados, desactivación o archivo cuando corresponde.' },
+  ],
+  policies: ['Usa únicamente tu cuenta personal.', 'Respeta el alcance de datos indicado por tu rol.', 'Confirma con el cliente cualquier cambio que altere el total.', 'No marques una entrega hasta recibir el pago completo.', 'Registra incidencias y correcciones en LensSpace; no reemplaces el historial con mensajes externos.', 'No almacenes credenciales ni datos privados en notas o documentación.'],
+} satisfies ClientDocsInput

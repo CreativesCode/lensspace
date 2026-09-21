@@ -12,6 +12,7 @@ Read relevant entries only. Store decisions with dates and evidence.
 
 ## Project decisions
 
+- [2026-09-21 — Manual integrado de LensSpace](project/2026-09-21-manual-generator.md)
 - [2026-09-21 — SEO público de LensSpace](project/2026-09-21-public-seo.md)
 - [2026-09-21 — LensSpace product name](project/2026-09-21-lensspace-rebrand.md)
 - [2026-09-21 — Filtros operativos reutilizables](project/2026-09-21-operational-filters.md)

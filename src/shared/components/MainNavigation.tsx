@@ -21,6 +21,7 @@ const navigationSections = [
       { href: '/catalog', label: 'Catálogo y precios' },
       { href: '/team', label: 'Equipo' },
       { href: '/organizations', label: 'Organizaciones' },
+      { href: '/manual', label: 'Manual del sistema' },
     ],
   },
 ]
