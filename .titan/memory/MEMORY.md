@@ -9,6 +9,7 @@ Read relevant entries only. Store decisions with dates and evidence.
 ## Feedback
 
 - [2026-09-12 — Invitation and member dashboard corrections](feedback/2026-09-12-invitation-member-dashboard.md)
+- [2026-10-01 — Upstream asset carried an OpenRouter key](feedback/2026-10-01-upstream-asset-secret.md)
 
 ## Project decisions
 
