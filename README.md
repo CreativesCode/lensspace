@@ -18,3 +18,10 @@ ESLint runs independently from the Next.js build. This starter uses ESLint 10 wi
 Tailwind remains version 3 with its matching `@tailwind` CSS directives and PostCSS configuration. No database, account or deployment is provisioned by copying this directory.
 
 The toolkit's scaffold command rejects nonempty destinations. For existing applications, apply individual skills instead of copying this starter over the project.
+
+## Shared Codex setup
+
+Project instructions, Titan Factory workflows, specialist roles and project
+skills are versioned with the repository. See [docs/CODEX_SETUP.md](docs/CODEX_SETUP.md)
+for teammate onboarding, skill restoration and the machine-local Supabase MCP
+authentication step.
