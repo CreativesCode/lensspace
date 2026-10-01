@@ -54,11 +54,16 @@ Thumbs.db
 .AppleDouble
 .LSOverride
 
-# Claude Code
+# Claude Code (shared config is versioned; personal state stays local)
 .claude/skills/**/node_modules
 .claude/plugins
+.claude/settings.local.json
+.claude/logs/
+CLAUDE.local.md
 *.mcp.json
 !example.mcp.json
+# Project MCP config carries only ${ENV_VAR} placeholders, never secrets
+!/.mcp.json
 
 # Supabase
 supabase/.branches

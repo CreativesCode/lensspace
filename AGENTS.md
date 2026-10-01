@@ -9,6 +9,14 @@
 - Preserve local code and project knowledge during toolkit updates. Never store credentials in shared memory.
 <!-- titan-factory-codex:end -->
 
+<!-- titan-factory-shared:start -->
+## Shared agent tooling
+
+- This repository hosts two Titan Factory toolboxes: Codex (`plugins/titan-factory-codex/`, `.codex/`, `.agents/`) and Claude Code (`CLAUDE.md`, `.claude/`). Both use the same `tf-` skill names.
+- Both share one project memory: `.titan/memory/` (plus `.titan/plans/` and `.titan/qa/`). Never create a second copy such as `.claude/memory/`. Entries may come from either agent; keep the existing format (plain Markdown, `# Title`, `Date: YYYY-MM-DD`, dated file names, one-line index entries appended to `MEMORY.md`).
+- Do not modify the other agent's toolbox unless the task is about it. Setup for both agents: `docs/AGENT_SETUP.md`.
+<!-- titan-factory-shared:end -->
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

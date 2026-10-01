@@ -12,6 +12,9 @@ The Titan Factory Codex 0.1.0 plugin is distributed through the repo marketplace
 named `lensspace`. The project also carries the Supabase, Supabase Postgres best
 practices and logo-design skills under `.agents/skills/`.
 
+Extended the same day to Claude Code; see
+[Dual-agent tooling](2026-10-01-dual-agent-tooling.md).
+
 ## Boundary
 
 Credentials and personal state do not travel with Git. Each contributor must
@@ -26,7 +29,7 @@ outside the repository.
 - `plugins/titan-factory-codex/`
 - `.agents/skills/logo-design/`
 - `skills-lock.json`
-- `docs/CODEX_SETUP.md`
+- `docs/AGENT_SETUP.md` (renamed from `docs/CODEX_SETUP.md` on 2026-10-01)
 
 Source: explicit user request to make the Codex project setup portable for the
 team and to add `kaankiziltug/logo-design-skill`.

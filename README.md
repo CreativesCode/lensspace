@@ -19,9 +19,10 @@ Tailwind remains version 3 with its matching `@tailwind` CSS directives and Post
 
 The toolkit's scaffold command rejects nonempty destinations. For existing applications, apply individual skills instead of copying this starter over the project.
 
-## Shared Codex setup
+## Shared AI agent setup
 
-Project instructions, Titan Factory workflows, specialist roles and project
-skills are versioned with the repository. See [docs/CODEX_SETUP.md](docs/CODEX_SETUP.md)
-for teammate onboarding, skill restoration and the machine-local Supabase MCP
-authentication step.
+Project instructions, Titan Factory workflows, specialist roles, project skills and
+the project memory are versioned with the repository for both Codex and Claude Code,
+which share one memory under `.titan/`. See [docs/AGENT_SETUP.md](docs/AGENT_SETUP.md)
+for teammate onboarding, skill restoration and the machine-local MCP authentication
+step for each agent.
