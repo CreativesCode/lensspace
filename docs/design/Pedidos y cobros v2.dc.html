@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #f7fbfa; }
+  a { color: #0d7a72; text-decoration: none; }
+  a:hover { color: #07322f; }
+  input, select, textarea, button { font-family: inherit; }
+  ::placeholder { color: #8a9a96; }
+  input[type=number]::-webkit-inner-spin-button { opacity: .4; }
+</style>
+</helmet>
+
+<div style="font-family: 'Source Sans 3', system-ui, sans-serif; color: #1c3a37; background: #f7fbfa; min-height: 100vh;">
+
+  <div style="position: fixed; top: 14px; right: 16px; z-index: 60; display: flex; align-items: center; gap: 4px; padding: 4px; border-radius: 12px; background: #ffffff; border: 1px solid #dcecea; box-shadow: 0 10px 28px rgba(7,50,47,.14);">
+    <button style="{{ swHoy }}" onClick="{{ verHoy }}">Hoy</button>
+    <button style="{{ swNuevo }}" onClick="{{ verNuevo }}">Propuesta</button>
+  </div>
+
+  <sc-if value="{{ esNuevo }}" hint-placeholder-val="{{ true }}">
+  <div data-screen-label="Pedidos · Propuesta" style="display: flex; min-height: 100vh;">
+    <aside style="width: 260px; flex: 0 0 260px; box-sizing: border-box; background: #07322f; padding: 22px 14px 18px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow-y: auto;">
+      <div style="padding: 0 6px; display: flex; align-items: center; gap: 10px;"><img src="brand/lensspace-mark.svg" width="36" height="36" alt=""><div><div style="font-family: 'Space Grotesk', sans-serif; font-size: 15.5px; font-weight: 700; color: #f2fbf9;">LensSpace</div><div style="font-size: 12px; color: #7fb3ac;">Óptica Vedado</div></div></div>
+      <button style="margin-top: 22px; min-height: 44px; border: none; border-radius: 10px; background: #35c2a8; color: #07322f; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;" style-hover="background: #5dd3bd;"><span style="width: 17px; height: 17px; background: #07322f; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/plus.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/plus.svg) center/contain no-repeat;"></span>Nueva venta</button>
+      <sc-for list="{{ navSecciones }}" as="sec" hint-placeholder-count="2">
+        <div style="padding-top: 22px; display: flex; flex-direction: column; gap: 2px;">
+          <div style="padding: 0 12px 8px; font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #7fb3ac;">{{ sec.label }}</div>
+          <sc-for list="{{ sec.items }}" as="it" hint-placeholder-count="4">
+            <div style="{{ it.row }}">
+              <span style="{{ it.bar }}"></span>
+              <span style="{{ it.icon }}"></span>
+              <span style="flex: 1;">{{ it.label }}</span>
+              <sc-if value="{{ it.count }}" hint-placeholder-val="{{ false }}"><span style="{{ it.countStyle }}">{{ it.count }}</span></sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+      <div style="margin-top: auto; padding-top: 22px;">
+        <div style="padding: 12px; border-radius: 12px; background: #10463f; display: flex; align-items: center; gap: 10px;">
+          <span style="width: 34px; height: 34px; flex: 0 0 34px; border-radius: 999px; background: #0d7a72; color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700;">YP</span>
+          <div style="flex: 1; min-width: 0;"><div style="font-size: 14px; font-weight: 600; color: #e6f5f3;">Yanet Pérez</div><div style="font-size: 12px; color: #7fb3ac;">Vendedora</div></div>
+          <span title="Cerrar sesión" style="width: 18px; height: 18px; background: #7fb3ac; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/log-out.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/log-out.svg) center/contain no-repeat; cursor: pointer;"></span>
+        </div>
+      </div>
+    </aside>
+
+    <main style="flex: 1; min-width: 0; padding: 24px clamp(16px, 2.6vw, 36px) 48px; box-sizing: border-box;">
+      <div style="max-width: 1440px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+
+        <header style="background: #07322f; border-radius: 20px; padding: clamp(20px, 2.6vw, 30px); display: flex; flex-direction: column; gap: 22px; position: relative; overflow: hidden;">
+          <div style="position: absolute; right: -90px; top: -150px; width: 380px; height: 380px; border-radius: 999px; border: 1px solid #16544c;"></div>
+          <div style="position: absolute; right: 30px; top: -60px; width: 210px; height: 210px; border-radius: 999px; border: 1px solid #16544c;"></div>
+          <div style="position: relative; max-width: 620px;">
+            <div style="font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #7fd8c8;">Operación comercial</div>
+            <h1 style="margin: 8px 0 0; font-family: 'Space Grotesk', sans-serif; font-size: clamp(28px, 3.2vw, 38px); font-weight: 700; letter-spacing: -.03em; line-height: 1.08; color: #ffffff;">Pedidos y cobros</h1>
+            <p style="margin: 8px 0 0; font-size: 15px; line-height: 1.55; color: #b9ddd7; text-wrap: pretty;">Registra efectivo, controla el saldo y entrega solo cuando el pedido esté pagado.</p>
+          </div>
+          <div style="position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px;">
+            <div style="border-radius: 14px; background: #10463f; padding: 14px 16px;"><div style="font-size: 13px; color: #a7cfc9;">Pedidos activos</div><div style="margin-top: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -.02em; color: #ffffff;">{{ kpi.activos }}</div></div>
+            <div style="border-radius: 14px; background: #ff6b4a; padding: 14px 16px;"><div style="font-size: 13px; font-weight: 600; color: #4a1507;">Saldo por cobrar</div><div style="margin-top: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -.02em; color: #07322f; font-variant-numeric: tabular-nums;">{{ kpi.saldo }} <span style="font-size: 13px; font-weight: 600;">CUP</span></div></div>
+            <div style="border-radius: 14px; background: #10463f; padding: 14px 16px;"><div style="font-size: 13px; color: #a7cfc9;">Pagados, por entregar</div><div style="margin-top: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -.02em; color: #35c2a8;">{{ kpi.listos }}</div></div>
+            <div style="border-radius: 14px; background: #10463f; padding: 14px 16px;"><div style="font-size: 13px; color: #a7cfc9;">Cobrado hoy</div><div style="margin-top: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -.02em; color: #ffffff; font-variant-numeric: tabular-nums;">{{ kpi.hoy }} <span style="font-size: 13px; font-weight: 500; color: #a7cfc9;">CUP</span></div></div>
+          </div>
+        </header>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start;">
+
+          <section style="flex: 1 1 360px; min-width: 0; background: #ffffff; border: 1px solid #e3efed; border-radius: 14px; box-shadow: 0 1px 2px rgba(7,50,47,.05); overflow: hidden;">
+            <div style="padding: 18px 18px 14px; display: flex; flex-direction: column; gap: 12px; border-bottom: 1px solid #eef5f4;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                <h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: #07322f;">Bandeja de pedidos</h2>
+                <span style="font-size: 13px; color: #5f716c;">{{ resultLabel }}</span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <label style="flex: 1; min-width: 0; height: 44px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 0 14px; border: 1px solid #dcecea; border-radius: 10px; background: #fbfefd;">
+                  <span style="width: 17px; height: 17px; flex: 0 0 17px; background: #5f716c; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/search.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/search.svg) center/contain no-repeat;"></span>
+                  <input value="{{ q }}" onChange="{{ onQ }}" placeholder="Nombre del cliente" style="border: none; outline: none; background: transparent; font-size: 15px; width: 100%; color: #1c3a37;">
+                </label>
+                <button title="Filtros" onClick="{{ abrirFiltros }}" style="position: relative; width: 44px; height: 44px; flex: 0 0 44px; border-radius: 10px; border: 1px solid #cfe3e0; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer;" style-hover="background: #f0fbf9;">
+                  <span style="width: 18px; height: 18px; background: #0d7a72; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/sliders-horizontal.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/sliders-horizontal.svg) center/contain no-repeat;"></span>
+                  <sc-if value="{{ filtrosActivos }}" hint-placeholder-val="{{ false }}"><span style="position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; border-radius: 999px; background: #ff6b4a; color: #07322f; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; box-sizing: border-box;">{{ filtrosActivos }}</span></sc-if>
+                </button>
+              </div>
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <sc-for list="{{ chips }}" as="ch" hint-placeholder-count="5">
+                  <button style="{{ ch.style }}" onClick="{{ ch.go }}">{{ ch.label }}<span style="{{ ch.countStyle }}">{{ ch.n }}</span></button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="max-height: 68vh; overflow-y: auto;">
+              <sc-for list="{{ lista }}" as="p" hint-placeholder-count="6">
+                <button style="{{ p.row }}" onClick="{{ p.go }}">
+                  <span style="{{ p.avatar }}">{{ p.ini }}</span>
+                  <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; text-align: left;">
+                    <span style="font-size: 15px; font-weight: 600; color: #07322f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.cliente }}</span>
+                    <span style="font-size: 13px; color: #5f716c;">{{ p.folioCorto }} · {{ p.fecha }}</span>
+                  </span>
+                  <span style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+                    <span style="{{ p.montoStyle }}">{{ p.monto }}</span>
+                    <span style="{{ p.badge }}"><span style="{{ p.dot }}"></span>{{ p.estado }}</span>
+                  </span>
+                </button>
+              </sc-for>
+              <sc-if value="{{ sinResultados }}" hint-placeholder-val="{{ false }}">
+                <div style="padding: 32px 20px; text-align: center; display: flex; flex-direction: column; align-items: center;">
+                  <span style="width: 48px; height: 48px; border-radius: 14px; background: #e2f4f1; display: flex; align-items: center; justify-content: center;"><span style="width: 22px; height: 22px; background: #0d7a72; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/search-x.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/search-x.svg) center/contain no-repeat;"></span></span>
+                  <div style="margin-top: 10px; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; color: #07322f;">Sin pedidos con estos filtros</div>
+                  <button onClick="{{ limpiar }}" style="margin-top: 10px; min-height: 40px; padding: 0 14px; border: none; border-radius: 10px; background: transparent; color: #0d7a72; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;" style-hover="background: #e2f4f1;">Limpiar filtros</button>
+                </div>
+              </sc-if>
+            </div>
+          </section>
+
+          <section style="flex: 2.4 1 520px; min-width: 0; background: #ffffff; border: 1px solid #e3efed; border-radius: 14px; box-shadow: 0 1px 2px rgba(7,50,47,.05); overflow: hidden;">
+            <div style="padding: 20px 24px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; border-bottom: 1px solid #eef5f4;">
+              <span style="width: 48px; height: 48px; flex: 0 0 48px; border-radius: 999px; background: #0d7a72; color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700;">{{ sel.ini }}</span>
+              <div style="flex: 1; min-width: 180px;">
+                <div style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -.02em; color: #07322f;">{{ sel.cliente }}</div>
+                <div style="margin-top: 2px; font-size: 14px; color: #5f716c;">{{ sel.folio }} · creado el {{ sel.fechaLarga }}</div>
+              </div>
+              <span style="{{ sel.badgeLg }}"><span style="{{ sel.dot }}"></span>{{ sel.estado }}</span>
+            </div>
+
+            <div style="padding: 22px 24px; display: flex; flex-direction: column; gap: 22px;">
+
+              <div style="display: flex; flex-wrap: wrap; gap: 14px;">
+                <div style="{{ sel.saldoPanel }}">
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
+                    <div>
+                      <div style="{{ sel.saldoLabelStyle }}">{{ sel.saldoLabel }}</div>
+                      <div style="{{ sel.saldoNumStyle }}">{{ sel.saldo }} <span style="font-size: 16px; font-weight: 600;">CUP</span></div>
+                    </div>
+                    <span style="{{ sel.saldoIconWrap }}"><span style="{{ sel.saldoIcon }}"></span></span>
+                  </div>
+                  <div style="margin-top: 16px; height: 10px; border-radius: 999px; background: rgba(7,50,47,.08); overflow: hidden;"><div style="{{ sel.barra }}"></div></div>
+                  <div style="margin-top: 8px; font-size: 13px; color: #4a5b58;">Cobrado {{ sel.pct }} % · {{ sel.estadoPago }}</div>
+                </div>
+                <div style="flex: 1 1 200px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                  <div style="border-radius: 14px; border: 1px solid #e3efed; padding: 14px 16px;"><div style="font-size: 13px; color: #5f716c;">Total</div><div style="margin-top: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #07322f; font-variant-numeric: tabular-nums;">{{ sel.total }}</div><div style="font-size: 12px; color: #5f716c;">CUP equivalentes</div></div>
+                  <div style="border-radius: 14px; border: 1px solid #e3efed; padding: 14px 16px;"><div style="font-size: 13px; color: #5f716c;">Cobrado</div><div style="margin-top: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #07655c; font-variant-numeric: tabular-nums;">{{ sel.pagado }}</div><div style="font-size: 12px; color: #5f716c;">{{ sel.nPagos }}</div></div>
+                </div>
+              </div>
+
+              <sc-if value="{{ sel.puedeCobrar }}" hint-placeholder-val="{{ true }}">
+                <div style="border-radius: 14px; border: 1px solid #e3efed; background: #fbfefd; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
+                    <h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 600; color: #07322f;">Registrar efectivo</h3>
+                    <button onClick="{{ llenarSaldo }}" style="min-height: 34px; padding: 0 12px; border: 1px solid #cfe3e0; border-radius: 8px; background: #fff; color: #0d7a72; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;" style-hover="background: #f0fbf9;">Cobrar saldo completo</button>
+                  </div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
+                    <label style="flex: 2 1 220px; display: flex; flex-direction: column; gap: 6px;">
+                      <span style="font-size: 13px; font-weight: 600; color: #324e4a;">Importe</span>
+                      <span style="display: flex; gap: 8px;">
+                        <input type="number" min="0" step="0.01" value="{{ amount }}" onChange="{{ onAmount }}" placeholder="0" style="{{ amountStyle }}">
+                        <span style="display: flex; padding: 3px; gap: 3px; border-radius: 10px; background: #eef5f4;">
+                          <button style="{{ monCUP }}" onClick="{{ setCUP }}">CUP</button>
+                          <button style="{{ monUSD }}" onClick="{{ setUSD }}">USD</button>
+                        </span>
+                      </span>
+                    </label>
+                    <sc-if value="{{ esUSD }}" hint-placeholder-val="{{ false }}">
+                      <label style="flex: 1 1 130px; display: flex; flex-direction: column; gap: 6px;">
+                        <span style="font-size: 13px; font-weight: 600; color: #324e4a;">Tasa aplicada</span>
+                        <input type="number" min="0.01" step="0.01" value="{{ rate }}" onChange="{{ onRate }}" style="height: 48px; box-sizing: border-box; padding: 0 14px; border: 1px solid #dcecea; border-radius: 10px; font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 600; color: #07322f; background: #fff; outline: none;">
+                      </label>
+                    </sc-if>
+                    <label style="flex: 2 1 220px; display: flex; flex-direction: column; gap: 6px;">
+                      <span style="font-size: 13px; font-weight: 600; color: #324e4a;">Nota <span style="font-weight: 400; color: #5f716c;">(opcional)</span></span>
+                      <input value="{{ note }}" onChange="{{ onNote }}" maxlength="500" placeholder="Ej. entregó en billetes de 1000" style="height: 48px; box-sizing: border-box; padding: 0 14px; border: 1px solid #dcecea; border-radius: 10px; font-size: 15px; color: #1c3a37; background: #fff; outline: none;">
+                    </label>
+                  </div>
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-top: 4px;">
+                    <div style="{{ equivStyle }}">{{ equivTexto }}</div>
+                    <button onClick="{{ registrar }}" style="{{ btnRegistrar }}"><span style="width: 17px; height: 17px; background: #fff; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/banknote.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/banknote.svg) center/contain no-repeat;"></span>Registrar pago</button>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ sel.pagadoMsg }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; gap: 12px; padding: 14px 16px; border-radius: 12px; background: #e9faf5; border: 1px solid #a9e6d7;"><span style="width: 18px; height: 18px; flex: 0 0 18px; margin-top: 1px; background: #07655c; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/circle-check.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/circle-check.svg) center/contain no-repeat;"></span><div style="font-size: 14.5px; line-height: 1.5; color: #07655c; font-weight: 600;">{{ sel.pagadoMsg }}</div></div>
+              </sc-if>
+
+              <div>
+                <div style="display: flex; gap: 2px; border-bottom: 1px solid #e3efed;">
+                  <button style="{{ tabPagos }}" onClick="{{ verPagos }}">Pagos <span style="{{ tabPagosN }}">{{ sel.pagosCount }}</span></button>
+                  <button style="{{ tabHist }}" onClick="{{ verHist }}">Historial <span style="{{ tabHistN }}">{{ sel.histCount }}</span></button>
+                </div>
+
+                <sc-if value="{{ esPagos }}" hint-placeholder-val="{{ true }}">
+                  <div style="display: flex; flex-direction: column;">
+                    <sc-for list="{{ sel.pagos }}" as="pg" hint-placeholder-count="2">
+                      <div style="display: flex; align-items: center; gap: 14px; padding: 14px 2px; border-bottom: 1px solid #f2f7f6;">
+                        <span style="width: 38px; height: 38px; flex: 0 0 38px; border-radius: 10px; background: #e2f4f1; display: flex; align-items: center; justify-content: center;"><span style="width: 18px; height: 18px; background: #0d7a72; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/banknote.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/banknote.svg) center/contain no-repeat;"></span></span>
+                        <div style="flex: 1; min-width: 0;">
+                          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;"><span style="font-size: 15px; font-weight: 600; color: #07322f;">{{ pg.desc }}</span><sc-if value="{{ pg.post }}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; background: #e2f4f1; color: #0b5a53;">Posterior al cierre</span></sc-if></div>
+                          <div style="font-size: 13px; color: #5f716c;">{{ pg.cuando }}</div>
+                        </div>
+                        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; color: #07322f; font-variant-numeric: tabular-nums; white-space: nowrap;">{{ pg.eq }} CUP</div>
+                      </div>
+                    </sc-for>
+                    <sc-if value="{{ sel.sinPagos }}" hint-placeholder-val="{{ false }}">
+                      <div style="padding: 22px 4px; font-size: 14.5px; color: #5f716c;">Aún no hay pagos registrados para este pedido.</div>
+                    </sc-if>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ esHist }}" hint-placeholder-val="{{ false }}">
+                  <ol style="margin: 0; padding: 18px 2px 0; list-style: none;">
+                    <sc-for list="{{ sel.timeline }}" as="ev" hint-placeholder-count="4">
+                      <li style="display: flex; gap: 14px;">
+                        <div style="display: flex; flex-direction: column; align-items: center; flex: 0 0 12px;"><span style="{{ ev.dot }}"></span><span style="{{ ev.line }}"></span></div>
+                        <div style="flex: 1; padding-bottom: 18px;">
+                          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;"><span style="{{ ev.tag }}">{{ ev.kindLabel }}</span><span style="font-size: 13px; color: #5f716c;">{{ ev.cuando }}</span></div>
+                          <div style="margin-top: 5px; font-size: 15px; font-weight: 600; color: #07322f;">{{ ev.title }}</div>
+                          <div style="margin-top: 2px; font-size: 14px; line-height: 1.5; color: #4a5b58;">{{ ev.detail }}</div>
+                          <div style="margin-top: 3px; font-size: 13px; color: #5f716c;">{{ ev.actor }}</div>
+                        </div>
+                      </li>
+                    </sc-for>
+                  </ol>
+                </sc-if>
+              </div>
+
+              <div style="display: flex; gap: 12px; padding: 14px 16px; border-radius: 12px; background: #f0fbf9; border: 1px solid #b9dfd9;"><span style="width: 18px; height: 18px; flex: 0 0 18px; margin-top: 1px; background: #0d7a72; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/message-circle.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/message-circle.svg) center/contain no-repeat;"></span><div style="font-size: 14px; line-height: 1.5; color: #0b5a53;">Confirmación, pedido listo, pago recibido y entrega se notifican solos al WhatsApp autorizado del cliente. Cada envío queda en el historial.</div></div>
+            </div>
+
+            <sc-if value="{{ sel.mostrarEntrega }}" hint-placeholder-val="{{ true }}">
+              <div style="padding: 16px 24px; border-top: 1px solid #eef5f4; background: #f7fbfa; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
+                <div style="{{ sel.entregaNotaStyle }}"><span style="{{ sel.entregaIcon }}"></span>{{ sel.entregaNota }}</div>
+                <button onClick="{{ entregar }}" style="{{ sel.btnEntregar }}"><span style="{{ sel.btnEntregarIcon }}"></span>Marcar como entregado</button>
+              </div>
+            </sc-if>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <sc-if value="{{ filtrosOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; inset: 0; z-index: 50; background: rgba(7,50,47,.55); display: flex; align-items: center; justify-content: center; padding: 16px;">
+      <div style="width: 100%; max-width: 520px; background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 28px 64px rgba(7,50,47,.3);">
+        <div style="padding: 20px 22px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; border-bottom: 1px solid #eef5f4;">
+          <div><div style="font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #0d7a72;">Filtros</div><div style="margin-top: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #07322f;">Filtrar por fecha</div></div>
+          <button onClick="{{ cerrarFiltros }}" title="Cerrar" style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid #dcecea; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer;"><span style="width: 18px; height: 18px; background: #07322f; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/x.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/x.svg) center/contain no-repeat;"></span></button>
+        </div>
+        <div style="padding: 20px 22px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;">
+          <label style="display: flex; flex-direction: column; gap: 6px;"><span style="font-size: 13px; font-weight: 600; color: #324e4a;">Desde</span><input type="date" value="{{ dateFrom }}" onChange="{{ onFrom }}" style="height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #dcecea; border-radius: 10px; font-size: 15px; background: #fbfefd; color: #1c3a37;"></label>
+          <label style="display: flex; flex-direction: column; gap: 6px;"><span style="font-size: 13px; font-weight: 600; color: #324e4a;">Hasta</span><input type="date" value="{{ dateTo }}" onChange="{{ onTo }}" style="height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #dcecea; border-radius: 10px; font-size: 15px; background: #fbfefd; color: #1c3a37;"></label>
+          <div style="grid-column: 1 / -1; font-size: 13px; color: #5f716c;">El estado se filtra con los botones rápidos de la bandeja.</div>
+        </div>
+        <div style="padding: 14px 22px; background: #f7fbfa; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+          <button onClick="{{ limpiar }}" style="min-height: 44px; padding: 0 14px; border: none; border-radius: 10px; background: transparent; color: #4a5b58; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;">Limpiar todo</button>
+          <button onClick="{{ cerrarFiltros }}" style="min-height: 44px; padding: 0 18px; border: none; border-radius: 10px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;">Ver {{ resultLabel }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  </sc-if>
+
+  <sc-if value="{{ esHoy }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="Pedidos · Hoy" style="display: flex; min-height: 100vh; background: #f7fbfa;">
+    <aside style="width: 244px; flex: 0 0 244px; box-sizing: border-box; background: #07322f; padding: 24px 16px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;">
+      <div style="padding: 0 4px; display: flex; align-items: center; gap: 12px;"><img src="brand/lensspace-mark.svg" width="42" height="42" alt=""><div><div style="font-family: 'Space Grotesk', sans-serif; font-size: 15.5px; font-weight: 700; letter-spacing: -.025em; color: #f2fbf9;">LensSpace</div><div style="font-size: 11px; color: #6f9c96;">Gestión óptica</div></div></div>
+      <div style="margin-top: 32px;">
+        <div style="display: flex; min-height: 44px; align-items: center; justify-content: center; gap: 8px; border-radius: 7px; padding: 10px 16px; box-sizing: border-box; background: #0d7a72; color: #fff; font-size: 14px; font-weight: 600;"><span style="font-size: 20px; line-height: 1;">+</span>Nueva venta</div>
+        <sc-for list="{{ hoyNav }}" as="sec" hint-placeholder-count="2">
+          <div style="padding-top: 24px;">
+            <div style="padding: 0 12px 8px; font-size: 10px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: #4d7a74;">{{ sec.label }}</div>
+            <sc-for list="{{ sec.items }}" as="it" hint-placeholder-count="4">
+              <div style="{{ it.row }}"><span style="{{ it.dot }}"></span>{{ it.label }}</div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin-top: auto; border-top: 1px solid #10463f; padding-top: 16px;">
+        <div style="font-size: 14px; font-weight: 600; color: #e6f5f3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">yanet.perez@opticavedado.cu</div>
+        <div style="margin-top: 4px; font-size: 12px; color: #6f9c96;">Sesión activa</div>
+        <div style="margin-top: 16px; border-radius: 7px; border: 1px solid #2b5e58; padding: 8px 16px; text-align: center; font-size: 14px; font-weight: 500; color: #a7cfc9;">Cerrar sesión</div>
+      </div>
+    </aside>
+    <main style="flex: 1; min-width: 0;">
+      <section style="max-width: 1440px; margin: 0 auto; padding: 32px 32px; box-sizing: border-box;">
+        <p style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: #0d7a72;">Operación comercial</p>
+        <h1 style="margin: 8px 0 0; font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; line-height: 36px; color: #07322f;">Pedidos y cobros</h1>
+        <p style="margin: 8px 0 24px; font-size: 14px; color: #74857f;">Registra efectivo, controla el saldo y entrega solo cuando el pedido esté pagado.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start;">
+          <section style="flex: 0 1 420px; min-width: 300px; display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; justify-content: flex-end;"><span style="width: 44px; height: 44px; border-radius: 7px; border: 1px solid #9bcdc6; background: #fff; display: flex; align-items: center; justify-content: center;"><span style="width: 19px; height: 19px; background: #0d7a72; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/filter.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/filter.svg) center/contain no-repeat;"></span></span></div>
+            <div style="border-radius: 10px; border: 1px solid #e3efed; background: #fff; padding: 16px;">
+              <h2 style="margin: 0; padding: 0 8px; font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: #07322f;">Bandeja de pedidos</h2>
+              <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                <sc-for list="{{ hoyLista }}" as="o" hint-placeholder-count="6">
+                  <button style="{{ o.row }}" onClick="{{ o.go }}">
+                    <span style="display: flex; align-items: center; justify-content: space-between; gap: 12px;"><strong style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; color: #07322f;">{{ o.folio }}</strong><span style="{{ o.badge }}">{{ o.estado }}</span></span>
+                    <span style="margin-top: 4px; display: block; font-size: 14px; color: #4a5b58;">{{ o.cliente }}</span>
+                    <span style="margin-top: 8px; display: block; font-size: 12px; color: #74857f;">{{ o.meta }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </section>
+          <section style="flex: 1 1 480px; min-width: 0; border-radius: 10px; border: 1px solid #e3efed; background: #fff; padding: 20px; display: flex; flex-direction: column; gap: 20px;">
+            <div>
+              <p style="margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: .025em; color: #74857f;">{{ sel.folio }} · {{ sel.comercial }}</p>
+              <h2 style="margin: 4px 0 0; font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; color: #07322f;">Saldo {{ sel.saldo }} CUP</h2>
+              <div style="margin-top: 12px; height: 8px; border-radius: 999px; background: #e3efed; overflow: hidden;"><span style="{{ sel.barraHoy }}"></span></div>
+              <p style="margin: 8px 0 0; font-size: 12px; color: #74857f;">Cobrado {{ sel.pagado }} de {{ sel.total }} CUP equivalentes · {{ sel.estadoPagoCorto }}</p>
+            </div>
+            <sc-if value="{{ sel.puedeCobrar }}" hint-placeholder-val="{{ true }}">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; border-radius: 7px; background: #f7fbfa; padding: 16px;">
+                <h3 style="grid-column: 1 / -1; margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; color: #07322f;">Registrar efectivo</h3>
+                <input placeholder="Importe" style="box-sizing: border-box; width: 100%; border-radius: 7px; border: 1px solid #dcecea; background: #fbfefd; padding: 10px 12px; font-size: 14px; color: #07322f; outline: none;">
+                <span style="display: flex; align-items: center; justify-content: space-between; border-radius: 7px; border: 1px solid #dcecea; background: #fbfefd; padding: 10px 12px; font-size: 14px; color: #07322f;">CUP<span style="width: 16px; height: 16px; background: #315d58; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/chevron-down.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/chevron-down.svg) center/contain no-repeat;"></span></span>
+                <input placeholder="Nota opcional" style="box-sizing: border-box; width: 100%; border-radius: 7px; border: 1px solid #dcecea; background: #fbfefd; padding: 10px 12px; font-size: 14px; color: #07322f; outline: none;">
+                <span style="border-radius: 8px; background: #0d7a72; padding: 12px 16px; text-align: center; font-size: 14px; font-weight: 600; color: #fff;">Registrar pago</span>
+              </div>
+            </sc-if>
+            <div>
+              <h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; color: #07322f;">Pagos</h3>
+              <div style="margin-top: 8px;">
+                <sc-for list="{{ sel.pagos }}" as="pg" hint-placeholder-count="2">
+                  <div style="display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid #eef5f4; font-size: 14px;"><span style="color: #4a5b58;">{{ pg.descHoy }}</span><strong style="color: #07322f;">{{ pg.eq }} CUP</strong></div>
+                </sc-for>
+              </div>
+            </div>
+            <p style="margin: 0; border-radius: 7px; border: 1px solid #dcecea; background: #f7fbfa; padding: 16px; font-size: 14px; color: #4a5b58;">Las notificaciones de confirmación, pedido listo, pago recibido y entrega se envían automáticamente al WhatsApp autorizado del cliente. Cada resultado queda registrado en este historial.</p>
+            <div>
+              <h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; color: #07322f;">Historial completo</h3>
+              <p style="margin: 4px 0 0; font-size: 12px; color: #74857f;">Más reciente primero</p>
+              <ol style="margin: 12px 0 0; padding: 0; list-style: none;">
+                <sc-for list="{{ sel.timeline }}" as="ev" hint-placeholder-count="4">
+                  <li style="display: flex; gap: 12px;">
+                    <div style="display: flex; flex-direction: column; align-items: center;"><span style="{{ ev.dotHoy }}"></span><span style="{{ ev.lineHoy }}"></span></div>
+                    <div style="padding-bottom: 16px;"><p style="margin: 0; font-size: 14px; font-weight: 600; color: #07322f;">{{ ev.title }}</p><p style="margin: 0; font-size: 12px; color: #4a5b58;">{{ ev.detail }}</p><p style="margin: 4px 0 0; font-size: 11px; color: #74857f;">{{ ev.cuandoHoy }} · {{ ev.actor }}</p></div>
+                  </li>
+                </sc-for>
+              </ol>
+            </div>
+            <sc-if value="{{ sel.mostrarEntrega }}" hint-placeholder-val="{{ true }}">
+              <span style="{{ sel.btnEntregarHoy }}">Marcar como entregado</span>
+            </sc-if>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 14px; background: #07322f; color: #e6f5f3; box-shadow: 0 16px 40px rgba(7,50,47,.32); z-index: 70;">
+      <span style="width: 22px; height: 22px; border-radius: 999px; background: #35c2a8; display: flex; align-items: center; justify-content: center;"><span style="width: 13px; height: 13px; background: #07322f; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/check.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/check.svg) center/contain no-repeat;"></span></span>
+      <span style="font-size: 14.5px;">{{ toast }}</span>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;vista&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;propuesta&quot;, &quot;hoy&quot;], &quot;default&quot;: &quot;propuesta&quot;, &quot;tsType&quot;: &quot;'propuesta' | 'hoy'&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const P = (id, amount, currency, rate, at, post) => ({ id, amount, currency, rate, eq: currency === 'USD' ? amount * rate : amount, at, post: !!post });
+    const O = (id, folio, cliente, commercial, total, createdAt, payments, extra) => ({ id, folio, cliente, commercial, total, createdAt, payments, extra: extra || [] });
+    const orders = [
+      O(129, 'VIS-2026-000129', 'Carlos Pupo Hernández', 'accepted', 11200, '2026-10-01T09:12', []),
+      O(128, 'VIS-2026-000128', 'Roberto Figueras', 'accepted', 12200, '2026-09-28T10:40', [P(1, 6000, 'CUP', 1, '2026-09-28T10:52'), P(2, 10, 'USD', 420, '2026-10-01T08:30')]),
+      O(127, 'VIS-2026-000127', 'Marisol Cabrera Domínguez', 'accepted', 8600, '2026-09-30T16:05', []),
+      O(126, 'VIS-2026-000126', 'Ana Lucía Prieto', 'accepted', 6200, '2026-09-26T11:20', [P(3, 6200, 'CUP', 1, '2026-09-26T11:31')]),
+      O(123, 'VIS-2026-000123', 'Luis Rodríguez Peña', 'accepted', 15400, '2026-09-22T14:10', [P(4, 7000, 'CUP', 1, '2026-09-22T14:25'), P(5, 1000, 'CUP', 1, '2026-09-29T18:40', true)], [{ kind: 'incident', title: 'Incidencia abierta · cristal defectuoso', detail: 'Repetición vinculada al trabajo original · costo al cristalero', at: '2026-09-27T15:02', actor: 'Yanet Pérez en nombre de Luis Ortega' }]),
+      O(119, 'VIS-2026-000119', 'Yudith Morales', 'delivered', 9800, '2026-09-15T09:45', [P(6, 4800, 'CUP', 1, '2026-09-15T09:58'), P(7, 5000, 'CUP', 1, '2026-09-24T12:10')]),
+      O(115, 'VIS-2026-000115', 'Ernesto Valdés', 'closed', 4300, '2026-09-10T13:30', [P(8, 4300, 'CUP', 1, '2026-09-10T13:41')]),
+    ];
+    this.state = { view: props.vista === 'hoy' ? 'hoy' : 'nuevo', orders, selectedId: 128, q: '', chip: 'all', dateFrom: '', dateTo: '', filtrosOpen: false, currency: 'CUP', amount: '', rate: '420', note: '', tab: 'pagos', toast: '', error: '' };
+  }
+
+  calc(o) {
+    const paid = o.payments.reduce((s, p) => s + p.eq, 0);
+    const balance = Math.max(0, o.total - paid);
+    const paymentStatus = paid <= 0 ? 'unpaid' : balance > 0 ? 'partial' : 'paid';
+    return { paid, balance, paymentStatus };
+  }
+
+  notify(msg) {
+    clearTimeout(this._t);
+    this.setState({ toast: msg });
+    this._t = setTimeout(() => this.setState({ toast: '' }), 2800);
+  }
+
+  registrar() {
+    const s = this.state;
+    const o = s.orders.find((x) => x.id === s.selectedId);
+    const amt = Number(s.amount);
+    const rate = s.currency === 'USD' ? Number(s.rate) : 1;
+    if (!amt || amt <= 0 || !rate) return this.setState({ error: 'Escribe un importe mayor que cero.' });
+    const eq = amt * rate;
+    const { balance } = this.calc(o);
+    if (eq > balance + 0.001) return this.setState({ error: 'El importe supera el saldo pendiente.' });
+    const pay = { id: Date.now(), amount: amt, currency: s.currency, rate, eq, at: '2026-10-01T' + new Date().toTimeString().slice(0, 5), post: false, note: s.note };
+    const orders = s.orders.map((x) => x.id === o.id ? { ...x, payments: [...x.payments, pay] } : x);
+    this.setState({ orders, amount: '', note: '', error: '' });
+    this.notify('Pago en efectivo registrado.');
+  }
+
+  entregar() {
+    const s = this.state;
+    const o = s.orders.find((x) => x.id === s.selectedId);
+    if (this.calc(o).balance > 0 || o.commercial !== 'accepted') return;
+    const orders = s.orders.map((x) => x.id === o.id ? { ...x, commercial: 'delivered', extra: [...x.extra, { kind: 'delivery', title: 'Pedido entregado', detail: 'Entregado al cliente en sucursal', at: '2026-10-01T' + new Date().toTimeString().slice(0, 5), actor: 'Yanet Pérez' }] } : x);
+    this.setState({ orders });
+    this.notify('Pedido marcado como entregado.');
+  }
+
+  renderVals() {
+    const s = this.state;
+    const nuevo = s.view === 'nuevo';
+    const PFX = 'https://unpkg.com/lucide-static@0.460.0/icons/';
+    const icon = (n, c, size = 18) => ({ width: size + 'px', height: size + 'px', flex: `0 0 ${size}px`, background: c, WebkitMask: `url(${PFX}${n}.svg) center/contain no-repeat`, mask: `url(${PFX}${n}.svg) center/contain no-repeat` });
+    const fmt = (n) => Math.round(n).toLocaleString('es-CU').replace(/,/g, ' ');
+    const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    const fCorta = (iso) => { const d = new Date(iso); return iso.startsWith('2026-10-01') ? 'hoy' : iso.startsWith('2026-09-30') ? 'ayer' : `${d.getDate()} ${meses[d.getMonth()]}`; };
+    const fLarga = (iso) => { const d = new Date(iso); return `${d.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][d.getMonth()]}`; };
+    const fHora = (iso) => `${fCorta(iso)} · ${iso.slice(11, 16)}`;
+    const fHoy = (iso) => { const d = new Date(iso); return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`; };
+    const fHoyHora = (iso) => { const d = new Date(iso); let h = d.getHours(); const ap = h >= 12 ? 'p. m.' : 'a. m.'; h = h % 12 || 12; return `${fHoy(iso)}, ${h}:${iso.slice(14, 16)}:00 ${ap}`; };
+
+    const tones = {
+      neutral: { bg: '#eef3f2', fg: '#4a5b58', dot: '#9aaba7' },
+      progress: { bg: '#e2f4f1', fg: '#0b5a53', dot: '#0d7a72' },
+      success: { bg: '#d9f5ee', fg: '#07655c', dot: '#35c2a8' },
+      warning: { bg: '#fff4e8', fg: '#8f4c0f', dot: '#e39a3b' },
+      danger: { bg: '#ffe8e1', fg: '#b2361a', dot: '#ff6b4a' },
+    };
+    const badge = (k, lg) => ({ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: lg ? '6px 12px' : '3px 8px', borderRadius: lg ? '8px' : '6px', fontSize: lg ? '13.5px' : '12px', fontWeight: 600, background: tones[k].bg, color: tones[k].fg, whiteSpace: 'nowrap' });
+    const dot = (k) => ({ width: '6px', height: '6px', borderRadius: '999px', background: tones[k].dot });
+
+    const enriched = s.orders.map((o) => {
+      const c = this.calc(o);
+      const done = ['delivered', 'closed'].includes(o.commercial);
+      const hasIncident = o.extra.some((e) => e.kind === 'incident');
+      let tone, estado;
+      if (o.commercial === 'delivered') { tone = 'neutral'; estado = 'Entregado'; }
+      else if (o.commercial === 'closed') { tone = 'neutral'; estado = 'Cerrado'; }
+      else if (hasIncident) { tone = 'danger'; estado = 'Incidencia'; }
+      else if (c.paymentStatus === 'paid') { tone = 'success'; estado = 'Pagado · por entregar'; }
+      else if (c.paymentStatus === 'partial') { tone = 'warning'; estado = 'Pago parcial'; }
+      else { tone = 'progress'; estado = 'Pendiente de pago'; }
+      return { ...o, ...c, done, tone, estado, hasIncident };
+    });
+
+    const inRange = (o) => { const d = o.createdAt.slice(0, 10); return (!s.dateFrom || d >= s.dateFrom) && (!s.dateTo || d <= s.dateTo); };
+    const term = s.q.trim().toLocaleLowerCase('es');
+    const base = enriched.filter((o) => (!term || o.cliente.toLocaleLowerCase('es').includes(term)) && inRange(o));
+    const chipDefs = [
+      ['all', 'Todos', () => true],
+      ['saldo', 'Con saldo', (o) => !o.done && o.balance > 0],
+      ['entregar', 'Por entregar', (o) => !o.done && o.balance === 0],
+      ['done', 'Entregados', (o) => o.done],
+    ];
+    const chipFn = (chipDefs.find((c) => c[0] === s.chip) || chipDefs[0])[2];
+    const filtered = base.filter(chipFn);
+    const chips = chipDefs.map(([key, label, fn]) => {
+      const a = s.chip === key;
+      return { label, n: base.filter(fn).length, go: () => this.setState({ chip: key }),
+        style: { display: 'flex', alignItems: 'center', gap: '8px', minHeight: '36px', padding: '0 8px 0 13px', borderRadius: '999px', border: a ? '1px solid #07322f' : '1px solid #dcecea', background: a ? '#07322f' : '#ffffff', color: a ? '#ffffff' : '#324e4a', fontSize: '14px', fontWeight: 600, cursor: 'pointer' },
+        countStyle: { minWidth: '20px', height: '20px', padding: '0 6px', boxSizing: 'border-box', borderRadius: '999px', background: a ? '#35c2a8' : '#eef5f4', color: '#07322f', fontSize: '11.5px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' } };
+    });
+
+    const initials = (n) => n.split(' ').slice(0, 2).map((w) => w[0]).join('');
+    const lista = filtered.map((o, i) => {
+      const a = o.id === s.selectedId;
+      return { cliente: o.cliente, folioCorto: o.folio.replace('VIS-2026-', 'VIS-'), fecha: fCorta(o.createdAt), ini: initials(o.cliente), estado: o.estado,
+        monto: o.done || o.balance === 0 ? fmt(o.total) : fmt(o.balance),
+        go: () => this.setState({ selectedId: o.id, amount: '', note: '', error: '' }),
+        badge: badge(o.tone), dot: dot(o.tone),
+        row: { width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 18px 14px 15px', border: 'none', borderBottom: i < filtered.length - 1 ? '1px solid #eef5f4' : 'none', borderLeft: a ? '3px solid #0d7a72' : '3px solid transparent', background: a ? '#f0fbf9' : '#ffffff', cursor: 'pointer', fontFamily: "'Source Sans 3', sans-serif" },
+        avatar: { width: '40px', height: '40px', flex: '0 0 40px', borderRadius: '999px', background: a ? '#0d7a72' : '#e2f4f1', color: a ? '#ffffff' : '#0d7a72', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', fontWeight: 700 },
+        montoStyle: { fontFamily: "'Space Grotesk', sans-serif", fontSize: '15.5px', fontWeight: 700, fontVariantNumeric: 'tabular-nums', color: !o.done && o.balance > 0 ? '#c23c1c' : '#07322f', whiteSpace: 'nowrap' } };
+    });
+
+    const o = enriched.find((x) => x.id === s.selectedId) || enriched[0];
+    const pct = o.total ? Math.min(100, Math.round(o.paid / o.total * 100)) : 100;
+    const owes = o.balance > 0 && !o.done;
+    const tlRaw = [
+      { kind: 'sale', title: 'Venta confirmada', detail: `Cotización aceptada · total ${fmt(o.total)} CUP`, at: o.createdAt, actor: 'Yanet Pérez' },
+      { kind: 'notification', title: 'WhatsApp · pedido confirmado', detail: 'Enviado al número principal del cliente', at: o.createdAt.slice(0, 14) + String(Math.min(59, Number(o.createdAt.slice(14, 16)) + 2)).padStart(2, '0'), actor: 'Sistema' },
+      ...o.payments.map((p) => ({ kind: 'payment', title: p.currency === 'USD' ? 'Pago en efectivo en USD' : 'Pago en efectivo', detail: p.currency === 'USD' ? `${fmt(p.amount)} USD a ${p.rate} · equivale a ${fmt(p.eq)} CUP` : `${fmt(p.amount)} CUP`, at: p.at, actor: 'Yanet Pérez' })),
+      ...o.extra,
+    ].sort((a, b) => b.at.localeCompare(a.at));
+    const kindMeta = { sale: ['Venta', 'neutral'], notification: ['WhatsApp', 'progress'], payment: ['Pago', 'success'], incident: ['Incidencia', 'danger'], delivery: ['Entrega', 'neutral'] };
+    const timeline = tlRaw.map((e, i) => {
+      const [kl, kt] = kindMeta[e.kind];
+      const last = i === tlRaw.length - 1;
+      return { ...e, kindLabel: kl, cuando: fHora(e.at), cuandoHoy: fHoyHora(e.at),
+        tag: { padding: '2px 7px', borderRadius: '5px', fontSize: '11.5px', fontWeight: 700, background: tones[kt].bg, color: tones[kt].fg },
+        dot: { width: '12px', height: '12px', borderRadius: '999px', marginTop: '4px', background: tones[kt].dot, boxShadow: `0 0 0 3px ${tones[kt].bg}` },
+        line: { width: '2px', flex: 1, minHeight: '14px', background: last ? 'transparent' : '#e3efed', marginTop: '4px' },
+        dotHoy: { marginTop: '4px', width: '10px', height: '10px', borderRadius: '999px', background: e.kind === 'incident' ? '#ff6b4a' : '#0d7a72' },
+        lineHoy: { minHeight: '40px', width: '1px', flex: 1, background: last ? 'transparent' : '#dcecea' } };
+    });
+    const pagos = o.payments.map((p) => ({ desc: p.currency === 'USD' ? `${fmt(p.amount)} USD × ${p.rate}` : `${fmt(p.amount)} CUP`, descHoy: p.currency === 'USD' ? `${p.amount} USD × ${p.rate}` : `${p.amount.toLocaleString('es-CU')} CUP`, eq: fmt(p.eq), cuando: fHora(p.at) + (p.note ? ` · ${p.note}` : ''), post: p.post }));
+
+    const sel = {
+      ini: initials(o.cliente), cliente: o.cliente, folio: o.folio, fechaLarga: fLarga(o.createdAt), estado: o.estado,
+      badgeLg: badge(o.tone, true), dot: dot(o.tone),
+      saldo: fmt(o.balance), total: fmt(o.total), pagado: fmt(o.paid), pct,
+      comercial: { accepted: 'Aceptado', delivered: 'Entregado', closed: 'Cerrado' }[o.commercial],
+      estadoPago: { unpaid: 'Sin pagos todavía', partial: 'Pago parcial', paid: 'Pagado completamente' }[o.paymentStatus],
+      estadoPagoCorto: { unpaid: 'Pendiente', partial: 'Parcial', paid: 'Pagado' }[o.paymentStatus],
+      nPagos: o.payments.length === 1 ? '1 pago' : `${o.payments.length} pagos`,
+      saldoLabel: owes ? 'Saldo pendiente' : 'Saldo',
+      saldoPanel: { flex: '1.3 1 260px', borderRadius: '14px', padding: '18px 20px', background: owes ? '#fff6f2' : '#e9faf5', border: owes ? '1px solid #ffd9cd' : '1px solid #a9e6d7' },
+      saldoLabelStyle: { fontSize: '13px', fontWeight: 600, color: owes ? '#c23c1c' : '#07655c' },
+      saldoNumStyle: { marginTop: '4px', fontFamily: "'Space Grotesk', sans-serif", fontSize: '36px', fontWeight: 700, letterSpacing: '-.03em', lineHeight: 1.05, fontVariantNumeric: 'tabular-nums', color: owes ? '#b2361a' : '#07655c' },
+      saldoIconWrap: { width: '42px', height: '42px', borderRadius: '12px', background: owes ? '#ffe8e1' : '#d9f5ee', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+      saldoIcon: icon(owes ? 'hourglass' : 'circle-check', owes ? '#c23c1c' : '#07655c', 20),
+      barra: { width: pct + '%', height: '10px', borderRadius: '999px', background: owes ? '#ff6b4a' : '#35c2a8', transition: 'width .4s ease' },
+      barraHoy: { display: 'block', height: '100%', width: pct + '%', background: '#35c2a8' },
+      puedeCobrar: owes,
+      pagadoMsg: owes ? false : (o.commercial === 'delivered' ? 'Pedido entregado y pagado completamente.' : o.commercial === 'closed' ? 'Pedido cerrado y pagado.' : 'Pago completado. El pedido está listo para entregar.'),
+      pagos, sinPagos: !pagos.length, pagosCount: pagos.length, timeline, histCount: timeline.length,
+      mostrarEntrega: o.commercial === 'accepted',
+      entregaNota: owes ? `Disponible cuando el saldo llegue a 0 · faltan ${fmt(o.balance)} CUP` : 'Todo cobrado. Puedes entregar el pedido.',
+      entregaNotaStyle: { display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: owes ? '#5f716c' : '#07655c', fontWeight: owes ? 400 : 600 },
+      entregaIcon: icon(owes ? 'lock' : 'package-check', owes ? '#9aaba7' : '#07655c', 16),
+      btnEntregar: { minHeight: '46px', padding: '0 20px', border: 'none', borderRadius: '10px', background: owes ? '#dcecea' : '#07322f', color: owes ? '#8a9a96' : '#ffffff', fontFamily: "'Space Grotesk', sans-serif", fontSize: '14px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', cursor: owes ? 'not-allowed' : 'pointer', boxShadow: owes ? 'none' : '0 6px 16px rgba(7,50,47,.22)' },
+      btnEntregarIcon: icon('package-check', owes ? '#8a9a96' : '#35c2a8', 17),
+      btnEntregarHoy: { display: 'block', width: '100%', boxSizing: 'border-box', borderRadius: '8px', background: '#07322f', padding: '12px 16px', textAlign: 'center', fontSize: '14px', fontWeight: 600, color: '#fff', opacity: owes ? 0.4 : 1 },
+    };
+
+    const activos = enriched.filter((x) => !x.done);
+    const hoyCobrado = enriched.reduce((sum, x) => sum + x.payments.filter((p) => p.at.startsWith('2026-10-01')).reduce((a, p) => a + p.eq, 0), 0);
+    const kpi = { activos: activos.length, saldo: fmt(activos.reduce((a, x) => a + x.balance, 0)), listos: activos.filter((x) => x.balance === 0).length, hoy: fmt(hoyCobrado) };
+
+    const navDef = [
+      { label: 'Operación', items: [['/dashboard', 'Panel principal', 'layout-dashboard'], ['/orders', 'Pedidos y cobros', 'receipt-text', activos.filter((x) => x.balance > 0).length], ['/customers', 'Clientes', 'users'], ['/prescriptions', 'Recetas', 'file-text'], ['/production', 'Producción', 'factory'], ['/cashbox', 'Caja y cierres', 'wallet']] },
+      { label: 'Gestión', items: [['/catalog', 'Catálogo y precios', 'tags'], ['/team', 'Equipo', 'users-round'], ['/manual', 'Manual del sistema', 'book-open']] },
+    ];
+    const navSecciones = navDef.map((sec) => ({ label: sec.label, items: sec.items.map(([href, label, ic, count]) => {
+      const a = href === '/orders';
+      return { label, count: count || false,
+        row: { position: 'relative', display: 'flex', alignItems: 'center', gap: '12px', minHeight: '42px', padding: '0 12px', borderRadius: '10px', background: a ? '#10463f' : 'transparent', color: a ? '#ffffff' : '#a7cfc9', fontSize: '14.5px', fontWeight: a ? 600 : 500, cursor: 'pointer' },
+        bar: { position: 'absolute', left: '-14px', top: '10px', bottom: '10px', width: '3px', borderRadius: '0 3px 3px 0', background: a ? '#35c2a8' : 'transparent' },
+        icon: icon(ic, a ? '#35c2a8' : '#7fb3ac'),
+        countStyle: { minWidth: '22px', height: '22px', padding: '0 6px', boxSizing: 'border-box', borderRadius: '999px', background: '#ff6b4a', color: '#07322f', fontFamily: "'Space Grotesk', sans-serif", fontSize: '11.5px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' } };
+    }) }));
+    const hoyNav = navDef.map((sec) => ({ label: sec.label, items: sec.items.map(([href, label]) => {
+      const a = href === '/orders';
+      return { label, row: { marginTop: '4px', display: 'flex', alignItems: 'center', gap: '12px', borderRadius: '7px', padding: '10px 12px', fontSize: '14px', background: a ? '#10463f' : 'transparent', fontWeight: a ? 600 : 500, color: a ? '#d8f5ef' : '#a7cfc9' },
+        dot: { width: '8px', height: '8px', borderRadius: '999px', boxSizing: 'border-box', background: a ? '#35c2a8' : 'transparent', border: a ? 'none' : '1px solid #6f9c96' } };
+    }) }));
+
+    const hoyLista = enriched.map((x) => {
+      const a = x.id === s.selectedId;
+      const ok = x.done || x.paymentStatus === 'paid';
+      return { folio: x.folio, cliente: x.cliente,
+        estado: x.done ? (x.commercial === 'delivered' ? 'Entregado' : 'Cerrado') : { unpaid: 'Pendiente', partial: 'Parcial', paid: 'Pagado' }[x.paymentStatus],
+        meta: `${x.total.toLocaleString('es-CU')} CUP · ${{ accepted: 'Aceptado', delivered: 'Entregado', closed: 'Cerrado' }[x.commercial]} · ${fHoy(x.createdAt)}`,
+        go: () => this.setState({ selectedId: x.id }),
+        row: { width: '100%', textAlign: 'left', borderRadius: '7px', border: a ? '1px solid #0d7a72' : '1px solid #e3efed', background: a ? '#f0fbf9' : '#ffffff', padding: '16px', cursor: 'pointer', fontFamily: "'Source Sans 3', sans-serif" },
+        badge: { borderRadius: '4px', padding: '4px 8px', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', background: ok ? '#d9f5ee' : '#fff0eb', color: ok ? '#07655c' : '#c23c1c' } };
+    });
+
+    const seg = (on) => ({ padding: '0 14px', minHeight: '42px', border: 'none', borderRadius: '8px', background: on ? '#ffffff' : 'transparent', boxShadow: on ? '0 1px 3px rgba(7,50,47,.15)' : 'none', color: on ? '#07322f' : '#5f716c', fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', fontWeight: 600, cursor: 'pointer' });
+    const sw = (on) => ({ minHeight: '34px', padding: '0 14px', border: 'none', borderRadius: '9px', background: on ? '#07322f' : 'transparent', color: on ? '#ffffff' : '#4a5b58', fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', fontWeight: 600, cursor: 'pointer' });
+    const tab = (on) => ({ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 14px', border: 'none', background: 'transparent', marginBottom: '-1px', borderBottom: on ? '2px solid #0d7a72' : '2px solid transparent', color: on ? '#07322f' : '#5f716c', fontFamily: "'Space Grotesk', sans-serif", fontSize: '15px', fontWeight: 600, cursor: 'pointer' });
+    const tabN = (on) => ({ minWidth: '20px', height: '20px', padding: '0 6px', boxSizing: 'border-box', borderRadius: '999px', background: on ? '#e2f4f1' : '#eef5f4', color: on ? '#0b5a53' : '#5f716c', fontSize: '11.5px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' });
+
+    const amt = Number(s.amount) || 0;
+    const rate = Number(s.rate) || 0;
+    const eq = s.currency === 'USD' ? amt * rate : amt;
+    const over = eq > o.balance + 0.001;
+    const equivTexto = s.error ? s.error : over ? `Supera el saldo en ${fmt(eq - o.balance)} CUP` : amt ? (s.currency === 'USD' ? `= ${fmt(eq)} CUP · quedarían ${fmt(o.balance - eq)} CUP` : `Quedarían ${fmt(o.balance - eq)} CUP`) : `Saldo actual ${fmt(o.balance)} CUP`;
+    const bad = !!s.error || over;
+    const filtrosActivos = Number(!!s.dateFrom) + Number(!!s.dateTo);
+
+    return {
+      esNuevo: nuevo, esHoy: !nuevo, swHoy: sw(!nuevo), swNuevo: sw(nuevo),
+      verHoy: () => this.setState({ view: 'hoy' }), verNuevo: () => this.setState({ view: 'nuevo' }),
+      navSecciones, hoyNav, hoyLista, kpi, chips, lista, sel,
+      sinResultados: !filtered.length,
+      resultLabel: filtered.length === 1 ? '1 pedido' : `${filtered.length} pedidos`,
+      q: s.q, onQ: (e) => this.setState({ q: e.target.value }),
+      filtrosActivos: filtrosActivos || false, filtrosOpen: s.filtrosOpen,
+      abrirFiltros: () => this.setState({ filtrosOpen: true }), cerrarFiltros: () => this.setState({ filtrosOpen: false }),
+      dateFrom: s.dateFrom, dateTo: s.dateTo,
+      onFrom: (e) => this.setState({ dateFrom: e.target.value }), onTo: (e) => this.setState({ dateTo: e.target.value }),
+      limpiar: () => this.setState({ q: '', chip: 'all', dateFrom: '', dateTo: '' }),
+      amount: s.amount, rate: s.rate, note: s.note,
+      onAmount: (e) => this.setState({ amount: e.target.value, error: '' }), onRate: (e) => this.setState({ rate: e.target.value, error: '' }), onNote: (e) => this.setState({ note: e.target.value }),
+      amountStyle: { flex: 1, minWidth: 0, height: '48px', boxSizing: 'border-box', padding: '0 14px', border: bad ? '1.5px solid #ff6b4a' : '1px solid #dcecea', borderRadius: '10px', fontFamily: "'Space Grotesk', sans-serif", fontSize: '20px', fontWeight: 700, fontVariantNumeric: 'tabular-nums', color: '#07322f', background: bad ? '#fffaf8' : '#ffffff', outline: 'none' },
+      esUSD: s.currency === 'USD', monCUP: seg(s.currency === 'CUP'), monUSD: seg(s.currency === 'USD'),
+      setCUP: () => this.setState({ currency: 'CUP', error: '' }), setUSD: () => this.setState({ currency: 'USD', error: '' }),
+      llenarSaldo: () => this.setState({ amount: String(s.currency === 'USD' ? Math.floor(o.balance / (rate || 420) * 100) / 100 : o.balance), error: '' }),
+      equivTexto, equivStyle: { fontSize: '14px', fontWeight: bad ? 600 : 500, color: bad ? '#c23c1c' : '#4a5b58', fontVariantNumeric: 'tabular-nums' },
+      btnRegistrar: { minHeight: '46px', padding: '0 20px', border: 'none', borderRadius: '10px', background: '#0d7a72', color: '#fff', fontFamily: "'Space Grotesk', sans-serif", fontSize: '14px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(13,122,114,.28)', opacity: amt && !over ? 1 : 0.55 },
+      registrar: () => this.registrar(), entregar: () => this.entregar(),
+      esPagos: s.tab === 'pagos', esHist: s.tab === 'hist',
+      tabPagos: tab(s.tab === 'pagos'), tabHist: tab(s.tab === 'hist'), tabPagosN: tabN(s.tab === 'pagos'), tabHistN: tabN(s.tab === 'hist'),
+      verPagos: () => this.setState({ tab: 'pagos' }), verHist: () => this.setState({ tab: 'hist' }),
+      toast: s.toast || false,
+    };
+  }
+}
+</script>
+</body>
+</html>

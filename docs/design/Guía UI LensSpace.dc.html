@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #f7fbfa; }
+  a { color: #0d7a72; text-decoration: none; }
+  a:hover { color: #07322f; }
+  input, select, textarea, button { font-family: inherit; }
+  ::placeholder { color: #8a9a96; }
+</style>
+</helmet>
+
+<div style="font-family: 'Source Sans 3', system-ui, sans-serif; color: #1c3a37; background: #f7fbfa; min-height: 100vh;">
+
+  <header style="background: #07322f; color: #d8f0ed; padding: 36px clamp(20px, 4vw, 48px) 30px;">
+    <div style="max-width: 1240px; margin: 0 auto;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <img src="brand/lensspace-mark.svg" width="40" height="40" alt="">
+        <span style="font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; color: #f2fbf9;">LensSpace</span>
+        <span style="padding: 4px 10px; border-radius: 999px; background: #10463f; font-size: 12px; font-weight: 600; color: #7fd8c8;">Guía UI 2.0 · propuesta</span>
+      </div>
+      <h1 style="margin: 22px 0 0; font-family: 'Space Grotesk', sans-serif; font-size: clamp(30px, 4.4vw, 46px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.05; color: #ffffff; max-width: 860px; text-wrap: pretty;">Auditoría visual y <span style="color: #35c2a8;">un solo archivo</span> con las piezas para rediseñar todas las vistas.</h1>
+      <p style="margin: 14px 0 0; max-width: 720px; font-size: 16px; line-height: 1.6; color: #b9ddd7; text-wrap: pretty;">La landing ya tiene carácter; la app no. Esta guía lleva la energía de la landing a los componentes compartidos, así cada vista mejora al cambiar las piezas — no hay que rediseñarlas una por una.</p>
+      <nav style="margin-top: 24px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <sc-for list="{{ indice }}" as="s" hint-placeholder-count="10">
+          <a href="{{ s.href }}" style="padding: 7px 13px; border-radius: 999px; background: #10463f; color: #b9ddd7; font-size: 13px; font-weight: 600;" style-hover="background: #0d7a72; color: #ffffff;">{{ s.label }}</a>
+        </sc-for>
+      </nav>
+    </div>
+  </header>
+
+  <main style="max-width: 1240px; margin: 0 auto; padding: 36px clamp(20px, 4vw, 48px) 96px; display: flex; flex-direction: column; gap: 56px;">
+
+    <sc-if value="{{ mostrarAuditoria }}" hint-placeholder-val="{{ true }}">
+    <section id="auditoria" style="display: flex; flex-direction: column; gap: 20px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #0d7a72;">01 · Auditoría</div>
+        <h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.025em; color: #07322f;">Qué encontré en el código</h2>
+        <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.6; color: #5f716c;">Revisé <code style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">globals.css</code>, <code style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">tailwind.config.ts</code>, el layout principal, la navegación y los workspaces de clientes, pedidos, caja, catálogo, producción y panel.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px;">
+        <sc-for list="{{ hallazgos }}" as="h" hint-placeholder-count="9">
+          <article style="background: #ffffff; border: 1px solid #e3efed; border-radius: 14px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 1px 2px rgba(7,50,47,.05);">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; color: #9aaba7;">{{ h.n }}</span>
+              <span style="{{ h.tagStyle }}">{{ h.nivel }}</span>
+            </div>
+            <h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 600; line-height: 1.3; color: #07322f;">{{ h.titulo }}</h3>
+            <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4a5b58; text-wrap: pretty;">{{ h.detalle }}</p>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.5; color: #5f716c; background: #f7fbfa; border-radius: 8px; padding: 8px 10px;">{{ h.donde }}</div>
+            <div style="display: flex; gap: 8px; align-items: flex-start; font-size: 13.5px; line-height: 1.5; color: #07655c;"><span style="margin-top: 3px; width: 14px; height: 14px; flex: 0 0 14px; background: #0d7a72; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/arrow-right.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/arrow-right.svg) center/contain no-repeat;"></span><span>{{ h.accion }}</span></div>
+          </article>
+        </sc-for>
+      </div>
+
+      <div style="background: #07322f; border-radius: 20px; padding: clamp(22px, 3vw, 34px); display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px 28px;">
+        <div style="grid-column: 1 / -1;">
+          <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #7fd8c8;">Directrices</div>
+          <div style="margin-top: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; letter-spacing: -0.02em; color: #ffffff;">Seis reglas para que todo se vea de la misma marca</div>
+        </div>
+        <sc-for list="{{ directrices }}" as="d" hint-placeholder-count="6">
+          <div style="display: flex; gap: 14px;">
+            <span style="width: 30px; height: 30px; flex: 0 0 30px; border-radius: 999px; background: #35c2a8; color: #07322f; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700;">{{ d.n }}</span>
+            <div>
+              <div style="font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; color: #f2fbf9;">{{ d.t }}</div>
+              <div style="margin-top: 4px; font-size: 14px; line-height: 1.55; color: #b9ddd7;">{{ d.c }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+    </sc-if>
+
+    <section id="fundamentos" style="display: flex; flex-direction: column; gap: 18px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #0d7a72;">02 · Fundamentos</div>
+        <h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.025em; color: #07322f;">Tokens</h2>
+        <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.6; color: #5f716c;">Misma paleta que ya existe — solo se nombra, se corrige contraste y se suben radios y profundidad. Todo lo demás se deriva de aquí.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;">
+        <sc-for list="{{ colores }}" as="c" hint-placeholder-count="12">
+          <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 14px; overflow: hidden;">
+            <div style="{{ c.swatch }}"></div>
+            <div style="padding: 10px 12px 12px;">
+              <div style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; color: #07322f;">{{ c.nombre }}</div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #5f716c;">{{ c.token }} · {{ c.hex }}</div>
+              <div style="margin-top: 4px; font-size: 12.5px; line-height: 1.4; color: #4a5b58;">{{ c.uso }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px;">
+        <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 14px; padding: 20px 22px;">
+          <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #5f716c; margin-bottom: 14px;">Escala tipográfica</div>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; align-items: baseline; gap: 14px;"><span style="width: 64px; flex: 0 0 64px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #9aaba7;">display</span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; letter-spacing: -0.035em; line-height: 1.05; color: #07322f;">Pedidos</span></div>
+            <div style="display: flex; align-items: baseline; gap: 14px;"><span style="width: 64px; flex: 0 0 64px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #9aaba7;">h2 · 24</span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; letter-spacing: -0.02em; color: #07322f;">Bandeja de pedidos</span></div>
+            <div style="display: flex; align-items: baseline; gap: 14px;"><span style="width: 64px; flex: 0 0 64px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #9aaba7;">h3 · 17</span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 600; color: #07322f;">Registrar efectivo</span></div>
+            <div style="display: flex; align-items: baseline; gap: 14px;"><span style="width: 64px; flex: 0 0 64px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #9aaba7;">cuerpo · 15</span><span style="font-size: 15px; line-height: 1.55; color: #4a5b58;">Busca por nombre o teléfono y reutiliza fichas.</span></div>
+            <div style="display: flex; align-items: baseline; gap: 14px;"><span style="width: 64px; flex: 0 0 64px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #9aaba7;">apoyo · 13</span><span style="font-size: 13px; color: #5f716c;">Cobrado 7 800 de 12 200 CUP</span></div>
+            <div style="display: flex; align-items: baseline; gap: 14px;"><span style="width: 64px; flex: 0 0 64px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #9aaba7;">eyebrow · 12</span><span style="font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #0d7a72;">Ventas ópticas</span></div>
+            <div style="display: flex; align-items: baseline; gap: 14px;"><span style="width: 64px; flex: 0 0 64px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #9aaba7;">cifra</span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: #07322f;">12 200 <span style="font-size: 14px; font-weight: 500; color: #5f716c;">CUP</span></span></div>
+          </div>
+          <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #eef5f4; font-size: 13px; line-height: 1.5; color: #5f716c;">Hoy el eyebrow varía entre 10–12 px y tracking .12–.18em; el h1 entre 26 y 30 px. Fijar estos 7 niveles.</div>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 14px; padding: 20px 22px; display: flex; flex-direction: column; gap: 16px;">
+          <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #5f716c;">Forma y profundidad</div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <div style="width: 70px; height: 58px; border-radius: 6px; border: 1px solid #dcecea; background: #fbfefd; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; font-size: 11.5px; color: #5f716c;">6 · badge</div>
+            <div style="width: 70px; height: 58px; border-radius: 10px; border: 1px solid #dcecea; background: #fbfefd; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; font-size: 11.5px; color: #5f716c;">10 · control</div>
+            <div style="width: 70px; height: 58px; border-radius: 14px; border: 1px solid #dcecea; background: #fbfefd; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; font-size: 11.5px; color: #5f716c;">14 · card</div>
+            <div style="width: 70px; height: 58px; border-radius: 20px; border: 1px solid #dcecea; background: #fbfefd; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; font-size: 11.5px; color: #5f716c;">20 · panel</div>
+          </div>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <div style="flex: 1 1 120px; padding: 14px; border-radius: 14px; background: #ffffff; border: 1px solid #e3efed; box-shadow: 0 1px 2px rgba(7,50,47,.05); font-size: 12.5px; color: #4a5b58;"><b style="color: #07322f;">e1</b> · tarjetas</div>
+            <div style="flex: 1 1 120px; padding: 14px; border-radius: 14px; background: #ffffff; box-shadow: 0 10px 28px rgba(7,50,47,.10); font-size: 12.5px; color: #4a5b58;"><b style="color: #07322f;">e2</b> · hover, menús</div>
+            <div style="flex: 1 1 120px; padding: 14px; border-radius: 14px; background: #ffffff; box-shadow: 0 28px 64px rgba(7,50,47,.22); font-size: 12.5px; color: #4a5b58;"><b style="color: #07322f;">e3</b> · diálogos</div>
+          </div>
+          <div style="font-size: 13px; line-height: 1.5; color: #5f716c;">Espaciado en múltiplos de 4: 8 dentro de grupos, 16 entre tarjetas, 20–24 dentro de tarjetas, 32+ entre secciones. Hoy coexisten <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">rounded-[7px] [8px] [9px] [10px] [12px] full</code>.</div>
+        </div>
+      </div>
+
+      <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 14px; padding: 20px 22px;">
+        <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #5f716c; margin-bottom: 14px;">Correcciones de contraste (WCAG AA)</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;">
+          <div style="border-radius: 10px; border: 1px solid #eef5f4; padding: 14px; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px;"><span style="color: #74857f;">Texto tenue actual #74857F</span><span style="font-weight: 700; color: #c23c1c;">3,9:1</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px;"><span style="color: #5f716c;">Propuesto #5F716C</span><span style="font-weight: 700; color: #07655c;">5,2:1</span></div>
+          </div>
+          <div style="border-radius: 10px; padding: 14px; background: #07322f; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px;"><span style="color: #4d7a74; letter-spacing: .14em; text-transform: uppercase; font-weight: 600;">Sección nav #4D7A74</span><span style="font-weight: 700; color: #ff9b85;">2,9:1</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px;"><span style="color: #7fb3ac; letter-spacing: .14em; text-transform: uppercase; font-weight: 600;">Propuesto #7FB3AC</span><span style="font-weight: 700; color: #7fd8c8;">5,8:1</span></div>
+          </div>
+          <div style="border-radius: 10px; border: 1px solid #eef5f4; padding: 14px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <span style="padding: 9px 14px; border-radius: 10px; background: #ff6b4a; color: #ffffff; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700;">Blanco 2,8:1</span>
+            <span style="padding: 9px 14px; border-radius: 10px; background: #ff6b4a; color: #07322f; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700;">Tinta 4,9:1</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="botones" style="display: flex; flex-direction: column; gap: 18px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #0d7a72;">03 · Botones</div>
+        <h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.025em; color: #07322f;">Un primario, cuatro apoyos</h2>
+        <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.6; color: #5f716c;">Etiqueta en Space Grotesk 600, alto mínimo 44 px, icono a la izquierda. Teal es la acción; tinta queda para navegación y totales; coral solo en "acción de atención" (cobrar saldo, resolver incidencia).</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 14px;">
+        <sc-if value="{{ mostrarAntes }}" hint-placeholder-val="{{ true }}">
+          <div style="flex: 1 1 280px; min-width: 0; box-sizing: border-box; background: #ffffff; border: 1px dashed #dcecea; border-radius: 14px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px;">
+            <div style="font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #9aaba7;">Hoy</div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <span style="padding: 10px 16px; border-radius: 7px; background: #0d7a72; color: #fff; font-size: 14px; font-weight: 600;">Buscar</span>
+              <span style="padding: 10px 16px; border-radius: 7px; background: #07322f; color: #fff; font-size: 14px; font-weight: 600;">Nueva venta</span>
+              <span style="padding: 12px 16px; border-radius: 7px; background: #0369a1; color: #fff; font-size: 14px; font-weight: 600;">Iniciar sesión</span>
+              <span style="padding: 10px 16px; border-radius: 7px; border: 1px solid #dcecea; background: #fff; color: #07322f; font-size: 14px; font-weight: 600;">+ Registrar cliente nuevo</span>
+            </div>
+            <div style="font-size: 13px; line-height: 1.5; color: #5f716c;">Tres colores de primario (teal, tinta, <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">sky-700</code> del starter), radios 7–12 px, sin iconos, "+" como texto.</div>
+          </div>
+        </sc-if>
+        <div style="flex: 2 1 480px; min-width: 0; box-sizing: border-box; background: #ffffff; border: 1px solid #e3efed; border-radius: 14px; padding: 20px 22px; display: flex; flex-direction: column; gap: 18px;">
+          <div style="font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #0d7a72;">Propuesta</div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+            <button style="min-height: 44px; padding: 0 18px; border: none; border-radius: 10px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 1px 0 rgba(255,255,255,.18) inset, 0 4px 12px rgba(13,122,114,.28);" style-hover="background: #0a625c;"><span style="width: 17px; height: 17px; background: #fff; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/plus.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/plus.svg) center/contain no-repeat;"></span>Nueva venta</button>
+            <button style="min-height: 44px; padding: 0 18px; border: 1px solid #cfe3e0; border-radius: 10px; background: #fff; color: #07322f; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer;" style-hover="background: #f0fbf9; border-color: #9bcdc6;"><span style="width: 17px; height: 17px; background: #0d7a72; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/user-plus.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/user-plus.svg) center/contain no-repeat;"></span>Registrar cliente</button>
+            <button style="min-height: 44px; padding: 0 16px; border: none; border-radius: 10px; background: transparent; color: #0d7a72; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;" style-hover="background: #e2f4f1;">Ver historial</button>
+            <button style="min-height: 44px; padding: 0 18px; border: none; border-radius: 10px; background: #ff6b4a; color: #07322f; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(255,107,74,.32);" style-hover="background: #ff8466;"><span style="width: 17px; height: 17px; background: #07322f; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/banknote.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/banknote.svg) center/contain no-repeat;"></span>Cobrar saldo</button>
+            <button style="min-height: 44px; padding: 0 18px; border: 1px solid #ffd9cd; border-radius: 10px; background: #fff6f2; color: #c23c1c; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;" style-hover="background: #ffe8e1;">Anular</button>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; padding-top: 16px; border-top: 1px solid #eef5f4;">
+            <button style="min-height: 34px; padding: 0 12px; border: none; border-radius: 8px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;">Pequeño 34</button>
+            <button style="min-height: 44px; padding: 0 18px; border: none; border-radius: 10px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;">Base 44</button>
+            <button style="min-height: 52px; padding: 0 24px; border: none; border-radius: 12px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer;">Grande 52</button>
+            <button style="min-height: 44px; padding: 0 18px; border: none; border-radius: 10px; background: #e2f4f1; color: #9aaba7; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; cursor: not-allowed;">Deshabilitado</button>
+            <span title="Filtros" style="position: relative; width: 44px; height: 44px; border-radius: 10px; border: 1px solid #cfe3e0; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer;"><span style="width: 18px; height: 18px; background: #0d7a72; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/sliders-horizontal.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/sliders-horizontal.svg) center/contain no-repeat;"></span><span style="position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; border-radius: 999px; background: #ff6b4a; color: #07322f; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; box-sizing: border-box;">2</span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="campos" style="display: flex; flex-direction: column; gap: 18px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #0d7a72;">04 · Campos</div>
+        <h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.025em; color: #07322f;">Un solo <code style="font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 500;">&lt;Field&gt;</code></h2>
+        <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.6; color: #5f716c;">Hoy hay seis <code style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">inputClass</code> distintos. Uno solo: alto 44, radio 10, etiqueta 13 px semibold encima, ayuda o error debajo.</p>
+      </div>
+      <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 14px; padding: 22px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px 20px;">
+        <label style="display: flex; flex-direction: column; gap: 6px;">
+          <span style="font-size: 13px; font-weight: 600; color: #324e4a;">Nombre completo</span>
+          <input value="Marisol Cabrera Domínguez" style="height: 44px; box-sizing: border-box; padding: 0 14px; border: 1px solid #dcecea; border-radius: 10px; font-size: 15px; background: #fbfefd; color: #1c3a37; outline: none;">
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 6px;">
+          <span style="font-size: 13px; font-weight: 600; color: #324e4a;">Buscar</span>
+          <span style="height: 44px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 0 14px; border: 1px solid #dcecea; border-radius: 10px; background: #fbfefd;"><span style="width: 17px; height: 17px; flex: 0 0 17px; background: #5f716c; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/search.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/search.svg) center/contain no-repeat;"></span><input placeholder="Nombre o teléfono" style="border: none; outline: none; background: transparent; font-size: 15px; width: 100%; color: #1c3a37;"></span>
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 6px;">
+          <span style="font-size: 13px; font-weight: 600; color: #324e4a;">Teléfono · foco</span>
+          <input value="+53 5218 4477" style="height: 44px; box-sizing: border-box; padding: 0 14px; border: 1.5px solid #0d7a72; border-radius: 10px; font-size: 15px; background: #fff; color: #1c3a37; outline: none; box-shadow: 0 0 0 4px #e2f4f1;">
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 6px;">
+          <span style="font-size: 13px; font-weight: 600; color: #324e4a;">Nombre del cliente</span>
+          <input placeholder="Obligatorio" style="height: 44px; box-sizing: border-box; padding: 0 14px; border: 1.5px solid #ff6b4a; border-radius: 10px; font-size: 15px; background: #fffaf8; outline: none;">
+          <span style="display: flex; gap: 6px; align-items: center; font-size: 13px; color: #c23c1c;"><span style="width: 14px; height: 14px; background: #c23c1c; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/circle-alert.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/circle-alert.svg) center/contain no-repeat;"></span>El nombre es obligatorio.</span>
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 6px;">
+          <span style="font-size: 13px; font-weight: 600; color: #324e4a;">Esfera OD</span>
+          <input value="-2.25" style="height: 44px; box-sizing: border-box; padding: 0 14px; border: 1px solid #dcecea; border-radius: 10px; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; color: #07322f; background: #fbfefd; outline: none;">
+          <span style="font-size: 13px; color: #5f716c;">Pasos de 0.25</span>
+        </label>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <span style="font-size: 13px; font-weight: 600; color: #324e4a;">Importe</span>
+          <div style="display: flex; gap: 8px;">
+            <input value="6 400" style="flex: 1; min-width: 0; height: 44px; box-sizing: border-box; padding: 0 14px; border: 1px solid #dcecea; border-radius: 10px; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; color: #07322f; background: #fbfefd; outline: none;">
+            <div style="display: flex; padding: 3px; gap: 3px; border-radius: 10px; background: #eef5f4;">
+              <button style="{{ monCUP }}" onClick="{{ setCUP }}">CUP</button>
+              <button style="{{ monUSD }}" onClick="{{ setUSD }}">USD</button>
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <span style="font-size: 13px; font-weight: 600; color: #324e4a;">Material</span>
+          <span style="height: 44px; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; border: 1px solid #dcecea; border-radius: 10px; background: #fbfefd; font-size: 15px; color: #1c3a37; cursor: pointer;">Policarbonato 1.59<span style="width: 16px; height: 16px; background: #07322f; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/chevron-down.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/chevron-down.svg) center/contain no-repeat;"></span></span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px; justify-content: flex-end;">
+          <span style="display: flex; align-items: center; gap: 10px; font-size: 15px; color: #1c3a37;"><span style="width: 20px; height: 20px; border-radius: 6px; background: #0d7a72; display: flex; align-items: center; justify-content: center;"><span style="width: 14px; height: 14px; background: #fff; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/check.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/check.svg) center/contain no-repeat;"></span></span>Acepta WhatsApp</span>
+          <span style="display: flex; align-items: center; gap: 10px; font-size: 15px; color: #1c3a37;"><button style="{{ switchStyle }}" onClick="{{ toggleSwitch }}"><span style="width: 20px; height: 20px; border-radius: 999px; background: #fff; box-shadow: 0 1px 3px rgba(7,50,47,.25);"></span></button>Módulo de caja</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="estados" style="display: flex; flex-direction: column; gap: 18px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #0d7a72;">05 · Estados</div>
+        <h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.025em; color: #07322f;">Cinco tonos, un <code style="font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 500;">&lt;Badge&gt;</code></h2>
+        <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.6; color: #5f716c;">Cada estado del negocio se mapea a un tono — nunca a un color suelto. Punto + texto, radio 6, 12 px semibold, sin mayúsculas.</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 14px;">
+        <sc-if value="{{ mostrarAntes }}" hint-placeholder-val="{{ true }}">
+          <div style="flex: 1 1 280px; min-width: 0; box-sizing: border-box; background: #ffffff; border: 1px dashed #dcecea; border-radius: 14px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px;">
+            <div style="font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #9aaba7;">Hoy · bandeja de pedidos</div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <span style="padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; background: #fff0eb; color: #c23c1c;">Pendiente de pago</span>
+              <span style="padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; background: #fff0eb; color: #c23c1c;">En producción</span>
+              <span style="padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; background: #d9f5ee; color: #07655c;">Pagado</span>
+              <span style="padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; background: #fffbeb; color: #b45309;">Solo lectura</span>
+            </div>
+            <div style="font-size: 13px; line-height: 1.5; color: #5f716c;">Todo lo no pagado sale en coral: un pedido sano "en producción" parece un error. Mezcla de 4 px/píldora y ámbar de Tailwind fuera de paleta.</div>
+          </div>
+        </sc-if>
+        <div style="flex: 2 1 480px; min-width: 0; box-sizing: border-box; background: #ffffff; border: 1px solid #e3efed; border-radius: 14px; padding: 20px 22px; display: flex; flex-direction: column; gap: 16px;">
+          <sc-for list="{{ tonos }}" as="t" hint-placeholder-count="5">
+            <div style="display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 12px; align-items: center; padding-bottom: 14px; border-bottom: 1px solid #f2f7f6;">
+              <div>
+                <div style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; color: #07322f;">{{ t.nombre }}</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5f716c;">tone="{{ t.key }}"</div>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <sc-for list="{{ t.items }}" as="i" hint-placeholder-count="3">
+                  <span style="{{ t.badge }}"><span style="{{ t.dot }}"></span>{{ i }}</span>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+          <div style="display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-end;">
+            <div>
+              <div style="font-size: 13px; font-weight: 600; color: #324e4a; margin-bottom: 8px;">Pasos del pedido</div>
+              <div style="display: flex; align-items: center; gap: 0;">
+                <span style="width: 26px; height: 26px; border-radius: 999px; background: #35c2a8; display: flex; align-items: center; justify-content: center;"><span style="width: 14px; height: 14px; background: #07322f; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/check.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/check.svg) center/contain no-repeat;"></span></span>
+                <span style="width: 28px; height: 2px; background: #35c2a8;"></span>
+                <span style="width: 26px; height: 26px; border-radius: 999px; background: #35c2a8; display: flex; align-items: center; justify-content: center;"><span style="width: 14px; height: 14px; background: #07322f; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/check.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/check.svg) center/contain no-repeat;"></span></span>
+                <span style="width: 28px; height: 2px; background: #35c2a8;"></span>
+                <span style="width: 26px; height: 26px; border-radius: 999px; background: #0d7a72; color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700; box-shadow: 0 0 0 4px #e2f4f1;">3</span>
+                <span style="width: 28px; height: 2px; background: #dcecea;"></span>
+                <span style="width: 26px; height: 26px; border-radius: 999px; background: #eef5f4; color: #5f716c; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700;">4</span>
+              </div>
+              <div style="margin-top: 6px; font-size: 12.5px; color: #5f716c;">Venta · Cristales · Montaje · Entrega</div>
+            </div>
+            <div style="flex: 1 1 220px; max-width: 320px;">
+              <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px;"><span style="font-weight: 600; color: #324e4a;">Cobrado</span><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #07322f;">64 %</span></div>
+              <div style="height: 8px; border-radius: 999px; background: #eef5f4; overflow: hidden;"><div style="width: 64%; height: 8px; border-radius: 999px; background: #35c2a8;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="encabezado" style="display: flex; flex-direction: column; gap: 18px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #0d7a72;">06 · Encabezado de página</div>
+        <h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.025em; color: #07322f;">La pieza que más cambia la percepción</h2>
+        <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.6; color: #5f716c;">Un <code style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">&lt;PageHeader&gt;</code> compartido reemplaza el bloque eyebrow + h1 + párrafo que hoy se repite a mano en cada <code style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">page.tsx</code>. Dos variantes: <b>destacada</b> (panel, pedidos, caja) y <b>simple</b> (formularios, catálogo).</p>
+      </div>
+
+      <sc-if value="{{ mostrarAntes }}" hint-placeholder-val="{{ true }}">
+        <div style="background: #f7fbfa; border: 1px dashed #dcecea; border-radius: 14px; padding: 22px 26px;">
+          <div style="font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #9aaba7; margin-bottom: 14px;">Hoy · panel principal</div>
+          <p style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: #0d7a72;">Panel principal</p>
+          <p style="margin: 8px 0 0; font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -.02em; color: #07322f;">LensSpace</p>
+          <p style="margin: 16px 0 0; font-size: 16px; color: #4a5b58;">Tu actividad, accesos directos y estado operativo en un solo lugar.</p>
+        </div>
+      </sc-if>
+
+      <div style="background: #07322f; border-radius: 20px; padding: clamp(22px, 3vw, 32px); display: flex; flex-direction: column; gap: 24px; position: relative; overflow: hidden;">
+        <div style="position: absolute; right: -80px; top: -120px; width: 360px; height: 360px; border-radius: 999px; border: 1px solid #16544c;"></div>
+        <div style="position: absolute; right: 20px; top: -40px; width: 200px; height: 200px; border-radius: 999px; border: 1px solid #16544c;"></div>
+        <div style="position: relative; display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap;">
+          <div style="max-width: 560px;">
+            <div style="font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #7fd8c8;">Óptica Vedado · Martes 1 oct</div>
+            <div style="margin-top: 8px; font-family: 'Space Grotesk', sans-serif; font-size: clamp(28px, 3.4vw, 38px); font-weight: 700; letter-spacing: -.03em; line-height: 1.08; color: #ffffff;">Buenos días, Yanet</div>
+            <div style="margin-top: 8px; font-size: 15px; line-height: 1.55; color: #b9ddd7;">3 pedidos listos para recoger y 2 con saldo pendiente.</div>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button style="min-height: 44px; padding: 0 18px; border: 1px solid #2b5e58; border-radius: 10px; background: transparent; color: #d8f0ed; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;" style-hover="background: #10463f;">Ver caja</button>
+            <button style="min-height: 44px; padding: 0 18px; border: none; border-radius: 10px; background: #35c2a8; color: #07322f; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer;" style-hover="background: #5dd3bd;"><span style="width: 17px; height: 17px; background: #07322f; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/plus.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/plus.svg) center/contain no-repeat;"></span>Nueva venta</button>
+          </div>
+        </div>
+        <div style="position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px;">
+          <div style="border-radius: 14px; background: #10463f; padding: 14px 16px;"><div style="font-size: 13px; color: #a7cfc9;">Vendido hoy</div><div style="margin-top: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -.02em; color: #fff; font-variant-numeric: tabular-nums;">18 400 <span style="font-size: 13px; font-weight: 500; color: #a7cfc9;">CUP</span></div></div>
+          <div style="border-radius: 14px; background: #10463f; padding: 14px 16px;"><div style="font-size: 13px; color: #a7cfc9;">En producción</div><div style="margin-top: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -.02em; color: #fff;">7</div></div>
+          <div style="border-radius: 14px; background: #10463f; padding: 14px 16px;"><div style="font-size: 13px; color: #a7cfc9;">Listos para recoger</div><div style="margin-top: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -.02em; color: #35c2a8;">3</div></div>
+          <div style="border-radius: 14px; background: #ff6b4a; padding: 14px 16px;"><div style="font-size: 13px; font-weight: 600; color: #4a1507;">Saldo por cobrar</div><div style="margin-top: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -.02em; color: #07322f; font-variant-numeric: tabular-nums;">6 850 <span style="font-size: 13px; font-weight: 600;">CUP</span></div></div>
+        </div>
+      </div>
+
+      <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 14px; padding: 22px 26px; display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #5f716c;">Ventas ópticas<span style="width: 13px; height: 13px; background: #9aaba7; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/chevron-right.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/chevron-right.svg) center/contain no-repeat;"></span><span style="color: #07322f; font-weight: 600;">Clientes</span></div>
+          <div style="margin-top: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; letter-spacing: -.03em; color: #07322f;">Clientes</div>
+          <div style="margin-top: 4px; font-size: 15px; color: #5f716c;">Busca por nombre o teléfono y reutiliza fichas existentes.</div>
+        </div>
+        <button style="min-height: 44px; padding: 0 18px; border: none; border-radius: 10px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer;" style-hover="background: #0a625c;"><span style="width: 17px; height: 17px; background: #fff; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/user-plus.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/user-plus.svg) center/contain no-repeat;"></span>Registrar cliente</button>
+      </div>
+    </section>
+
+    <section id="navegacion" style="display: flex; flex-direction: column; gap: 18px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #0d7a72;">07 · Navegación</div>
+        <h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.025em; color: #07322f;">Barra lateral con iconos</h2>
+        <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.6; color: #5f716c;"><code style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">MainNavigation.tsx</code> usa puntos de 8 px como icono. <code style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">lucide-react</code> ya está instalado: un icono por destino, barra de acento en el activo y contadores donde hay trabajo pendiente.</p>
+      </div>
+      <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: stretch;">
+        <sc-if value="{{ mostrarAntes }}" hint-placeholder-val="{{ true }}">
+          <div style="flex: 0 0 244px; background: #07322f; border-radius: 14px; padding: 24px 16px; display: flex; flex-direction: column; gap: 4px; position: relative;">
+            <div style="position: absolute; top: 10px; right: 12px; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #4d7a74;">Hoy</div>
+            <div style="margin-bottom: 18px; display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 7px; background: #0d7a72; color: #fff; font-size: 14px; font-weight: 600; gap: 8px;"><span style="font-size: 20px; line-height: 1;">+</span>Nueva venta</div>
+            <div style="padding: 0 12px 8px; font-size: 10px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: #4d7a74;">Operación</div>
+            <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 7px; color: #a7cfc9; font-size: 14px; font-weight: 500;"><span style="width: 8px; height: 8px; border-radius: 999px; border: 1px solid #6f9c96; box-sizing: border-box;"></span>Panel principal</div>
+            <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 7px; background: #10463f; color: #d8f5ef; font-size: 14px; font-weight: 600;"><span style="width: 8px; height: 8px; border-radius: 999px; background: #35c2a8;"></span>Pedidos y cobros</div>
+            <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 7px; color: #a7cfc9; font-size: 14px; font-weight: 500;"><span style="width: 8px; height: 8px; border-radius: 999px; border: 1px solid #6f9c96; box-sizing: border-box;"></span>Clientes</div>
+            <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 7px; color: #a7cfc9; font-size: 14px; font-weight: 500;"><span style="width: 8px; height: 8px; border-radius: 999px; border: 1px solid #6f9c96; box-sizing: border-box;"></span>Recetas</div>
+          </div>
+        </sc-if>
+        <div style="flex: 0 0 260px; background: #07322f; border-radius: 14px; padding: 22px 14px 18px; display: flex; flex-direction: column;">
+          <div style="padding: 0 6px; display: flex; align-items: center; gap: 10px;"><img src="brand/lensspace-mark.svg" width="36" height="36" alt=""><div><div style="font-family: 'Space Grotesk', sans-serif; font-size: 15.5px; font-weight: 700; color: #f2fbf9;">LensSpace</div><div style="font-size: 12px; color: #7fb3ac;">Óptica Vedado</div></div></div>
+          <button style="margin-top: 22px; min-height: 44px; border: none; border-radius: 10px; background: #35c2a8; color: #07322f; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;" style-hover="background: #5dd3bd;"><span style="width: 17px; height: 17px; background: #07322f; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/plus.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/plus.svg) center/contain no-repeat;"></span>Nueva venta</button>
+          <sc-for list="{{ navSecciones }}" as="sec" hint-placeholder-count="2">
+            <div style="padding-top: 22px; display: flex; flex-direction: column; gap: 2px;">
+              <div style="padding: 0 12px 8px; font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #7fb3ac;">{{ sec.label }}</div>
+              <sc-for list="{{ sec.items }}" as="it" hint-placeholder-count="4">
+                <button style="{{ it.row }}" onClick="{{ it.go }}">
+                  <span style="{{ it.bar }}"></span>
+                  <span style="{{ it.icon }}"></span>
+                  <span style="flex: 1; text-align: left;">{{ it.label }}</span>
+                  <sc-if value="{{ it.count }}" hint-placeholder-val="{{ false }}"><span style="{{ it.countStyle }}">{{ it.count }}</span></sc-if>
+                </button>
+              </sc-for>
+            </div>
+          </sc-for>
+          <div style="margin-top: 22px; padding: 12px; border-radius: 12px; background: #10463f; display: flex; align-items: center; gap: 10px;">
+            <span style="width: 34px; height: 34px; flex: 0 0 34px; border-radius: 999px; background: #0d7a72; color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700;">YP</span>
+            <div style="flex: 1; min-width: 0;"><div style="font-size: 14px; font-weight: 600; color: #e6f5f3;">Yanet Pérez</div><div style="font-size: 12px; color: #7fb3ac;">Vendedora</div></div>
+            <span title="Cerrar sesión" style="width: 18px; height: 18px; background: #7fb3ac; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/log-out.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/log-out.svg) center/contain no-repeat; cursor: pointer;"></span>
+          </div>
+        </div>
+        <div style="flex: 1 1 300px; min-width: 280px; background: #ffffff; border: 1px solid #e3efed; border-radius: 14px; padding: 20px 22px; display: flex; flex-direction: column; gap: 20px;">
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: #324e4a; margin-bottom: 10px;">Pestañas</div>
+            <div style="display: flex; gap: 2px; border-bottom: 1px solid #e3efed;">
+              <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="3">
+                <button style="{{ tb.style }}" onClick="{{ tb.go }}">{{ tb.label }}</button>
+              </sc-for>
+            </div>
+            <div style="padding: 14px 2px 0; font-size: 14px; line-height: 1.55; color: #4a5b58;">{{ tabTexto }}</div>
+          </div>
+          <div style="padding-top: 16px; border-top: 1px solid #eef5f4;">
+            <div style="font-size: 13px; font-weight: 600; color: #324e4a; margin-bottom: 10px;">Filtros rápidos</div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <sc-for list="{{ chips }}" as="ch" hint-placeholder-count="4">
+                <button style="{{ ch.style }}" onClick="{{ ch.go }}">{{ ch.label }}<span style="{{ ch.countStyle }}">{{ ch.n }}</span></button>
+              </sc-for>
+            </div>
+          </div>
+          <div style="padding-top: 16px; border-top: 1px solid #eef5f4; font-size: 14px; line-height: 1.55; color: #5f716c;"><b style="color: #07322f;">Móvil:</b> hoy hay cabecera blanca + botón "+" + menú lateral (<code style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">MobileSidebar</code>). Mantenerlo, pero con la misma lista de iconos y la cabecera en tinta para que no parezca otra app.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="listas" style="display: flex; flex-direction: column; gap: 18px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #0d7a72;">08 · Tarjetas y listas</div>
+        <h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.025em; color: #07322f;">Filas que se leen de un vistazo</h2>
+        <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.6; color: #5f716c;">Bandeja de pedidos, cajas y clientes repiten el mismo patrón: un <code style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">&lt;ListItem&gt;</code> con avatar o icono, título, metadatos, estado y cifra a la derecha.</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 14px;">
+        <sc-if value="{{ mostrarAntes }}" hint-placeholder-val="{{ true }}">
+          <div style="flex: 1 1 280px; min-width: 0; box-sizing: border-box; background: #ffffff; border: 1px dashed #dcecea; border-radius: 14px; padding: 16px;">
+            <div style="font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #9aaba7; margin: 0 0 12px 8px;">Hoy</div>
+            <div style="border-radius: 7px; border: 1px solid #0d7a72; background: #f0fbf9; padding: 16px;">
+              <div style="display: flex; justify-content: space-between; gap: 12px;"><b style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; color: #07322f;">VIS-2026-000128</b><span style="padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; background: #fff0eb; color: #c23c1c;">Pendiente de pago</span></div>
+              <div style="margin-top: 4px; font-size: 14px; color: #4a5b58;">Roberto Figueras</div>
+              <div style="margin-top: 8px; font-size: 12px; color: #74857f;">12 200 CUP · Aceptado · 28/9/2026</div>
+            </div>
+          </div>
+        </sc-if>
+        <div style="flex: 2 1 480px; min-width: 0; box-sizing: border-box; background: #ffffff; border: 1px solid #e3efed; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 2px rgba(7,50,47,.05);">
+          <div style="padding: 16px 20px; border-bottom: 1px solid #eef5f4; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 600; color: #07322f;">Bandeja de pedidos</div>
+            <span style="font-size: 13px; color: #5f716c;">14 pedidos</span>
+          </div>
+          <sc-for list="{{ pedidos }}" as="p" hint-placeholder-count="4">
+            <button style="{{ p.row }}" onClick="{{ p.go }}">
+              <span style="{{ p.avatar }}">{{ p.ini }}</span>
+              <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; text-align: left;">
+                <span style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;"><span style="font-size: 15px; font-weight: 600; color: #07322f;">{{ p.cliente }}</span><span style="{{ p.badge }}"><span style="{{ p.dot }}"></span>{{ p.estado }}</span></span>
+                <span style="font-size: 13px; color: #5f716c;">{{ p.folio }} · {{ p.tipo }} · {{ p.fecha }}</span>
+              </span>
+              <span style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+                <span style="{{ p.montoStyle }}">{{ p.monto }}</span>
+                <span style="font-size: 12px; color: #5f716c;">{{ p.montoLabel }}</span>
+              </span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+        <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 14px; padding: 18px 20px; box-shadow: 0 1px 2px rgba(7,50,47,.05);">
+          <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 13px; color: #5f716c;">Clientes nuevos</span><span style="width: 34px; height: 34px; border-radius: 10px; background: #e2f4f1; display: flex; align-items: center; justify-content: center;"><span style="width: 17px; height: 17px; background: #0d7a72; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/users.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/users.svg) center/contain no-repeat;"></span></span></div>
+          <div style="margin-top: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -.02em; color: #07322f;">42</div>
+          <div style="margin-top: 2px; font-size: 13px; color: #07655c; font-weight: 600;">+8 vs. septiembre</div>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 14px; padding: 18px 20px; box-shadow: 0 1px 2px rgba(7,50,47,.05);">
+          <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 13px; color: #5f716c;">Ingresos del mes</span><span style="width: 34px; height: 34px; border-radius: 10px; background: #e2f4f1; display: flex; align-items: center; justify-content: center;"><span style="width: 17px; height: 17px; background: #0d7a72; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/wallet.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/wallet.svg) center/contain no-repeat;"></span></span></div>
+          <div style="margin-top: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -.02em; color: #07322f; font-variant-numeric: tabular-nums;">38 200 <span style="font-size: 14px; font-weight: 500; color: #5f716c;">CUP</span></div>
+          <div style="margin-top: 2px; font-size: 13px; color: #5f716c;">+ 120 USD</div>
+        </div>
+        <div style="background: #fff6f2; border: 1px solid #ffd9cd; border-radius: 14px; padding: 18px 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 13px; font-weight: 600; color: #c23c1c;">Incidencias abiertas</span><span style="width: 34px; height: 34px; border-radius: 10px; background: #ffe8e1; display: flex; align-items: center; justify-content: center;"><span style="width: 17px; height: 17px; background: #c23c1c; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/triangle-alert.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/triangle-alert.svg) center/contain no-repeat;"></span></span></div>
+          <div style="margin-top: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -.02em; color: #c23c1c;">1</div>
+          <div style="margin-top: 2px; font-size: 13px; color: #7a3a26;">Cristal defectuoso · VIS-000119</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="avisos" style="display: flex; flex-direction: column; gap: 18px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #0d7a72;">09 · Avisos y diálogos</div>
+        <h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.025em; color: #07322f;">Feedback con el mismo tono que los estados</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px;">
+        <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; gap: 12px; padding: 14px 16px; border-radius: 12px; background: #f0fbf9; border: 1px solid #b9dfd9;"><span style="width: 18px; height: 18px; flex: 0 0 18px; margin-top: 1px; background: #0d7a72; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/info.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/info.svg) center/contain no-repeat;"></span><div style="font-size: 14px; line-height: 1.5; color: #0b5a53;">Tras enviar el trabajo al cristalero, los datos comerciales quedan bloqueados.</div></div>
+          <div style="display: flex; gap: 12px; padding: 14px 16px; border-radius: 12px; background: #fff4e8; border: 1px solid #f6d9b3;"><span style="width: 18px; height: 18px; flex: 0 0 18px; margin-top: 1px; background: #a35a15; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/triangle-alert.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/triangle-alert.svg) center/contain no-repeat;"></span><div style="font-size: 14px; line-height: 1.5; color: #7a4510;"><b>Posible duplicado.</b> Mismo teléfono que Marisol Rivas Pérez.</div></div>
+          <div style="display: flex; gap: 12px; padding: 14px 16px; border-radius: 12px; background: #fff6f2; border: 1px solid #ffd9cd;"><span style="width: 18px; height: 18px; flex: 0 0 18px; margin-top: 1px; background: #c23c1c; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/circle-alert.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/circle-alert.svg) center/contain no-repeat;"></span><div style="font-size: 14px; line-height: 1.5; color: #7a3a26;">No se puede entregar con saldo pendiente.</div></div>
+          <div style="display: flex; gap: 12px; padding: 14px 16px; border-radius: 12px; background: #e9faf5; border: 1px solid #a9e6d7;"><span style="width: 18px; height: 18px; flex: 0 0 18px; margin-top: 1px; background: #07655c; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/circle-check.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/circle-check.svg) center/contain no-repeat;"></span><div style="font-size: 14px; line-height: 1.5; color: #07655c;">Pago registrado. Saldo actualizado a 4 400 CUP.</div></div>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button style="min-height: 44px; padding: 0 18px; border: 1px solid #cfe3e0; border-radius: 10px; background: #fff; color: #07322f; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;" style-hover="background: #f0fbf9;" onClick="{{ abrirModal }}">Abrir diálogo</button>
+            <button style="min-height: 44px; padding: 0 18px; border: 1px solid #cfe3e0; border-radius: 10px; background: #fff; color: #07322f; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;" style-hover="background: #f0fbf9;" onClick="{{ mostrarToast }}">Mostrar aviso</button>
+          </div>
+          <div style="border: 1px dashed #cfe3e0; border-radius: 14px; padding: 28px 20px; text-align: center; background: #fbfefd; display: flex; flex-direction: column; align-items: center;">
+            <span style="width: 52px; height: 52px; border-radius: 16px; background: #e2f4f1; display: flex; align-items: center; justify-content: center;"><span style="width: 24px; height: 24px; background: #0d7a72; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/glasses.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/glasses.svg) center/contain no-repeat;"></span></span>
+            <div style="margin-top: 12px; font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 600; color: #07322f;">Aún no hay pedidos aceptados</div>
+            <div style="margin-top: 4px; max-width: 300px; font-size: 14px; line-height: 1.5; color: #5f716c;">Crea una venta y confirma la cotización; el pedido aparecerá aquí.</div>
+            <button style="margin-top: 14px; min-height: 44px; padding: 0 18px; border: none; border-radius: 10px; background: #0d7a72; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;">Nueva venta</button>
+          </div>
+        </div>
+      </div>
+      <sc-if value="{{ modal }}" hint-placeholder-val="{{ false }}">
+        <div style="position: fixed; inset: 0; background: rgba(7,50,47,.55); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 40;" onClick="{{ cerrarModal }}">
+          <div style="width: 100%; max-width: 460px; background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 28px 64px rgba(7,50,47,.3);">
+            <div style="padding: 24px 24px 0; display: flex; gap: 14px;">
+              <span style="width: 44px; height: 44px; flex: 0 0 44px; border-radius: 12px; background: #fff0eb; display: flex; align-items: center; justify-content: center;"><span style="width: 22px; height: 22px; background: #c23c1c; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/banknote.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/banknote.svg) center/contain no-repeat;"></span></span>
+              <div>
+                <div style="font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 700; color: #07322f;">El pedido tiene saldo pendiente</div>
+                <div style="margin-top: 6px; font-size: 15px; line-height: 1.55; color: #4a5b58;">Quedan 4 400 CUP por cobrar. Registra el cobro antes de marcarlo como entregado.</div>
+              </div>
+            </div>
+            <div style="margin-top: 22px; padding: 16px 24px; background: #f7fbfa; display: flex; gap: 10px; justify-content: flex-end;">
+              <button style="min-height: 44px; padding: 0 16px; border: none; border-radius: 10px; background: transparent; color: #4a5b58; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;" onClick="{{ cerrarModal }}">Cancelar</button>
+              <button style="min-height: 44px; padding: 0 18px; border: none; border-radius: 10px; background: #ff6b4a; color: #07322f; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer;" onClick="{{ cerrarModal }}">Cobrar saldo</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+        <div style="position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 14px; background: #07322f; color: #e6f5f3; box-shadow: 0 16px 40px rgba(7,50,47,.32); z-index: 45;">
+          <span style="width: 22px; height: 22px; border-radius: 999px; background: #35c2a8; display: flex; align-items: center; justify-content: center;"><span style="width: 13px; height: 13px; background: #07322f; -webkit-mask: url(https://unpkg.com/lucide-static@0.460.0/icons/check.svg) center/contain no-repeat; mask: url(https://unpkg.com/lucide-static@0.460.0/icons/check.svg) center/contain no-repeat;"></span></span>
+          <span style="font-size: 14.5px;">WhatsApp enviado a Marisol Cabrera.</span>
+        </div>
+      </sc-if>
+    </section>
+
+    <section id="adopcion" style="display: flex; flex-direction: column; gap: 18px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #0d7a72;">10 · Plan de adopción</div>
+        <h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.025em; color: #07322f;">Cambiar las piezas, no las vistas</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+        <sc-for list="{{ pasos }}" as="ps" hint-placeholder-count="3">
+          <div style="background: #ffffff; border: 1px solid #e3efed; border-radius: 14px; padding: 20px 22px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px;"><span style="width: 30px; height: 30px; border-radius: 999px; background: #07322f; color: #35c2a8; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700;">{{ ps.n }}</span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 600; color: #07322f;">{{ ps.t }}</span></div>
+            <div style="font-size: 14px; line-height: 1.55; color: #4a5b58;">{{ ps.c }}</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.6; color: #5f716c; background: #f7fbfa; border-radius: 8px; padding: 10px 12px; white-space: pre-wrap;">{{ ps.code }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="background: #07322f; border-radius: 14px; padding: 20px 22px; overflow-x: auto;">
+        <div style="font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #7fd8c8; margin-bottom: 10px;">tailwind.config.ts · extend</div>
+        <pre style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.7; color: #d8f0ed;">{{ tailwindSnippet }}</pre>
+      </div>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;mostrarAntes&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Vista&quot;}, &quot;mostrarAuditoria&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Vista&quot;}}">
+class Component extends DCLogic {
+  state = { nav: '/orders', tab: 0, chip: 0, pedido: 0, modal: false, toast: false, sw: true, mon: 'CUP' };
+
+  renderVals() {
+    const s = this.state;
+    const P = 'https://unpkg.com/lucide-static@0.460.0/icons/';
+    const icon = (n, c, size = 18) => ({ width: size + 'px', height: size + 'px', flex: `0 0 ${size}px`, background: c, WebkitMask: `url(${P}${n}.svg) center/contain no-repeat`, mask: `url(${P}${n}.svg) center/contain no-repeat` });
+
+    const tag = {
+      Alta: { bg: '#ffe8e1', fg: '#c23c1c' },
+      Media: { bg: '#fff4e8', fg: '#a35a15' },
+      Baja: { bg: '#eef5f4', fg: '#4a5b58' },
+    };
+    const H = (n, nivel, titulo, detalle, donde, accion) => ({ n, nivel, titulo, detalle, donde, accion,
+      tagStyle: { padding: '3px 9px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, background: tag[nivel].bg, color: tag[nivel].fg } });
+
+    const hallazgos = [
+      H('01', 'Alta', 'Tres sistemas visuales conviviendo', 'La landing usa radios grandes, coral y sombras profundas; la app es plana con 7 px; login, contraseña y alta de organización aún usan el azul del starter.', 'LoginForm.tsx · UpdatePasswordForm.tsx · OrganizationOnboardingForm.tsx → sky-700, slate-300, rounded-xl', 'Migrar esas 3 pantallas a los tokens; eliminar sky-* y amber-* del uso.'),
+      H('02', 'Alta', 'Colores y clases escritos a mano', 'Hex literales repetidos en todos los workspaces y seis variantes de inputClass (py-2 vs py-2.5, texto #1C3A37 vs #07322F, font-display solo en recetas).', 'CustomerWorkspace · OrderPayments · Catalog · Prescription · PlatformAdmin · ManualEditor', 'Crear src/shared/ui con Button, Field, Badge, Card; prohibir hex en features.'),
+      H('03', 'Alta', 'Contraste insuficiente', 'El gris de apoyo #74857F da 3,9:1 en textos de 11–13 px; las etiquetas de sección del menú #4D7A74 sobre tinta dan 2,9:1; el CTA coral con texto blanco 2,8:1.', 'globals.css · MainNavigation.tsx · LandingPage.tsx', 'Usar #5F716C, #7FB3AC y texto tinta sobre coral.'),
+      H('04', 'Media', 'Jerarquía plana dentro de la app', 'Todo es tarjeta blanca con borde de 1 px; los encabezados de página son solo texto y el panel principal titula "LensSpace". Es la causa principal de que se vea poco llamativo.', 'dashboard/page.tsx · */page.tsx (bloque eyebrow + h1 repetido)', 'PageHeader compartido con variante destacada en tinta + cifras clave.'),
+      H('05', 'Media', 'Navegación sin iconos', 'Los destinos se distinguen solo por texto y un punto de 8 px; lucide-react ya está instalado y se usa en landing y manual, pero no en la app.', 'MainNavigation.tsx · MobileSidebar.tsx', 'Un icono por destino + contador de pendientes.'),
+      H('06', 'Media', 'Estados binarios en la bandeja', 'Cualquier pedido no pagado sale coral: un trabajo sano "en producción" se lee como error. Badges mezclan 4 px, 5 px y píldora, mayúsculas y no.', 'OrderPaymentsWorkspace.tsx L107 · CashboxWorkspace L48 · dashboard L199', 'Badge con 5 tonos semánticos mapeados desde los estados del negocio.'),
+      H('07', 'Media', 'Primarios que compiten', 'Teal, tinta y coral funcionan como botón principal según la pantalla; el panel del dueño muestra 4 botones tinta idénticos en fila.', 'dashboard/page.tsx DashboardCard · CatalogWorkspace (bg-[#07322F] guardar)', 'Teal = acción; tinta = marco; coral = atención.'),
+      H('08', 'Baja', 'Radios y sombras ad hoc', 'Conviven 7, 8, 9, 10 y 12 px; tres sombras distintas. tailwind.config redefine xl = 7 px, así que rounded-xl no significa lo mismo que en la landing.', 'tailwind.config.ts borderRadius · shadow-[0_8px_24px_rgba(7,50,47,0.04)]', 'Escala 6 / 10 / 14 / 20 y elevaciones e1–e3.'),
+      H('09', 'Baja', 'Documentación desalineada', 'La biblioteca de docs/design muestra una barra inferior móvil y valores que el código no usa; confunde a quien diseña vistas nuevas.', 'docs/design/Componentes Vision Studio.dc.html', 'Sustituir por esta guía como única referencia.'),
+    ];
+
+    const directrices = [
+      { n: 1, t: 'Una sola fuente de tokens', c: 'CSS vars + tailwind.config. Cero hex en src/features.' },
+      { n: 2, t: 'Tinta enmarca, teal actúa, coral alerta', c: 'Coral solo para saldo, incidencias y el CTA de marketing.' },
+      { n: 3, t: 'Cada vista abre con carácter', c: 'PageHeader destacado en tinta con 2–4 cifras de la vista.' },
+      { n: 4, t: 'Iconos en todo lo navegable', c: 'lucide-react 18 px en menú, botones, avisos y vacíos.' },
+      { n: 5, t: 'Estados con significado', c: 'Cinco tonos: neutro, en curso, listo, espera, problema.' },
+      { n: 6, t: 'Más aire y más forma', c: 'Controles de 44 px, radios 10/14/20, sombras e1–e3.' },
+    ];
+
+    const C = (nombre, token, hex, uso, border) => ({ nombre, token, hex, uso, swatch: { height: '64px', background: hex, borderBottom: border ? '1px solid #e3efed' : 'none' } });
+    const colores = [
+      C('Tinta', 'ink', '#07322F', 'Barra lateral, títulos, encabezado destacado'),
+      C('Tinta 2', 'ink-2', '#10463F', 'Superficies sobre tinta, activo del menú'),
+      C('Acción', 'action', '#0D7A72', 'Botón primario, enlaces, foco'),
+      C('Menta', 'mint', '#35C2A8', 'Listo, completado, CTA sobre tinta'),
+      C('Coral', 'coral', '#FF6B4A', 'Saldo, incidencias, atención'),
+      C('Ámbar', 'amber', '#A35A15', 'Espera, solo lectura, advertencias', false),
+      C('Texto', 'text', '#1C3A37', 'Cuerpo de texto'),
+      C('Texto tenue', 'muted', '#5F716C', 'Apoyo · nuevo, cumple AA'),
+      C('Borde', 'line', '#DCECEA', 'Bordes de control y tarjeta', true),
+      C('Menta suave', 'mint-50', '#E2F4F1', 'Fondos de icono, selección', true),
+      C('Lienzo', 'canvas', '#F7FBFA', 'Fondo de la app', true),
+      C('Superficie', 'surface', '#FFFFFF', 'Tarjetas', true),
+    ];
+
+    const tonoDef = {
+      neutral: { bg: '#eef3f2', fg: '#4a5b58', dot: '#9aaba7' },
+      progress: { bg: '#e2f4f1', fg: '#0b5a53', dot: '#0d7a72' },
+      success: { bg: '#d9f5ee', fg: '#07655c', dot: '#35c2a8' },
+      warning: { bg: '#fff4e8', fg: '#8f4c0f', dot: '#e39a3b' },
+      danger: { bg: '#ffe8e1', fg: '#b2361a', dot: '#ff6b4a' },
+    };
+    const badge = (k) => ({ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 9px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, background: tonoDef[k].bg, color: tonoDef[k].fg, whiteSpace: 'nowrap' });
+    const dot = (k) => ({ width: '6px', height: '6px', borderRadius: '999px', background: tonoDef[k].dot });
+    const T = (nombre, key, items) => ({ nombre, key, items, badge: badge(key), dot: dot(key) });
+    const tonos = [
+      T('Neutro', 'neutral', ['Borrador', 'Cotizado', 'Entregado', 'Cerrado']),
+      T('En curso', 'progress', ['Aceptado', 'Enviado', 'En fabricación', 'En montaje']),
+      T('Listo', 'success', ['Listo para recoger', 'Pagado', 'Caja cerrada']),
+      T('Espera', 'warning', ['Pago parcial', 'Esperando aceptación', 'Solo lectura']),
+      T('Problema', 'danger', ['Incidencia', 'Vencida', 'Saldo vencido']),
+    ];
+
+    const navDef = [
+      { label: 'Operación', items: [
+        ['/dashboard', 'Panel principal', 'layout-dashboard'],
+        ['/orders', 'Pedidos y cobros', 'receipt-text', 2],
+        ['/customers', 'Clientes', 'users'],
+        ['/prescriptions', 'Recetas', 'file-text'],
+        ['/production', 'Producción', 'factory', 7],
+        ['/cashbox', 'Caja y cierres', 'wallet'],
+      ] },
+      { label: 'Gestión', items: [
+        ['/catalog', 'Catálogo y precios', 'tags'],
+        ['/team', 'Equipo', 'users-round'],
+        ['/manual', 'Manual', 'book-open'],
+      ] },
+    ];
+    const navSecciones = navDef.map((sec) => ({ label: sec.label, items: sec.items.map(([href, label, ic, count]) => {
+      const a = s.nav === href;
+      return { label, count: count || false,
+        go: () => this.setState({ nav: href }),
+        row: { position: 'relative', display: 'flex', alignItems: 'center', gap: '12px', minHeight: '42px', padding: '0 12px', border: 'none', borderRadius: '10px', background: a ? '#10463f' : 'transparent', color: a ? '#ffffff' : '#a7cfc9', fontFamily: "'Source Sans 3', sans-serif", fontSize: '14.5px', fontWeight: a ? 600 : 500, cursor: 'pointer', width: '100%' },
+        bar: { position: 'absolute', left: '-14px', top: '10px', bottom: '10px', width: '3px', borderRadius: '0 3px 3px 0', background: a ? '#35c2a8' : 'transparent' },
+        icon: icon(ic, a ? '#35c2a8' : '#7fb3ac'),
+        countStyle: { minWidth: '22px', height: '22px', padding: '0 6px', boxSizing: 'border-box', borderRadius: '999px', background: href === '/orders' ? '#ff6b4a' : '#1d5a52', color: href === '/orders' ? '#07322f' : '#d8f0ed', fontFamily: "'Space Grotesk', sans-serif", fontSize: '11.5px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' } };
+    }) }));
+
+    const tabNames = ['Resumen', 'Pagos', 'Historial'];
+    const tabTextos = ['Datos generales del pedido, receta y configuración.', 'Pagos registrados, moneda, tasa aplicada y caja receptora.', 'Cronología completa con autor y origen de cada cambio.'];
+    const tabs = tabNames.map((label, i) => ({ label, go: () => this.setState({ tab: i }),
+      style: { padding: '10px 14px', border: 'none', background: 'transparent', marginBottom: '-1px', borderBottom: s.tab === i ? '2px solid #0d7a72' : '2px solid transparent', color: s.tab === i ? '#07322f' : '#5f716c', fontFamily: "'Space Grotesk', sans-serif", fontSize: '14px', fontWeight: 600, cursor: 'pointer' } }));
+
+    const chipDef = [['Todos', 14], ['Con saldo', 2], ['En producción', 7], ['Listos', 3]];
+    const chips = chipDef.map(([label, n], i) => {
+      const a = s.chip === i;
+      return { label, n, go: () => this.setState({ chip: i }),
+        style: { display: 'flex', alignItems: 'center', gap: '8px', minHeight: '36px', padding: '0 8px 0 14px', borderRadius: '999px', border: a ? '1px solid #07322f' : '1px solid #dcecea', background: a ? '#07322f' : '#ffffff', color: a ? '#ffffff' : '#324e4a', fontSize: '14px', fontWeight: 600, cursor: 'pointer' },
+        countStyle: { minWidth: '20px', height: '20px', padding: '0 6px', boxSizing: 'border-box', borderRadius: '999px', background: a ? '#35c2a8' : '#eef5f4', color: '#07322f', fontSize: '11.5px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' } };
+    });
+
+    const pedDef = [
+      ['Roberto Figueras', 'VIS-000128', 'Progresivo', 'hoy', 'progress', 'En fabricación', '4 400 CUP', 'Saldo', true],
+      ['Ana Lucía Prieto', 'VIS-000126', 'Monofocal', 'ayer', 'success', 'Listo para recoger', 'Pagado', '6 200 CUP', false],
+      ['Marisol Cabrera', 'VIS-000123', 'Bifocal', '27 sep', 'warning', 'Pago parcial', '2 450 CUP', 'Saldo', true],
+      ['Luis Rodríguez', 'VIS-000119', 'Progresivo', '25 sep', 'danger', 'Incidencia', '0', 'Sin saldo', false],
+    ];
+    const pedidos = pedDef.map(([cliente, folio, tipo, fecha, k, estado, monto, montoLabel, debe], i) => {
+      const a = s.pedido === i;
+      const ini = cliente.split(' ').slice(0, 2).map((w) => w[0]).join('');
+      return { cliente, folio, tipo, fecha, estado, monto, montoLabel, ini,
+        go: () => this.setState({ pedido: i }),
+        badge: badge(k), dot: dot(k),
+        row: { width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 20px', border: 'none', borderBottom: i < pedDef.length - 1 ? '1px solid #eef5f4' : 'none', borderLeft: a ? '3px solid #0d7a72' : '3px solid transparent', background: a ? '#f0fbf9' : '#ffffff', cursor: 'pointer', fontFamily: "'Source Sans 3', sans-serif" },
+        avatar: { width: '40px', height: '40px', flex: '0 0 40px', borderRadius: '999px', background: a ? '#0d7a72' : '#e2f4f1', color: a ? '#ffffff' : '#0d7a72', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', fontWeight: 700 },
+        montoStyle: { fontFamily: "'Space Grotesk', sans-serif", fontSize: '16px', fontWeight: 700, fontVariantNumeric: 'tabular-nums', color: debe ? '#c23c1c' : (monto === 'Pagado' ? '#07655c' : '#5f716c'), whiteSpace: 'nowrap' } };
+    });
+
+    const swOn = s.sw;
+    const seg = (on) => ({ padding: '0 14px', minHeight: '38px', border: 'none', borderRadius: '8px', background: on ? '#ffffff' : 'transparent', boxShadow: on ? '0 1px 3px rgba(7,50,47,.15)' : 'none', color: on ? '#07322f' : '#5f716c', fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', fontWeight: 600, cursor: 'pointer' });
+
+    const pasos = [
+      { n: 1, t: 'Tokens', c: 'Ampliar las CSS vars de globals.css y mapearlas en tailwind.config. Un PR, sin tocar vistas.', code: '--ls-ink  --ls-action\n--ls-mint --ls-coral\n--ls-muted: #5F716C' },
+      { n: 2, t: 'Primitivas en src/shared/ui', c: 'Button, Field, Badge (tone), Card, PageHeader, ListItem, StatCard, EmptyState, Dialog, Alert.', code: '<Button icon={Plus}>Nueva venta</Button>\n<Badge tone="progress">En fabricación</Badge>' },
+      { n: 3, t: 'Reemplazo por buscar/sustituir', c: 'Sustituir inputClass, botones y badges en cada workspace; luego MainNavigation y los page.tsx con PageHeader.', code: "grep -r \"rounded-\\[7px\\] bg-\\[#0D7A72\\]\" src/features\n→ <Button>" },
+    ];
+
+    const tailwindSnippet = `colors: {
+  ink:    { DEFAULT: '#07322F', 2: '#10463F' },
+  action: { DEFAULT: '#0D7A72', hover: '#0A625C', soft: '#E2F4F1' },
+  mint:   '#35C2A8',
+  coral:  { DEFAULT: '#FF6B4A', ink: '#C23C1C', soft: '#FFF0EB' },
+  amber:  { ink: '#A35A15', soft: '#FFF4E8' },
+  text:   { DEFAULT: '#1C3A37', muted: '#5F716C' },
+  line:   '#DCECEA', canvas: '#F7FBFA',
+},
+borderRadius: { badge: '6px', control: '10px', card: '14px', panel: '20px' },
+boxShadow: {
+  e1: '0 1px 2px rgba(7,50,47,.05)',
+  e2: '0 10px 28px rgba(7,50,47,.10)',
+  e3: '0 28px 64px rgba(7,50,47,.22)',
+},`;
+
+    return {
+      mostrarAntes: this.props.mostrarAntes ?? true,
+      mostrarAuditoria: this.props.mostrarAuditoria ?? true,
+      indice: [
+        ['#auditoria', 'Auditoría'], ['#fundamentos', 'Tokens'], ['#botones', 'Botones'], ['#campos', 'Campos'], ['#estados', 'Estados'],
+        ['#encabezado', 'Encabezado'], ['#navegacion', 'Navegación'], ['#listas', 'Listas'], ['#avisos', 'Avisos'], ['#adopcion', 'Plan'],
+      ].map(([href, label]) => ({ href, label })),
+      hallazgos, directrices, colores, tonos, navSecciones, tabs, chips, pedidos, pasos, tailwindSnippet,
+      tabTexto: tabTextos[s.tab],
+      switchStyle: { width: '42px', height: '24px', borderRadius: '999px', padding: '2px', border: 'none', display: 'flex', alignItems: 'center', justifyContent: swOn ? 'flex-end' : 'flex-start', background: swOn ? '#0d7a72' : '#cfe3e0', cursor: 'pointer', boxSizing: 'border-box' },
+      toggleSwitch: () => this.setState({ sw: !s.sw }),
+      monCUP: seg(s.mon === 'CUP'), monUSD: seg(s.mon === 'USD'),
+      setCUP: () => this.setState({ mon: 'CUP' }), setUSD: () => this.setState({ mon: 'USD' }),
+      modal: s.modal, toast: s.toast,
+      abrirModal: () => this.setState({ modal: true }),
+      cerrarModal: () => this.setState({ modal: false }),
+      mostrarToast: () => { this.setState({ toast: true }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ toast: false }), 2600); },
+    };
+  }
+}
+</script>
+</body>
+</html>

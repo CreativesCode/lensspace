@@ -17,7 +17,7 @@ Read relevant entries only. Store decisions with dates and evidence.
 - [2026-10-01 — Portable Codex tooling](project/2026-10-01-portable-codex-tooling.md)
 - [2026-09-21 — Manual integrado de LensSpace](project/2026-09-21-manual-generator.md)
 - [2026-09-21 — SEO público de LensSpace](project/2026-09-21-public-seo.md)
-- [2026-09-21 — LensSpace product name](project/2026-09-21-lensspace-rebrand.md)
+- [2026-09-21 — LensSpace product name (logo D2.1 since 2026-10-01)](project/2026-09-21-lensspace-rebrand.md)
 - [2026-09-21 — Filtros operativos reutilizables](project/2026-09-21-operational-filters.md)
 - [2026-09-21 — Fichas de clientes unificadas y editables](project/2026-09-21-customer-forms-and-editing.md)
 - [2026-09-20 — Ajustes de precio por producto en ventas](project/2026-09-20-sale-line-price-adjustments.md)
