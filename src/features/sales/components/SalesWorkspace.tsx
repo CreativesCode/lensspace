@@ -1,7 +1,7 @@
 "use client";
 
 import { CircleCheck, Plus, Save, Store, UserPlus } from "lucide-react";
-import { useMemo, useRef, useState, useTransition, type FormEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition, type FormEvent, type ReactNode } from "react";
 
 import { friendlyError, isNetworkError } from "@/shared/lib/friendly-error";
 import { CustomerFormFields, customerFormValues, type CustomerPhoneDraft } from "@/features/customers/components";
@@ -45,14 +45,49 @@ type PrescriptionResult = {
   revisionNumber: number;
 };
 
+type SaleDraft = {
+  savedAt: number;
+  customer: SaleCustomer;
+  revisionId: number;
+  selected: number[];
+  agreedPrices: Record<number, string>;
+  adjustmentReasons: Record<number, string>;
+  rate: string;
+  notes: string;
+};
+const DRAFT_TTL_MS = 24 * 60 * 60 * 1000;
+
+// Per-viewer convenience only (never balances or payments): a reload, a dropped
+// connection or a closed tab must not lose the sale being prepared (QA-17).
+function readDraft(key: string): SaleDraft | null {
+  try {
+    const draft = JSON.parse(localStorage.getItem(key) ?? "null") as SaleDraft | null;
+    return draft && Date.now() - draft.savedAt < DRAFT_TTL_MS && draft.customer ? draft : null;
+  } catch {
+    return null;
+  }
+}
+function writeDraft(key: string, draft: SaleDraft | null) {
+  try {
+    if (draft) localStorage.setItem(key, JSON.stringify(draft));
+    else localStorage.removeItem(key);
+  } catch {
+    /* storage unavailable (private mode): the sale still works without a draft */
+  }
+}
+
 export function SalesWorkspace({
   organizations,
+  userId,
+  lastRates,
   recentCustomers,
   initialCustomer,
   initialRevisions,
   items,
 }: {
   organizations: Organization[];
+  userId: string;
+  lastRates: Record<number, number>;
   recentCustomers: SaleCustomer[];
   initialCustomer: SaleCustomer | null;
   initialRevisions: Revision[];
@@ -71,7 +106,9 @@ export function SalesWorkspace({
   const [selected, setSelected] = useState<number[]>([]);
   const [agreedPrices, setAgreedPrices] = useState<Record<number, string>>({});
   const [adjustmentReasons, setAdjustmentReasons] = useState<Record<number, string>>({});
-  const [rate, setRate] = useState("420");
+  const [rate, setRate] = useState(String(lastRates[initialScope?.id ?? 0] ?? 420));
+  const [notes, setNotes] = useState("");
+  const [restorable, setRestorable] = useState<SaleDraft | null>(null);
   const [quotationId, setQuotationId] = useState<number | null>(null);
   const [preview, setPreview] = useState<PriceResult | null>(null);
   const [acceptedOrder, setAcceptedOrder] = useState<AcceptedOrder | null>(null);
@@ -93,6 +130,14 @@ export function SalesWorkspace({
     (entry) => `${entry.id}:${entry.branchId}` === scopeKey,
   );
   const organizationId = organization?.id ?? 0;
+  const draftKey = `lensspace:sale-draft:${userId}:${scopeKey}`;
+  const lastRate = lastRates[organizationId] ?? 420;
+  const rateValue = Number(rate);
+  const rateWarning = !rate || !Number.isFinite(rateValue) || rateValue <= 0
+    ? "Indica una tasa mayor que 0."
+    : Math.abs(rateValue - lastRate) / lastRate > 0.3
+      ? `La tasa se aleja más de un 30 % de la última usada (${lastRate}). Revísala antes de crear el pedido.`
+      : "";
   const customerId = selectedCustomer?.id ?? 0;
   const availableRecentCustomers = recentCustomers.filter(
     (entry) =>
@@ -145,6 +190,40 @@ export function SalesWorkspace({
       });
   }
 
+  // Offer the unfinished sale once (a deep link to a customer starts a new one).
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      if (!initialCustomer) setRestorable(readDraft(draftKey));
+    }, 0);
+    return () => window.clearTimeout(timer);
+    // Only on mount and when the branch changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draftKey]);
+
+  useEffect(() => {
+    if (!selectedCustomer || restorable || acceptedOrder) return;
+    const timer = window.setTimeout(() => writeDraft(draftKey, {
+      savedAt: Date.now(), customer: selectedCustomer, revisionId, selected, agreedPrices, adjustmentReasons, rate, notes,
+    }), 500);
+    return () => window.clearTimeout(timer);
+  }, [acceptedOrder, adjustmentReasons, agreedPrices, draftKey, notes, rate, restorable, revisionId, selected, selectedCustomer]);
+
+  function restoreDraft(draft: SaleDraft) {
+    const availableIds = new Set(availableItems.map((item) => item.id));
+    selectCustomer(draft.customer);
+    setRevisionId(draft.revisionId);
+    setSelected(draft.selected.filter((id) => availableIds.has(id)));
+    setAgreedPrices(draft.agreedPrices);
+    setAdjustmentReasons(draft.adjustmentReasons);
+    setRate(draft.rate);
+    setNotes(draft.notes);
+    setRestorable(null);
+  }
+  function discardDraft() {
+    writeDraft(draftKey, null);
+    setRestorable(null);
+  }
+
   function resetQuote() {
     quoteRequestId.current = null;
     setQuotationId(null);
@@ -168,6 +247,7 @@ export function SalesWorkspace({
   }
   function changeScope(value: string) {
     setScopeKey(value);
+    setRate(String(lastRates[Number(value.split(":")[0])] ?? 420));
     setSelectedCustomer(null);
     setRevisionId(0);
     setSelected([]);
@@ -275,6 +355,8 @@ export function SalesWorkspace({
   function lineAdjustmentsOrError(): Record<string, { amount: number; reason: string }> | string {
     if (!organization || !customerId || !selected.length)
       return "Selecciona cliente y al menos un concepto.";
+    if (!Number.isFinite(rateValue) || rateValue <= 0)
+      return "Indica una tasa de cambio mayor que 0.";
     const lineAdjustments: Record<string, { amount: number; reason: string }> = {};
     for (const item of selectedItems) {
       const rawAmount = agreedPrices[item.id]?.trim();
@@ -297,7 +379,6 @@ export function SalesWorkspace({
   // quotation id, or null after reporting the error.
   async function persistQuote(lineAdjustments: Record<string, { amount: number; reason: string }>) {
     if (!organization) return null;
-    const notes = String(new FormData(formRef.current ?? undefined).get("notes") ?? "");
     quoteRequestId.current ??= newRequestId();
     const { data, error } = await supabase.rpc("save_sale_quotation", {
       target_quotation_id: quotationId,
@@ -359,6 +440,7 @@ export function SalesWorkspace({
       );
       setAcceptedOrder(result);
       setQuotationId(null);
+      writeDraft(draftKey, null);
     });
   }
 
@@ -378,7 +460,9 @@ export function SalesWorkspace({
           setAgreedPrices({});
           setAdjustmentReasons({});
           setPreview(null);
+          setNotes("");
           setMessage("");
+          writeDraft(draftKey, null);
         }}
       />
     );
@@ -386,8 +470,17 @@ export function SalesWorkspace({
   const currentStep = !customerId ? 0 : !selected.length ? 1 : !quotationId ? 2 : 3;
   return (
     <>
-      <form ref={formRef} onSubmit={save} className="grid items-start gap-5 pb-24 xl:grid-cols-[minmax(0,1fr)_390px] xl:pb-0">
+      <form ref={formRef} onSubmit={save} noValidate className="grid items-start gap-5 pb-24 xl:grid-cols-[minmax(0,1fr)_390px] xl:pb-0">
         <div className="flex min-w-0 flex-col gap-5">
+          {restorable ? (
+            <Alert tone="info" title="Tienes una venta sin terminar">
+              {restorable.customer.name} · {restorable.selected.length === 1 ? "1 concepto" : `${restorable.selected.length} conceptos`}
+              <span className="mt-3 flex flex-wrap gap-2">
+                <Button size="sm" onClick={() => restoreDraft(restorable)}>Recuperar</Button>
+                <Button size="sm" variant="ghost" onClick={discardDraft}>Descartar</Button>
+              </span>
+            </Alert>
+          ) : null}
           <Card className="flex flex-col gap-4">
             <Steps label="Progreso de la venta" steps={["Cliente", "Configuración", "Cotización", "Pedido"]} current={currentStep} />
             <h2 className="font-display text-[17px] font-semibold text-ink">Cliente y receta</h2>
@@ -446,6 +539,7 @@ export function SalesWorkspace({
                 <span>CUP</span>
               </label>
             </div>
+            {rateWarning ? <Alert tone="warning">{rateWarning}</Alert> : null}
           </Card>
 
           <Card className="flex flex-col gap-5">
@@ -463,7 +557,7 @@ export function SalesWorkspace({
               onAdjustmentReasonChange={updateAdjustmentReason}
             />
             <Field label="Notas comerciales" optional>
-              <Textarea name="notes" maxLength={1000} />
+              <Textarea name="notes" maxLength={1000} value={notes} onChange={(event) => setNotes(event.target.value)} />
             </Field>
           </Card>
         </div>

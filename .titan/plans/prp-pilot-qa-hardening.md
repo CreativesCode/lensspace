@@ -97,12 +97,12 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 | QA-14 | Delivery not tied to production; no 'Listo para recoger' or production strip in order detail | medium | missing-feature | SOLO-10, MR-08 | done 2026-10-02 | M |
 | QA-15 | Two-step save/accept, no total before saving, redundant `calculate_sale_price` round trip | medium | friction | SALES-11, PERF-12 | done 2026-10-02 | M |
 | QA-16 | Mobile: total and Save/Accept buttons ~3000 px down, no sticky bar | medium | mobile | SOLO-16, SALES-12 | done 2026-10-02 | S |
-| QA-17 | Sale draft lost on reload/back/tab kill; saved quotations cannot be resumed | medium | offline | SALES-07, PERF-09, RC-11 | confirmed | S |
+| QA-17 | Sale draft lost on reload/back/tab kill; saved quotations cannot be resumed | medium | offline | SALES-07, PERF-09, RC-11 | done 2026-10-02 | S |
 | QA-18 | Paying the full balance in USD leaves a CUP residue that blocks delivery | medium | bug | SALES-08 | done 2026-10-02 | S |
 | QA-19 | Nueva venta blocks real homonyms and never checks duplicate phones | medium | bug | SALES-05 | partial 2026-10-02 (homonyms no longer blocked; phone warning pending) | M |
 | QA-20 | Phones stored in two formats ('50000101' vs '5350000101'); duplicates missed | medium | data-integrity | SALES-13 | confirmed | S |
 | QA-21 | No pending label and no request timeout on Save/Accept/Pay | medium | friction | SALES-18 (labels), RC-10 | confirmed | S |
-| QA-22 | Rate hardcoded to 420; absurd rate accepted; native English validation | low | friction | SOLO-15, SALES-18 (rate) | confirmed | S |
+| QA-22 | Rate hardcoded to 420; absurd rate accepted; native English validation | low | friction | SOLO-15, SALES-18 (rate) | done 2026-10-02 (/catalog simulator still 420) | S |
 | QA-23 | No password recovery (self-service or admin) | medium | missing-feature | ADM-05 | confirmed | S |
 | QA-24 | Sidebar counters never refresh after mutations or soft navigation | medium | refresh | SOLO-06, MR-04, SALES-15, PERF-04, RC-05 | confirmed | S |
 | QA-25 | Superseded incident jobs counted as active/incident forever | medium | bug | SOLO-07, MR-05 | confirmed | S |
@@ -435,6 +435,8 @@ Target for a solo owner on a phone:
   - Never cache balances or payments.
 - **Verify:** fill a draft and reload → verificar: restored; accept → verificar: draft cleared.
 
+- **Done (2026-10-02):** the sale draft (customer, prescription, items, agreed prices, reasons, rate and notes) is stored in localStorage under `lensspace:sale-draft:<userId>:<org:branch>`, debounced at 500 ms, inside try/catch and with a 24 h TTL. The notes field is now controlled. On return, 'Tienes una venta sin terminar' offers 'Recuperar' / 'Descartar'; restoring drops items no longer available. The draft is cleared on accept and on 'Otra venta', and is skipped for `?clienteId` deep links. Balances and payments are never stored. Verified: rate 410, a customer, an item and a note survived a reload and were restored, the draft was gone after accepting QSB-2026-000008.
+
 ### QA-18 USD full-balance residue (medium, S — product rule)
 - **Problem:** 'Cobrar saldo completo' in USD fills `floor(balance/rate)` (16.66 USD for 7000 CUP at 420) and leaves 2.80 CUP owing. 16.67 is rejected as an overpayment, so the order cannot be settled in USD alone and delivery stays blocked.
 - **Evidence:** JAV-2026-000016; `sales-friction/usd-full-balance-residue-mobile.png`.
@@ -479,6 +481,8 @@ Target for a solo owner on a phone:
   - Validate in the app (`noValidate`) with Spanish copy.
   - Ask for confirmation when the rate is more than 30 % away from the last one.
 - **Verify:** sell at 410 and reopen `/sales` → verificar: 410; enter 99999 → verificar: a confirm prompt.
+
+- **Done (2026-10-02):** `/sales` defaults the rate to the organization's latest order rate, falling back to 420, and switches it per scope. The form is `noValidate`, so a missing or ≤0 rate is rejected with Spanish copy. A non-blocking warning appears when the rate is more than 30 % away from the last one. Verified: after selling at 410, `/sales` defaulted to 410, and 999 showed the warning. The `/catalog` simulator still uses 420.
 
 ### QA-23 Password recovery (medium, S)
 - **Problem:** a sole owner who forgets the password has no way back except the Supabase dashboard.
