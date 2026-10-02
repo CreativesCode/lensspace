@@ -5,7 +5,7 @@ type Option<T extends string> = { value: T; label: string }
 // Guide: CUP/USD selector and view toggles. Rendered as a radiogroup of buttons.
 export function SegmentedControl<T extends string>({ options, value, onChange, label, className }: { options: Option<T>[]; value: T; onChange: (value: T) => void; label: string; className?: string }) {
   return (
-    <div role="radiogroup" aria-label={label} className={cx('inline-flex shrink-0 gap-[3px] rounded-control bg-[#EEF5F4] p-[3px]', className)}>
+    <div role="radiogroup" aria-label={label} className={cx('inline-flex shrink-0 gap-[3px] rounded-control bg-line-soft p-[3px]', className)}>
       {options.map((option) => {
         const active = option.value === value
         return (

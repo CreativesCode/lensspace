@@ -302,7 +302,7 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
             {loading ? (
               <p className="py-5 text-sm text-text-muted">Buscando clientes…</p>
             ) : results.length ? (
-              <div className="-mx-5 border-t border-[#EEF5F4] md:-mx-[22px]">
+              <div className="-mx-5 border-t border-line-soft md:-mx-[22px]">
                 {results.map((customer, index) => {
                   const scope = scopes.find(({ organizationId, branchId }) => organizationId === customer.organization_id && branchId === customer.branch_id)
                   const summary = customer.orderSummary ?? { total: 0, open: 0, completed: 0 }
@@ -382,9 +382,9 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
                 <div>
                   <dt className="text-[13px] text-text-muted">Trabajos</dt>
                   <dd className="mt-2 grid grid-cols-3 gap-2 text-center">
-                    <span className="rounded-control bg-[#EEF3F2] px-2 py-2.5"><strong className="block font-display text-lg text-ink">{selected.orderSummary?.total ?? 0}</strong><small className="text-[#4A5B58]">Total</small></span>
-                    <span className="rounded-control bg-action-soft px-2 py-2.5"><strong className="block font-display text-lg text-[#0B5A53]">{selected.orderSummary?.open ?? 0}</strong><small className="text-[#0B5A53]">Abiertos</small></span>
-                    <span className="rounded-control bg-[#D9F5EE] px-2 py-2.5"><strong className="block font-display text-lg text-[#07655C]">{selected.orderSummary?.completed ?? 0}</strong><small className="text-[#07655C]">Finalizados</small></span>
+                    <span className="rounded-control bg-neutral-soft px-2 py-2.5"><strong className="block font-display text-lg text-ink">{selected.orderSummary?.total ?? 0}</strong><small className="text-text-secondary">Total</small></span>
+                    <span className="rounded-control bg-action-soft px-2 py-2.5"><strong className="block font-display text-lg text-progress-ink">{selected.orderSummary?.open ?? 0}</strong><small className="text-progress-ink">Abiertos</small></span>
+                    <span className="rounded-control bg-success-soft px-2 py-2.5"><strong className="block font-display text-lg text-success-ink">{selected.orderSummary?.completed ?? 0}</strong><small className="text-success-ink">Finalizados</small></span>
                   </dd>
                 </div>
               </dl>

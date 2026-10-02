@@ -13,8 +13,8 @@ export function LensSpaceLogo({ compact = false, inverse = false, subtitle }: Pr
         <circle cx="94" cy="94" r="13" fill="#FF6B4A" />
       </svg>
       <div className="min-w-0">
-        <p className={inverse ? 'font-display text-[15.5px] font-bold tracking-tight text-[#F2FBF9]' : 'font-display text-lg font-bold tracking-tight text-slate-950'}>LensSpace</p>
-        {subtitle ? <p className={inverse ? 'truncate text-xs text-[#7FB3AC]' : 'truncate text-xs text-slate-500'}>{subtitle}</p> : null}
+        <p className={inverse ? 'font-display text-[15.5px] font-bold tracking-tight text-[#F2FBF9]' : 'font-display text-lg font-bold tracking-tight text-ink'}>LensSpace</p>
+        {subtitle ? <p className={inverse ? 'truncate text-xs text-[#7FB3AC]' : 'truncate text-xs text-text-muted'}>{subtitle}</p> : null}
       </div>
     </div>
   )

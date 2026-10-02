@@ -29,10 +29,10 @@ export function ProductionJobCard({ job, showCustomer, transitionLabel, pending,
         {showCustomer && job.customerName ? <p className="text-[15px] font-semibold text-ink">{job.customerName}</p> : null}
         <p className="mt-0.5 text-[13px] text-text-muted">{job.jobType === 'lens' ? 'Cristales' : 'Montaje'} · {job.providerName} · {new Date(job.assignedAt).toLocaleDateString('es-CU')}</p>
       </div>
-      <p className="text-sm leading-6 text-[#4A5B58]">{job.snapshot.items?.map((item) => item.name).join(' · ') || 'Configuración preservada en la asignación.'}</p>
+      <p className="text-sm leading-6 text-text-secondary">{job.snapshot.items?.map((item) => item.name).join(' · ') || 'Configuración preservada en la asignación.'}</p>
       <PrescriptionDetails prescription={job.snapshot.prescription} />
       {job.incidents.map((incident) => (
-        <div key={incident.id} className="flex flex-col gap-2 rounded-[12px] border border-[#FFD9CD] bg-[#FFF6F2] px-4 py-3 text-sm text-[#7A3A26]">
+        <div key={incident.id} className="flex flex-col gap-2 rounded-[12px] border border-coral-line bg-coral-tint px-4 py-3 text-sm text-coral-deep">
           <p className="flex gap-2"><TriangleAlert aria-hidden="true" size={16} className="mt-0.5 shrink-0 text-coral-ink" />{incident.description}</p>
           <p className="font-semibold">Costo: {responsibilityLabels[incident.costResponsibility] ?? incident.costResponsibility}</p>
           {!incident.reworkJobId ? (
@@ -59,7 +59,7 @@ function PrescriptionDetails({ prescription }: { prescription?: PrescriptionSnap
     { label: 'OI', values: [['Esfera', prescriptionValue(prescription.left_sphere)], ['Cilindro', prescriptionValue(prescription.left_cylinder)], ['Eje', prescriptionValue(prescription.left_axis, '°')], ['Adición', prescriptionValue(prescription.left_addition)], ['DP', prescriptionValue(prescription.left_pupillary_distance, ' mm')], ['Altura', prescriptionValue(prescription.left_height, ' mm')]] },
   ]
   return (
-    <details className="group rounded-control border border-[#B9DFD9] bg-[#F7FDFC]">
+    <details className="group rounded-control border border-line-focus bg-action-wash">
       <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-3.5 text-sm font-semibold text-action">
         Ver receta de fabricación
         <ChevronDown aria-hidden="true" size={16} className="transition-transform group-open:rotate-180" />
@@ -73,7 +73,7 @@ function PrescriptionDetails({ prescription }: { prescription?: PrescriptionSnap
             </dl>
           </div>
         ))}
-        <div className="grid gap-1.5 border-t border-line pt-3 text-[13px] text-[#4A5B58] sm:grid-cols-2">
+        <div className="grid gap-1.5 border-t border-line pt-3 text-[13px] text-text-secondary sm:grid-cols-2">
           <p><strong className="text-ink">DP conjunta:</strong> {prescriptionValue(prescription.pupillary_distance_total, ' mm')}</p>
           <p><strong className="text-ink">Fecha:</strong> {prescription.prescription_date ?? '—'}</p>
           <p><strong className="text-ink">Prisma OD:</strong> {prescriptionValue(prescription.right_prism)} {prescription.right_prism_base ? `· ${prismBaseLabels[prescription.right_prism_base] ?? prescription.right_prism_base}` : ''}</p>

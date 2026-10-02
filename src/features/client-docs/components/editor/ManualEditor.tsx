@@ -9,7 +9,7 @@ import { moveBy, removeAt, replaceAt } from './listOps'
 
 const Text = ({ label, value, onChange, area = false }: { label: string; value: string; onChange: (value: string) => void; area?: boolean }) => <Field label={label}>{area ? <Textarea rows={3} value={value} onChange={(event) => onChange(event.target.value)} /> : <Input value={value} onChange={(event) => onChange(event.target.value)} />}</Field>
 const Lines = ({ label, value, onChange }: { label: string; value: string[]; onChange: (value: string[]) => void }) => <Text label={label} area value={value.join('\n')} onChange={(next) => onChange(next.split('\n').filter(Boolean))} />
-const EditorSection = ({ title, action, children }: { title: React.ReactNode; action?: React.ReactNode; children: React.ReactNode }) => <section className="rounded-card border border-[#E3EFED] bg-surface"><header className="flex min-h-14 items-center justify-between gap-3 border-b border-line px-4 py-2"><h3 className="font-display text-[15px] font-semibold text-ink">{title}</h3>{action}</header><div className="flex flex-col gap-3 p-3">{children}</div></section>
+const EditorSection = ({ title, action, children }: { title: React.ReactNode; action?: React.ReactNode; children: React.ReactNode }) => <section className="rounded-card border border-line-card bg-surface"><header className="flex min-h-14 items-center justify-between gap-3 border-b border-line px-4 py-2"><h3 className="font-display text-[15px] font-semibold text-ink">{title}</h3>{action}</header><div className="flex flex-col gap-3 p-3">{children}</div></section>
 
 function ListEditor<T extends object>({ title, items, onChange, makeEmpty, itemTitle, render }: { title: string; items: T[]; onChange: (items: T[]) => void; makeEmpty: () => T; itemTitle: (item: T, index: number) => string; render: (item: T, update: (patch: Partial<T>) => void) => React.ReactNode }) {
   const counter = useRef(0)
@@ -21,7 +21,7 @@ function ListEditor<T extends object>({ title, items, onChange, makeEmpty, itemT
     {items.map((item, index) => {
       const key = keys[index] ?? `fallback-${index}`
       const open = openKey === key
-      return <div key={key} className={cx('rounded-control border', open ? 'border-action' : 'border-[#E3EFED]')}>
+      return <div key={key} className={cx('rounded-control border', open ? 'border-action' : 'border-line-card')}>
         <div className="flex items-center gap-1 p-1">
           <button type="button" aria-expanded={open} onClick={() => setOpenKey(open ? null : key)} className="min-h-11 min-w-0 flex-1 truncate rounded-control px-2.5 text-left text-sm font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-action">{itemTitle(item, index) || 'Sin título'}</button>
           <IconButton icon={ChevronUp} label="Mover arriba" disabled={!index} onClick={() => apply(moveBy(items, index, -1), moveBy(keys, index, -1))} variant="ghost" />

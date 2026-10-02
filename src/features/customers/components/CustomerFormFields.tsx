@@ -29,7 +29,7 @@ export function CustomerFormFields({ fullName, onFullNameChange, phones, onPhone
     <fieldset className="flex flex-col gap-2.5">
       <legend className="mb-2.5 font-display text-[15px] font-semibold text-ink">Teléfonos</legend>
       {phones.map((phone, index) => (
-        <div key={index} className="grid gap-2 rounded-control border border-[#E3EFED] bg-[#FBFEFD] p-3 sm:grid-cols-[1fr_150px_auto] sm:items-center">
+        <div key={index} className="grid gap-2 rounded-control border border-line-card bg-field p-3 sm:grid-cols-[1fr_150px_auto] sm:items-center">
           <Input aria-label={`Teléfono ${index + 1}`} type="tel" inputMode="tel" value={phone.number} onChange={(event) => updatePhone(index, { number: event.target.value })} placeholder="+53 5218 4477" required />
           <Input aria-label={`Etiqueta del teléfono ${index + 1}`} value={phone.label} onChange={(event) => updatePhone(index, { label: event.target.value })} maxLength={40} />
           {index ? (
@@ -44,7 +44,7 @@ export function CustomerFormFields({ fullName, onFullNameChange, phones, onPhone
       ) : null}
     </fieldset>
     <label className="flex min-h-11 items-center gap-2.5 text-[15px] text-text">
-      <input name="messagingConsent" type="checkbox" defaultChecked={initialValues?.messagingConsent ?? false} className="size-5 shrink-0 accent-[#0D7A72]" />
+      <input name="messagingConsent" type="checkbox" defaultChecked={initialValues?.messagingConsent ?? false} className="size-5 shrink-0 accent-action" />
       Consentimiento para mensajes por WhatsApp
     </label>
     <Field label="Notas" optional><Textarea name="notes" defaultValue={initialValues?.notes ?? ''} rows={3} /></Field>

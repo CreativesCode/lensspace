@@ -8,7 +8,7 @@ import { cx } from './cx'
 // Conflicting utilities (colour, size, background) are chosen exclusively, never stacked:
 // Tailwind resolves stacked conflicts by stylesheet order, not by class order.
 const controlBase =
-  'w-full min-w-0 rounded-control px-3.5 outline-none transition placeholder:text-[#8A9A96] focus:border-[1.5px] focus:border-action focus:bg-surface focus:ring-4 focus:ring-action-soft disabled:cursor-not-allowed disabled:opacity-60'
+  'w-full min-w-0 rounded-control px-3.5 outline-none transition placeholder:text-text-placeholder focus:border-[1.5px] focus:border-action focus:bg-surface focus:ring-4 focus:ring-action-soft disabled:cursor-not-allowed disabled:opacity-60'
 
 export type ControlSize = 'md' | 'lg'
 
@@ -19,7 +19,7 @@ export function controlClasses({ invalid = false, numeric = false, controlSize =
     : 'text-[16px] text-text md:text-[15px]'
   return cx(
     controlBase,
-    invalid ? 'border-[1.5px] border-coral bg-[#FFFAF8]' : 'border border-line bg-[#FBFEFD]',
+    invalid ? 'border-[1.5px] border-coral bg-coral-field' : 'border border-line bg-field',
     text,
     className,
   )
@@ -32,7 +32,7 @@ type FieldProps = { label: ReactNode; help?: ReactNode; error?: ReactNode; optio
 export function Field({ label, help, error, optional = false, as: Wrapper = 'label', className, children }: FieldProps) {
   return (
     <Wrapper className={cx('flex min-w-0 flex-col gap-1.5', className)}>
-      <span className="text-[13px] font-semibold text-[#324E4A]">
+      <span className="text-[13px] font-semibold text-text-label">
         {label}
         {optional ? <span className="font-normal text-text-muted"> (opcional)</span> : null}
       </span>

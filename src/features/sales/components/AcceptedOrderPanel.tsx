@@ -48,13 +48,13 @@ export function AcceptedOrderPanel({ order, customerName, preview, onNewSale }: 
   const owes = Boolean(summary && summary.balanceCup > 0)
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-      <div className="flex flex-col gap-4 rounded-card border border-[#A9E6D7] bg-[#E9FAF5] p-5 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex flex-col gap-4 rounded-card border border-success-line bg-success-tint p-5 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex gap-3">
-          <span className="grid size-11 shrink-0 place-items-center rounded-[12px] bg-[#D9F5EE] text-[#07655C]"><CircleCheck aria-hidden="true" size={22} /></span>
+          <span className="grid size-11 shrink-0 place-items-center rounded-[12px] bg-success-soft text-success-ink"><CircleCheck aria-hidden="true" size={22} /></span>
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#07655C]">Pedido creado</p>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-success-ink">Pedido creado</p>
             <h2 className="mt-1 font-display text-2xl font-bold text-ink">{order.orderNumber}</h2>
-            <p className="mt-0.5 text-sm text-[#4A5B58]">Cliente: {customerName}</p>
+            <p className="mt-0.5 text-sm text-text-secondary">Cliente: {customerName}</p>
           </div>
         </div>
         <div className="grid gap-2 sm:flex">
@@ -65,15 +65,15 @@ export function AcceptedOrderPanel({ order, customerName, preview, onNewSale }: 
 
       <Card>
         <CardHeader title="Detalle del pedido" />
-        <div className="mt-3 divide-y divide-[#EEF5F4]">
+        <div className="mt-3 divide-y divide-line-soft">
           {preview.lineItems.map((line, index) => (
             <div key={`${line.name}:${index}`} className="flex justify-between gap-4 py-3 text-sm">
-              <span className="text-[#4A5B58]">{line.name}</span>
+              <span className="text-text-secondary">{line.name}</span>
               <strong className="shrink-0 font-display tabular-nums text-ink">{formatAmount(line.amount)} {line.currency}</strong>
             </div>
           ))}
         </div>
-        <div className="mt-3 border-t border-dashed border-[#B9DFD9] pt-3">
+        <div className="mt-3 border-t border-dashed border-line-focus pt-3">
           {Object.entries(preview.totals).map(([currency, total]) => (
             <p key={currency} className="flex justify-between font-display text-xl font-bold tabular-nums text-ink"><span>Total</span><span>{formatAmount(total)} {currency}</span></p>
           ))}
@@ -82,7 +82,7 @@ export function AcceptedOrderPanel({ order, customerName, preview, onNewSale }: 
 
       <Card className="flex flex-col gap-4">
         <div>
-          <p className={owes ? 'text-[13px] font-semibold text-coral-ink' : 'text-[13px] font-semibold text-[#07655C]'}>Saldo pendiente</p>
+          <p className={owes ? 'text-[13px] font-semibold text-coral-ink' : 'text-[13px] font-semibold text-success-ink'}>Saldo pendiente</p>
           <p className="mt-1 font-display text-[32px] font-bold leading-tight tabular-nums text-ink">{summary ? `${formatAmount(summary.balanceCup)} CUP` : 'Cargando…'}</p>
           {summary ? (
             <div className="mt-3">

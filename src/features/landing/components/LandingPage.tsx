@@ -37,7 +37,7 @@ export function LandingPage() {
   return (
     <main className={`${styles.page} overflow-hidden bg-[#F7FBFA] text-[#1C3A37]`}>
       <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 md:px-7">
-        <div className={`${styles.headerGlass} mx-auto flex max-w-7xl items-center justify-between rounded-2xl px-4 py-3 md:px-5`}>
+        <div className={`${styles.headerGlass} mx-auto flex max-w-7xl items-center justify-between rounded-[10px] px-4 py-3 md:px-5`}>
           <Link href="/" className="flex items-center gap-2.5" aria-label="LensSpace, inicio">
             <Image src="/brand/lensspace-mark.svg" width={38} height={38} alt="" priority />
             <span className="font-display text-lg font-bold tracking-[-0.03em] text-[#07322F]">LensSpace</span>
@@ -48,7 +48,7 @@ export function LandingPage() {
             <a className="transition hover:text-[#0D7A72]" href="#accesos">Accesos</a>
             <a className="transition hover:text-[#0D7A72]" href="#seguridad">Seguridad</a>
           </nav>
-          <Link href="/login" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#07322F] px-4 text-sm font-bold text-white transition hover:bg-[#0D7A72]">
+          <Link href="/login" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[7px] bg-[#07322F] px-4 text-sm font-bold text-white transition hover:bg-[#0D7A72]">
             Iniciar sesión <ArrowRight aria-hidden="true" size={16} />
           </Link>
         </div>
@@ -57,7 +57,7 @@ export function LandingPage() {
       <section className={`${styles.hero} relative px-5 pb-20 pt-36 md:px-8 md:pb-28 md:pt-44`}>
         <div className="mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-[0.92fr_1.08fr] lg:gap-16">
           <div className={styles.heroCopy}>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#B9DFD8] bg-white/80 px-3.5 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[#0D7A72] shadow-sm">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#B9DFD8] bg-white/80 px-3.5 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[#0D7A72] shadow-[0_1px_3px_rgba(7,50,47,0.12)]">
               <Sparkles aria-hidden="true" size={15} /> Operación óptica conectada
             </div>
             <h1 className="max-w-3xl font-display text-[44px] font-bold leading-[0.98] tracking-[-0.055em] text-[#07322F] sm:text-6xl lg:text-[72px]">
@@ -67,10 +67,10 @@ export function LandingPage() {
               LensSpace conecta clientes, ventas, cobros y producción para que cada pedido avance con información clara y cada persona acceda solo a lo que necesita.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
-              <a href="#como-funciona" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#FF6B4A] px-5 font-display text-sm font-bold text-[#07322F] shadow-[0_12px_30px_rgba(255,107,74,0.22)] transition hover:-translate-y-0.5 hover:bg-[#FF8466]">
+              <a href="#como-funciona" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[7px] bg-[#FF6B4A] px-5 font-display text-sm font-bold text-[#07322F] shadow-[0_12px_30px_rgba(255,107,74,0.22)] transition hover:-translate-y-0.5 hover:bg-[#FF8466]">
                 Ver cómo funciona <ArrowRight aria-hidden="true" size={17} />
               </a>
-              <Link href="/login" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-[#B9D8D3] bg-white/70 px-5 font-display text-sm font-bold text-[#07322F] transition hover:border-[#0D7A72] hover:bg-white">
+              <Link href="/login" className="inline-flex min-h-12 items-center justify-center rounded-[7px] border border-[#B9D8D3] bg-white/70 px-5 font-display text-sm font-bold text-[#07322F] transition hover:border-[#0D7A72] hover:bg-white">
                 Ya tengo acceso
               </Link>
             </div>
@@ -95,10 +95,10 @@ export function LandingPage() {
                 <span className="rounded-full bg-[#164C46] px-3 py-1.5 text-xs font-bold text-[#9EE5D8]">En producción</span>
               </div>
               <div className="grid gap-3 pt-4 sm:grid-cols-[1.05fr_.95fr]">
-                <div className="rounded-2xl bg-white p-5">
+                <div className="rounded-[10px] bg-white p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div><p className="text-xs font-bold uppercase tracking-[0.15em] text-[#0D7A72]">Progreso del pedido</p><p className="mt-2 font-display text-2xl font-bold text-[#07322F]">Cristales listos</p></div>
-                    <div className="grid h-11 w-11 place-items-center rounded-xl bg-[#E3F6F2] text-[#0D7A72]"><Glasses aria-hidden="true" size={23} /></div>
+                    <div className="grid h-11 w-11 place-items-center rounded-[7px] bg-[#E3F6F2] text-[#0D7A72]"><Glasses aria-hidden="true" size={23} /></div>
                   </div>
                   <div className="mt-7 space-y-4">
                     {[
@@ -114,13 +114,13 @@ export function LandingPage() {
                   </div>
                 </div>
                 <div className="grid gap-3">
-                  <div className="rounded-2xl bg-[#10463F] p-5 text-white">
+                  <div className="rounded-[10px] bg-[#10463F] p-5 text-white">
                     <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#7FD8C8]">Saldo pendiente</p>
                     <p className="mt-3 font-display text-3xl font-bold tabular-nums">2 450 CUP</p>
                     <div className="mt-5 h-2 overflow-hidden rounded-full bg-[#07322F]"><div className={`${styles.progressBar} h-full rounded-full bg-[#FF6B4A]`} /></div>
                     <p className="mt-3 text-xs leading-5 text-[#A7CFC9]">La entrega permanecerá protegida hasta completar el cobro.</p>
                   </div>
-                  <div className="rounded-2xl bg-[#F0FBF9] p-5">
+                  <div className="rounded-[10px] bg-[#F0FBF9] p-5">
                     <div className="flex items-center gap-3"><FileClock aria-hidden="true" className="text-[#0D7A72]" size={20} /><p className="font-display text-sm font-bold text-[#07322F]">Historial conectado</p></div>
                     <p className="mt-3 text-sm leading-6 text-[#4A5B58]">Venta, pago, taller y notificación con actor y momento.</p>
                   </div>
@@ -144,8 +144,8 @@ export function LandingPage() {
           <div className="relative mt-16 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <div className={`${styles.workflowLine} hidden lg:block`} aria-hidden="true" />
             {workflow.map(({ number, title, copy, icon: Icon }, index) => (
-              <article key={number} className={`${styles.workflowCard} relative rounded-2xl border border-[#DCECEA] bg-white p-6 shadow-[0_16px_45px_rgba(7,50,47,0.06)]`}>
-                <div className="flex items-center justify-between"><span className="font-display text-xs font-bold tracking-[0.18em] text-[#0D7A72]">{number}</span><div className="grid h-11 w-11 place-items-center rounded-xl bg-[#E6F7F3] text-[#0D7A72]"><Icon aria-hidden="true" size={21} /></div></div>
+              <article key={number} className={`${styles.workflowCard} relative rounded-[10px] border border-[#DCECEA] bg-white p-6 shadow-[0_16px_45px_rgba(7,50,47,0.06)]`}>
+                <div className="flex items-center justify-between"><span className="font-display text-xs font-bold tracking-[0.18em] text-[#0D7A72]">{number}</span><div className="grid h-11 w-11 place-items-center rounded-[7px] bg-[#E6F7F3] text-[#0D7A72]"><Icon aria-hidden="true" size={21} /></div></div>
                 <h3 className="mt-7 font-display text-xl font-bold tracking-[-0.02em] text-[#07322F]">{title}</h3>
                 <p className="mt-3 leading-7 text-[#5B6F6B]">{copy}</p>
                 {index < workflow.length - 1 ? <span className="sr-only">Siguiente:</span> : null}
@@ -170,32 +170,32 @@ export function LandingPage() {
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-10 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
             <SectionHeading eyebrow="ACCESO POR RESPONSABILIDAD" title="Cada persona ve lo necesario para hacer bien su trabajo." copy="Los accesos no son planes comerciales. Son límites operativos que mantienen la información relevante en las manos correctas." />
-            <div className="rounded-2xl border border-[#B9DFD8] bg-[#EAF8F5] p-5 text-sm leading-6 text-[#315A55] sm:flex sm:items-center sm:gap-4"><div className="mb-3 grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-white text-[#0D7A72] shadow-sm sm:mb-0"><LockKeyhole aria-hidden="true" size={21} /></div>Los permisos se aplican sobre la información y las acciones, no solo ocultando opciones en pantalla.</div>
+            <div className="rounded-[10px] border border-[#B9DFD8] bg-[#EAF8F5] p-5 text-sm leading-6 text-[#315A55] sm:flex sm:items-center sm:gap-4"><div className="mb-3 grid h-11 w-11 shrink-0 place-items-center rounded-[7px] bg-white text-[#0D7A72] shadow-[0_1px_3px_rgba(7,50,47,0.12)] sm:mb-0"><LockKeyhole aria-hidden="true" size={21} /></div>Los permisos se aplican sobre la información y las acciones, no solo ocultando opciones en pantalla.</div>
           </div>
           <div className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-5">
             {roles.map(({ name, eyebrow, copy, icon: Icon, tone }) => (
-              <article key={name} className={`${styles.roleCard} ${styles[tone]} rounded-2xl border border-[#DCECEA] bg-white p-5`}>
-                <div className="grid h-11 w-11 place-items-center rounded-xl bg-[var(--role-soft)] text-[var(--role-ink)]"><Icon aria-hidden="true" size={21} /></div>
+              <article key={name} className={`${styles.roleCard} ${styles[tone]} rounded-[10px] border border-[#DCECEA] bg-white p-5`}>
+                <div className="grid h-11 w-11 place-items-center rounded-[7px] bg-[var(--role-soft)] text-[var(--role-ink)]"><Icon aria-hidden="true" size={21} /></div>
                 <p className="mt-6 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--role-ink)]">{eyebrow}</p>
                 <h3 className="mt-2 font-display text-xl font-bold text-[#07322F]">{name}</h3><p className="mt-3 text-sm leading-6 text-[#5B6F6B]">{copy}</p>
               </article>
             ))}
           </div>
-          <div className="mt-6 rounded-2xl border border-[#DCECEA] bg-white p-5 md:p-7"><div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-center"><div><p className="font-display text-lg font-bold text-[#07322F]">Privacidad operativa para proveedores</p><p className="mt-2 text-sm leading-6 text-[#5B6F6B]">Laboratorio y montador acceden a sus trabajos asignados sin ver identidad del cliente, precios, cobros ni pedidos ajenos.</p></div><div className="flex flex-wrap gap-2 text-xs font-bold text-[#0D7A72]">{['Sin identidad', 'Sin precios', 'Sin pagos'].map((item) => <span key={item} className="rounded-full bg-[#E6F7F3] px-3 py-2">{item}</span>)}</div></div></div>
+          <div className="mt-6 rounded-[10px] border border-[#DCECEA] bg-white p-5 md:p-7"><div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-center"><div><p className="font-display text-lg font-bold text-[#07322F]">Privacidad operativa para proveedores</p><p className="mt-2 text-sm leading-6 text-[#5B6F6B]">Laboratorio y montador acceden a sus trabajos asignados sin ver identidad del cliente, precios, cobros ni pedidos ajenos.</p></div><div className="flex flex-wrap gap-2 text-xs font-bold text-[#0D7A72]">{['Sin identidad', 'Sin precios', 'Sin pagos'].map((item) => <span key={item} className="rounded-full bg-[#E6F7F3] px-3 py-2">{item}</span>)}</div></div></div>
         </div>
       </section>
 
       <section id="seguridad" className="scroll-mt-24 px-5 pb-24 md:px-8 md:pb-32">
         <div className={`${styles.trustPanel} mx-auto grid max-w-7xl gap-12 overflow-hidden rounded-[30px] bg-[#0A403B] p-7 text-white md:p-12 lg:grid-cols-[.8fr_1.2fr] lg:p-16`}>
-          <div><div className="grid h-13 w-13 place-items-center rounded-2xl bg-[#155A52] p-3 text-[#7FD8C8]"><ShieldCheck aria-hidden="true" size={28} /></div><p className="mt-7 text-xs font-bold uppercase tracking-[0.18em] text-[#7FD8C8]">CONTROL CONCRETO</p><h2 className="mt-4 font-display text-4xl font-bold leading-tight tracking-[-0.04em] md:text-5xl">Claridad sin abrir información de más.</h2><p className="mt-5 max-w-xl text-lg leading-8 text-[#B9DDD7]">LensSpace conserva el contexto completo del pedido y, al mismo tiempo, separa lo que corresponde a cada organización, sucursal y rol.</p></div>
-          <div className="grid gap-3 sm:grid-cols-2">{trustPoints.map((point, index) => <div key={point} className="rounded-2xl border border-white/10 bg-white/[0.06] p-5"><span className="grid h-8 w-8 place-items-center rounded-full bg-[#35C2A8] font-display text-xs font-bold text-[#07322F]">{index + 1}</span><p className="mt-5 leading-7 text-[#E5F5F2]">{point}</p></div>)}</div>
+          <div><div className="grid h-13 w-13 place-items-center rounded-[10px] bg-[#155A52] p-3 text-[#7FD8C8]"><ShieldCheck aria-hidden="true" size={28} /></div><p className="mt-7 text-xs font-bold uppercase tracking-[0.18em] text-[#7FD8C8]">CONTROL CONCRETO</p><h2 className="mt-4 font-display text-4xl font-bold leading-tight tracking-[-0.04em] md:text-5xl">Claridad sin abrir información de más.</h2><p className="mt-5 max-w-xl text-lg leading-8 text-[#B9DDD7]">LensSpace conserva el contexto completo del pedido y, al mismo tiempo, separa lo que corresponde a cada organización, sucursal y rol.</p></div>
+          <div className="grid gap-3 sm:grid-cols-2">{trustPoints.map((point, index) => <div key={point} className="rounded-[10px] border border-white/10 bg-white/[0.06] p-5"><span className="grid h-8 w-8 place-items-center rounded-full bg-[#35C2A8] font-display text-xs font-bold text-[#07322F]">{index + 1}</span><p className="mt-5 leading-7 text-[#E5F5F2]">{point}</p></div>)}</div>
         </div>
       </section>
 
       <section className="px-5 pb-24 md:px-8 md:pb-32">
         <div className={`${styles.cta} relative mx-auto max-w-7xl overflow-hidden rounded-[30px] border border-[#CBE5E0] bg-[#EAF8F5] px-6 py-16 text-center md:px-12 md:py-20`}>
           <div className={styles.ctaGlow} aria-hidden="true" /><Image className="relative mx-auto" src="/brand/lensspace-mark.svg" width={64} height={64} alt="" /><p className="relative mt-7 text-xs font-bold uppercase tracking-[0.2em] text-[#0D7A72]">UN PEDIDO. UN HISTORIAL.</p><h2 className="relative mx-auto mt-4 max-w-3xl font-display text-4xl font-bold leading-tight tracking-[-0.045em] text-[#07322F] md:text-6xl">Mira tu operación con más claridad.</h2><p className="relative mx-auto mt-5 max-w-2xl text-lg leading-8 text-[#4A5B58]">Clientes, ventas, taller y cobros trabajando sobre la misma información, con el acceso correcto para cada persona.</p>
-          <div className="relative mt-9 flex flex-wrap justify-center gap-3"><a href="#como-funciona" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#07322F] px-5 font-display text-sm font-bold text-white transition hover:bg-[#0D7A72]">Explorar el recorrido <ArrowRight aria-hidden="true" size={17} /></a><Link href="/login" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-[#9BCDC6] bg-white px-5 font-display text-sm font-bold text-[#07322F] transition hover:border-[#0D7A72]">Iniciar sesión</Link></div>
+          <div className="relative mt-9 flex flex-wrap justify-center gap-3"><a href="#como-funciona" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[7px] bg-[#07322F] px-5 font-display text-sm font-bold text-white transition hover:bg-[#0D7A72]">Explorar el recorrido <ArrowRight aria-hidden="true" size={17} /></a><Link href="/login" className="inline-flex min-h-12 items-center justify-center rounded-[7px] border border-[#9BCDC6] bg-white px-5 font-display text-sm font-bold text-[#07322F] transition hover:border-[#0D7A72]">Iniciar sesión</Link></div>
         </div>
       </section>
 
@@ -229,5 +229,5 @@ function SectionHeading({ eyebrow, title, copy, dark = false }: { eyebrow: strin
 }
 
 function CapabilityCard({ icon: Icon, number, title, copy, items, featured = false }: { icon: typeof Eye; number: string; title: string; copy: string; items: string[]; featured?: boolean }) {
-  return <article className={`${styles.capabilityCard} ${featured ? styles.capabilityFeatured : ''} rounded-3xl border p-6 md:p-7`}><div className="flex items-center justify-between"><div className="grid h-12 w-12 place-items-center rounded-2xl bg-white/10 text-[#7FD8C8]"><Icon aria-hidden="true" size={23} /></div><span className="font-display text-sm font-bold text-[#6F9C96]">{number}</span></div><h3 className="mt-8 font-display text-2xl font-bold tracking-[-0.025em] text-white">{title}</h3><p className="mt-4 leading-7 text-[#A7CFC9]">{copy}</p><ul className="mt-7 space-y-3">{items.map((item) => <li key={item} className="flex gap-3 text-sm text-[#D8F0ED]"><span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#35C2A8] text-[#07322F]"><Check aria-hidden="true" size={12} strokeWidth={3} /></span>{item}</li>)}</ul></article>
+  return <article className={`${styles.capabilityCard} ${featured ? styles.capabilityFeatured : ''} rounded-[10px] border p-6 md:p-7`}><div className="flex items-center justify-between"><div className="grid h-12 w-12 place-items-center rounded-[10px] bg-white/10 text-[#7FD8C8]"><Icon aria-hidden="true" size={23} /></div><span className="font-display text-sm font-bold text-[#6F9C96]">{number}</span></div><h3 className="mt-8 font-display text-2xl font-bold tracking-[-0.025em] text-white">{title}</h3><p className="mt-4 leading-7 text-[#A7CFC9]">{copy}</p><ul className="mt-7 space-y-3">{items.map((item) => <li key={item} className="flex gap-3 text-sm text-[#D8F0ED]"><span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#35C2A8] text-[#07322F]"><Check aria-hidden="true" size={12} strokeWidth={3} /></span>{item}</li>)}</ul></article>
 }

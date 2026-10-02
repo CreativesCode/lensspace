@@ -7,11 +7,11 @@ import { cx } from './cx'
 export type Tone = 'neutral' | 'progress' | 'success' | 'warning' | 'danger'
 
 export const toneClasses: Record<Tone, { surface: string; dot: string; ring: string }> = {
-  neutral: { surface: 'bg-[#EEF3F2] text-[#4A5B58]', dot: 'bg-[#9AABA7]', ring: 'shadow-[0_0_0_3px_#EEF3F2]' },
-  progress: { surface: 'bg-action-soft text-[#0B5A53]', dot: 'bg-action', ring: 'shadow-[0_0_0_3px_#E2F4F1]' },
-  success: { surface: 'bg-[#D9F5EE] text-[#07655C]', dot: 'bg-mint', ring: 'shadow-[0_0_0_3px_#D9F5EE]' },
-  warning: { surface: 'bg-amber-soft text-[#8F4C0F]', dot: 'bg-[#E39A3B]', ring: 'shadow-[0_0_0_3px_#FFF4E8]' },
-  danger: { surface: 'bg-[#FFE8E1] text-[#B2361A]', dot: 'bg-coral', ring: 'shadow-[0_0_0_3px_#FFE8E1]' },
+  neutral: { surface: 'bg-neutral-soft text-text-secondary', dot: 'bg-text-disabled', ring: 'shadow-[0_0_0_3px_theme(colors.neutral.soft)]' },
+  progress: { surface: 'bg-action-soft text-progress-ink', dot: 'bg-action', ring: 'shadow-[0_0_0_3px_theme(colors.action.soft)]' },
+  success: { surface: 'bg-success-soft text-success-ink', dot: 'bg-mint', ring: 'shadow-[0_0_0_3px_theme(colors.success.soft)]' },
+  warning: { surface: 'bg-amber-soft text-amber-deep', dot: 'bg-amber-dot', ring: 'shadow-[0_0_0_3px_theme(colors.amber.soft)]' },
+  danger: { surface: 'bg-coral-wash text-coral-strong', dot: 'bg-coral', ring: 'shadow-[0_0_0_3px_theme(colors.coral.wash)]' },
 }
 
 export function Badge({ tone = 'neutral', size = 'sm', dot = true, className, children }: { tone?: Tone; size?: 'sm' | 'lg'; dot?: boolean; className?: string; children: ReactNode }) {

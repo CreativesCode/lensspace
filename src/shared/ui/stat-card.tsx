@@ -20,10 +20,10 @@ export function StatCard({ label, value, unit, hint, icon: Icon, surface = 'ligh
     const attention = tone === 'attention'
     return (
       <div className={cx('rounded-card px-4 py-3.5', attention ? 'bg-coral' : 'bg-ink-2')}>
-        <p className={cx('text-[13px]', attention ? 'font-semibold text-[#4A1507]' : 'text-[#A7CFC9]')}>{label}</p>
+        <p className={cx('text-[13px]', attention ? 'font-semibold text-coral-night' : 'text-on-ink-muted')}>{label}</p>
         <p className={cx('mt-1 font-display text-[26px] font-bold tabular-nums tracking-[-0.02em]', attention ? 'text-ink' : tone === 'positive' ? 'text-mint' : 'text-white')}>
           {value}
-          {unit ? <span className={cx('ml-1 text-[13px]', attention ? 'font-semibold' : 'font-medium text-[#A7CFC9]')}>{unit}</span> : null}
+          {unit ? <span className={cx('ml-1 text-[13px]', attention ? 'font-semibold' : 'font-medium text-on-ink-muted')}>{unit}</span> : null}
         </p>
       </div>
     )
@@ -31,11 +31,11 @@ export function StatCard({ label, value, unit, hint, icon: Icon, surface = 'ligh
 
   const danger = tone === 'danger'
   return (
-    <div className={cx('rounded-card border px-5 py-[18px]', danger ? 'border-[#FFD9CD] bg-[#FFF6F2]' : 'border-[#E3EFED] bg-surface shadow-e1')}>
+    <div className={cx('rounded-card border px-5 py-[18px]', danger ? 'border-coral-line bg-coral-tint' : 'border-line-card bg-surface shadow-e1')}>
       <div className="flex items-center justify-between gap-3">
         <p className={cx('text-[13px]', danger ? 'font-semibold text-coral-ink' : 'text-text-muted')}>{label}</p>
         {Icon ? (
-          <span className={cx('grid size-[34px] shrink-0 place-items-center rounded-control', danger ? 'bg-[#FFE8E1] text-coral-ink' : 'bg-action-soft text-action')}>
+          <span className={cx('grid size-[34px] shrink-0 place-items-center rounded-control', danger ? 'bg-coral-wash text-coral-ink' : 'bg-action-soft text-action')}>
             <Icon aria-hidden="true" size={17} />
           </span>
         ) : null}
@@ -44,7 +44,7 @@ export function StatCard({ label, value, unit, hint, icon: Icon, surface = 'ligh
         {value}
         {unit ? <span className="ml-1 text-sm font-medium text-text-muted">{unit}</span> : null}
       </p>
-      {hint ? <p className={cx('mt-0.5 text-[13px]', danger ? 'text-[#7A3A26]' : tone === 'positive' ? 'font-semibold text-[#07655C]' : 'text-text-muted')}>{hint}</p> : null}
+      {hint ? <p className={cx('mt-0.5 text-[13px]', danger ? 'text-coral-deep' : tone === 'positive' ? 'font-semibold text-success-ink' : 'text-text-muted')}>{hint}</p> : null}
     </div>
   )
 }

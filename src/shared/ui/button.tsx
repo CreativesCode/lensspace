@@ -10,13 +10,13 @@ export type ButtonSize = 'sm' | 'md' | 'lg'
 // Guide: teal acts, ink frames (navigation/totals), coral only for attention.
 const variantClasses: Record<ButtonVariant, string> = {
   primary: 'font-semibold bg-action text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_4px_12px_rgba(13,122,114,0.28)] hover:bg-action-hover',
-  secondary: 'font-semibold border border-[#CFE3E0] bg-surface text-ink hover:border-[#9BCDC6] hover:bg-[#F0FBF9] [&>svg]:text-action',
+  secondary: 'font-semibold border border-line-strong bg-surface text-ink hover:border-line-hover hover:bg-action-tint [&>svg]:text-action',
   ghost: 'font-semibold bg-transparent text-action hover:bg-action-soft',
   attention: 'bg-coral font-bold text-ink shadow-[0_4px_14px_rgba(255,107,74,0.32)] hover:bg-coral-hover',
-  danger: 'font-semibold border border-[#FFD9CD] bg-[#FFF6F2] text-coral-ink hover:bg-[#FFE8E1]',
+  danger: 'font-semibold border border-coral-line bg-coral-tint text-coral-ink hover:bg-coral-wash',
   ink: 'font-semibold bg-ink text-white shadow-[0_6px_16px_rgba(7,50,47,0.22)] hover:bg-ink-2 [&>svg]:text-mint',
-  mint: 'bg-mint font-bold text-ink hover:bg-[#5DD3BD]',
-  inverse: 'font-semibold border border-[#2B5E58] bg-transparent text-[#D8F0ED] hover:bg-ink-2',
+  mint: 'bg-mint font-bold text-ink hover:bg-mint-hover',
+  inverse: 'font-semibold border border-on-ink-stroke bg-transparent text-on-ink-soft hover:bg-ink-2',
 }
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -28,8 +28,8 @@ const sizeClasses: Record<ButtonSize, string> = {
 export function buttonClasses({ variant = 'primary', size = 'md', block = false, className }: { variant?: ButtonVariant; size?: ButtonSize; block?: boolean; className?: string } = {}) {
   return cx(
     'inline-flex shrink-0 items-center justify-center font-display transition',
-    'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#B9DFD9]',
-    'disabled:cursor-not-allowed disabled:border-transparent disabled:bg-action-soft disabled:text-[#9AABA7] disabled:shadow-none',
+    'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-line-focus',
+    'disabled:cursor-not-allowed disabled:border-transparent disabled:bg-action-soft disabled:text-text-disabled disabled:shadow-none',
     variantClasses[variant],
     sizeClasses[size],
     block && 'w-full',
@@ -67,10 +67,10 @@ export function IconButton({ icon: Icon, label, count, variant = 'outline', clas
       title={label}
       className={cx(
         'relative grid size-11 shrink-0 place-items-center rounded-control border transition',
-        variant === 'outline' && 'border-[#CFE3E0] bg-surface text-action hover:bg-[#F0FBF9]',
-        variant === 'ghost' && 'border-transparent bg-transparent text-text-muted hover:bg-[#F0FBF9] hover:text-action',
-        variant === 'danger' && 'border-transparent bg-transparent text-coral-ink hover:bg-[#FFF6F2]',
-        'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#B9DFD9] disabled:cursor-not-allowed disabled:opacity-50',
+        variant === 'outline' && 'border-line-strong bg-surface text-action hover:bg-action-tint',
+        variant === 'ghost' && 'border-transparent bg-transparent text-text-muted hover:bg-action-tint hover:text-action',
+        variant === 'danger' && 'border-transparent bg-transparent text-coral-ink hover:bg-coral-tint',
+        'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-line-focus disabled:cursor-not-allowed disabled:opacity-50',
         className,
       )}
       {...props}

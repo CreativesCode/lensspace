@@ -46,7 +46,7 @@ export function MainNavigation({ allowedHrefs, onNavigate }: { allowedHrefs: str
       ) : null}
       {visibleSections.map((section, sectionIndex) => (
         <div key={section.label} className={cx('flex flex-col gap-0.5', (sectionIndex > 0 || canCreateSale) && 'pt-[22px]')}>
-          <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-[#7FB3AC]">{section.label}</p>
+          <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-on-ink-subtle">{section.label}</p>
           {section.items.map(({ href, label, icon: Icon }) => {
             const isActive = pathname === href || pathname.startsWith(`${href}/`)
             return (
@@ -57,11 +57,11 @@ export function MainNavigation({ allowedHrefs, onNavigate }: { allowedHrefs: str
                 aria-current={isActive ? 'page' : undefined}
                 className={cx(
                   'relative flex min-h-[42px] items-center gap-3 rounded-control px-3 text-[14.5px] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint',
-                  isActive ? 'bg-ink-2 font-semibold text-white' : 'font-medium text-[#A7CFC9] hover:bg-ink-2 hover:text-white',
+                  isActive ? 'bg-ink-2 font-semibold text-white' : 'font-medium text-on-ink-muted hover:bg-ink-2 hover:text-white',
                 )}
               >
                 <span aria-hidden="true" className={cx('absolute -left-3.5 bottom-2.5 top-2.5 w-[3px] rounded-r-[3px]', isActive ? 'bg-mint' : 'bg-transparent')} />
-                <Icon aria-hidden="true" size={18} className={isActive ? 'text-mint' : 'text-[#7FB3AC]'} />
+                <Icon aria-hidden="true" size={18} className={isActive ? 'text-mint' : 'text-on-ink-subtle'} />
                 <span className="flex-1">{label}</span>
               </Link>
             )

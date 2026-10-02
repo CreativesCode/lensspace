@@ -22,7 +22,7 @@ type QuoteSummaryProps = {
 export function QuoteSummary({ preview, selectedCount, quotationId, pending, canOperate, message, onAccept }: QuoteSummaryProps) {
   return (
     <Card padded={false} className="h-fit overflow-hidden xl:sticky xl:top-6">
-      <div className="border-b border-[#EEF5F4] px-5 py-4">
+      <div className="border-b border-line-soft px-5 py-4">
         <h2 className="font-display text-[17px] font-semibold text-ink">Cotización</h2>
         <p className="mt-0.5 text-[13px] text-text-muted">{selectedCount === 1 ? '1 concepto seleccionado' : `${selectedCount} conceptos seleccionados`}</p>
       </div>
@@ -32,7 +32,7 @@ export function QuoteSummary({ preview, selectedCount, quotationId, pending, can
             {preview.lineItems.map((line, index) => (
               <div key={index} className="text-sm">
                 <div className="flex justify-between gap-3">
-                  <span className="text-[#4A5B58]">{line.name}</span>
+                  <span className="text-text-secondary">{line.name}</span>
                   <strong className="whitespace-nowrap font-display tabular-nums text-ink">{amount(line.amount)} {line.currency}</strong>
                 </div>
                 {Number(line.baseAmount) !== Number(line.amount) ? (

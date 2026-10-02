@@ -33,7 +33,7 @@ export function OrderDetail({ order, summary, timeline, pending, error, onBack, 
 
   return (
     <Card padded={false} className="overflow-hidden">
-      <div className="flex flex-wrap items-center gap-3.5 border-b border-[#EEF5F4] px-4 py-4 md:px-6 md:py-5">
+      <div className="flex flex-wrap items-center gap-3.5 border-b border-line-soft px-4 py-4 md:px-6 md:py-5">
         <div className="w-full xl:hidden"><Button variant="ghost" size="sm" icon={ArrowLeft} onClick={onBack} className="-ml-2">Volver a pedidos</Button></div>
         <Avatar name={order.customerName} size="lg" strong />
         <div className="min-w-0 flex-1 basis-[180px]">
@@ -45,30 +45,30 @@ export function OrderDetail({ order, summary, timeline, pending, error, onBack, 
 
       <div className="flex flex-col gap-[22px] px-4 py-5 md:px-6 md:py-[22px]">
         <div className="flex flex-wrap gap-3.5">
-          <div className={cx('min-w-0 flex-[1.3_1_260px] rounded-card border px-5 py-[18px]', owes ? 'border-[#FFD9CD] bg-[#FFF6F2]' : 'border-[#A9E6D7] bg-[#E9FAF5]')}>
+          <div className={cx('min-w-0 flex-[1.3_1_260px] rounded-card border px-5 py-[18px]', owes ? 'border-coral-line bg-coral-tint' : 'border-success-line bg-success-tint')}>
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className={cx('text-[13px] font-semibold', owes ? 'text-coral-ink' : 'text-[#07655C]')}>{owes ? 'Saldo pendiente' : 'Saldo'}</p>
-                <p className={cx('mt-1 font-display text-[36px] font-bold leading-[1.05] tracking-[-0.03em] tabular-nums', owes ? 'text-[#B2361A]' : 'text-[#07655C]')}>
+                <p className={cx('text-[13px] font-semibold', owes ? 'text-coral-ink' : 'text-success-ink')}>{owes ? 'Saldo pendiente' : 'Saldo'}</p>
+                <p className={cx('mt-1 font-display text-[36px] font-bold leading-[1.05] tracking-[-0.03em] tabular-nums', owes ? 'text-coral-strong' : 'text-success-ink')}>
                   {formatAmount(summary.balanceCup)} <span className="text-base font-semibold">CUP</span>
                 </p>
               </div>
-              <span className={cx('grid size-[42px] shrink-0 place-items-center rounded-[12px]', owes ? 'bg-[#FFE8E1] text-coral-ink' : 'bg-[#D9F5EE] text-[#07655C]')}>
+              <span className={cx('grid size-[42px] shrink-0 place-items-center rounded-[12px]', owes ? 'bg-coral-wash text-coral-ink' : 'bg-success-soft text-success-ink')}>
                 {owes ? <Hourglass aria-hidden="true" size={20} /> : <CircleCheck aria-hidden="true" size={20} />}
               </span>
             </div>
             <div className="mt-4"><ProgressBar value={percent} tone={owes ? 'attention' : 'success'} size="lg" label="Porcentaje cobrado" /></div>
-            <p className="mt-2 text-[13px] text-[#4A5B58]">Cobrado {Math.min(100, Math.round(percent))} % · {paymentStatusLabels[summary.paymentStatus] ?? summary.paymentStatus}</p>
+            <p className="mt-2 text-[13px] text-text-secondary">Cobrado {Math.min(100, Math.round(percent))} % · {paymentStatusLabels[summary.paymentStatus] ?? summary.paymentStatus}</p>
           </div>
           <div className="grid flex-[1_1_200px] grid-cols-2 gap-2.5">
-            <div className="rounded-card border border-[#E3EFED] px-4 py-3.5">
+            <div className="rounded-card border border-line-card px-4 py-3.5">
               <p className="text-[13px] text-text-muted">Total</p>
               <p className="mt-1 font-display text-xl font-bold tabular-nums text-ink">{formatAmount(summary.totalCup)}</p>
               <p className="text-xs text-text-muted">CUP equivalentes</p>
             </div>
-            <div className="rounded-card border border-[#E3EFED] px-4 py-3.5">
+            <div className="rounded-card border border-line-card px-4 py-3.5">
               <p className="text-[13px] text-text-muted">Cobrado</p>
-              <p className="mt-1 font-display text-xl font-bold tabular-nums text-[#07655C]">{formatAmount(summary.paidCup)}</p>
+              <p className="mt-1 font-display text-xl font-bold tabular-nums text-success-ink">{formatAmount(summary.paidCup)}</p>
               <p className="text-xs text-text-muted">{paymentCount === 1 ? '1 pago' : `${paymentCount} pagos`}</p>
             </div>
           </div>
@@ -86,7 +86,7 @@ export function OrderDetail({ order, summary, timeline, pending, error, onBack, 
           {tab === 'payments' ? (
             <div role="tabpanel" className="flex flex-col">
               {summary.payments.map((payment) => (
-                <div key={payment.id} className="flex items-center gap-3.5 border-b border-[#F2F7F6] px-0.5 py-3.5">
+                <div key={payment.id} className="flex items-center gap-3.5 border-b border-line-faint px-0.5 py-3.5">
                   <span className="grid size-[38px] shrink-0 place-items-center rounded-control bg-action-soft text-action"><Banknote aria-hidden="true" size={18} /></span>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
@@ -109,9 +109,9 @@ export function OrderDetail({ order, summary, timeline, pending, error, onBack, 
       </div>
 
       {summary.commercialStatus === 'accepted' ? (
-        <div className="flex flex-wrap items-center justify-between gap-3.5 border-t border-[#EEF5F4] bg-canvas px-4 py-4 md:px-6">
-          <p className={cx('flex items-center gap-2 text-sm', owes ? 'text-text-muted' : 'font-semibold text-[#07655C]')}>
-            {owes ? <Lock aria-hidden="true" size={16} className="shrink-0 text-[#9AABA7]" /> : <PackageCheck aria-hidden="true" size={16} className="shrink-0" />}
+        <div className="flex flex-wrap items-center justify-between gap-3.5 border-t border-line-soft bg-canvas px-4 py-4 md:px-6">
+          <p className={cx('flex items-center gap-2 text-sm', owes ? 'text-text-muted' : 'font-semibold text-success-ink')}>
+            {owes ? <Lock aria-hidden="true" size={16} className="shrink-0 text-text-disabled" /> : <PackageCheck aria-hidden="true" size={16} className="shrink-0" />}
             {owes ? `Disponible cuando el saldo llegue a 0 · faltan ${formatAmount(summary.balanceCup)} CUP` : 'Todo cobrado. Puedes entregar el pedido.'}
           </p>
           <Button variant="ink" icon={PackageCheck} onClick={onDeliver} disabled={owes || pending} className="w-full sm:w-auto">Marcar como entregado</Button>

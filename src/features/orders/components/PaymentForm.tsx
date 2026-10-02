@@ -43,7 +43,7 @@ export function PaymentForm({ balanceCup, defaultRate, pending, onSubmit }: { ba
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-3.5 rounded-card border border-[#E3EFED] bg-[#FBFEFD] px-4 py-4 md:px-5 md:py-[18px]">
+    <form onSubmit={submit} className="flex flex-col gap-3.5 rounded-card border border-line-card bg-field px-4 py-4 md:px-5 md:py-[18px]">
       <div className="flex flex-wrap items-center justify-between gap-2.5">
         <h3 className="font-display text-[17px] font-semibold text-ink">Registrar efectivo</h3>
         <Button variant="secondary" size="sm" onClick={fillBalance}>Cobrar saldo completo</Button>
@@ -79,7 +79,7 @@ export function PaymentForm({ balanceCup, defaultRate, pending, onSubmit }: { ba
         </Field>
       </div>
       <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-        <p aria-live="polite" className={cx('text-sm tabular-nums', over ? 'font-semibold text-coral-ink' : 'font-medium text-[#4A5B58]')}>{feedback}</p>
+        <p aria-live="polite" className={cx('text-sm tabular-nums', over ? 'font-semibold text-coral-ink' : 'font-medium text-text-secondary')}>{feedback}</p>
         <Button type="submit" icon={Banknote} disabled={!canSubmit} className="w-full sm:w-auto">Registrar pago</Button>
       </div>
     </form>

@@ -132,8 +132,8 @@ export function OrganizationOnboardingForm({ onCreated }: { onCreated?: () => vo
         <p className="mt-1 text-sm text-text-muted">El Núcleo siempre está habilitado. Caja, Producción y WhatsApp requieren Ventas ópticas.</p>
         <div className="mt-4 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
           {optionalModules.map(({ key, label }) => (
-            <label key={key} className="flex min-h-11 cursor-pointer items-center gap-3 rounded-control border border-line bg-[#FBFEFD] px-4 py-3 text-[15px] text-text transition hover:border-[#9BCDC6] has-[:checked]:border-action has-[:checked]:bg-[#F0FBF9]">
-              <input type="checkbox" name={key} defaultChecked={key === 'optical_sales'} className="size-5 shrink-0 rounded-badge accent-[#0D7A72]" />
+            <label key={key} className="flex min-h-11 cursor-pointer items-center gap-3 rounded-control border border-line bg-field px-4 py-3 text-[15px] text-text transition hover:border-line-hover has-[:checked]:border-action has-[:checked]:bg-action-tint">
+              <input type="checkbox" name={key} defaultChecked={key === 'optical_sales'} className="size-5 shrink-0 rounded-badge accent-action" />
               {label}
             </label>
           ))}

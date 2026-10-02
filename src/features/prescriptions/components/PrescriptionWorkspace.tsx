@@ -269,7 +269,7 @@ export function PrescriptionWorkspace({
                 {record.prescription_revisions.map((revision) => (
                   <div key={revision.id} className="border-l-2 border-mint pl-3">
                     <div className="flex justify-between gap-2"><p className="text-sm font-semibold text-ink">Revisión {revision.revision_number}</p><time className="text-[13px] text-text-muted">{revision.prescription_date}</time></div>
-                    <p className="mt-1 font-display text-[13px] tabular-nums text-[#4A5B58]">OD {formatOptical(revision.right_sphere)} / {formatOptical(revision.right_cylinder)} · OI {formatOptical(revision.left_sphere)} / {formatOptical(revision.left_cylinder)}</p>
+                    <p className="mt-1 font-display text-[13px] tabular-nums text-text-secondary">OD {formatOptical(revision.right_sphere)} / {formatOptical(revision.right_cylinder)} · OI {formatOptical(revision.left_sphere)} / {formatOptical(revision.left_cylinder)}</p>
                     {revision.change_reason ? <p className="mt-1 text-[13px] text-amber-ink">{revision.change_reason}</p> : null}
                     {revision.prescription_files.map((file) => <Button key={file.id} variant="ghost" size="sm" icon={Download} onClick={() => void downloadFile(file)} className="-ml-3 mt-1">{file.file_name}</Button>)}
                   </div>

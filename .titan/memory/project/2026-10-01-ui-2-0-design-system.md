@@ -43,8 +43,13 @@ tooling and never ships.
 
 ## Constraints
 
-- `tailwind.config.ts` remaps `slate/sky/emerald/red` to brand colours and sets
-  `rounded-lg/xl` to 7 px; those legacy remaps stay until the PRP cleanup phase.
+- ~~`tailwind.config.ts` remaps `slate/sky/emerald/red`…~~ Superseded 2026-10-02 (Fase 9):
+  legacy remaps, `rounded-lg/xl` overrides and `--vs-*` are gone. Every colour is a
+  semantic token in `tailwind.config.ts` (`text-secondary/label/placeholder`,
+  `line-soft/card/strong/hover/focus`, `action-tint`, `success-*`, `coral-tint/line/wash`,
+  `on-ink-*` for text on the ink surface…). Shadow rings use `theme(colors.x)`.
+  ESLint `no-restricted-syntax` rejects hex in `src/features/**` (landing excluded, D3).
+  New colour → add a token first, never an inline hex.
 - Visual validation is manual by the user (no Playwright screenshots); each phase
   ends with a concrete review checklist.
 - `docs/design/brand/` was synced to the D2.1 logo on 2026-10-01.

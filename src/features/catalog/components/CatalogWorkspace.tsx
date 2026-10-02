@@ -280,10 +280,10 @@ export function CatalogWorkspace({
                 {group.items.map((item) => {
                   const active = selected.includes(item.id)
                   return (
-                    <div key={item.id} className={cx('relative rounded-card border transition', active ? 'border-action bg-[#F0FBF9] shadow-[0_0_0_1px_#0D7A72]' : 'border-[#E3EFED] bg-surface hover:border-[#9BCDC6]')}>
+                    <div key={item.id} className={cx('relative rounded-card border transition', active ? 'border-action bg-action-tint shadow-[0_0_0_1px_theme(colors.action.DEFAULT)]' : 'border-line-card bg-surface hover:border-line-hover')}>
                       <button type="button" aria-pressed={isPlatformAdmin ? undefined : active} disabled={isPlatformAdmin || !item.enabled} onClick={() => toggleItem(item.id)} className="flex min-h-16 w-full items-start gap-3 rounded-card p-3.5 pr-14 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-action disabled:cursor-default">
                         {!isPlatformAdmin ? (
-                          <span aria-hidden="true" className={cx('mt-0.5 grid size-5 shrink-0 place-items-center rounded-badge border', active ? 'border-action bg-action text-white' : 'border-[#CFE3E0] bg-surface')}>
+                          <span aria-hidden="true" className={cx('mt-0.5 grid size-5 shrink-0 place-items-center rounded-badge border', active ? 'border-action bg-action text-white' : 'border-line-strong bg-surface')}>
                             {active ? <Check size={14} strokeWidth={3} /> : null}
                           </span>
                         ) : null}

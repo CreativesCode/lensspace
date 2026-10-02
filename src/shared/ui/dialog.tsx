@@ -58,7 +58,7 @@ export function Dialog({ open, onClose, title, eyebrow, description, icon: Icon,
         tabIndex={-1}
         className={cx('flex max-h-[calc(100vh-2rem)] w-full flex-col overflow-hidden rounded-panel bg-surface shadow-[0_28px_64px_rgba(7,50,47,0.3)] outline-none', widths[size])}
       >
-        <div className="flex items-start gap-3.5 border-b border-[#EEF5F4] px-6 py-5">
+        <div className="flex items-start gap-3.5 border-b border-line-soft px-6 py-5">
           {Icon ? (
             <span className={cx('grid size-11 shrink-0 place-items-center rounded-[12px]', tone === 'danger' ? 'bg-coral-soft text-coral-ink' : 'bg-action-soft text-action')}>
               <Icon aria-hidden="true" size={22} />
@@ -67,9 +67,9 @@ export function Dialog({ open, onClose, title, eyebrow, description, icon: Icon,
           <div className="min-w-0 flex-1">
             {eyebrow ? <p className="text-xs font-bold uppercase tracking-[0.16em] text-action">{eyebrow}</p> : null}
             <h2 id={titleId} className={cx('font-display text-[19px] font-bold text-ink', Boolean(eyebrow) && 'mt-1')}>{title}</h2>
-            {description ? <p id={descriptionId} className="mt-1.5 text-[15px] leading-[1.55] text-[#4A5B58]">{description}</p> : null}
+            {description ? <p id={descriptionId} className="mt-1.5 text-[15px] leading-[1.55] text-text-secondary">{description}</p> : null}
           </div>
-          <button type="button" onClick={onClose} aria-label="Cerrar diálogo" className="grid size-10 shrink-0 place-items-center rounded-control border border-line text-ink transition hover:bg-[#F0FBF9] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-action-soft">
+          <button type="button" onClick={onClose} aria-label="Cerrar diálogo" className="grid size-10 shrink-0 place-items-center rounded-control border border-line text-ink transition hover:bg-action-tint focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-action-soft">
             <X aria-hidden="true" size={18} />
           </button>
         </div>

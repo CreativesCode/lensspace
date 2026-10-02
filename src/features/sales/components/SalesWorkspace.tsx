@@ -409,7 +409,7 @@ export function SalesWorkspace({
                 <p className="text-sm font-semibold text-ink">Tasa de esta venta</p>
                 <p className="text-[13px] leading-5 text-text-muted">Se usa para convertir importes en USD y queda congelada al crear el pedido.</p>
               </div>
-              <label className="flex shrink-0 items-center gap-2 text-sm font-semibold text-[#4A5B58]">
+              <label className="flex shrink-0 items-center gap-2 text-sm font-semibold text-text-secondary">
                 <span>1 USD =</span>
                 <span className="w-28">
                   <Input
@@ -497,7 +497,7 @@ function QuickPicker({ label, actionLabel, onAction, disabled = false, children 
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between gap-3">
-        <span className="text-[13px] font-semibold text-[#324E4A]">{label}</span>
+        <span className="text-[13px] font-semibold text-text-label">{label}</span>
         <Button variant="ghost" size="sm" icon={Plus} disabled={disabled} onClick={onAction} className="-mr-2">{actionLabel}</Button>
       </div>
       {children}

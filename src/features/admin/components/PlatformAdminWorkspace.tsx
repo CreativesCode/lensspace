@@ -124,7 +124,7 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
 
     {filteredOrganizations.map((organization) => (
       <Card key={organization.id} padded={false} className="overflow-hidden">
-        <button type="button" onClick={() => openDetails(organization)} className="flex w-full flex-wrap items-center justify-between gap-3 p-5 text-left hover:bg-[#F7FBFA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-action">
+        <button type="button" onClick={() => openDetails(organization)} className="flex w-full flex-wrap items-center justify-between gap-3 p-5 text-left hover:bg-canvas focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-action">
           <span className="flex min-w-0 flex-col gap-1">
             <span className="font-display text-[17px] font-semibold text-ink">{organization.name}</span>
             <span className="text-[13px] text-text-muted">{organization.order_prefix} · {organization.owners.map((owner) => owner.display_name).join(', ') || 'Sin propietario'} · {organization.branches.length === 1 ? '1 sucursal' : `${organization.branches.length} sucursales`}</span>

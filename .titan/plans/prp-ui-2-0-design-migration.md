@@ -1,7 +1,7 @@
 # PRP: Migración gradual a la Guía UI 2.0
 
 > **Estado**: EN EJECUCIÓN (aprobado 2026-10-01)
-> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ · Fase 4 ✅ (aprobada por el usuario) · Fase 5 ✅ · Fase 6 ✅ · Fase 7 ✅ · Fase 8 ✅ (pendiente revisión manual) · Fase 9 siguiente
+> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ · Fase 4 ✅ (aprobada por el usuario) · Fase 5 ✅ · Fase 6 ✅ · Fase 7 ✅ · Fase 8 ✅ (pendiente revisión manual) · Fase 9 ✅ · Fase 10 siguiente
 > **Fecha**: 2026-10-01
 > **Proyecto**: LensSpace
 
@@ -167,7 +167,7 @@ $$;
 **Objetivo**: caja, producción, catálogo, equipo, administración de plataforma u organizaciones y editor del manual (`client-docs`) migrados a primitivas y tonos.
 **Validación**: revisión manual de cierre de caja, cambio de estado de producción con incidencia, edición de catálogo e invitación de miembro.
 
-### Fase 9: Limpieza y guardia
+### Fase 9: Limpieza y guardia ✅ (2026-10-02)
 **Objetivo**: quitar del `tailwind.config.ts` el remapeo legado (`slate/sky/emerald/red`, `lg/xl = 7px`) y las `--vs-*` que ya no se usen, agregar la regla ESLint anti-hex en `src/features/**` y retirar los huérfanos (`inputClass` y clases muertas).
 **Validación**: lint con la regla nueva pasa. Los `grep` de los criterios de éxito dan 0 y la revisión manual no muestra regresiones.
 
@@ -223,6 +223,11 @@ $$;
 - **Fix**: envolver en un contenedor posicionado: `<div className="absolute right-2 top-2"><IconButton … /></div>`.
 - **Aplicar en**: `position`, `display` y cualquier utilidad que la primitiva ya fije: el posicionamiento va en un wrapper, nunca en su `className`.
 
+### 2026-10-02: Fase 9 — tokens y regla anti-hex
+- Todos los hex derivados pasaron a tokens semánticos en `tailwind.config.ts` (reemplazo mecánico `prefijo-[#HEX]` → `prefijo-token`, sin cambio visual). Los anillos con sombra usan `theme(colors.x)` dentro del valor arbitrario. Únicas excepciones: landing (D3), logo/OG (arte de marca) y `manifest.ts` (necesita hex reales).
+- Se eliminaron los remapeos `slate/sky/emerald/red`, `rounded-lg/xl/2xl/3xl`, `shadow-sm/xl` y las `--vs-*`. La landing conserva su aspecto con valores arbitrarios equivalentes (`rounded-[7px]`, etc.).
+- **Error**: el selector de `no-restricted-syntax` con `\b` no disparaba (esquery no interpreta ese escape). **Fix**: regex sin escapes `/(^|[[_])#[0-9A-Fa-f]{6}/`, que además no marca copy como "Pedido #123456". Probado con un archivo sonda.
+
 ### 2026-10-01: D1 aplicado — payload de pedidos
 - `list_accessible_orders` agrega `paidCup`, `balanceCup`, `paidTodayCup` (por `payments.business_date` en la zona horaria de la organización, igual que la caja) y `hasOpenIncident` (incidencia sin `rework_job_id`). `get_order_payment_summary` agrega `notes`. Migración `20261002013055_extend_order_list_for_ui_v2.sql`, security invoker, advisors sin hallazgos nuevos.
 - `FormSelect` se alineó a la guía en la Fase 5 (44 px, radio 10, foco teal): su `className` solo afecta al contenedor, así que el cambio es global y seguro. Hasta migrar las fases 7–8, en formularios viejos puede verse 2–4 px más alto que los inputs antiguos.
@@ -230,7 +235,7 @@ $$;
 - **Revisión manual y Turbopack**: si una vista se ve a medio migrar (piezas nuevas mezcladas con markup viejo), es caché de Turbopack; recargar fuerte o reiniciar `npm run dev` antes de reportar un bug visual.
 - Fase 6: `PageContainer` unifica el contenedor de todas las páginas (max 1440, gutters de la guía, gap 20). KPIs de pedidos compartidos en `features/orders/order-kpis.ts` (panel + bandeja). `OrganizationList` en `dashboard/page.tsx` es código muerto previo (exportado, sin usos): retirarlo en la Fase 9 con aprobación.
 - Fase 7: `CustomerFormFields` y `PrescriptionFormFields` ya no reciben `fieldClass` (usan `Field`/`Input`); la receta pasó de tabla de 650 px a un bloque por ojo (3 columnas en móvil). `SalesWorkspace` 914 → 506 líneas: `ItemPicker`, `QuoteSummary`, `AcceptedOrderPanel` (reutiliza `PaymentForm` de pedidos) y `Dialog` compartido con `footer` + atributo `form`. Nueva primitiva `Steps` con el progreso real de la venta. `OrganizationList` muerto eliminado (aprobado).
-- Pendiente Fase 9: tokenizar los tonos derivados que aún aparecen como hex en features migradas (`#4A5B58` texto secundario, `#324E4A` etiqueta, `#E3EFED`/`#EEF5F4`/`#CFE3E0`/`#9BCDC6` bordes, `#F0FBF9` selección, `#07655C`/`#0B5A53` tintas de éxito y progreso) y reemplazarlos en bloque.
+- ~~Pendiente Fase 9~~ (hecho 2026-10-02): tokenizar los tonos derivados que aún aparecen como hex en features migradas (`#4A5B58` texto secundario, `#324E4A` etiqueta, `#E3EFED`/`#EEF5F4`/`#CFE3E0`/`#9BCDC6` bordes, `#F0FBF9` selección, `#07655C`/`#0B5A53` tintas de éxito y progreso) y reemplazarlos en bloque.
 - El efecto de auto-apertura en escritorio no puede llamar `setState` directo (`react-hooks/set-state-in-effect`): se carga dentro de `startTransition` y se fija la selección al terminar.
 - Fase 8: todas las cabeceras usan el `PageHeader` featured (tinta) aunque no tengan stats (decisión del usuario). Caja y Producción renderizan su `PageHeader` dentro del workspace para que las stats usen los datos filtrados en cliente; sus páginas solo envuelven en `PageContainer`. Producción: `ProductionJobCard` + `production-status.ts`. `Card` ganó `tone="danger"` e `IconButton` ganó `variant` (`outline`/`ghost`/`danger`) para no recolorear por `className`. Los 5 diálogos hechos a mano (producción ×3, catálogo, equipo, organizaciones) pasaron al `Dialog` compartido y se eliminaron sus `useEffect` de Escape/scroll. Mensajes: errores como `Alert` dentro del diálogo, éxitos como `Toast`. Catálogo: alta de artículo pasa de `<details>` a diálogo; "Disponible" y módulos de organización usan `Switch` (estado controlado, no `FormData`). Equipo: tabla → `ListItem` (funciona en móvil). Diálogo de organización con `key` por id para no arrastrar `defaultValue` de otra organización.
 

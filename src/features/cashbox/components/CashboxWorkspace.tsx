@@ -69,7 +69,7 @@ export function CashboxWorkspace({ initialCashboxes, currentUserId }: { initialC
     {header}
     <div className="grid items-start gap-5 xl:grid-cols-[minmax(320px,410px)_minmax(0,1fr)]">
       <Card padded={false} className={cx('overflow-hidden', detailOpen && 'hidden xl:block')}>
-        <div className="flex items-center justify-between gap-3 border-b border-[#EEF5F4] px-4 py-3.5 md:px-[18px]">
+        <div className="flex items-center justify-between gap-3 border-b border-line-soft px-4 py-3.5 md:px-[18px]">
           <CardHeader title="Cajas por día y moneda" meta={visibleCashboxes.length === 1 ? '1 caja' : `${visibleCashboxes.length} cajas`} className="flex-1" />
           <FilterPanel title="Filtrar cajas" eyebrow="Caja" activeFilterCount={activeFilterCount} resultCount={visibleCashboxes.length} onClear={clearFilters}>
             <div className="grid gap-3.5">
@@ -114,9 +114,9 @@ export function CashboxWorkspace({ initialCashboxes, currentUserId }: { initialC
           </div>
           {selected.closures.length ? <div>
             <h3 className="font-display text-[17px] font-semibold text-ink">Historial de cierres</h3>
-            <div className="mt-2 divide-y divide-[#EEF5F4]">{selected.closures.map((closure) => <div key={closure.id} className="grid gap-1 py-3 text-sm sm:grid-cols-[1fr_auto]"><div><strong className="text-ink">{closure.type === 'primary' ? 'Cierre principal' : `Complementario ${closure.sequenceNumber}`}</strong><p className="text-[13px] text-text-muted">{new Date(closure.closedAt).toLocaleString('es-CU')}</p></div><div className="text-left sm:text-right"><p className="font-display font-semibold tabular-nums text-ink">{money(closure.expectedAmount, selected.currency)}</p><p className="text-[13px] text-text-muted">Declarado {money(closure.declaredAmount, selected.currency)}</p></div></div>)}</div>
+            <div className="mt-2 divide-y divide-line-soft">{selected.closures.map((closure) => <div key={closure.id} className="grid gap-1 py-3 text-sm sm:grid-cols-[1fr_auto]"><div><strong className="text-ink">{closure.type === 'primary' ? 'Cierre principal' : `Complementario ${closure.sequenceNumber}`}</strong><p className="text-[13px] text-text-muted">{new Date(closure.closedAt).toLocaleString('es-CU')}</p></div><div className="text-left sm:text-right"><p className="font-display font-semibold tabular-nums text-ink">{money(closure.expectedAmount, selected.currency)}</p><p className="text-[13px] text-text-muted">Declarado {money(closure.declaredAmount, selected.currency)}</p></div></div>)}</div>
           </div> : null}
-          {isOwnCashbox ? <form onSubmit={closeCashbox} className="flex flex-col gap-3 rounded-card border border-[#E3EFED] bg-[#FBFEFD] p-4">
+          {isOwnCashbox ? <form onSubmit={closeCashbox} className="flex flex-col gap-3 rounded-card border border-line-card bg-field p-4">
             <div className="flex flex-wrap items-end gap-3">
               <Field label={`Efectivo declarado (${selected.currency})`} className="min-w-52 flex-1">
                 <Input key={selected.id} name="declaredAmount" type="number" inputMode="decimal" min="0" step="0.01" defaultValue={(selected.primaryClosed ? selected.pendingPostCloseAmount : selected.receivedAmount).toFixed(2)} required numeric />

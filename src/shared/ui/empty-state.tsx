@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 
 export function EmptyState({ icon: Icon, title, description, action }: { icon: LucideIcon; title: ReactNode; description?: ReactNode; action?: ReactNode }) {
   return (
-    <div className="flex flex-col items-center rounded-card border border-dashed border-[#CFE3E0] bg-[#FBFEFD] px-5 py-7 text-center">
+    <div className="flex flex-col items-center rounded-card border border-dashed border-line-strong bg-field px-5 py-7 text-center">
       <span className="grid size-[52px] place-items-center rounded-[16px] bg-action-soft text-action">
         <Icon aria-hidden="true" size={24} />
       </span>

@@ -16,7 +16,7 @@ type AuthCardProps = {
 
 export function AuthCard({ title, eyebrow, description, logoSubtitle, logoClassName, centered = false, children }: AuthCardProps) {
   return (
-    <div className={cx('w-full max-w-md rounded-panel border border-[#E3EFED] bg-surface p-6 shadow-e2 sm:p-8', centered && 'text-center')}>
+    <div className={cx('w-full max-w-md rounded-panel border border-line-card bg-surface p-6 shadow-e2 sm:p-8', centered && 'text-center')}>
       <div className={cx('mb-7', centered && 'flex justify-center', logoClassName)}>
         <LensSpaceLogo compact={centered} subtitle={logoSubtitle} />
       </div>

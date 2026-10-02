@@ -20,7 +20,7 @@ export function Steps({ steps, current, label }: { steps: string[]; current: num
                   aria-hidden="true"
                   className={cx(
                     'grid size-[26px] place-items-center rounded-full font-display text-xs font-bold',
-                    done ? 'bg-mint text-ink' : active ? 'bg-action text-white shadow-[0_0_0_4px_#E2F4F1]' : 'bg-[#EEF5F4] text-text-muted',
+                    done ? 'bg-mint text-ink' : active ? 'bg-action text-white shadow-[0_0_0_4px_theme(colors.action.soft)]' : 'bg-line-soft text-text-muted',
                   )}
                 >
                   {done ? <Check size={14} strokeWidth={3} /> : index + 1}

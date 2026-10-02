@@ -55,7 +55,7 @@ async function AuthenticatedLayout({ children }: { children: React.ReactNode }) 
                 href="/sales"
                 aria-label="Crear nueva venta"
                 title="Nueva venta"
-                className="grid size-11 place-items-center rounded-control bg-mint text-ink transition hover:bg-[#5DD3BD] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#B9DFD9]"
+                className="grid size-11 place-items-center rounded-control bg-mint text-ink transition hover:bg-mint-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-line-focus"
               >
                 <Plus aria-hidden="true" size={20} strokeWidth={2.5} />
               </Link>

@@ -16,13 +16,13 @@ export function FilterChips<T extends string>({ chips, value, onChange, label }:
             onClick={() => onChange(chip.value)}
             className={cx(
               'flex min-h-9 items-center gap-2 rounded-full border pl-3.5 pr-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-action-soft',
-              active ? 'border-ink bg-ink text-white' : 'border-line bg-surface text-[#324E4A] hover:border-[#9BCDC6]',
+              active ? 'border-ink bg-ink text-white' : 'border-line bg-surface text-text-label hover:border-line-hover',
               chip.count === undefined && 'pr-3.5',
             )}
           >
             {chip.label}
             {chip.count !== undefined ? (
-              <span className={cx('grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[11.5px] font-bold text-ink', active ? 'bg-mint' : 'bg-[#EEF5F4]')}>{chip.count}</span>
+              <span className={cx('grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[11.5px] font-bold text-ink', active ? 'bg-mint' : 'bg-line-soft')}>{chip.count}</span>
             ) : null}
           </button>
         )

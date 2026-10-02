@@ -24,7 +24,7 @@ export function PrescriptionFormFields() {
   return (
     <div className="flex flex-col gap-5">
       {eyes.map((eye) => (
-        <fieldset key={eye.key} className="rounded-card border border-[#E3EFED] bg-[#FBFEFD] p-4">
+        <fieldset key={eye.key} className="rounded-card border border-line-card bg-field p-4">
           <legend className="sr-only">{eye.name}</legend>
           <p aria-hidden="true" className="mb-3 flex items-center gap-2 font-display text-[15px] font-semibold text-ink">
             <span className="grid h-7 min-w-9 place-items-center rounded-badge bg-ink px-1.5 text-xs font-bold text-white">{eye.label}</span>
@@ -53,7 +53,7 @@ export function PrescriptionFormFields() {
         <Field label="Observaciones" className="md:col-span-2 lg:col-span-3"><Textarea name="notes" rows={3} /></Field>
       </div>
 
-      <label className="flex cursor-pointer flex-col gap-2 rounded-card border border-dashed border-[#B9DFD9] bg-[#F7FDFC] p-4 text-[15px] text-text transition hover:border-action">
+      <label className="flex cursor-pointer flex-col gap-2 rounded-card border border-dashed border-line-focus bg-action-wash p-4 text-[15px] text-text transition hover:border-action">
         <span className="flex items-center gap-2 font-semibold text-ink">
           <Upload aria-hidden="true" size={18} className="text-action" />
           Original privado <span className="text-[13px] font-normal text-text-muted">(opcional, JPG, PNG, WebP o PDF, máx. 10 MB)</span>

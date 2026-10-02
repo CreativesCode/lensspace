@@ -51,7 +51,7 @@ export function OrdersInbox({ orders, selectedId, onSelect, initialQuery, initia
 
   return (
     <Card padded={false} className={cx('overflow-hidden', className)}>
-      <div className="flex flex-col gap-3 border-b border-[#EEF5F4] px-4 pb-3.5 pt-[18px] md:px-[18px]">
+      <div className="flex flex-col gap-3 border-b border-line-soft px-4 pb-3.5 pt-[18px] md:px-[18px]">
         <CardHeader title="Bandeja de pedidos" meta={resultLabel} />
         <div className="flex gap-2">
           <Input leadingIcon={Search} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Nombre del cliente" aria-label="Buscar por nombre del cliente" className="flex-1" />

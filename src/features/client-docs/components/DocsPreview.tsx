@@ -6,7 +6,7 @@ import type { DocSection } from '../generators/types'
 
 const imageLine = /^!\[(.*?)\]\((.+?)\)$/
 export function DocsPreview({ section }: { section: DocSection }) {
-  return <article className="min-h-[620px] rounded-card border border-[#E3EFED] bg-surface p-5 shadow-e1 sm:p-8">
+  return <article className="min-h-[620px] rounded-card border border-line-card bg-surface p-5 shadow-e1 sm:p-8">
     <p className="text-xs font-bold uppercase tracking-[0.16em] text-action">{section.title}</p>
     <div className="mt-4 flex flex-col gap-2">{section.content.split('\n').map((raw, index) => {
       const line = raw.trim(); if (!line) return <div key={index} className="h-2" />

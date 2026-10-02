@@ -36,13 +36,13 @@ export function ListItem({ title, meta, avatarName, leading, badge, trailing, se
   )
   const className = cx(
     'flex w-full items-center gap-3.5 border-l-[3px] py-3.5 pl-[15px] pr-[18px] font-sans transition',
-    !last && 'border-b border-b-[#EEF5F4]',
-    selected ? 'border-l-action bg-[#F0FBF9]' : 'border-l-transparent bg-surface',
+    !last && 'border-b border-b-line-soft',
+    selected ? 'border-l-action bg-action-tint' : 'border-l-transparent bg-surface',
   )
 
   if (!onSelect) return <div className={className}>{content}</div>
   return (
-    <button type="button" onClick={onSelect} aria-pressed={selected} className={cx(className, 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-action', !selected && 'hover:bg-[#F7FBFA]')}>
+    <button type="button" onClick={onSelect} aria-pressed={selected} className={cx(className, 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-action', !selected && 'hover:bg-canvas')}>
       {content}
     </button>
   )

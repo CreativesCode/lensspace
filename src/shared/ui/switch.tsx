@@ -13,7 +13,7 @@ export function Switch({ checked, onChange, label, disabled = false }: { checked
         onClick={() => onChange(!checked)}
         className={cx(
           'flex h-6 w-[42px] shrink-0 items-center rounded-full p-0.5 transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-action-soft disabled:cursor-not-allowed',
-          checked ? 'justify-end bg-action' : 'justify-start bg-[#CFE3E0]',
+          checked ? 'justify-end bg-action' : 'justify-start bg-line-strong',
         )}
       >
         <span className="size-5 rounded-full bg-white shadow-[0_1px_3px_rgba(7,50,47,0.25)]" />

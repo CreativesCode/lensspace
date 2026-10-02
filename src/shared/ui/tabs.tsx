@@ -5,7 +5,7 @@ type Tab<T extends string> = { value: T; label: string; count?: number }
 // Presentational tablist; the parent renders the active panel.
 export function Tabs<T extends string>({ tabs, value, onChange, label }: { tabs: Tab<T>[]; value: T; onChange: (value: T) => void; label: string }) {
   return (
-    <div role="tablist" aria-label={label} className="flex gap-0.5 overflow-x-auto border-b border-[#E3EFED]">
+    <div role="tablist" aria-label={label} className="flex gap-0.5 overflow-x-auto border-b border-line-card">
       {tabs.map((tab) => {
         const active = tab.value === value
         return (
@@ -22,7 +22,7 @@ export function Tabs<T extends string>({ tabs, value, onChange, label }: { tabs:
           >
             {tab.label}
             {tab.count !== undefined ? (
-              <span className={cx('grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[11.5px] font-bold', active ? 'bg-action-soft text-[#0B5A53]' : 'bg-[#EEF5F4] text-text-muted')}>
+              <span className={cx('grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[11.5px] font-bold', active ? 'bg-action-soft text-progress-ink' : 'bg-line-soft text-text-muted')}>
                 {tab.count}
               </span>
             ) : null}

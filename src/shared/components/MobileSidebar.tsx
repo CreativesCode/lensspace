@@ -28,7 +28,7 @@ export function MobileSidebar({ allowedHrefs, identity }: { allowedHrefs: string
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} aria-expanded={open} aria-controls="mobile-sidebar" aria-label="Abrir menú principal" className="grid size-11 place-items-center rounded-control border border-[#2B5E58] text-[#D8F0ED] transition hover:bg-ink-2">
+      <button type="button" onClick={() => setOpen(true)} aria-expanded={open} aria-controls="mobile-sidebar" aria-label="Abrir menú principal" className="grid size-11 place-items-center rounded-control border border-on-ink-stroke text-on-ink-soft transition hover:bg-ink-2">
         <Menu aria-hidden="true" size={20} />
       </button>
       {open ? <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true" aria-label="Menú principal">
@@ -36,7 +36,7 @@ export function MobileSidebar({ allowedHrefs, identity }: { allowedHrefs: string
         <aside id="mobile-sidebar" className="relative flex h-full w-[min(86vw,320px)] flex-col overflow-y-auto bg-ink px-3.5 pb-[18px] pt-5 shadow-e3">
           <div className="flex items-start justify-between gap-4 px-1.5">
             <LensSpaceLogo compact inverse subtitle={identity.organizationName} />
-            <button ref={closeButtonRef} type="button" onClick={() => setOpen(false)} aria-label="Cerrar menú principal" className="grid size-11 shrink-0 place-items-center rounded-control border border-[#2B5E58] text-[#D8F0ED]">
+            <button ref={closeButtonRef} type="button" onClick={() => setOpen(false)} aria-label="Cerrar menú principal" className="grid size-11 shrink-0 place-items-center rounded-control border border-on-ink-stroke text-on-ink-soft">
               <X aria-hidden="true" size={20} />
             </button>
           </div>

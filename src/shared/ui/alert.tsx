@@ -6,10 +6,10 @@ import { cx } from './cx'
 export type AlertTone = 'info' | 'warning' | 'danger' | 'success'
 
 const tones: Record<AlertTone, { box: string; icon: string; text: string; Icon: LucideIcon }> = {
-  info: { box: 'border-[#B9DFD9] bg-[#F0FBF9]', icon: 'text-action', text: 'text-[#0B5A53]', Icon: Info },
-  warning: { box: 'border-[#F6D9B3] bg-amber-soft', icon: 'text-amber-ink', text: 'text-[#7A4510]', Icon: TriangleAlert },
-  danger: { box: 'border-[#FFD9CD] bg-[#FFF6F2]', icon: 'text-coral-ink', text: 'text-[#7A3A26]', Icon: CircleAlert },
-  success: { box: 'border-[#A9E6D7] bg-[#E9FAF5]', icon: 'text-[#07655C]', text: 'text-[#07655C]', Icon: CircleCheck },
+  info: { box: 'border-line-focus bg-action-tint', icon: 'text-action', text: 'text-progress-ink', Icon: Info },
+  warning: { box: 'border-amber-line bg-amber-soft', icon: 'text-amber-ink', text: 'text-amber-strong', Icon: TriangleAlert },
+  danger: { box: 'border-coral-line bg-coral-tint', icon: 'text-coral-ink', text: 'text-coral-deep', Icon: CircleAlert },
+  success: { box: 'border-success-line bg-success-tint', icon: 'text-success-ink', text: 'text-success-ink', Icon: CircleCheck },
 }
 
 // Feedback uses the same tones as statuses. `role` defaults to status; use "alert" for errors that need announcing.
