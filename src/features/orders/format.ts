@@ -1,20 +1,19 @@
+import { BUSINESS_TIME_ZONE, daysAgoIn, todayIn } from '@/shared/utils/dates'
+
 const amountFormat = new Intl.NumberFormat('es-CU', { maximumFractionDigits: 2 })
-const shortDate = new Intl.DateTimeFormat('es-CU', { day: 'numeric', month: 'short' })
-const longDate = new Intl.DateTimeFormat('es-CU', { day: 'numeric', month: 'long' })
-const time = new Intl.DateTimeFormat('es-CU', { hour: '2-digit', minute: '2-digit' })
+const shortDate = new Intl.DateTimeFormat('es-CU', { day: 'numeric', month: 'short', timeZone: BUSINESS_TIME_ZONE })
+const longDate = new Intl.DateTimeFormat('es-CU', { day: 'numeric', month: 'long', timeZone: BUSINESS_TIME_ZONE })
+const time = new Intl.DateTimeFormat('es-CU', { hour: '2-digit', minute: '2-digit', timeZone: BUSINESS_TIME_ZONE })
 
 export const formatAmount = (value: number) => amountFormat.format(Number(value))
 
-const dayKey = (date: Date) => `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
 
 // "hoy", "ayer" or "27 sep".
 export function formatShortDate(iso: string) {
   const date = new Date(iso)
-  const today = new Date()
-  const yesterday = new Date(today)
-  yesterday.setDate(today.getDate() - 1)
-  if (dayKey(date) === dayKey(today)) return 'hoy'
-  if (dayKey(date) === dayKey(yesterday)) return 'ayer'
+  const day = todayIn(date)
+  if (day === todayIn()) return 'hoy'
+  if (day === daysAgoIn(1)) return 'ayer'
   return shortDate.format(date).replace('.', '')
 }
 

@@ -2,6 +2,7 @@ import { Upload } from 'lucide-react'
 
 import { FormSelect } from '@/shared/components'
 import { Field, Input, Textarea } from '@/shared/ui'
+import { todayIn } from '@/shared/utils/dates'
 
 const eyes = [
   { key: 'right', label: 'OD', name: 'Ojo derecho' },
@@ -48,7 +49,7 @@ export function PrescriptionFormFields() {
             <Field label="Base"><FormSelect name={`${eye.key}PrismBase`} ariaLabel={`Base del prisma ${eye.label}`} options={prismBases} /></Field>
           </div>
         ))}
-        <Field label="Fecha de la receta"><Input name="prescriptionDate" type="date" required defaultValue={new Date().toISOString().slice(0, 10)} /></Field>
+        <Field label="Fecha de la receta"><Input name="prescriptionDate" type="date" required defaultValue={todayIn()} /></Field>
         <Field label="Médico u optometrista" className="md:col-span-2"><Input name="prescriberName" minLength={2} maxLength={160} /></Field>
         <Field label="Observaciones" className="md:col-span-2 lg:col-span-3"><Textarea name="notes" rows={3} /></Field>
       </div>

@@ -3,6 +3,7 @@
 import { Plus, X } from 'lucide-react'
 
 import { Button, Field, Input, Textarea } from '@/shared/ui'
+import { todayIn } from '@/shared/utils/dates'
 
 export type CustomerPhoneDraft = { number: string; label: string; whatsappEnabled: boolean }
 
@@ -23,7 +24,7 @@ export function CustomerFormFields({ fullName, onFullNameChange, phones, onPhone
     <div className="grid gap-[18px] md:grid-cols-2">
       <Field label="Nombre completo"><Input autoFocus name="fullName" value={fullName} onChange={(event) => onFullNameChange(event.target.value)} required minLength={2} maxLength={160} /></Field>
       <Field label="Carné o identificador" optional><Input name="nationalId" defaultValue={initialValues?.nationalId ?? ''} maxLength={40} /></Field>
-      <Field label="Fecha de nacimiento" optional><Input name="birthDate" type="date" defaultValue={initialValues?.birthDate ?? ''} max={new Date().toISOString().slice(0, 10)} /></Field>
+      <Field label="Fecha de nacimiento" optional><Input name="birthDate" type="date" defaultValue={initialValues?.birthDate ?? ''} max={todayIn()} /></Field>
       <Field label="Dirección" optional className="md:col-span-2"><Input name="address" defaultValue={initialValues?.address ?? ''} /></Field>
     </div>
     <fieldset className="flex flex-col gap-2.5">

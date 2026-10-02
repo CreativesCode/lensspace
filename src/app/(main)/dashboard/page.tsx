@@ -10,12 +10,11 @@ import { loadOwnedOrganizations } from '@/features/team/load-owned-organizations
 import type { Tables } from '@/lib/supabase/database.types'
 import { createClient } from '@/lib/supabase/server'
 import { ButtonLink, EmptyState, PageContainer, PageHeader, StatCard } from '@/shared/ui'
+import { BUSINESS_TIME_ZONE, daysAgoIn, todayIn } from '@/shared/utils/dates'
 
 export default async function DashboardPage() {
-  const defaultTo = new Date().toISOString().slice(0, 10)
-  const fromDate = new Date()
-  fromDate.setUTCDate(fromDate.getUTCDate() - 29)
-  const defaultFrom = fromDate.toISOString().slice(0, 10)
+  const defaultTo = todayIn()
+  const defaultFrom = daysAgoIn(29)
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   const [{ data: isPlatformAdmin }, { data: profile }] = await Promise.all([
@@ -109,7 +108,7 @@ export default async function DashboardPage() {
 }
 
 // Cuba is the launch market; greetings and dates follow Havana time.
-const TIME_ZONE = 'America/Havana'
+const TIME_ZONE = BUSINESS_TIME_ZONE
 
 function greetingFor(date: Date) {
   const hour = Number(new Intl.DateTimeFormat('es-CU', { hour: 'numeric', hourCycle: 'h23', timeZone: TIME_ZONE }).format(date))

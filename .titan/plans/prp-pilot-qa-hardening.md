@@ -90,8 +90,8 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 | QA-07 | `/sales` shows base prices and disabled items, ignoring overrides | medium | data-integrity | SOLO-18, SALES-06 | done 2026-10-02 | S |
 | QA-08 | 'Pedido listo' WhatsApp fires on first lens reception and is never re-sent after rework | high | data-integrity | MR-03 | done 2026-10-02 | M |
 | QA-09 | `/production` crashes to 'This page couldn't load' when the post-mutation refetch fails | high | bug | RC-04 | done 2026-10-02 | S |
-| QA-10 | Delivery event attributed to 'Sistema' (no `delivered_by`) | medium | data-integrity | SOLO-09, MR-09 | confirmed | S |
-| QA-11 | Client 'today' in UTC: prescription date defaults to tomorrow after 20:00 Havana | medium | data-integrity | SALES-14, RC-13 | confirmed | S |
+| QA-10 | Delivery event attributed to 'Sistema' (no `delivered_by`) | medium | data-integrity | SOLO-09, MR-09 | done 2026-10-02 | S |
+| QA-11 | Client 'today' in UTC: prescription date defaults to tomorrow after 20:00 Havana | medium | data-integrity | SALES-14, RC-13 | done 2026-10-02 | S |
 | QA-12 | Sale customer picker: no search, capped at 200 customers / 200 revisions | high | friction | SALES-04, SOLO-17, PERF-03, RC-12 | confirmed | M |
 | QA-13 | Production assignment only from `/production`, order chosen by number only, no auto provider | medium | friction | MR-12, MR-11 (selector), RC-15 (label) | confirmed | M |
 | QA-14 | Delivery not tied to production; no 'Listo para recoger' or production strip in order detail | medium | missing-feature | SOLO-10, MR-08 | confirmed | M |
@@ -314,6 +314,8 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 - **Fix:** migration adding `orders.delivered_by uuid references profiles`, set to `auth.uid()` in `mark_order_delivered` and used in the timeline.
 - **Verify:** deliver as javier → verificar: 'Pedido entregado · Javier …'.
 
+- **Done (2026-10-02):** migration `20261002183635_attribute_order_delivery.sql` adds `orders.delivered_by`. It is stamped with `auth.uid()` by a BEFORE trigger, has no UPDATE grant so it cannot be spoofed, is backfilled for the 4 past deliveries from the `order_delivered` dispatch actor, and is used by `get_order_timeline`. Verified: delivering QSB-2026-000002 shows 'Pedido entregado · QA Solo B Dueño', and a direct REST update of `delivered_by` is denied.
+
 ### QA-11 Client 'today' in UTC (medium, S)
 - **Problem:** at 21:30 in Havana, 'Fecha de la receta' defaults to the next day, which is wrong clinical data. The birth-date max has the same bug. The dashboard default range and `orders/format.ts` (no `timeZone`) diverge between a UTC server (Vercel) and the client, causing hydration mismatches and wrong 'hoy'/'ayer' labels.
 - **Evidence:** `refresh-cache-code/05-havana-2130-prescription-date-tomorrow.png`. The script run at 21:30 Havana produced the default 2026-10-03.
@@ -343,6 +345,8 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
   - the next notification is stored `sent` with a `provider_message_id` and arrives once;
   - 'Pedido listo' (manual after QA-08) and 'Pedido entregado' arrive once each.
   - JAV-2026-000018 was deliberately left without production and delivery, so `order_ready:27` and `order_delivered:27` are unused for this re-test.
+
+- **Done (2026-10-02):** `src/shared/utils/dates.ts` adds `todayIn`, `daysAgoIn` and `BUSINESS_TIME_ZONE = 'America/Havana'`. They are used by the prescription date default, the birth-date max, the dashboard default range, and the `orders/format.ts` formatters plus 'hoy'/'ayer'. The onboarding form's subscription dates (admin-only) were left unchanged. Verified: at a fixed 2026-10-03T01:30Z (21:30 Havana), 'Nueva receta' defaults to 2026-10-02 with the browser in America/Havana and in UTC.
 
 ## Phase 2 — Core sale flow friction (product owner's top priority)
 
