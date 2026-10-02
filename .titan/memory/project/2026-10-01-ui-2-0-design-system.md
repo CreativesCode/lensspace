@@ -36,6 +36,11 @@ tooling and never ships.
   tone mapping lives in each feature, never in `src/shared/ui`.
 - lucide-react icons in navigation, buttons, alerts and empty states.
 
+## User decisions over the guide
+
+- 2026-10-01: every page header uses the featured ink `PageHeader` (with or without
+  stat cards); the guide's white "simple" header is not used.
+
 ## Constraints
 
 - `tailwind.config.ts` remaps `slate/sky/emerald/red` to brand colours and sets

@@ -8,14 +8,14 @@ type PageHeaderProps = {
   eyebrow?: ReactNode
   description?: ReactNode
   actions?: ReactNode
-  // Featured: ink panel with 2-4 key figures (dashboard, orders, cashbox).
-  // Simple: white card with breadcrumb-style eyebrow (forms, catalog).
+  // Featured (default): ink panel, optionally with 2-4 key figures. The user chose it for
+  // every page (2026-10-01). Simple: white card with breadcrumb eyebrow; kept but unused.
   variant?: 'featured' | 'simple'
   stats?: ReactNode
   breadcrumb?: ReactNode
 }
 
-export function PageHeader({ title, eyebrow, description, actions, variant = 'simple', stats, breadcrumb }: PageHeaderProps) {
+export function PageHeader({ title, eyebrow, description, actions, variant = 'featured', stats, breadcrumb }: PageHeaderProps) {
   if (variant === 'featured') {
     return (
       <header className="relative flex flex-col gap-[22px] overflow-hidden rounded-panel bg-ink p-5 md:p-[30px]">
