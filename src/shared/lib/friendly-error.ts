@@ -2,7 +2,7 @@ type AppError = { code?: string; message?: string } | null | undefined
 
 // supabase-js reports a dropped connection as an error without a Postgres code.
 export function isNetworkError(error: AppError) {
-  return Boolean(error) && !error?.code && /fetch|network|load failed|aborted|timeout/i.test(error?.message ?? '')
+  return Boolean(error) && !error?.code && /fetch|network|load failed|aborted|timeout|timed out/i.test(error?.message ?? '')
 }
 
 // Our RPCs raise Spanish messages meant for users; Postgres/PostgREST internals are

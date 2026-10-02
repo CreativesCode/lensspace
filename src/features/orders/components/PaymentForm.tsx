@@ -97,7 +97,7 @@ export function PaymentForm({ balanceCup, defaultRate, pending, onSubmit }: { ba
       </div>
       <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
         <p aria-live="polite" className={cx('text-sm tabular-nums', over ? 'font-semibold text-coral-ink' : 'font-medium text-text-secondary')}>{feedback}</p>
-        <Button type="submit" icon={Banknote} disabled={!canSubmit} className="w-full sm:w-auto">Registrar pago</Button>
+        <Button type="submit" icon={Banknote} disabled={!canSubmit} className="w-full sm:w-auto">{pending ? 'Registrando…' : 'Registrar pago'}</Button>
       </div>
     </form>
   )

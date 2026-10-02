@@ -72,7 +72,7 @@ export function QuoteSummary({ preview, estimate, estimateCup, selectedCount, qu
           <p className="rounded-control border border-dashed border-line p-5 text-sm text-text-muted">Elige cliente y conceptos para ver el total.</p>
         )}
         <Button variant="ink" icon={CircleCheck} block onClick={onAccept} disabled={pending || !canOperate || !canAccept}>{pending ? 'Procesando…' : 'Cliente acepta · crear pedido'}</Button>
-        {!quotationId ? <Button type="submit" variant="secondary" icon={Save} block disabled={pending || !canOperate}>Guardar cotización</Button> : null}
+        {!quotationId ? <Button type="submit" variant="secondary" icon={Save} block disabled={pending || !canOperate}>{pending ? 'Guardando…' : 'Guardar cotización'}</Button> : null}
         {message ? <Alert tone="info">{message}</Alert> : null}
       </div>
     </Card>

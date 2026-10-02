@@ -101,7 +101,7 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 | QA-18 | Paying the full balance in USD leaves a CUP residue that blocks delivery | medium | bug | SALES-08 | done 2026-10-02 | S |
 | QA-19 | Nueva venta blocks real homonyms and never checks duplicate phones | medium | bug | SALES-05 | done 2026-10-02 | M |
 | QA-20 | Phones stored in two formats ('50000101' vs '5350000101'); duplicates missed | medium | data-integrity | SALES-13 | done 2026-10-02 | S |
-| QA-21 | No pending label and no request timeout on Save/Accept/Pay | medium | friction | SALES-18 (labels), RC-10 | confirmed | S |
+| QA-21 | No pending label and no request timeout on Save/Accept/Pay | medium | friction | SALES-18 (labels), RC-10 | done 2026-10-02 | S |
 | QA-22 | Rate hardcoded to 420; absurd rate accepted; native English validation | low | friction | SOLO-15, SALES-18 (rate) | done 2026-10-02 (/catalog simulator still 420) | S |
 | QA-23 | No password recovery (self-service or admin) | medium | missing-feature | ADM-05 | confirmed | S |
 | QA-24 | Sidebar counters never refresh after mutations or soft navigation | medium | refresh | SOLO-06, MR-04, SALES-15, PERF-04, RC-05 | confirmed | S |
@@ -474,6 +474,7 @@ Target for a solo owner on a phone:
   - Treat a timeout as an unknown outcome and handle it like QA-03/QA-04. Ship the timeout only together with QA-03.
 - **Verify:** 25 s delay → verificar: the label changes immediately, then after about 20 s 'Sin conexión…' appears and the balance is re-read.
 
+- **Done (2026-10-02):** `src/lib/supabase/client.ts` wraps the browser client's fetch with `AbortSignal.timeout(20000)` (Storage uploads are exempt; requests with their own signal too). `isNetworkError` also recognises 'timed out'. Labels now read 'Guardando…' (Guardar cotización), 'Procesando…' (Cliente acepta) and 'Registrando…' (Registrar pago). Verified: with `register_cash_payment` delayed 25 s the label changed at once, after 20.5 s 'Sin conexión: no sabemos si el cobro llegó…' appeared, and the retry left exactly 1 payment (QSB-2026-000008).
 ### QA-22 Sensible rate default and validation (low, S)
 - **Problem:** the rate always defaults to a hardcoded 420, both in `/sales` and the `/catalog` simulator. 99999 is accepted silently. Empty or 0 is blocked only by the browser's native bubble, which can appear in English. A wrong rate is frozen on accept.
 - **Root cause:** `SalesWorkspace.tsx:75` and `CatalogWorkspace.tsx:73` (`useState('420')`); the rate input at `SalesWorkspace.tsx:415-429`.
