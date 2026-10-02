@@ -1,7 +1,7 @@
 # Integración OpenWA para notificaciones de pedidos
 
 Fecha: 2026-09-20
-Estado: automatización, migraciones, Vault y Edge Function desplegados; prueba real pendiente
+Estado: envío real verificado el 2026-10-02 (los mensajes llegan), pero OpenWA responde HTTP 500 tras enviar y el intento queda como failed: falso negativo, ver QA-61 en .titan/plans/prp-pilot-qa-hardening.md
 
 ## Decisión
 

@@ -1,0 +1,280 @@
+[
+ {
+  "to": "/orders",
+  "urlMs": 494,
+  "settleMs": 495,
+  "reqs": 6,
+  "kb": 12.7,
+  "byKind": {
+   "rsc": {
+    "n": 1,
+    "kb": 2.5
+   },
+   "js": {
+    "n": 1,
+    "kb": 7.7
+   },
+   "supabase": {
+    "n": 4,
+    "kb": 2.5
+   }
+  },
+  "navRsc": [
+   {
+    "kb": 2.5,
+    "ms": 416
+   }
+  ],
+  "prefetches": 0,
+  "supabase": [
+   "rpc/get_order_payment_summary",
+   "rpc/get_order_timeline"
+  ],
+  "approxUploadKB": 4.7
+ },
+ {
+  "to": "/customers",
+  "urlMs": 1141,
+  "settleMs": 1141,
+  "reqs": 2,
+  "kb": 8.5,
+  "byKind": {
+   "rsc": {
+    "n": 1,
+    "kb": 2.6
+   },
+   "js": {
+    "n": 1,
+    "kb": 6
+   }
+  },
+  "navRsc": [
+   {
+    "kb": 2.6,
+    "ms": 1110
+   }
+  ],
+  "prefetches": 0,
+  "supabase": [],
+  "approxUploadKB": 1
+ },
+ {
+  "to": "/prescriptions",
+  "urlMs": 1663,
+  "settleMs": 1663,
+  "reqs": 4,
+  "kb": 9.5,
+  "byKind": {
+   "rsc": {
+    "n": 1,
+    "kb": 2.7
+   },
+   "js": {
+    "n": 1,
+    "kb": 5.9
+   },
+   "supabase": {
+    "n": 2,
+    "kb": 1
+   }
+  },
+  "navRsc": [
+   {
+    "kb": 2.7,
+    "ms": 1634
+   }
+  ],
+  "prefetches": 0,
+  "supabase": [
+   "prescriptions?select=id%2Corganization_id%2Cbranch_id%2Ccust"
+  ],
+  "approxUploadKB": 2.7
+ },
+ {
+  "to": "/production",
+  "urlMs": 1143,
+  "settleMs": 1144,
+  "reqs": 2,
+  "kb": 6,
+  "byKind": {
+   "rsc": {
+    "n": 1,
+    "kb": 0
+   },
+   "js": {
+    "n": 1,
+    "kb": 6
+   }
+  },
+  "navRsc": [
+   {
+    "kb": 0,
+    "ms": 1097
+   }
+  ],
+  "prefetches": 0,
+  "supabase": [],
+  "approxUploadKB": 1
+ },
+ {
+  "to": "/cashbox",
+  "urlMs": 483,
+  "settleMs": 483,
+  "reqs": 2,
+  "kb": 3.8,
+  "byKind": {
+   "rsc": {
+    "n": 1,
+    "kb": 0
+   },
+   "js": {
+    "n": 1,
+    "kb": 3.8
+   }
+  },
+  "navRsc": [
+   {
+    "kb": 0,
+    "ms": 461
+   }
+  ],
+  "prefetches": 0,
+  "supabase": [],
+  "approxUploadKB": 1
+ },
+ {
+  "to": "/catalog",
+  "urlMs": 1697,
+  "settleMs": 1697,
+  "reqs": 2,
+  "kb": 8.6,
+  "byKind": {
+   "rsc": {
+    "n": 1,
+    "kb": 3.1
+   },
+   "js": {
+    "n": 1,
+    "kb": 5.5
+   }
+  },
+  "navRsc": [
+   {
+    "kb": 3.1,
+    "ms": 1670
+   }
+  ],
+  "prefetches": 0,
+  "supabase": [],
+  "approxUploadKB": 1
+ },
+ {
+  "to": "/team",
+  "urlMs": 2803,
+  "settleMs": 2803,
+  "reqs": 2,
+  "kb": 5.6,
+  "byKind": {
+   "rsc": {
+    "n": 1,
+    "kb": 2.8
+   },
+   "js": {
+    "n": 1,
+    "kb": 2.9
+   }
+  },
+  "navRsc": [
+   {
+    "kb": 2.8,
+    "ms": 2772
+   }
+  ],
+  "prefetches": 0,
+  "supabase": [],
+  "approxUploadKB": 0.9
+ },
+ {
+  "to": "/sales",
+  "urlMs": 1074,
+  "settleMs": 1074,
+  "reqs": 2,
+  "kb": 19.4,
+  "byKind": {
+   "rsc": {
+    "n": 1,
+    "kb": 3
+   },
+   "js": {
+    "n": 1,
+    "kb": 16.4
+   }
+  },
+  "navRsc": [
+   {
+    "kb": 3,
+    "ms": 1039
+   }
+  ],
+  "prefetches": 0,
+  "supabase": [],
+  "approxUploadKB": 0.9
+ },
+ {
+  "to": "/dashboard",
+  "urlMs": 2180,
+  "settleMs": 2180,
+  "reqs": 2,
+  "kb": 1.2,
+  "byKind": {
+   "rsc": {
+    "n": 1,
+    "kb": 0
+   },
+   "supabase": {
+    "n": 1,
+    "kb": 1.2
+   }
+  },
+  "navRsc": [
+   {
+    "kb": 0,
+    "ms": 2166
+   }
+  ],
+  "prefetches": 0,
+  "supabase": [
+   "rpc/get_owner_dashboard"
+  ],
+  "approxUploadKB": 2.2
+ },
+ {
+  "to": "/orders",
+  "urlMs": 574,
+  "settleMs": 575,
+  "reqs": 3,
+  "kb": 1.1,
+  "byKind": {
+   "rsc": {
+    "n": 1,
+    "kb": 0
+   },
+   "supabase": {
+    "n": 2,
+    "kb": 1.1
+   }
+  },
+  "navRsc": [
+   {
+    "kb": 0,
+    "ms": 553
+   }
+  ],
+  "prefetches": 0,
+  "supabase": [
+   "rpc/get_order_payment_summary",
+   "rpc/get_order_timeline"
+  ],
+  "approxUploadKB": 3.7
+ }
+]

@@ -1,0 +1,5462 @@
+[
+ {
+  "route": "/",
+  "who": null,
+  "cold": {
+   "ttfb": 10,
+   "fcp": 156,
+   "lcp": 156,
+   "dcl": 36,
+   "load": 128,
+   "docKB": 19,
+   "loadMs": 131,
+   "settledMs": 1107,
+   "reqs": 17,
+   "kb": 238.1,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 19.2
+    },
+    "font": {
+     "n": 2,
+     "kb": 50.5
+    },
+    "image": {
+     "n": 1,
+     "kb": 1.1
+    },
+    "css": {
+     "n": 2,
+     "kb": 12.2
+    },
+    "js": {
+     "n": 7,
+     "kb": 143.2
+    },
+    "rsc": {
+     "n": 4,
+     "kb": 12
+    }
+   },
+   "finalUrl": "/"
+  },
+  "coldList": [
+   {
+    "u": "/",
+    "m": "GET",
+    "t": "Document",
+    "kb": 19.2,
+    "st": 200,
+    "cache": "s-maxage=31536000",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/0c89a48fa5027cee-s.p.2cyn07wtgehh0.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 22.1,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 9,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/47df9ba1c7236d3b-s.p.2adce56gso3ku.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 28.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/brand/lensspace-mark.svg",
+    "m": "GET",
+    "t": "Image",
+    "kb": 1.1,
+    "st": 200,
+    "cache": "public, max-age=0",
+    "ms": 22,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/3jw6v_8pudl5q.css",
+    "m": "GET",
+    "t": "Stylesheet",
+    "kb": 10.2,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1gt0832u46ycs.css",
+    "m": "GET",
+    "t": "Stylesheet",
+    "kb": 2,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/08sf_64ef_no7.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 2.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1a32t_8v73q__.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 7.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/426jtnlb2tgco.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 70.3,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 31,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/26ogvttrutp6h.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 44.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 28,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/turbopack-25xq5mx9wcxpn.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 23,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1l01cgcrw_is1.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 24,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/0ecgzo__od1u0.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 9.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 25,
+    "fc": false
+   },
+   {
+    "u": "/?_rsc=5CB68i4pnAekjehf",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0.7,
+    "st": 200,
+    "cache": "s-maxage=31536000",
+    "ms": 40,
+    "fc": false
+   },
+   {
+    "u": "/login?_rsc=5CB68i4pnAekjehf",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0.5,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 42,
+    "fc": false
+   },
+   {
+    "u": "/?_rsc=8nTjltbQWvg6NcbE",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 10.8,
+    "st": 200,
+    "cache": "s-maxage=31536000",
+    "ms": 19,
+    "fc": false
+   },
+   {
+    "u": "/login?_rsc=tXyZJ52UQVBCVsD3",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 19,
+    "fc": false
+   }
+  ],
+  "warm": {
+   "ttfb": 6,
+   "fcp": 84,
+   "lcp": 84,
+   "dcl": 22,
+   "load": 55,
+   "docKB": 0.3,
+   "loadMs": 64,
+   "settledMs": 937,
+   "reqs": 17,
+   "kb": 13.6,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 0.4
+    },
+    "font": {
+     "n": 2,
+     "kb": 0
+    },
+    "image": {
+     "n": 1,
+     "kb": 0.2
+    },
+    "css": {
+     "n": 2,
+     "kb": 0
+    },
+    "js": {
+     "n": 7,
+     "kb": 0
+    },
+    "rsc": {
+     "n": 4,
+     "kb": 13
+    }
+   },
+   "finalUrl": "/"
+  },
+  "errors": []
+ },
+ {
+  "route": "/login",
+  "who": null,
+  "cold": {
+   "ttfb": 59,
+   "fcp": 168,
+   "lcp": 168,
+   "dcl": 77,
+   "load": 130,
+   "docKB": 6.5,
+   "loadMs": 132,
+   "settledMs": 1002,
+   "reqs": 12,
+   "kb": 220.5,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 6.9
+    },
+    "font": {
+     "n": 2,
+     "kb": 50.5
+    },
+    "css": {
+     "n": 1,
+     "kb": 10.2
+    },
+    "js": {
+     "n": 8,
+     "kb": 152.9
+    }
+   },
+   "finalUrl": "/login"
+  },
+  "coldList": [
+   {
+    "u": "/login",
+    "m": "GET",
+    "t": "Document",
+    "kb": 6.9,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 66,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/0c89a48fa5027cee-s.p.2cyn07wtgehh0.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 22.1,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 8,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/47df9ba1c7236d3b-s.p.2adce56gso3ku.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 28.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/3jw6v_8pudl5q.css",
+    "m": "GET",
+    "t": "Stylesheet",
+    "kb": 10.2,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 8,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/08sf_64ef_no7.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 2.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1a32t_8v73q__.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 7.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/426jtnlb2tgco.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 70.3,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 22,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/26ogvttrutp6h.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 44.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 19,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/turbopack-25xq5mx9wcxpn.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1l01cgcrw_is1.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/098kmfpj4c5l-.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 7.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2vjf0nrxyeu0z.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 11.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 18,
+    "fc": false
+   }
+  ],
+  "warm": {
+   "ttfb": 18,
+   "fcp": 64,
+   "lcp": 64,
+   "dcl": 50,
+   "load": 51,
+   "docKB": 6.5,
+   "loadMs": 65,
+   "settledMs": 950,
+   "reqs": 12,
+   "kb": 6.9,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 6.9
+    },
+    "font": {
+     "n": 2,
+     "kb": 0
+    },
+    "css": {
+     "n": 1,
+     "kb": 0
+    },
+    "js": {
+     "n": 8,
+     "kb": 0
+    }
+   },
+   "finalUrl": "/login"
+  },
+  "errors": []
+ },
+ {
+  "route": "/manual",
+  "who": "javier",
+  "cold": {
+   "ttfb": 627,
+   "fcp": 800,
+   "lcp": 800,
+   "dcl": 654,
+   "load": 723,
+   "docKB": 9.1,
+   "loadMs": 728,
+   "settledMs": 1590,
+   "reqs": 12,
+   "kb": 231.6,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 9.6
+    },
+    "font": {
+     "n": 2,
+     "kb": 50.5
+    },
+    "css": {
+     "n": 1,
+     "kb": 10.2
+    },
+    "js": {
+     "n": 8,
+     "kb": 161.3
+    }
+   },
+   "finalUrl": "/manual"
+  },
+  "coldList": [
+   {
+    "u": "/manual",
+    "m": "GET",
+    "t": "Document",
+    "kb": 9.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 644,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/0c89a48fa5027cee-s.p.2cyn07wtgehh0.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 22.1,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/47df9ba1c7236d3b-s.p.2adce56gso3ku.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 28.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/3jw6v_8pudl5q.css",
+    "m": "GET",
+    "t": "Stylesheet",
+    "kb": 10.2,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/08sf_64ef_no7.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 2.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1a32t_8v73q__.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 7.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/426jtnlb2tgco.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 70.3,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 25,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/26ogvttrutp6h.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 44.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 23,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/turbopack-25xq5mx9wcxpn.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1l01cgcrw_is1.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 20,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2vjf0nrxyeu0z.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 11.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 21,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/28ahl3-e_xev5.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 15.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 21,
+    "fc": false
+   }
+  ],
+  "warm": {
+   "ttfb": 1185,
+   "fcp": 1264,
+   "lcp": 1264,
+   "dcl": 1228,
+   "load": 1234,
+   "docKB": 9.1,
+   "loadMs": 1237,
+   "settledMs": 2103,
+   "reqs": 12,
+   "kb": 9.6,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 9.6
+    },
+    "font": {
+     "n": 2,
+     "kb": 0
+    },
+    "css": {
+     "n": 1,
+     "kb": 0
+    },
+    "js": {
+     "n": 8,
+     "kb": 0
+    }
+   },
+   "finalUrl": "/manual"
+  },
+  "errors": []
+ },
+ {
+  "route": "/dashboard",
+  "who": "javier",
+  "cold": {
+   "ttfb": 2519,
+   "fcp": 2612,
+   "lcp": 2612,
+   "dcl": 2541,
+   "load": 2635,
+   "docKB": 10.5,
+   "loadMs": 2637,
+   "settledMs": 4146,
+   "reqs": 35,
+   "kb": 302,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 10.9
+    },
+    "font": {
+     "n": 2,
+     "kb": 50.5
+    },
+    "css": {
+     "n": 1,
+     "kb": 10.2
+    },
+    "js": {
+     "n": 10,
+     "kb": 224.5
+    },
+    "supabase": {
+     "n": 2,
+     "kb": 1.1
+    },
+    "rsc": {
+     "n": 19,
+     "kb": 4.7
+    }
+   },
+   "finalUrl": "/dashboard"
+  },
+  "coldList": [
+   {
+    "u": "/dashboard",
+    "m": "GET",
+    "t": "Document",
+    "kb": 10.9,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 2521,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/0c89a48fa5027cee-s.p.2cyn07wtgehh0.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 22.1,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/47df9ba1c7236d3b-s.p.2adce56gso3ku.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 28.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/3jw6v_8pudl5q.css",
+    "m": "GET",
+    "t": "Stylesheet",
+    "kb": 10.2,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/08sf_64ef_no7.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 2.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1a32t_8v73q__.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 7.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/426jtnlb2tgco.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 70.3,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 24,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/26ogvttrutp6h.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 44.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 22,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/turbopack-25xq5mx9wcxpn.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1l01cgcrw_is1.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1sy0_96ymfav8.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 21,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2vjf0nrxyeu0z.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 11.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 23,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2i1eruhu99lpo.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 23,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/0e964btuxme39.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 65.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 28,
+    "fc": false
+   },
+   {
+    "u": "https://mgrqkbwgkkbshhtdpibs.supabase.co/rest/v1/rpc/get_owner_dashboard",
+    "m": "POST",
+    "t": "Fetch",
+    "kb": 1.1,
+    "st": 200,
+    "ms": 644,
+    "fc": false
+   },
+   {
+    "u": "https://mgrqkbwgkkbshhtdpibs.supabase.co/rest/v1/rpc/get_owner_dashboard",
+    "m": "OPTIONS",
+    "t": "Preflight",
+    "kb": 0,
+    "st": 200,
+    "ms": 414,
+    "fc": false
+   },
+   {
+    "u": "/sales?_rsc=j79Vj4yH5aoiafxS",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 26,
+    "fc": false
+   },
+   {
+    "u": "/orders?_rsc=j79Vj4yH5aoiafxS",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 29,
+    "fc": false
+   },
+   {
+    "u": "/customers?_rsc=j79Vj4yH5aoiafxS",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 30,
+    "fc": false
+   },
+   {
+    "u": "/prescriptions?_rsc=j79Vj4yH5aoiafxS",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 28,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=j79Vj4yH5aoiafxS",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 24,
+    "fc": false
+   },
+   {
+    "u": "/cashbox?_rsc=j79Vj4yH5aoiafxS",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 24,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=j79Vj4yH5aoiafxS",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 25,
+    "fc": false
+   },
+   {
+    "u": "/team?_rsc=j79Vj4yH5aoiafxS",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 25,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=j79Vj4yH5aoiafxS",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/sales?_rsc=IOe_mmh6jQxP6_Ru",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 23,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=IOe_mmh6jQxP6_Ru",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 23,
+    "fc": false
+   },
+   {
+    "u": "/orders?_rsc=IOe_mmh6jQxP6_Ru",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 24,
+    "fc": false
+   },
+   {
+    "u": "/customers?_rsc=IOe_mmh6jQxP6_Ru",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/prescriptions?_rsc=IOe_mmh6jQxP6_Ru",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=IOe_mmh6jQxP6_Ru",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 19,
+    "fc": false
+   },
+   {
+    "u": "/cashbox?_rsc=IOe_mmh6jQxP6_Ru",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 19,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=IOe_mmh6jQxP6_Ru",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/team?_rsc=IOe_mmh6jQxP6_Ru",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 9,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=IOe_mmh6jQxP6_Ru",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 8,
+    "fc": false
+   }
+  ],
+  "warm": {
+   "ttfb": 1665,
+   "fcp": 1720,
+   "lcp": 1720,
+   "dcl": 1699,
+   "load": 1702,
+   "docKB": 10.5,
+   "loadMs": 1704,
+   "settledMs": 2776,
+   "reqs": 34,
+   "kb": 12.1,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 10.9
+    },
+    "font": {
+     "n": 2,
+     "kb": 0
+    },
+    "css": {
+     "n": 1,
+     "kb": 0
+    },
+    "js": {
+     "n": 10,
+     "kb": 0
+    },
+    "supabase": {
+     "n": 1,
+     "kb": 1.2
+    },
+    "rsc": {
+     "n": 19,
+     "kb": 0
+    }
+   },
+   "finalUrl": "/dashboard"
+  },
+  "errors": []
+ },
+ {
+  "route": "/sales",
+  "who": "javier",
+  "cold": {
+   "ttfb": 1733,
+   "fcp": 1948,
+   "lcp": 1948,
+   "dcl": 1755,
+   "load": 2012,
+   "docKB": 10.3,
+   "loadMs": 2015,
+   "settledMs": 2979,
+   "reqs": 33,
+   "kb": 305.7,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 10.7
+    },
+    "font": {
+     "n": 2,
+     "kb": 50.5
+    },
+    "css": {
+     "n": 1,
+     "kb": 10.2
+    },
+    "js": {
+     "n": 10,
+     "kb": 234.2
+    },
+    "rsc": {
+     "n": 19,
+     "kb": 0
+    }
+   },
+   "finalUrl": "/sales"
+  },
+  "coldList": [
+   {
+    "u": "/sales",
+    "m": "GET",
+    "t": "Document",
+    "kb": 10.7,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 1734,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/0c89a48fa5027cee-s.p.2cyn07wtgehh0.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 22.1,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/47df9ba1c7236d3b-s.p.2adce56gso3ku.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 28.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/3jw6v_8pudl5q.css",
+    "m": "GET",
+    "t": "Stylesheet",
+    "kb": 10.2,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/08sf_64ef_no7.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 2.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1a32t_8v73q__.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 7.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/426jtnlb2tgco.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 70.3,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 28,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/26ogvttrutp6h.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 44.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 24,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/turbopack-25xq5mx9wcxpn.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 19,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1l01cgcrw_is1.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 20,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1sy0_96ymfav8.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 23,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2vjf0nrxyeu0z.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 11.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 23,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1p5wv20x5gouf.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 16.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 25,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/0e964btuxme39.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 65.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 31,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=prQoPsswxfNnMLfQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/orders?_rsc=prQoPsswxfNnMLfQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/customers?_rsc=prQoPsswxfNnMLfQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/prescriptions?_rsc=prQoPsswxfNnMLfQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=prQoPsswxfNnMLfQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/cashbox?_rsc=prQoPsswxfNnMLfQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=prQoPsswxfNnMLfQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/team?_rsc=prQoPsswxfNnMLfQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=prQoPsswxfNnMLfQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 8,
+    "fc": false
+   },
+   {
+    "u": "/sales?_rsc=A2m2b36-59ZBH9Tm",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=A2m2b36-59ZBH9Tm",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/orders?_rsc=A2m2b36-59ZBH9Tm",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/customers?_rsc=A2m2b36-59ZBH9Tm",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/prescriptions?_rsc=A2m2b36-59ZBH9Tm",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=A2m2b36-59ZBH9Tm",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/cashbox?_rsc=A2m2b36-59ZBH9Tm",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=A2m2b36-59ZBH9Tm",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/team?_rsc=A2m2b36-59ZBH9Tm",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 8,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=A2m2b36-59ZBH9Tm",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 8,
+    "fc": false
+   }
+  ],
+  "warm": {
+   "ttfb": 1124,
+   "fcp": 1176,
+   "lcp": 1176,
+   "dcl": 1156,
+   "load": 1159,
+   "docKB": 10.3,
+   "loadMs": 1160,
+   "settledMs": 2123,
+   "reqs": 33,
+   "kb": 11.3,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 10.7
+    },
+    "font": {
+     "n": 2,
+     "kb": 0
+    },
+    "css": {
+     "n": 1,
+     "kb": 0
+    },
+    "js": {
+     "n": 10,
+     "kb": 0
+    },
+    "rsc": {
+     "n": 19,
+     "kb": 0.5
+    }
+   },
+   "finalUrl": "/sales"
+  },
+  "errors": []
+ },
+ {
+  "route": "/orders",
+  "who": "javier",
+  "cold": {
+   "ttfb": 1087,
+   "fcp": 1216,
+   "lcp": 1216,
+   "dcl": 1107,
+   "load": 1194,
+   "docKB": 9.4,
+   "loadMs": 1197,
+   "settledMs": 2715,
+   "reqs": 37,
+   "kb": 300.2,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 9.8
+    },
+    "font": {
+     "n": 2,
+     "kb": 50.5
+    },
+    "css": {
+     "n": 1,
+     "kb": 10.2
+    },
+    "js": {
+     "n": 10,
+     "kb": 225.5
+    },
+    "supabase": {
+     "n": 4,
+     "kb": 2.1
+    },
+    "rsc": {
+     "n": 19,
+     "kb": 2.1
+    }
+   },
+   "finalUrl": "/orders"
+  },
+  "coldList": [
+   {
+    "u": "/orders",
+    "m": "GET",
+    "t": "Document",
+    "kb": 9.8,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 1089,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/0c89a48fa5027cee-s.p.2cyn07wtgehh0.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 22.1,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 8,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/47df9ba1c7236d3b-s.p.2adce56gso3ku.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 28.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/3jw6v_8pudl5q.css",
+    "m": "GET",
+    "t": "Stylesheet",
+    "kb": 10.2,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/08sf_64ef_no7.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 2.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1a32t_8v73q__.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 7.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/426jtnlb2tgco.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 70.3,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 22,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/26ogvttrutp6h.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 44.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 19,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/turbopack-25xq5mx9wcxpn.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1l01cgcrw_is1.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1sy0_96ymfav8.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2vjf0nrxyeu0z.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 11.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2qi6c_7l7xo4f.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 7.7,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 19,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/0e964btuxme39.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 65.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 25,
+    "fc": false
+   },
+   {
+    "u": "https://mgrqkbwgkkbshhtdpibs.supabase.co/rest/v1/rpc/get_order_payment_summary",
+    "m": "POST",
+    "t": "Fetch",
+    "kb": 0.9,
+    "st": 200,
+    "ms": 623,
+    "fc": false
+   },
+   {
+    "u": "https://mgrqkbwgkkbshhtdpibs.supabase.co/rest/v1/rpc/get_order_timeline",
+    "m": "POST",
+    "t": "Fetch",
+    "kb": 1.1,
+    "st": 200,
+    "ms": 628,
+    "fc": false
+   },
+   {
+    "u": "https://mgrqkbwgkkbshhtdpibs.supabase.co/rest/v1/rpc/get_order_payment_summary",
+    "m": "OPTIONS",
+    "t": "Preflight",
+    "kb": 0,
+    "st": 200,
+    "ms": 396,
+    "fc": false
+   },
+   {
+    "u": "https://mgrqkbwgkkbshhtdpibs.supabase.co/rest/v1/rpc/get_order_timeline",
+    "m": "OPTIONS",
+    "t": "Preflight",
+    "kb": 0,
+    "st": 200,
+    "ms": 396,
+    "fc": false
+   },
+   {
+    "u": "/sales?_rsc=KsDTiBny6MvXk6iC",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 19,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=KsDTiBny6MvXk6iC",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 21,
+    "fc": false
+   },
+   {
+    "u": "/customers?_rsc=KsDTiBny6MvXk6iC",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/prescriptions?_rsc=KsDTiBny6MvXk6iC",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0.5,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=KsDTiBny6MvXk6iC",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/cashbox?_rsc=KsDTiBny6MvXk6iC",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=KsDTiBny6MvXk6iC",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/team?_rsc=KsDTiBny6MvXk6iC",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=KsDTiBny6MvXk6iC",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/sales?_rsc=U5Jq6qAThNnFslX9",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=U5Jq6qAThNnFslX9",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/orders?_rsc=U5Jq6qAThNnFslX9",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/customers?_rsc=U5Jq6qAThNnFslX9",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 34,
+    "fc": false
+   },
+   {
+    "u": "/prescriptions?_rsc=U5Jq6qAThNnFslX9",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 34,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=U5Jq6qAThNnFslX9",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 34,
+    "fc": false
+   },
+   {
+    "u": "/cashbox?_rsc=U5Jq6qAThNnFslX9",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 32,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=U5Jq6qAThNnFslX9",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/team?_rsc=U5Jq6qAThNnFslX9",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=U5Jq6qAThNnFslX9",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 14,
+    "fc": false
+   }
+  ],
+  "warm": {
+   "ttfb": 643,
+   "fcp": 688,
+   "lcp": 688,
+   "dcl": 669,
+   "load": 671,
+   "docKB": 9.5,
+   "loadMs": 672,
+   "settledMs": 1759,
+   "reqs": 35,
+   "kb": 15.5,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 10
+    },
+    "font": {
+     "n": 2,
+     "kb": 0
+    },
+    "css": {
+     "n": 1,
+     "kb": 0
+    },
+    "js": {
+     "n": 10,
+     "kb": 0
+    },
+    "supabase": {
+     "n": 2,
+     "kb": 2.4
+    },
+    "rsc": {
+     "n": 19,
+     "kb": 3.2
+    }
+   },
+   "finalUrl": "/orders"
+  },
+  "errors": []
+ },
+ {
+  "route": "/customers",
+  "who": "javier",
+  "cold": {
+   "ttfb": 841,
+   "fcp": 904,
+   "lcp": 904,
+   "dcl": 859,
+   "load": 937,
+   "docKB": 9,
+   "loadMs": 939,
+   "settledMs": 1920,
+   "reqs": 33,
+   "kb": 296,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 9.4
+    },
+    "font": {
+     "n": 2,
+     "kb": 50.5
+    },
+    "css": {
+     "n": 1,
+     "kb": 10.2
+    },
+    "js": {
+     "n": 10,
+     "kb": 223.7
+    },
+    "rsc": {
+     "n": 19,
+     "kb": 2.1
+    }
+   },
+   "finalUrl": "/customers"
+  },
+  "coldList": [
+   {
+    "u": "/customers",
+    "m": "GET",
+    "t": "Document",
+    "kb": 9.4,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 842,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/0c89a48fa5027cee-s.p.2cyn07wtgehh0.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 22.1,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 9,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/47df9ba1c7236d3b-s.p.2adce56gso3ku.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 28.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/3jw6v_8pudl5q.css",
+    "m": "GET",
+    "t": "Stylesheet",
+    "kb": 10.2,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/08sf_64ef_no7.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 2.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1a32t_8v73q__.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 7.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/426jtnlb2tgco.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 70.3,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 22,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/26ogvttrutp6h.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 44.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 19,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/turbopack-25xq5mx9wcxpn.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1l01cgcrw_is1.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1sy0_96ymfav8.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2vjf0nrxyeu0z.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 11.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/01xwekskrg_2a.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 20,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/0e964btuxme39.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 65.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 25,
+    "fc": false
+   },
+   {
+    "u": "/sales?_rsc=wwpZyUoXPG21V7_n",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=wwpZyUoXPG21V7_n",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/orders?_rsc=wwpZyUoXPG21V7_n",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/prescriptions?_rsc=wwpZyUoXPG21V7_n",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=wwpZyUoXPG21V7_n",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/cashbox?_rsc=wwpZyUoXPG21V7_n",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 8,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=wwpZyUoXPG21V7_n",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/team?_rsc=wwpZyUoXPG21V7_n",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0.5,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 7,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=wwpZyUoXPG21V7_n",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/sales?_rsc=RNL4oIAe9xgnM8KF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=RNL4oIAe9xgnM8KF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/orders?_rsc=RNL4oIAe9xgnM8KF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 8,
+    "fc": false
+   },
+   {
+    "u": "/customers?_rsc=RNL4oIAe9xgnM8KF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/prescriptions?_rsc=RNL4oIAe9xgnM8KF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=RNL4oIAe9xgnM8KF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/cashbox?_rsc=RNL4oIAe9xgnM8KF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=RNL4oIAe9xgnM8KF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/team?_rsc=RNL4oIAe9xgnM8KF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=RNL4oIAe9xgnM8KF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   }
+  ],
+  "warm": {
+   "ttfb": 1004,
+   "fcp": 1044,
+   "lcp": 1044,
+   "dcl": 1029,
+   "load": 1031,
+   "docKB": 9,
+   "loadMs": 1034,
+   "settledMs": 2014,
+   "reqs": 33,
+   "kb": 14.1,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 9.4
+    },
+    "font": {
+     "n": 2,
+     "kb": 0
+    },
+    "css": {
+     "n": 1,
+     "kb": 0
+    },
+    "js": {
+     "n": 10,
+     "kb": 0
+    },
+    "rsc": {
+     "n": 19,
+     "kb": 4.7
+    }
+   },
+   "finalUrl": "/customers"
+  },
+  "errors": []
+ },
+ {
+  "route": "/prescriptions",
+  "who": "javier",
+  "cold": {
+   "ttfb": 1448,
+   "fcp": 1576,
+   "lcp": 1576,
+   "dcl": 1469,
+   "load": 1532,
+   "docKB": 10.3,
+   "loadMs": 1534,
+   "settledMs": 3153,
+   "reqs": 35,
+   "kb": 305.8,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 10.7
+    },
+    "font": {
+     "n": 2,
+     "kb": 50.5
+    },
+    "css": {
+     "n": 1,
+     "kb": 10.2
+    },
+    "js": {
+     "n": 10,
+     "kb": 223.6
+    },
+    "rsc": {
+     "n": 19,
+     "kb": 9.5
+    },
+    "supabase": {
+     "n": 2,
+     "kb": 1.2
+    }
+   },
+   "finalUrl": "/prescriptions"
+  },
+  "coldList": [
+   {
+    "u": "/prescriptions",
+    "m": "GET",
+    "t": "Document",
+    "kb": 10.7,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 1450,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/0c89a48fa5027cee-s.p.2cyn07wtgehh0.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 22.1,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 9,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/47df9ba1c7236d3b-s.p.2adce56gso3ku.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 28.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/3jw6v_8pudl5q.css",
+    "m": "GET",
+    "t": "Stylesheet",
+    "kb": 10.2,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/08sf_64ef_no7.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 2.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1a32t_8v73q__.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 7.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/426jtnlb2tgco.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 70.3,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 26,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/26ogvttrutp6h.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 44.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 20,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/turbopack-25xq5mx9wcxpn.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1l01cgcrw_is1.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1sy0_96ymfav8.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2vjf0nrxyeu0z.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 11.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 21,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/0nd1auil7ss2q.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 5.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 22,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/0e964btuxme39.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 65.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 30,
+    "fc": false
+   },
+   {
+    "u": "/sales?_rsc=pMMPYPdJgZK6y9fe",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=pMMPYPdJgZK6y9fe",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0.5,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/orders?_rsc=pMMPYPdJgZK6y9fe",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0.5,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/customers?_rsc=pMMPYPdJgZK6y9fe",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0.5,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "https://mgrqkbwgkkbshhtdpibs.supabase.co/rest/v1/prescriptions?select=id%2Corganization_id%2Cbranch_id%2Ccustomer_id%2Ccreated_at%2Cprescription_revisions%28*%2",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.2,
+    "st": 200,
+    "ms": 647,
+    "fc": false
+   },
+   {
+    "u": "https://mgrqkbwgkkbshhtdpibs.supabase.co/rest/v1/prescriptions?select=id%2Corganization_id%2Cbranch_id%2Ccustomer_id%2Ccreated_at%2Cprescription_revisions%28*%2",
+    "m": "OPTIONS",
+    "t": "Preflight",
+    "kb": 0,
+    "st": 200,
+    "ms": 418,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=pMMPYPdJgZK6y9fe",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/cashbox?_rsc=pMMPYPdJgZK6y9fe",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=pMMPYPdJgZK6y9fe",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/team?_rsc=pMMPYPdJgZK6y9fe",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=pMMPYPdJgZK6y9fe",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/sales?_rsc=vhsPd53L1sZIgwNn",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=vhsPd53L1sZIgwNn",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/orders?_rsc=vhsPd53L1sZIgwNn",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/customers?_rsc=vhsPd53L1sZIgwNn",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/prescriptions?_rsc=vhsPd53L1sZIgwNn",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=vhsPd53L1sZIgwNn",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/cashbox?_rsc=vhsPd53L1sZIgwNn",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=vhsPd53L1sZIgwNn",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/team?_rsc=vhsPd53L1sZIgwNn",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 9,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=vhsPd53L1sZIgwNn",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 9,
+    "fc": false
+   }
+  ],
+  "warm": {
+   "ttfb": 1001,
+   "fcp": 1052,
+   "lcp": 1052,
+   "dcl": 1032,
+   "load": 1035,
+   "docKB": 10.2,
+   "loadMs": 1037,
+   "settledMs": 2125,
+   "reqs": 34,
+   "kb": 12.1,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 10.7
+    },
+    "font": {
+     "n": 2,
+     "kb": 0
+    },
+    "css": {
+     "n": 1,
+     "kb": 0
+    },
+    "js": {
+     "n": 10,
+     "kb": 0
+    },
+    "rsc": {
+     "n": 19,
+     "kb": 0
+    },
+    "supabase": {
+     "n": 1,
+     "kb": 1.4
+    }
+   },
+   "finalUrl": "/prescriptions"
+  },
+  "errors": []
+ },
+ {
+  "route": "/production",
+  "who": "javier",
+  "cold": {
+   "ttfb": 967,
+   "fcp": 1048,
+   "lcp": 1048,
+   "dcl": 986,
+   "load": 1062,
+   "docKB": 9.5,
+   "loadMs": 1065,
+   "settledMs": 2024,
+   "reqs": 33,
+   "kb": 299.2,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 10
+    },
+    "font": {
+     "n": 2,
+     "kb": 50.5
+    },
+    "css": {
+     "n": 1,
+     "kb": 10.2
+    },
+    "js": {
+     "n": 10,
+     "kb": 223.8
+    },
+    "rsc": {
+     "n": 19,
+     "kb": 4.7
+    }
+   },
+   "finalUrl": "/production"
+  },
+  "coldList": [
+   {
+    "u": "/production",
+    "m": "GET",
+    "t": "Document",
+    "kb": 10,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 968,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/0c89a48fa5027cee-s.p.2cyn07wtgehh0.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 22.1,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 8,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/47df9ba1c7236d3b-s.p.2adce56gso3ku.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 28.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 8,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/3jw6v_8pudl5q.css",
+    "m": "GET",
+    "t": "Stylesheet",
+    "kb": 10.2,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/08sf_64ef_no7.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 2.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1a32t_8v73q__.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 7.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/426jtnlb2tgco.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 70.3,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 19,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/26ogvttrutp6h.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 44.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/turbopack-25xq5mx9wcxpn.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1l01cgcrw_is1.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1sy0_96ymfav8.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2vjf0nrxyeu0z.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 11.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2emvc92ox_8hd.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/0e964btuxme39.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 65.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 24,
+    "fc": false
+   },
+   {
+    "u": "/sales?_rsc=QnpMOLk_5nF1h-ro",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 9,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=QnpMOLk_5nF1h-ro",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/orders?_rsc=QnpMOLk_5nF1h-ro",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/customers?_rsc=QnpMOLk_5nF1h-ro",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/prescriptions?_rsc=QnpMOLk_5nF1h-ro",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/cashbox?_rsc=QnpMOLk_5nF1h-ro",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=QnpMOLk_5nF1h-ro",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/team?_rsc=QnpMOLk_5nF1h-ro",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=QnpMOLk_5nF1h-ro",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/sales?_rsc=qNIonP9o8l0gGS0y",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=qNIonP9o8l0gGS0y",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/orders?_rsc=qNIonP9o8l0gGS0y",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/customers?_rsc=qNIonP9o8l0gGS0y",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/prescriptions?_rsc=qNIonP9o8l0gGS0y",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=qNIonP9o8l0gGS0y",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/cashbox?_rsc=qNIonP9o8l0gGS0y",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=qNIonP9o8l0gGS0y",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 9,
+    "fc": false
+   },
+   {
+    "u": "/team?_rsc=qNIonP9o8l0gGS0y",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 9,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=qNIonP9o8l0gGS0y",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 8,
+    "fc": false
+   }
+  ],
+  "warm": {
+   "ttfb": 1243,
+   "fcp": 1288,
+   "lcp": 1288,
+   "dcl": 1274,
+   "load": 1276,
+   "docKB": 9.5,
+   "loadMs": 1278,
+   "settledMs": 2250,
+   "reqs": 33,
+   "kb": 15.2,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 10
+    },
+    "font": {
+     "n": 2,
+     "kb": 0
+    },
+    "css": {
+     "n": 1,
+     "kb": 0
+    },
+    "js": {
+     "n": 10,
+     "kb": 0
+    },
+    "rsc": {
+     "n": 19,
+     "kb": 5.3
+    }
+   },
+   "finalUrl": "/production"
+  },
+  "errors": []
+ },
+ {
+  "route": "/cashbox",
+  "who": "javier",
+  "cold": {
+   "ttfb": 644,
+   "fcp": 768,
+   "lcp": 768,
+   "dcl": 660,
+   "load": 745,
+   "docKB": 9.7,
+   "loadMs": 747,
+   "settledMs": 1708,
+   "reqs": 33,
+   "kb": 295.1,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 10.2
+    },
+    "font": {
+     "n": 2,
+     "kb": 50.5
+    },
+    "css": {
+     "n": 1,
+     "kb": 10.2
+    },
+    "js": {
+     "n": 10,
+     "kb": 221.6
+    },
+    "rsc": {
+     "n": 19,
+     "kb": 2.6
+    }
+   },
+   "finalUrl": "/cashbox"
+  },
+  "coldList": [
+   {
+    "u": "/cashbox",
+    "m": "GET",
+    "t": "Document",
+    "kb": 10.2,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 645,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/0c89a48fa5027cee-s.p.2cyn07wtgehh0.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 22.1,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 7,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/47df9ba1c7236d3b-s.p.2adce56gso3ku.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 28.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/3jw6v_8pudl5q.css",
+    "m": "GET",
+    "t": "Stylesheet",
+    "kb": 10.2,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 9,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/08sf_64ef_no7.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 2.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1a32t_8v73q__.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 7.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/426jtnlb2tgco.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 70.3,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 20,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/26ogvttrutp6h.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 44.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/turbopack-25xq5mx9wcxpn.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1l01cgcrw_is1.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1sy0_96ymfav8.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2vjf0nrxyeu0z.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 11.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/12a0qs20k5-yh.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 3.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/0e964btuxme39.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 65.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 23,
+    "fc": false
+   },
+   {
+    "u": "/sales?_rsc=vwjQ6IFn4iq7XCAb",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=vwjQ6IFn4iq7XCAb",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/orders?_rsc=vwjQ6IFn4iq7XCAb",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/customers?_rsc=vwjQ6IFn4iq7XCAb",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/prescriptions?_rsc=vwjQ6IFn4iq7XCAb",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=vwjQ6IFn4iq7XCAb",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=vwjQ6IFn4iq7XCAb",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0.5,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 8,
+    "fc": false
+   },
+   {
+    "u": "/team?_rsc=vwjQ6IFn4iq7XCAb",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0.5,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 8,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=vwjQ6IFn4iq7XCAb",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/sales?_rsc=nNuhUrAS8lsMYuEQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=nNuhUrAS8lsMYuEQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/orders?_rsc=nNuhUrAS8lsMYuEQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/customers?_rsc=nNuhUrAS8lsMYuEQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/prescriptions?_rsc=nNuhUrAS8lsMYuEQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=nNuhUrAS8lsMYuEQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/cashbox?_rsc=nNuhUrAS8lsMYuEQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=nNuhUrAS8lsMYuEQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/team?_rsc=nNuhUrAS8lsMYuEQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 7,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=nNuhUrAS8lsMYuEQ",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 7,
+    "fc": false
+   }
+  ],
+  "warm": {
+   "ttfb": 642,
+   "fcp": 688,
+   "lcp": 688,
+   "dcl": 670,
+   "load": 672,
+   "docKB": 9.7,
+   "loadMs": 673,
+   "settledMs": 1645,
+   "reqs": 33,
+   "kb": 13.3,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 10.2
+    },
+    "font": {
+     "n": 2,
+     "kb": 0
+    },
+    "css": {
+     "n": 1,
+     "kb": 0
+    },
+    "js": {
+     "n": 10,
+     "kb": 0
+    },
+    "rsc": {
+     "n": 19,
+     "kb": 3.2
+    }
+   },
+   "finalUrl": "/cashbox"
+  },
+  "errors": []
+ },
+ {
+  "route": "/catalog",
+  "who": "javier",
+  "cold": {
+   "ttfb": 2207,
+   "fcp": 2320,
+   "lcp": 2320,
+   "dcl": 2313,
+   "load": 2363,
+   "docKB": 10.7,
+   "loadMs": 2365,
+   "settledMs": 3341,
+   "reqs": 33,
+   "kb": 298.2,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 11.1
+    },
+    "font": {
+     "n": 2,
+     "kb": 50.5
+    },
+    "css": {
+     "n": 1,
+     "kb": 10.2
+    },
+    "js": {
+     "n": 10,
+     "kb": 223.3
+    },
+    "rsc": {
+     "n": 19,
+     "kb": 3.2
+    }
+   },
+   "finalUrl": "/catalog"
+  },
+  "coldList": [
+   {
+    "u": "/catalog",
+    "m": "GET",
+    "t": "Document",
+    "kb": 11.1,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 2209,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/0c89a48fa5027cee-s.p.2cyn07wtgehh0.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 22.1,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/47df9ba1c7236d3b-s.p.2adce56gso3ku.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 28.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/3jw6v_8pudl5q.css",
+    "m": "GET",
+    "t": "Stylesheet",
+    "kb": 10.2,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/08sf_64ef_no7.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 2.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1a32t_8v73q__.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 7.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/426jtnlb2tgco.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 70.3,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 22,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/26ogvttrutp6h.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 44.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 19,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/turbopack-25xq5mx9wcxpn.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1l01cgcrw_is1.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1sy0_96ymfav8.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2vjf0nrxyeu0z.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 11.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/18harx5e7_3eh.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 5.5,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 19,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/0e964btuxme39.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 65.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 25,
+    "fc": false
+   },
+   {
+    "u": "/sales?_rsc=OYzo7EH3MGwwxBfF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 8,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=OYzo7EH3MGwwxBfF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/orders?_rsc=OYzo7EH3MGwwxBfF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/customers?_rsc=OYzo7EH3MGwwxBfF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/prescriptions?_rsc=OYzo7EH3MGwwxBfF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=OYzo7EH3MGwwxBfF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/cashbox?_rsc=OYzo7EH3MGwwxBfF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/team?_rsc=OYzo7EH3MGwwxBfF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=OYzo7EH3MGwwxBfF",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/sales?_rsc=O6cAbYUSgs3KBG-F",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=O6cAbYUSgs3KBG-F",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/orders?_rsc=O6cAbYUSgs3KBG-F",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/customers?_rsc=O6cAbYUSgs3KBG-F",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/prescriptions?_rsc=O6cAbYUSgs3KBG-F",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=O6cAbYUSgs3KBG-F",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/cashbox?_rsc=O6cAbYUSgs3KBG-F",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=O6cAbYUSgs3KBG-F",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/team?_rsc=O6cAbYUSgs3KBG-F",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=O6cAbYUSgs3KBG-F",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 9,
+    "fc": false
+   }
+  ],
+  "warm": {
+   "ttfb": 4117,
+   "fcp": 4164,
+   "lcp": 4164,
+   "dcl": 4146,
+   "load": 4148,
+   "docKB": 10.7,
+   "loadMs": 4151,
+   "settledMs": 5132,
+   "reqs": 33,
+   "kb": 14.2,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 11.1
+    },
+    "font": {
+     "n": 2,
+     "kb": 0
+    },
+    "css": {
+     "n": 1,
+     "kb": 0
+    },
+    "js": {
+     "n": 10,
+     "kb": 0
+    },
+    "rsc": {
+     "n": 19,
+     "kb": 3.2
+    }
+   },
+   "finalUrl": "/catalog"
+  },
+  "errors": []
+ },
+ {
+  "route": "/team",
+  "who": "javier",
+  "cold": {
+   "ttfb": 1304,
+   "fcp": 1388,
+   "lcp": 1388,
+   "dcl": 1325,
+   "load": 1399,
+   "docKB": 9,
+   "loadMs": 1401,
+   "settledMs": 2366,
+   "reqs": 33,
+   "kb": 290.8,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 9.5
+    },
+    "font": {
+     "n": 2,
+     "kb": 50.5
+    },
+    "css": {
+     "n": 1,
+     "kb": 10.2
+    },
+    "js": {
+     "n": 10,
+     "kb": 220.6
+    },
+    "rsc": {
+     "n": 19,
+     "kb": 0
+    }
+   },
+   "finalUrl": "/team"
+  },
+  "coldList": [
+   {
+    "u": "/team",
+    "m": "GET",
+    "t": "Document",
+    "kb": 9.5,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 1304,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/0c89a48fa5027cee-s.p.2cyn07wtgehh0.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 22.1,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 8,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/47df9ba1c7236d3b-s.p.2adce56gso3ku.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 28.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/3jw6v_8pudl5q.css",
+    "m": "GET",
+    "t": "Stylesheet",
+    "kb": 10.2,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/08sf_64ef_no7.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 2.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1a32t_8v73q__.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 7.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/426jtnlb2tgco.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 70.3,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 24,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/26ogvttrutp6h.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 44.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 21,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/turbopack-25xq5mx9wcxpn.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1l01cgcrw_is1.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1sy0_96ymfav8.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 19,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2vjf0nrxyeu0z.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 11.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 22,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/30x1k6c1wjlv7.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 2.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 22,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/0e964btuxme39.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 65.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 31,
+    "fc": false
+   },
+   {
+    "u": "/sales?_rsc=JKKNhOGQ9Ze3zsGw",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=JKKNhOGQ9Ze3zsGw",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/orders?_rsc=JKKNhOGQ9Ze3zsGw",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/customers?_rsc=JKKNhOGQ9Ze3zsGw",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/prescriptions?_rsc=JKKNhOGQ9Ze3zsGw",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=JKKNhOGQ9Ze3zsGw",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/cashbox?_rsc=JKKNhOGQ9Ze3zsGw",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=JKKNhOGQ9Ze3zsGw",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=JKKNhOGQ9Ze3zsGw",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/sales?_rsc=uSfPnHwE5_EOvKVU",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=uSfPnHwE5_EOvKVU",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/orders?_rsc=uSfPnHwE5_EOvKVU",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/customers?_rsc=uSfPnHwE5_EOvKVU",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/prescriptions?_rsc=uSfPnHwE5_EOvKVU",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=uSfPnHwE5_EOvKVU",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/cashbox?_rsc=uSfPnHwE5_EOvKVU",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=uSfPnHwE5_EOvKVU",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/team?_rsc=uSfPnHwE5_EOvKVU",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=uSfPnHwE5_EOvKVU",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   }
+  ],
+  "warm": {
+   "ttfb": 2604,
+   "fcp": 2644,
+   "lcp": 2644,
+   "dcl": 2629,
+   "load": 2631,
+   "docKB": 9,
+   "loadMs": 2634,
+   "settledMs": 3601,
+   "reqs": 33,
+   "kb": 12.6,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 9.5
+    },
+    "font": {
+     "n": 2,
+     "kb": 0
+    },
+    "css": {
+     "n": 1,
+     "kb": 0
+    },
+    "js": {
+     "n": 10,
+     "kb": 0
+    },
+    "rsc": {
+     "n": 19,
+     "kb": 3.2
+    }
+   },
+   "finalUrl": "/team"
+  },
+  "errors": []
+ },
+ {
+  "route": "/production",
+  "who": "claudia",
+  "cold": {
+   "ttfb": 965,
+   "fcp": 1104,
+   "lcp": 1104,
+   "dcl": 985,
+   "load": 1083,
+   "docKB": 8.4,
+   "loadMs": 1087,
+   "settledMs": 1958,
+   "reqs": 17,
+   "kb": 296.5,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 8.8
+    },
+    "font": {
+     "n": 2,
+     "kb": 50.5
+    },
+    "css": {
+     "n": 1,
+     "kb": 10.2
+    },
+    "js": {
+     "n": 10,
+     "kb": 223.8
+    },
+    "rsc": {
+     "n": 3,
+     "kb": 3.2
+    }
+   },
+   "finalUrl": "/production"
+  },
+  "coldList": [
+   {
+    "u": "/production",
+    "m": "GET",
+    "t": "Document",
+    "kb": 8.8,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 966,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/0c89a48fa5027cee-s.p.2cyn07wtgehh0.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 22.1,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 9,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/47df9ba1c7236d3b-s.p.2adce56gso3ku.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 28.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/3jw6v_8pudl5q.css",
+    "m": "GET",
+    "t": "Stylesheet",
+    "kb": 10.2,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/08sf_64ef_no7.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 2.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1a32t_8v73q__.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 7.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/426jtnlb2tgco.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 70.3,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 21,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/26ogvttrutp6h.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 44.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 19,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/turbopack-25xq5mx9wcxpn.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1l01cgcrw_is1.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1sy0_96ymfav8.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2vjf0nrxyeu0z.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 11.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2emvc92ox_8hd.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 19,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/0e964btuxme39.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 65.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 26,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=QnpMOLk_5nF1h-ro",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 7,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=qNIonP9o8l0gGS0y",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 6,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=qNIonP9o8l0gGS0y",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 4,
+    "fc": false
+   }
+  ],
+  "warm": {
+   "ttfb": 725,
+   "fcp": 768,
+   "lcp": 768,
+   "dcl": 755,
+   "load": 757,
+   "docKB": 8.4,
+   "loadMs": 760,
+   "settledMs": 1628,
+   "reqs": 17,
+   "kb": 12,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 8.8
+    },
+    "font": {
+     "n": 2,
+     "kb": 0
+    },
+    "css": {
+     "n": 1,
+     "kb": 0
+    },
+    "js": {
+     "n": 10,
+     "kb": 0
+    },
+    "rsc": {
+     "n": 3,
+     "kb": 3.2
+    }
+   },
+   "finalUrl": "/production"
+  },
+  "errors": []
+ },
+ {
+  "route": "/dashboard",
+  "who": "claudia",
+  "cold": {
+   "ttfb": 2548,
+   "fcp": 2660,
+   "lcp": 2660,
+   "dcl": 2647,
+   "load": 2687,
+   "docKB": 8.4,
+   "loadMs": 2689,
+   "settledMs": 3550,
+   "reqs": 17,
+   "kb": 297.3,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 8.9
+    },
+    "font": {
+     "n": 2,
+     "kb": 50.5
+    },
+    "css": {
+     "n": 1,
+     "kb": 10.2
+    },
+    "js": {
+     "n": 10,
+     "kb": 224.5
+    },
+    "rsc": {
+     "n": 3,
+     "kb": 3.2
+    }
+   },
+   "finalUrl": "/dashboard"
+  },
+  "coldList": [
+   {
+    "u": "/dashboard",
+    "m": "GET",
+    "t": "Document",
+    "kb": 8.9,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 2550,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/0c89a48fa5027cee-s.p.2cyn07wtgehh0.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 22.1,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/47df9ba1c7236d3b-s.p.2adce56gso3ku.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 28.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/3jw6v_8pudl5q.css",
+    "m": "GET",
+    "t": "Stylesheet",
+    "kb": 10.2,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/08sf_64ef_no7.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 2.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1a32t_8v73q__.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 7.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/426jtnlb2tgco.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 70.3,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 23,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/26ogvttrutp6h.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 44.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 20,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/turbopack-25xq5mx9wcxpn.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1l01cgcrw_is1.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 17,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1sy0_96ymfav8.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 19,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2vjf0nrxyeu0z.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 11.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2i1eruhu99lpo.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 20,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/0e964btuxme39.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 65.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 26,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=j79Vj4yH5aoiafxS",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 7,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=IOe_mmh6jQxP6_Ru",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 6,
+    "fc": false
+   },
+   {
+    "u": "/production?_rsc=IOe_mmh6jQxP6_Ru",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 1.6,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 5,
+    "fc": false
+   }
+  ],
+  "warm": {
+   "ttfb": 2413,
+   "fcp": 2448,
+   "lcp": 2448,
+   "dcl": 2436,
+   "load": 2437,
+   "docKB": 8.4,
+   "loadMs": 2439,
+   "settledMs": 3296,
+   "reqs": 17,
+   "kb": 12,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 8.9
+    },
+    "font": {
+     "n": 2,
+     "kb": 0
+    },
+    "css": {
+     "n": 1,
+     "kb": 0
+    },
+    "js": {
+     "n": 10,
+     "kb": 0
+    },
+    "rsc": {
+     "n": 3,
+     "kb": 3.2
+    }
+   },
+   "finalUrl": "/dashboard"
+  },
+  "errors": []
+ },
+ {
+  "route": "/organizations",
+  "who": "admin",
+  "cold": {
+   "ttfb": 4735,
+   "fcp": 4856,
+   "lcp": 4856,
+   "dcl": 4755,
+   "load": 4889,
+   "docKB": 8.7,
+   "loadMs": 4891,
+   "settledMs": 5864,
+   "reqs": 21,
+   "kb": 293.1,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 9.2
+    },
+    "font": {
+     "n": 2,
+     "kb": 50.5
+    },
+    "css": {
+     "n": 1,
+     "kb": 10.2
+    },
+    "js": {
+     "n": 10,
+     "kb": 223.3
+    },
+    "rsc": {
+     "n": 7,
+     "kb": 0
+    }
+   },
+   "finalUrl": "/organizations"
+  },
+  "coldList": [
+   {
+    "u": "/organizations",
+    "m": "GET",
+    "t": "Document",
+    "kb": 9.2,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 4736,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/0c89a48fa5027cee-s.p.2cyn07wtgehh0.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 22.1,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 8,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/47df9ba1c7236d3b-s.p.2adce56gso3ku.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 28.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/3jw6v_8pudl5q.css",
+    "m": "GET",
+    "t": "Stylesheet",
+    "kb": 10.2,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/08sf_64ef_no7.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 2.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1a32t_8v73q__.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 7.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/426jtnlb2tgco.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 70.3,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 24,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/26ogvttrutp6h.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 44.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/turbopack-25xq5mx9wcxpn.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1l01cgcrw_is1.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1sy0_96ymfav8.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2vjf0nrxyeu0z.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 11.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/0u9giwg70njoe.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 5.5,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/0e964btuxme39.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 65.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 40,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=6RN89dgKMLq8jCnq",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=6RN89dgKMLq8jCnq",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=6RN89dgKMLq8jCnq",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/organizations?_rsc=igzW5Cc7FeHIwSNj",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 16,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=igzW5Cc7FeHIwSNj",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=igzW5Cc7FeHIwSNj",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=igzW5Cc7FeHIwSNj",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 11,
+    "fc": false
+   }
+  ],
+  "warm": {
+   "ttfb": 3673,
+   "fcp": 3728,
+   "lcp": 3728,
+   "dcl": 3708,
+   "load": 3711,
+   "docKB": 8.7,
+   "loadMs": 3713,
+   "settledMs": 4583,
+   "reqs": 21,
+   "kb": 9.2,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 9.2
+    },
+    "font": {
+     "n": 2,
+     "kb": 0
+    },
+    "css": {
+     "n": 1,
+     "kb": 0
+    },
+    "js": {
+     "n": 10,
+     "kb": 0
+    },
+    "rsc": {
+     "n": 7,
+     "kb": 0
+    }
+   },
+   "finalUrl": "/organizations"
+  },
+  "errors": []
+ },
+ {
+  "route": "/dashboard",
+  "who": "admin",
+  "cold": {
+   "ttfb": 2062,
+   "fcp": 2212,
+   "lcp": 2212,
+   "dcl": 2084,
+   "load": 2256,
+   "docKB": 9.2,
+   "loadMs": 2258,
+   "settledMs": 3117,
+   "reqs": 21,
+   "kb": 294.9,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 9.7
+    },
+    "font": {
+     "n": 2,
+     "kb": 50.5
+    },
+    "css": {
+     "n": 1,
+     "kb": 10.2
+    },
+    "js": {
+     "n": 10,
+     "kb": 224.5
+    },
+    "rsc": {
+     "n": 7,
+     "kb": 0
+    }
+   },
+   "finalUrl": "/dashboard"
+  },
+  "coldList": [
+   {
+    "u": "/dashboard",
+    "m": "GET",
+    "t": "Document",
+    "kb": 9.7,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 2075,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/0c89a48fa5027cee-s.p.2cyn07wtgehh0.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 22.1,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/media/47df9ba1c7236d3b-s.p.2adce56gso3ku.woff2",
+    "m": "GET",
+    "t": "Font",
+    "kb": 28.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/3jw6v_8pudl5q.css",
+    "m": "GET",
+    "t": "Stylesheet",
+    "kb": 10.2,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/08sf_64ef_no7.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 2.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1a32t_8v73q__.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 7.9,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 15,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/426jtnlb2tgco.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 70.3,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 24,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/26ogvttrutp6h.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 44.4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 22,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/turbopack-25xq5mx9wcxpn.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1l01cgcrw_is1.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 4,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 18,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/1sy0_96ymfav8.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 20,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2vjf0nrxyeu0z.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 11.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 20,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/2i1eruhu99lpo.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 6.8,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 23,
+    "fc": false
+   },
+   {
+    "u": "/_next/static/chunks/0e964btuxme39.js",
+    "m": "GET",
+    "t": "Script",
+    "kb": 65.6,
+    "st": 200,
+    "cache": "public, max-age=31536000, immutable",
+    "ms": 27,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=j79Vj4yH5aoiafxS",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 10,
+    "fc": false
+   },
+   {
+    "u": "/organizations?_rsc=j79Vj4yH5aoiafxS",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=j79Vj4yH5aoiafxS",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 12,
+    "fc": false
+   },
+   {
+    "u": "/dashboard?_rsc=IOe_mmh6jQxP6_Ru",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 13,
+    "fc": false
+   },
+   {
+    "u": "/catalog?_rsc=IOe_mmh6jQxP6_Ru",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/manual?_rsc=IOe_mmh6jQxP6_Ru",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 14,
+    "fc": false
+   },
+   {
+    "u": "/organizations?_rsc=IOe_mmh6jQxP6_Ru",
+    "m": "GET",
+    "t": "Fetch",
+    "kb": 0,
+    "st": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "ms": 14,
+    "fc": false
+   }
+  ],
+  "warm": {
+   "ttfb": 3100,
+   "fcp": 3136,
+   "lcp": 3136,
+   "dcl": 3121,
+   "load": 3123,
+   "docKB": 9.2,
+   "loadMs": 3125,
+   "settledMs": 3988,
+   "reqs": 21,
+   "kb": 11.8,
+   "byKind": {
+    "document": {
+     "n": 1,
+     "kb": 9.7
+    },
+    "font": {
+     "n": 2,
+     "kb": 0
+    },
+    "css": {
+     "n": 1,
+     "kb": 0
+    },
+    "js": {
+     "n": 10,
+     "kb": 0
+    },
+    "rsc": {
+     "n": 7,
+     "kb": 2.1
+    }
+   },
+   "finalUrl": "/dashboard"
+  },
+  "errors": []
+ }
+]

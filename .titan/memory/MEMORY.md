@@ -14,6 +14,7 @@ Read relevant entries only. Store decisions with dates and evidence.
 
 ## Project decisions
 
+- [2026-10-02 — Pilot QA decisions and readiness](project/2026-10-02-pilot-qa-decisions.md)
 - [2026-10-01 — UI 2.0 design system and view precedence](project/2026-10-01-ui-2-0-design-system.md)
 - [2026-10-01 — Dual-agent tooling: Claude Code and Codex](project/2026-10-01-dual-agent-tooling.md)
 - [2026-10-01 — Portable Codex tooling](project/2026-10-01-portable-codex-tooling.md)

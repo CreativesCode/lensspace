@@ -197,7 +197,8 @@ tendrá fecha de inicio, fecha de vencimiento y uno de estos estados:
 - **Prueba:** acceso temporal de evaluación.
 - **Activa:** operación normal.
 - **Vencida:** acceso de solo lectura; no permite nuevas operaciones.
-- **Suspendida:** acceso bloqueado para los usuarios de la óptica.
+- **Suspendida:** toda operación bloqueada para los usuarios de la óptica; los
+  datos quedan en solo lectura (decisión del 2026-10-02).
 
 El superadministrador registra renovaciones y cambios de estado. Los datos siguen
 perteneciendo a la organización aunque su suscripción venza o sea suspendida.
