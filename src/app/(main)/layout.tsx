@@ -1,13 +1,20 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { Plus } from 'lucide-react'
 
-import { signOut } from '@/features/auth/actions'
 import type { Tables } from '@/lib/supabase/database.types'
 import { createClient } from '@/lib/supabase/server'
-import { LensSpaceLogo, MainNavigation, MobileSidebar } from '@/shared/components'
+import { LensSpaceLogo, MainNavigation, MobileSidebar, SidebarAccount, type ShellIdentity } from '@/shared/components'
 
 const commercialHrefs = ['/prescriptions', '/catalog', '/orders', '/sales', '/customers']
+const roleLabels: Record<string, string> = {
+  owner: 'Dueño',
+  seller: 'Vendedor',
+  lens_provider: 'Cristalero/laboratorio',
+  mounting_provider: 'Montador',
+}
+const rolePriority = ['owner', 'seller', 'lens_provider', 'mounting_provider']
 
 export const metadata: Metadata = {
   robots: {
@@ -24,42 +31,36 @@ async function AuthenticatedLayout({ children }: { children: React.ReactNode }) 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
-  const allowedHrefs = await loadAllowedNavigation(supabase, user.id)
+  const { allowedHrefs, identity } = await loadShell(supabase, user.id, user.email ?? 'Usuario')
   const canCreateSale = allowedHrefs.includes('/sales')
 
   return (
-    <div className="min-h-screen bg-slate-50 md:flex">
-      <aside className="hidden w-[244px] shrink-0 flex-col bg-slate-950 px-4 py-6 md:sticky md:top-0 md:flex md:h-screen">
-        <div className="px-1">
-          <LensSpaceLogo inverse subtitle="Gestión óptica" />
+    <div className="min-h-screen bg-canvas md:flex">
+      <aside className="hidden w-[260px] shrink-0 flex-col overflow-y-auto bg-ink px-3.5 pb-[18px] pt-[22px] md:sticky md:top-0 md:flex md:h-screen">
+        <div className="px-1.5">
+          <LensSpaceLogo compact inverse subtitle={identity.organizationName} />
         </div>
         <MainNavigation allowedHrefs={allowedHrefs} />
-        <div className="mt-auto border-t border-[#10463F] pt-4">
-          <p className="truncate text-sm font-semibold text-[#E6F5F3]">{user.email}</p>
-          <p className="mt-1 text-xs text-[#6F9C96]">Sesión activa</p>
-          <form action={signOut}>
-            <button type="submit" className="mt-4 w-full rounded-lg border border-[#2B5E58] px-4 py-2 text-sm font-medium text-[#A7CFC9] transition hover:bg-[#10463F]">
-              Cerrar sesión
-            </button>
-          </form>
+        <div className="mt-auto pt-[22px]">
+          <SidebarAccount identity={identity} />
         </div>
       </aside>
 
       <div className="min-w-0 flex-1">
-        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-5 py-4 md:hidden">
-          <LensSpaceLogo compact />
+        <header className="sticky top-0 z-10 flex items-center justify-between bg-ink px-4 py-3 md:hidden">
+          <LensSpaceLogo compact inverse />
           <div className="flex items-center gap-2">
             {canCreateSale ? (
               <Link
                 href="/sales"
                 aria-label="Crear nueva venta"
                 title="Nueva venta"
-                className="grid h-11 w-11 place-items-center rounded-lg bg-[#0D7A72] text-2xl font-semibold leading-none text-white shadow-[0_6px_18px_rgba(13,122,114,0.22)] transition hover:bg-[#07322F] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#B9DFD9]"
+                className="grid size-11 place-items-center rounded-control bg-mint text-ink transition hover:bg-[#5DD3BD] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#B9DFD9]"
               >
-                <span aria-hidden="true">+</span>
+                <Plus aria-hidden="true" size={20} strokeWidth={2.5} />
               </Link>
             ) : null}
-            <MobileSidebar allowedHrefs={allowedHrefs} email={user.email ?? 'Usuario'} />
+            <MobileSidebar allowedHrefs={allowedHrefs} identity={identity} />
           </div>
         </header>
         <main>{children}</main>
@@ -70,28 +71,36 @@ async function AuthenticatedLayout({ children }: { children: React.ReactNode }) 
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>
 
-async function loadAllowedNavigation(supabase: SupabaseServerClient, userId: string) {
-  const { data: isPlatformAdmin } = await supabase.rpc('current_user_is_platform_admin')
-  if (isPlatformAdmin) return ['/dashboard', '/organizations', '/catalog', '/manual']
+async function loadShell(supabase: SupabaseServerClient, userId: string, email: string): Promise<{ allowedHrefs: string[]; identity: ShellIdentity }> {
+  const [{ data: isPlatformAdmin }, { data: profile }, { data: membershipData }] = await Promise.all([
+    supabase.rpc('current_user_is_platform_admin'),
+    supabase.from('profiles').select('display_name').eq('user_id', userId).maybeSingle(),
+    supabase.from('organization_memberships').select('organization_id, role').eq('user_id', userId).eq('status', 'active'),
+  ])
+  const displayName = (profile as Pick<Tables<'profiles'>, 'display_name'> | null)?.display_name ?? email.split('@')[0]
 
-  const { data: membershipData } = await supabase
-    .from('organization_memberships')
-    .select('organization_id, role')
-    .eq('user_id', userId)
-    .eq('status', 'active')
+  if (isPlatformAdmin) {
+    return {
+      allowedHrefs: ['/dashboard', '/organizations', '/catalog', '/manual'],
+      identity: { displayName, roleLabel: 'Administración de plataforma', organizationName: 'Plataforma LensSpace' },
+    }
+  }
 
   const memberships = (membershipData ?? []) as Pick<
     Tables<'organization_memberships'>,
     'organization_id' | 'role'
   >[]
   const organizationIds = [...new Set(memberships.map(({ organization_id }) => organization_id))]
-  if (!organizationIds.length) return ['/dashboard']
+  const mainRole = rolePriority.find((role) => memberships.some((membership) => membership.role === role))
+  const identity: ShellIdentity = { displayName, roleLabel: mainRole ? roleLabels[mainRole] : 'Sin acceso activo', organizationName: 'Gestión óptica' }
+  if (!organizationIds.length) return { allowedHrefs: ['/dashboard'], identity }
 
-  const { data: moduleData } = await supabase
-    .from('organization_modules')
-    .select('organization_id, module_key')
-    .in('organization_id', organizationIds)
-    .eq('is_enabled', true)
+  const [{ data: moduleData }, { data: organizationData }] = await Promise.all([
+    supabase.from('organization_modules').select('organization_id, module_key').in('organization_id', organizationIds).eq('is_enabled', true),
+    supabase.from('organizations').select('id, name').in('id', organizationIds),
+  ])
+  const organizations = (organizationData ?? []) as Pick<Tables<'organizations'>, 'id' | 'name'>[]
+  identity.organizationName = organizations.length === 1 ? organizations[0].name : organizations.length > 1 ? `${organizations.length} organizaciones` : identity.organizationName
 
   const modules = (moduleData ?? []) as Pick<
     Tables<'organization_modules'>,
@@ -113,5 +122,5 @@ async function loadAllowedNavigation(supabase: SupabaseServerClient, userId: str
     allowed.push('/production')
   }
 
-  return allowed
+  return { allowedHrefs: allowed, identity }
 }

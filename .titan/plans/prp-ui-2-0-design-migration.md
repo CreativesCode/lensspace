@@ -1,7 +1,7 @@
 # PRP: Migración gradual a la Guía UI 2.0
 
 > **Estado**: EN EJECUCIÓN (aprobado 2026-10-01)
-> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 en curso
+> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ (pendiente revisión manual) · Fase 4 siguiente
 > **Fecha**: 2026-10-01
 > **Proyecto**: LensSpace
 
@@ -143,7 +143,7 @@ $$;
 **Objetivo**: implementar las primitivas listadas, accesibles (foco visible, `aria-*`, objetivos de 44 px), siguiendo las medidas de la guía, sin lógica de negocio y con iconos `lucide-react`.
 **Validación**: typecheck estricto sin `any`, lint y build pasan. Cada primitiva se usa al menos una vez en la Fase 4.
 
-### Fase 3: Shell de navegación
+### Fase 3: Shell de navegación ✅ (2026-10-01)
 **Objetivo**: `MainNavigation` con un icono por destino (incluido Organizaciones, que no aparece en la guía), barra de acento, etiquetas de sección AA y "Nueva venta" como `Button`. Cabecera móvil en tinta y `MobileSidebar` con la misma lista. Bloque de usuario con avatar de iniciales, `profiles.display_name` y rol, y subtítulo con el nombre de la organización en lugar de "Gestión óptica". Ambos datos se leen en `(main)/layout.tsx`, que ya consulta las membresías. Los contadores de pendientes van en la Fase 11 (D2).
 **Validación**: revisión manual del usuario en escritorio y en 390 px por rol. Se mantienen la navegación por teclado, `aria-current` y el filtrado por `allowedHrefs`.
 
