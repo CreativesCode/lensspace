@@ -1,18 +1,24 @@
 'use client'
 
+import { ArrowLeft, Lock, Wallet } from 'lucide-react'
 import { FormEvent, useMemo, useState, useTransition } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { FilterPanel, FormSelect } from '@/shared/components'
+import { Alert, Badge, Button, Card, CardHeader, EmptyState, Field, Input, ListItem, PageHeader, StatCard, Toast, cx } from '@/shared/ui'
 
 type Closure = { id: number; type: 'primary' | 'complementary'; sequenceNumber: number; expectedAmount: number; declaredAmount: number; differenceAmount: number; closedAt: string }
 export type Cashbox = { id: number; branchName: string; sellerId: string; sellerName: string; businessDate: string; currency: 'CUP' | 'USD'; receivedAmount: number; paymentCount: number; pendingPostCloseAmount: number; primaryClosed: boolean; closedExpectedAmount: number; closedDeclaredAmount: number; closedDifferenceAmount: number; closures: Closure[] }
 const money = (value: number, currency: string) => `${Number(value).toLocaleString('es-CU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`
+const amount = (value: number) => Number(value).toLocaleString('es-CU', { maximumFractionDigits: 2 })
 
 export function CashboxWorkspace({ initialCashboxes, currentUserId }: { initialCashboxes: Cashbox[]; currentUserId: string }) {
   const supabase = useMemo(() => createClient(), [])
   const [cashboxes, setCashboxes] = useState(initialCashboxes)
   const [selectedId, setSelectedId] = useState(initialCashboxes[0]?.id ?? 0)
+  // Mobile shows one pane at a time; desktop (xl) shows list and detail side by side.
+  const [detailOpen, setDetailOpen] = useState(false)
   const [message, setMessage] = useState('')
+  const [toast, setToast] = useState('')
   const [dateFilter, setDateFilter] = useState('')
   const [branchFilter, setBranchFilter] = useState('')
   const [sellerFilter, setSellerFilter] = useState('')
@@ -24,6 +30,9 @@ export function CashboxWorkspace({ initialCashboxes, currentUserId }: { initialC
   const sellers = [...new Map(cashboxes.map((cashbox) => [cashbox.sellerId, cashbox.sellerName])).entries()]
   const activeFilterCount = Number(Boolean(dateFilter)) + Number(Boolean(branchFilter)) + Number(Boolean(sellerFilter))
   const clearFilters = () => { setDateFilter(''); setBranchFilter(''); setSellerFilter('') }
+  const totalBy = (currency: Cashbox['currency']) => visibleCashboxes.filter((cashbox) => cashbox.currency === currency).reduce((sum, cashbox) => sum + Number(cashbox.receivedAmount), 0)
+  const openCount = visibleCashboxes.filter((cashbox) => !cashbox.primaryClosed).length
+  const differenceCount = visibleCashboxes.filter((cashbox) => Number(cashbox.closedDifferenceAmount) !== 0).length
 
   function closeCashbox(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -37,24 +46,90 @@ export function CashboxWorkspace({ initialCashboxes, currentUserId }: { initialC
       const { data, error: refreshError } = await supabase.rpc('list_accessible_cashboxes', { target_branch_id: null, target_business_date: null, target_seller_id: null } as never)
       if (refreshError) return setMessage(refreshError.message)
       setCashboxes(data as unknown as Cashbox[])
-      setMessage(closureType === 'primary' ? 'Cierre principal registrado.' : 'Cierre complementario registrado.')
+      setToast(closureType === 'primary' ? 'Cierre principal registrado.' : 'Cierre complementario registrado.')
     })
   }
 
-  if (!cashboxes.length) return <div className="rounded-[10px] border border-dashed border-[#DCECEA] bg-white p-8 text-sm text-[#5F716C]">Aún no hay cobros en cajas accesibles.</div>
-  return <div className="grid gap-6 xl:grid-cols-[minmax(300px,410px)_1fr]">
-    <section className="rounded-[10px] border border-[#E3EFED] bg-white p-4"><div className="flex items-center justify-between gap-3"><h2 className="px-2 font-display text-lg font-semibold text-[#07322F]">Cajas por día y moneda</h2><FilterPanel title="Filtrar cajas" eyebrow="Caja" activeFilterCount={activeFilterCount} resultCount={visibleCashboxes.length} onClear={clearFilters}><div className="grid gap-3"><label className="text-xs font-semibold text-[#4A5B58]">Fecha<input aria-label="Filtrar por fecha" type="date" value={dateFilter} onChange={(event) => setDateFilter(event.target.value)} className="mt-1 w-full rounded-[7px] border border-[#DCECEA] bg-[#FBFEFD] px-3 py-2.5 text-sm text-[#4A5B58]" /></label><label className="text-xs font-semibold text-[#4A5B58]">Sucursal<FormSelect className="mt-1" ariaLabel="Filtrar por sucursal" value={branchFilter} onValueChange={setBranchFilter} options={[{ value: '', label: 'Todas las sucursales' }, ...branches.map((branch) => ({ value: branch, label: branch }))]} /></label><label className="text-xs font-semibold text-[#4A5B58]">Vendedor<FormSelect className="mt-1" ariaLabel="Filtrar por vendedor" value={sellerFilter} onValueChange={setSellerFilter} options={[{ value: '', label: 'Todos los vendedores' }, ...sellers.map(([id, name]) => ({ value: id, label: name }))]} /></label></div></FilterPanel></div><div className="mt-3 space-y-2">{visibleCashboxes.map((cashbox) => <button key={cashbox.id} type="button" onClick={() => { setSelectedId(cashbox.id); setMessage('') }} className={`w-full rounded-lg border p-4 text-left transition ${selectedId === cashbox.id ? 'border-[#0D7A72] bg-[#F0FBF9]' : 'border-[#E3EFED] hover:border-[#9BCDC6]'}`}><span className="flex items-center justify-between gap-3"><strong className="font-display text-sm text-[#07322F]">{cashbox.sellerName}</strong><span className="rounded bg-[#E2F4F1] px-2 py-1 text-[10px] font-bold text-[#0D7A72]">{cashbox.currency}</span></span><span className="mt-1 block text-sm text-[#4A5B58]">{cashbox.branchName} · {cashbox.businessDate}</span><span className="mt-2 flex justify-between text-xs text-[#5F716C]"><span>{cashbox.paymentCount} cobros</span><strong className="text-[#07322F]">{money(cashbox.receivedAmount, cashbox.currency)}</strong></span></button>)}{!visibleCashboxes.length ? <p className="rounded-lg border border-dashed border-[#DCECEA] p-5 text-sm text-[#5F716C]">No hay cajas que coincidan con los filtros.</p> : null}</div></section>
-    {selected ? <section className="space-y-5 rounded-[10px] border border-[#E3EFED] bg-white p-5">
-      <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#0D7A72]">{selected.branchName} · {selected.businessDate}</p><h2 className="mt-1 font-display text-2xl font-bold text-[#07322F]">Caja {selected.sellerName}</h2></div><span className={`rounded-full px-3 py-1.5 text-xs font-semibold ${selected.primaryClosed ? 'bg-[#D9F5EE] text-[#07655C]' : 'bg-[#FFF0EB] text-[#C23C1C]'}`}>{selected.primaryClosed ? 'Cierre principal realizado' : 'Abierta'}</span></div>
-      <div className="grid gap-3 sm:grid-cols-3"><Metric label="Cobrado" value={money(selected.receivedAmount, selected.currency)} /><Metric label="Consolidado" value={money(selected.closedExpectedAmount, selected.currency)} /><Metric label="Diferencia" value={money(selected.closedDifferenceAmount, selected.currency)} alert={selected.closedDifferenceAmount !== 0} /></div>
-      {selected.closures.length ? <div><h3 className="font-display font-semibold text-[#07322F]">Historial de cierres</h3><div className="mt-2 divide-y divide-[#EEF5F4]">{selected.closures.map((closure) => <div key={closure.id} className="grid gap-1 py-3 text-sm sm:grid-cols-[1fr_auto]"><div><strong className="text-[#07322F]">{closure.type === 'primary' ? 'Cierre principal' : `Complementario ${closure.sequenceNumber}`}</strong><p className="text-xs text-[#5F716C]">{new Date(closure.closedAt).toLocaleString('es-CU')}</p></div><div className="text-left sm:text-right"><p className="font-semibold text-[#07322F]">{money(closure.expectedAmount, selected.currency)}</p><p className="text-xs text-[#5F716C]">Declarado {money(closure.declaredAmount, selected.currency)}</p></div></div>)}</div></div> : null}
-      {isOwnCashbox ? <form onSubmit={closeCashbox} className="rounded-lg bg-[#F7FBFA] p-4"><div className="flex flex-wrap items-end gap-3"><label className="min-w-52 flex-1 text-xs font-semibold text-[#4A5B58]">Efectivo declarado ({selected.currency})<input name="declaredAmount" type="number" min="0" step="0.01" defaultValue={(selected.primaryClosed ? selected.pendingPostCloseAmount : selected.receivedAmount).toFixed(2)} required className="mt-1 w-full rounded-[7px] border border-[#DCECEA] bg-white px-3 py-2.5 text-sm text-[#07322F] outline-none focus:border-[#0D7A72] focus:ring-4 focus:ring-[#E2F4F1]" /></label><button disabled={pending || (selected.primaryClosed && selected.pendingPostCloseAmount <= 0)} className="rounded-[7px] bg-[#0D7A72] px-5 py-3 text-sm font-semibold text-white disabled:opacity-40">{selected.primaryClosed ? 'Generar complementario' : 'Cerrar caja del día'}</button></div>{selected.primaryClosed ? <p className="mt-2 text-xs text-[#5F716C]">Pendiente posterior al cierre: {money(selected.pendingPostCloseAmount, selected.currency)}</p> : null}</form> : <p className="rounded-lg bg-[#F7FBFA] p-4 text-sm text-[#4A5B58]">Vista de revisión. Solo el vendedor responsable puede cerrar esta caja.</p>}
-      {message ? <p role="status" className="text-sm text-[#4A5B58]">{message}</p> : null}
-      <aside className="rounded-lg border border-[#DCECEA] bg-[#FBFEFD] p-4"><h3 className="font-display text-sm font-semibold text-[#07322F]">Cómo funciona tu caja</h3><p className="mt-1 text-sm leading-6 text-[#4A5B58]">Cada moneda se cierra por separado. Los cobros posteriores permanecen disponibles para un cierre complementario sin alterar el principal.</p></aside>
-    </section> : null}
-  </div>
-}
+  const header = (
+    <PageHeader
+      eyebrow="Control de efectivo"
+      title="Caja y cierres"
+      description="Revisa cobros por vendedor, sucursal y moneda sin perder los movimientos posteriores al cierre."
+      stats={cashboxes.length ? <>
+        <StatCard surface="ink" label="Cajas abiertas" value={openCount} />
+        <StatCard surface="ink" label="Cobrado en CUP" value={amount(totalBy('CUP'))} unit="CUP" />
+        <StatCard surface="ink" label="Cobrado en USD" value={amount(totalBy('USD'))} unit="USD" />
+        <StatCard surface="ink" tone={differenceCount ? 'attention' : 'positive'} label="Cierres con diferencia" value={differenceCount} />
+      </> : undefined}
+    />
+  )
 
-function Metric({ label, value, alert = false }: { label: string; value: string; alert?: boolean }) {
-  return <div className="rounded-lg border border-[#E3EFED] p-4"><p className="text-xs text-[#5F716C]">{label}</p><p className={`mt-1 font-display text-lg font-bold ${alert ? 'text-[#C23C1C]' : 'text-[#07322F]'}`}>{value}</p></div>
+  if (!cashboxes.length) return <div className="flex flex-col gap-5">{header}<EmptyState icon={Wallet} title="Sin cobros todavía" description="Aún no hay cobros en cajas accesibles." /></div>
+  return <div className="flex flex-col gap-5">
+    {header}
+    <div className="grid items-start gap-5 xl:grid-cols-[minmax(320px,410px)_minmax(0,1fr)]">
+      <Card padded={false} className={cx('overflow-hidden', detailOpen && 'hidden xl:block')}>
+        <div className="flex items-center justify-between gap-3 border-b border-[#EEF5F4] px-4 py-3.5 md:px-[18px]">
+          <CardHeader title="Cajas por día y moneda" meta={visibleCashboxes.length === 1 ? '1 caja' : `${visibleCashboxes.length} cajas`} className="flex-1" />
+          <FilterPanel title="Filtrar cajas" eyebrow="Caja" activeFilterCount={activeFilterCount} resultCount={visibleCashboxes.length} onClear={clearFilters}>
+            <div className="grid gap-3.5">
+              <Field label="Fecha"><Input aria-label="Filtrar por fecha" type="date" value={dateFilter} onChange={(event) => setDateFilter(event.target.value)} /></Field>
+              <Field label="Sucursal"><FormSelect ariaLabel="Filtrar por sucursal" value={branchFilter} onValueChange={setBranchFilter} options={[{ value: '', label: 'Todas las sucursales' }, ...branches.map((branch) => ({ value: branch, label: branch }))]} /></Field>
+              <Field label="Vendedor"><FormSelect ariaLabel="Filtrar por vendedor" value={sellerFilter} onValueChange={setSellerFilter} options={[{ value: '', label: 'Todos los vendedores' }, ...sellers.map(([id, name]) => ({ value: id, label: name }))]} /></Field>
+            </div>
+          </FilterPanel>
+        </div>
+        <div className="xl:max-h-[68vh] xl:overflow-y-auto">
+          {visibleCashboxes.map((cashbox, index) => (
+            <ListItem
+              key={cashbox.id}
+              avatarName={cashbox.sellerName}
+              title={cashbox.sellerName}
+              meta={`${cashbox.branchName} · ${cashbox.businessDate} · ${cashbox.paymentCount} cobros`}
+              trailing={<span className="whitespace-nowrap font-display text-[15px] font-bold tabular-nums text-ink">{money(cashbox.receivedAmount, cashbox.currency)}</span>}
+              badge={<Badge tone={cashbox.primaryClosed ? 'success' : 'progress'}>{cashbox.primaryClosed ? 'Cerrada' : 'Abierta'}</Badge>}
+              selected={selectedId === cashbox.id}
+              onSelect={() => { setSelectedId(cashbox.id); setDetailOpen(true); setMessage('') }}
+              last={index === visibleCashboxes.length - 1}
+            />
+          ))}
+          {!visibleCashboxes.length ? <div className="p-4"><EmptyState icon={Wallet} title="Sin cajas con estos filtros" action={<Button variant="ghost" onClick={clearFilters}>Limpiar filtros</Button>} /></div> : null}
+        </div>
+      </Card>
+
+      {selected ? <div className={cx(!detailOpen && 'hidden xl:block')}>
+        <Card className="flex flex-col gap-5">
+          <div className="xl:hidden"><Button variant="ghost" size="sm" icon={ArrowLeft} onClick={() => setDetailOpen(false)} className="-ml-2">Volver a cajas</Button></div>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-action">{selected.branchName} · {selected.businessDate}</p>
+              <h2 className="mt-1 font-display text-[22px] font-bold tracking-[-0.02em] text-ink">Caja {selected.sellerName}</h2>
+            </div>
+            <Badge size="lg" tone={selected.primaryClosed ? 'success' : 'progress'}>{selected.primaryClosed ? 'Cierre principal realizado' : 'Abierta'}</Badge>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <StatCard label="Cobrado" value={amount(selected.receivedAmount)} unit={selected.currency} />
+            <StatCard label="Consolidado" value={amount(selected.closedExpectedAmount)} unit={selected.currency} />
+            <StatCard label="Diferencia" value={amount(selected.closedDifferenceAmount)} unit={selected.currency} tone={Number(selected.closedDifferenceAmount) !== 0 ? 'danger' : 'default'} />
+          </div>
+          {selected.closures.length ? <div>
+            <h3 className="font-display text-[17px] font-semibold text-ink">Historial de cierres</h3>
+            <div className="mt-2 divide-y divide-[#EEF5F4]">{selected.closures.map((closure) => <div key={closure.id} className="grid gap-1 py-3 text-sm sm:grid-cols-[1fr_auto]"><div><strong className="text-ink">{closure.type === 'primary' ? 'Cierre principal' : `Complementario ${closure.sequenceNumber}`}</strong><p className="text-[13px] text-text-muted">{new Date(closure.closedAt).toLocaleString('es-CU')}</p></div><div className="text-left sm:text-right"><p className="font-display font-semibold tabular-nums text-ink">{money(closure.expectedAmount, selected.currency)}</p><p className="text-[13px] text-text-muted">Declarado {money(closure.declaredAmount, selected.currency)}</p></div></div>)}</div>
+          </div> : null}
+          {isOwnCashbox ? <form onSubmit={closeCashbox} className="flex flex-col gap-3 rounded-card border border-[#E3EFED] bg-[#FBFEFD] p-4">
+            <div className="flex flex-wrap items-end gap-3">
+              <Field label={`Efectivo declarado (${selected.currency})`} className="min-w-52 flex-1">
+                <Input key={selected.id} name="declaredAmount" type="number" inputMode="decimal" min="0" step="0.01" defaultValue={(selected.primaryClosed ? selected.pendingPostCloseAmount : selected.receivedAmount).toFixed(2)} required numeric />
+              </Field>
+              <Button type="submit" icon={Lock} disabled={pending || (selected.primaryClosed && selected.pendingPostCloseAmount <= 0)} className="w-full sm:w-auto">{selected.primaryClosed ? 'Generar complementario' : 'Cerrar caja del día'}</Button>
+            </div>
+            {selected.primaryClosed ? <p className="text-[13px] text-text-muted">Pendiente posterior al cierre: {money(selected.pendingPostCloseAmount, selected.currency)}</p> : null}
+          </form> : <Alert tone="info">Vista de revisión. Solo el vendedor responsable puede cerrar esta caja.</Alert>}
+          {message ? <Alert tone="danger" role="alert">{message}</Alert> : null}
+          <Alert tone="info" title="Cómo funciona tu caja.">Cada moneda se cierra por separado. Los cobros posteriores permanecen disponibles para un cierre complementario sin alterar el principal.</Alert>
+        </Card>
+      </div> : null}
+    </div>
+    <Toast message={toast} onDismiss={() => setToast('')} />
+  </div>
 }

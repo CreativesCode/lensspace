@@ -2,9 +2,9 @@ import type { HTMLAttributes, ReactNode } from 'react'
 
 import { cx } from './cx'
 
-export function Card({ padded = true, className, children, ...props }: { padded?: boolean; children: ReactNode } & HTMLAttributes<HTMLElement>) {
+export function Card({ padded = true, tone = 'default', className, children, ...props }: { padded?: boolean; tone?: 'default' | 'danger'; children: ReactNode } & HTMLAttributes<HTMLElement>) {
   return (
-    <section className={cx('min-w-0 rounded-card border border-[#E3EFED] bg-surface shadow-e1', padded && 'p-5 md:px-[22px]', className)} {...props}>
+    <section className={cx('min-w-0 rounded-card border bg-surface shadow-e1', tone === 'danger' ? 'border-[#FFD9CD]' : 'border-[#E3EFED]', padded && 'p-5 md:px-[22px]', className)} {...props}>
       {children}
     </section>
   )
