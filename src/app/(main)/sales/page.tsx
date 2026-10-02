@@ -28,12 +28,11 @@ export default async function SalesPage() {
   })
   const uniqueScopes = [...new Map(scopes.map((scope) => [`${scope.organizationId}:${scope.branch.id}`, scope])).values()]
   const branchIds = uniqueScopes.map(({ branch }) => branch.id)
-  const [{ data: customerData }, { data: revisionData }] = branchIds.length
-    ? await Promise.all([
-        supabase.from('customers').select('id, organization_id, branch_id, full_name').in('branch_id', branchIds).is('archived_at', null).order('full_name').limit(200),
-        supabase.from('prescription_revisions').select('id, organization_id, branch_id, prescription_id, prescription_date, prescriptions(customer_id)').in('branch_id', branchIds).order('created_at', { ascending: false }).limit(200),
-      ])
-    : [{ data: [] }, { data: [] }]
+  // Only the latest customers; the picker searches the rest on demand and loads
+  // prescriptions for the selected customer (QA-12).
+  const { data: customerData } = branchIds.length
+    ? await supabase.from('customers').select('id, organization_id, branch_id, full_name').in('branch_id', branchIds).is('archived_at', null).order('updated_at', { ascending: false }).limit(10)
+    : { data: [] }
   const operability = new Map<number, boolean>()
   await Promise.all(organizationIds.map(async (organizationId) => {
     const { data } = await supabase.rpc('current_user_can_operate_organization', { target_organization_id: organizationId, required_module_key: 'optical_sales' } as never)
@@ -48,7 +47,6 @@ export default async function SalesPage() {
     canApproveLargeDiscount: memberships.some((entry) => entry.organization_id === organizationId && entry.role === 'owner'),
   }))
   type CustomerRow = { id: number; organization_id: number; branch_id: number; full_name: string }
-  type RevisionRow = { id: number; organization_id: number; branch_id: number; prescription_id: number; prescription_date: string; prescriptions: { customer_id: number } | null }
   type ItemRow = { id: number; organization_id: number | null; category: string; name: string; sale_price: number; currency: string }
   type OverrideRow = { organization_id: number; catalog_item_id: number; sale_price: number | null; currency: string | null; is_enabled: boolean | null }
   const overrides = (overrideData ?? []) as unknown as OverrideRow[]
@@ -62,8 +60,7 @@ export default async function SalesPage() {
   return <PageContainer>
     <PageHeader eyebrow="Ventas ópticas" title="Nueva venta" description="Cliente, receta, configuración y aceptación en un flujo trazable." />
     <SalesWorkspace organizations={organizations}
-      customers={((customerData ?? []) as unknown as CustomerRow[]).map((entry) => ({ id: entry.id, organizationId: entry.organization_id, branchId: entry.branch_id, name: entry.full_name }))}
-      revisions={((revisionData ?? []) as unknown as RevisionRow[]).map((entry) => ({ id: entry.id, organizationId: entry.organization_id, branchId: entry.branch_id, customerId: entry.prescriptions?.customer_id ?? 0, label: `Receta #${entry.prescription_id} · ${entry.prescription_date}` }))}
+      recentCustomers={((customerData ?? []) as unknown as CustomerRow[]).map((entry) => ({ id: entry.id, organizationId: entry.organization_id, branchId: entry.branch_id, name: entry.full_name }))}
       items={items} />
   </PageContainer>
 }

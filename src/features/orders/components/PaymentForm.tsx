@@ -26,17 +26,22 @@ export function PaymentForm({ balanceCup, defaultRate, pending, onSubmit }: { ba
   const numericAmount = Number(amount) || 0
   const numericRate = currency === 'USD' ? Number(rate) || 0 : 1
   const equivalent = numericAmount * numericRate
-  const over = equivalent > balanceCup + 0.001
+  // A USD payment rounded up to the cent may exceed the balance by less than one cent
+  // (product decision, mirrored by the server); anything beyond is an overpayment.
+  const tolerance = currency === 'USD' && balanceCup > 0 ? numericRate * 0.01 : 0.001
+  const over = equivalent - balanceCup >= tolerance
   const canSubmit = numericAmount > 0 && numericRate > 0 && !over && !pending
 
   const feedback = over
     ? `Supera el saldo en ${formatAmount(equivalent - balanceCup)} CUP`
-    : numericAmount
+    : numericAmount && equivalent > balanceCup
+      ? `= ${formatAmount(equivalent)} CUP · salda el pedido (redondeo de ${formatAmount(equivalent - balanceCup)} CUP)`
+      : numericAmount
       ? currency === 'USD' ? `= ${formatAmount(equivalent)} CUP · quedarían ${formatAmount(balanceCup - equivalent)} CUP` : `Quedarían ${formatAmount(balanceCup - equivalent)} CUP`
       : `Saldo actual ${formatAmount(balanceCup)} CUP`
 
   function fillBalance() {
-    const value = currency === 'USD' ? Math.floor((balanceCup / (numericRate || defaultRate)) * 100) / 100 : balanceCup
+    const value = currency === 'USD' ? Math.ceil(Math.round((balanceCup / (numericRate || defaultRate)) * 1e6) / 1e4) / 100 : balanceCup
     requestId.current = null
     setAmount(String(value))
   }

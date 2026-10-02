@@ -92,14 +92,14 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 | QA-09 | `/production` crashes to 'This page couldn't load' when the post-mutation refetch fails | high | bug | RC-04 | done 2026-10-02 | S |
 | QA-10 | Delivery event attributed to 'Sistema' (no `delivered_by`) | medium | data-integrity | SOLO-09, MR-09 | done 2026-10-02 | S |
 | QA-11 | Client 'today' in UTC: prescription date defaults to tomorrow after 20:00 Havana | medium | data-integrity | SALES-14, RC-13 | done 2026-10-02 | S |
-| QA-12 | Sale customer picker: no search, capped at 200 customers / 200 revisions | high | friction | SALES-04, SOLO-17, PERF-03, RC-12 | confirmed | M |
+| QA-12 | Sale customer picker: no search, capped at 200 customers / 200 revisions | high | friction | SALES-04, SOLO-17, PERF-03, RC-12 | done 2026-10-02 (deep link from /customers pending) | M |
 | QA-13 | Production assignment only from `/production`, order chosen by number only, no auto provider | medium | friction | MR-12, MR-11 (selector), RC-15 (label) | confirmed | M |
 | QA-14 | Delivery not tied to production; no 'Listo para recoger' or production strip in order detail | medium | missing-feature | SOLO-10, MR-08 | confirmed | M |
-| QA-15 | Two-step save/accept, no total before saving, redundant `calculate_sale_price` round trip | medium | friction | SALES-11, PERF-12 | confirmed | M |
-| QA-16 | Mobile: total and Save/Accept buttons ~3000 px down, no sticky bar | medium | mobile | SOLO-16, SALES-12 | confirmed | S |
+| QA-15 | Two-step save/accept, no total before saving, redundant `calculate_sale_price` round trip | medium | friction | SALES-11, PERF-12 | done 2026-10-02 (interim Promise.all) | M |
+| QA-16 | Mobile: total and Save/Accept buttons ~3000 px down, no sticky bar | medium | mobile | SOLO-16, SALES-12 | done 2026-10-02 | S |
 | QA-17 | Sale draft lost on reload/back/tab kill; saved quotations cannot be resumed | medium | offline | SALES-07, PERF-09, RC-11 | confirmed | S |
-| QA-18 | Paying the full balance in USD leaves a CUP residue that blocks delivery | medium | bug | SALES-08 | confirmed | S |
-| QA-19 | Nueva venta blocks real homonyms and never checks duplicate phones | medium | bug | SALES-05 | confirmed | M |
+| QA-18 | Paying the full balance in USD leaves a CUP residue that blocks delivery | medium | bug | SALES-08 | done 2026-10-02 | S |
+| QA-19 | Nueva venta blocks real homonyms and never checks duplicate phones | medium | bug | SALES-05 | partial 2026-10-02 (homonyms no longer blocked; phone warning pending) | M |
 | QA-20 | Phones stored in two formats ('50000101' vs '5350000101'); duplicates missed | medium | data-integrity | SALES-13 | confirmed | S |
 | QA-21 | No pending label and no request timeout on Save/Accept/Pay | medium | friction | SALES-18 (labels), RC-10 | confirmed | S |
 | QA-22 | Rate hardcoded to 420; absurd rate accepted; native English validation | low | friction | SOLO-15, SALES-18 (rate) | confirmed | S |
@@ -365,6 +365,8 @@ Target for a solo owner on a phone:
   - A 'Nueva venta' button on the `/customers` card → `/sales?clienteId=…`.
 - **Verify:** seed 250 customers → verificar: 'Zoila…' is found by name and by the last 4 phone digits; the `/sales` RSC payload no longer grows with the customer count.
 
+- **Done (2026-10-02):** `CustomerSearchPicker` searches by name or any part of a phone (≥2 chars, 300 ms debounce, 12 results, scoped to the branch) and lists the 10 most recent customers. Prescriptions load only for the selected customer (latest 20). `/sales/page.tsx` no longer preloads 200 customers and 200 revisions. Verified on desktop (by name) and at 390 px (by the phone digits '0403'). Pending: a 'Nueva venta' button on the `/customers` card with `?clienteId=`.
+
 ### QA-13 Assign production from the sale/order (medium, M)
 - **Problem:** sending lenses to the lab requires going to `/production`, opening a dialog, and finding the order in a selector. The selector lists every order, including delivered ones and orders that already have a job, labelled by number only. It defaults to the newest order and the provider is not preselected. That is 6 clicks plus navigation, with a risk of the wrong order.
 - **Evidence:** `multirole/javier-assign-dialog.png`.
@@ -397,6 +399,14 @@ Target for a solo owner on a phone:
   - Hide the scope select when there is one scope.
 - **Verify:** existing customer + 1 item → verificar: total visible before saving, accept in 1 click, ≤ 2 RPCs to an accepted order.
 
+- **Done (2026-10-02, interim):** what changed:
+  - A live 'Total estimado' (agreed prices per currency plus the CUP equivalent at the sale rate) shows before saving, noting that graduation surcharges are confirmed on accept.
+  - 'Cliente acepta · crear pedido' is the primary action and saves when needed, then accepts. 'Guardar cotización' is secondary.
+  - `calculate_sale_price` and `save_quotation` run in parallel.
+  - The scope select is hidden with a single scope.
+  - Verified: an existing customer plus 1 item, then 1 tap, gave the order in about 0.9 s with RPCs calculate+save (parallel) then accept.
+  - Still pending: `save_quotation` returning the pricing so one RPC can be dropped.
+
 ### QA-16 Mobile sticky action bar (medium, S)
 - **Problem:** at 390 px the summary and the Save/Accept buttons sit after 13–14 catalog cards and the notes field. The page is about 3019 px tall, so the seller scrolls several screens for each change.
 - **Evidence:** `sales-friction/mobile-quotation.png`, `solo-owner/m-06-sale-quote.png`.
@@ -405,6 +415,8 @@ Target for a solo owner on a phone:
   - Below xl, add a fixed bottom bar using the existing tokens and safe-area padding, holding the total or item count and the primary action.
   - Use 2-column item cards on mobile, or collapsible categories.
 - **Verify:** at 390x844 → verificar: total + primary action visible at every scroll position, no horizontal overflow, and the bar does not cover the last field.
+
+- **Done (2026-10-02):** below xl a fixed bottom bar shows the total (estimated or confirmed), the item count and 'Cliente acepta', with safe-area padding and `pb-24` on the form. Item cards use 2 columns on mobile, and long names wrap. Verified at 390x844: the bar is visible, no card or page overflows horizontally, and accepting from the bar created QSB-2026-000005.
 
 ### QA-17 Persist the sale draft (medium, S)
 - **Problem:** a reload, back navigation, tab eviction or the offline error page (QA-28) resets the customer, items, agreed prices, rate (back to 420) and notes. Saved-but-unaccepted quotations cannot be resumed: 11 are orphaned in org 2.
@@ -423,6 +435,8 @@ Target for a solo owner on a phone:
 - **Fix (suggested rule):** when currency = USD and the overshoot is less than `rate × 0.01`, accept and cap `equivalent_cup` at the remaining balance. The client uses `Math.ceil` with the same tolerance.
 - **Verify:** 7000 CUP at 420 paid as 'saldo completo' USD → verificar: balance 0 and delivery enabled.
 
+- **Done (2026-10-02):** migration `20261002185730_allow_usd_rounding_on_final_payment.sql` lets a USD payment exceed the balance by less than one USD cent at the applied rate; `payment_status` becomes `paid`. In `PaymentForm`, 'Cobrar saldo completo' in USD rounds up to the cent (float-safe), the over-balance check uses the same tolerance, and the feedback reads 'salda el pedido (redondeo de X CUP)'. Verified: 7000 CUP at 420 gives 16.67 USD (7001.4 CUP), the balance is 0 and delivery is enabled.
+
 ### QA-19 Duplicate warning in Nueva venta (medium, M)
 - **Problem:** an exact name match silently selects the existing customer and keeps blocking, so a real homonym can never be created from a sale. There is no phone check at all. BUSINESS_LOGIC asks to warn, not forbid.
 - **Evidence:** `sales-friction/homonym-blocked.png`; customer 51 was created on an existing phone.
@@ -430,6 +444,7 @@ Target for a solo owner on a phone:
 - **Fix:** extract the `/customers` duplicate query (name `ilike` + normalized phone) into a shared helper and list the matches with 'Usar este cliente' and 'Es otra persona, crear'.
 - **Verify:** same name with a different phone → verificar: a warning, then confirm creates the customer; same phone → verificar: a warning appears.
 
+- **Partial (2026-10-02):** the blocking exact-name check was removed with QA-12, so real homonyms can be created. The duplicate-phone warning is still pending.
 ### QA-20 Canonical Cuban phone numbers (medium, S)
 - **Problem:** '50000101' and '+53 5000 0101' are stored as different normalized numbers, so the duplicate check misses them. WhatsApp through OpenWA needs the country code.
 - **Evidence:** customer 55 is stored as '50000101' while others are '5350000101'; `sales-friction/customers-duplicate-warning.png`.

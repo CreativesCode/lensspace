@@ -10,16 +10,21 @@ const amount = (value: number) => Number(value).toLocaleString('es-CU', { maximu
 
 type QuoteSummaryProps = {
   preview: PriceResult | null
+  estimate: Record<string, number>
+  estimateCup: number
   selectedCount: number
   quotationId: number | null
   pending: boolean
   canOperate: boolean
+  canAccept: boolean
   message: string
   onAccept: () => void
 }
 
-// Lives inside the sale <form>: "Guardar cotización" submits it.
-export function QuoteSummary({ preview, selectedCount, quotationId, pending, canOperate, message, onAccept }: QuoteSummaryProps) {
+// Lives inside the sale <form>: "Guardar cotización" submits it, while "Cliente acepta"
+// saves (when needed) and creates the order in one tap.
+export function QuoteSummary({ preview, estimate, estimateCup, selectedCount, quotationId, pending, canOperate, canAccept, message, onAccept }: QuoteSummaryProps) {
+  const estimateTotals = Object.entries(estimate)
   return (
     <Card padded={false} className="h-fit overflow-hidden xl:sticky xl:top-6">
       <div className="border-b border-line-soft px-5 py-4">
@@ -52,11 +57,22 @@ export function QuoteSummary({ preview, selectedCount, quotationId, pending, can
             {/* Catalog advisories inform; they never block the sale. */}
             {preview.warnings.map((warning, index) => <Alert key={index} tone="warning">{warning.message}</Alert>)}
           </>
+        ) : estimateTotals.length ? (
+          <div className="flex flex-col gap-1.5">
+            {estimateTotals.map(([currency, total]) => (
+              <p key={currency} className="flex justify-between font-display text-2xl font-bold tabular-nums tracking-[-0.02em] text-ink">
+                <span>Total estimado</span>
+                <span>{amount(total)} <span className="text-sm font-medium text-text-muted">{currency}</span></span>
+              </p>
+            ))}
+            {estimate.USD ? <p className="text-right text-[13px] text-text-muted">Equivalente: {amount(estimateCup)} CUP</p> : null}
+            <p className="text-[13px] text-text-muted">Se confirma al crear el pedido; puede incluir recargos por graduación.</p>
+          </div>
         ) : (
-          <p className="rounded-control border border-dashed border-line p-5 text-sm text-text-muted">Guarda para obtener el desglose definitivo.</p>
+          <p className="rounded-control border border-dashed border-line p-5 text-sm text-text-muted">Elige cliente y conceptos para ver el total.</p>
         )}
-        <Button type="submit" icon={Save} block disabled={pending || !canOperate}>{quotationId ? 'Actualizar cotización' : 'Guardar cotización'}</Button>
-        {quotationId ? <Button variant="ink" icon={CircleCheck} block onClick={onAccept} disabled={pending}>Cliente acepta · crear pedido</Button> : null}
+        <Button variant="ink" icon={CircleCheck} block onClick={onAccept} disabled={pending || !canOperate || !canAccept}>{pending ? 'Procesando…' : 'Cliente acepta · crear pedido'}</Button>
+        {!quotationId ? <Button type="submit" variant="secondary" icon={Save} block disabled={pending || !canOperate}>Guardar cotización</Button> : null}
         {message ? <Alert tone="info">{message}</Alert> : null}
       </div>
     </Card>

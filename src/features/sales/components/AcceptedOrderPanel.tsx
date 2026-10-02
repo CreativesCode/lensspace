@@ -13,7 +13,7 @@ import { Alert, Button, ButtonLink, Card, CardHeader, ProgressBar, Toast } from 
 import type { AcceptedOrder, PriceResult } from './sale-types'
 
 // After acceptance the seller can take the first payment with the same form as /orders.
-export function AcceptedOrderPanel({ order, customerName, preview, onNewSale }: { order: AcceptedOrder; customerName: string; preview: PriceResult; onNewSale: () => void }) {
+export function AcceptedOrderPanel({ order, customerName, preview, onNewSale }: { order: AcceptedOrder; customerName: string; preview: PriceResult | null; onNewSale: () => void }) {
   const supabase = useMemo(() => createClient(), [])
   const [summary, setSummary] = useState<PaymentSummary | null>(null)
   const [error, setError] = useState('')
@@ -71,7 +71,7 @@ export function AcceptedOrderPanel({ order, customerName, preview, onNewSale }: 
         </div>
       </div>
 
-      <Card>
+      {preview ? <Card>
         <CardHeader title="Detalle del pedido" />
         <div className="mt-3 divide-y divide-line-soft">
           {preview.lineItems.map((line, index) => (
@@ -86,7 +86,7 @@ export function AcceptedOrderPanel({ order, customerName, preview, onNewSale }: 
             <p key={currency} className="flex justify-between font-display text-xl font-bold tabular-nums text-ink"><span>Total</span><span>{formatAmount(total)} {currency}</span></p>
           ))}
         </div>
-      </Card>
+      </Card> : null}
 
       <Card className="flex flex-col gap-4">
         <div>

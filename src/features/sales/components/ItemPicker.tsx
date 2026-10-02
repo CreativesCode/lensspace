@@ -31,7 +31,7 @@ export function ItemPicker({ groupedItems, selected, agreedPrices, adjustmentRea
       {groupedItems.map(([category, categoryItems]) => (
         <div key={category}>
           <h3 className="mb-2.5 text-xs font-bold uppercase tracking-[0.16em] text-text-muted">{categoryLabels[category] ?? 'Otro concepto'}</h3>
-          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-3">
             {categoryItems.map((item) => {
               const active = selected.includes(item.id)
               const agreedAmount = agreedPrices[item.id] ?? String(item.price)
@@ -43,7 +43,7 @@ export function ItemPicker({ groupedItems, selected, agreedPrices, adjustmentRea
                       {active ? <Check size={14} strokeWidth={3} /> : null}
                     </span>
                     <span className="min-w-0">
-                      <strong className="block font-display text-[15px] font-semibold text-ink">{item.name}</strong>
+                      <strong className="block font-display text-[15px] font-semibold text-ink [overflow-wrap:anywhere]">{item.name}</strong>
                       <span className="mt-0.5 block text-sm font-semibold tabular-nums text-action">Base: {item.price.toLocaleString('es-CU')} {item.currency}</span>
                     </span>
                   </button>
