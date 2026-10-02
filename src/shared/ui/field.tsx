@@ -10,11 +10,17 @@ import { cx } from './cx'
 const controlBase =
   'w-full min-w-0 rounded-control px-3.5 outline-none transition placeholder:text-[#8A9A96] focus:border-[1.5px] focus:border-action focus:bg-surface focus:ring-4 focus:ring-action-soft disabled:cursor-not-allowed disabled:opacity-60'
 
-export function controlClasses({ invalid = false, numeric = false, className }: { invalid?: boolean; numeric?: boolean; className?: string } = {}) {
+export type ControlSize = 'md' | 'lg'
+
+// md = 44 px (guide default); lg = 48 px with a 20 px figure for amount entry.
+export function controlClasses({ invalid = false, numeric = false, controlSize = 'md', className }: { invalid?: boolean; numeric?: boolean; controlSize?: ControlSize; className?: string } = {}) {
+  const text = numeric
+    ? cx('font-display tabular-nums text-ink', controlSize === 'lg' ? 'text-[20px] font-bold' : 'text-[16px] font-semibold')
+    : 'text-[16px] text-text md:text-[15px]'
   return cx(
     controlBase,
     invalid ? 'border-[1.5px] border-coral bg-[#FFFAF8]' : 'border border-line bg-[#FBFEFD]',
-    numeric ? 'font-display text-[16px] font-semibold tabular-nums text-ink' : 'text-[16px] text-text md:text-[15px]',
+    text,
     className,
   )
 }
@@ -43,14 +49,16 @@ export function Field({ label, help, error, optional = false, as: Wrapper = 'lab
   )
 }
 
-type InputProps = InputHTMLAttributes<HTMLInputElement> & { invalid?: boolean; numeric?: boolean; leadingIcon?: LucideIcon }
+type InputProps = InputHTMLAttributes<HTMLInputElement> & { invalid?: boolean; numeric?: boolean; controlSize?: ControlSize; leadingIcon?: LucideIcon }
 
-export function Input({ invalid, numeric, leadingIcon: Icon, className, ...props }: InputProps) {
-  if (!Icon) return <input aria-invalid={invalid || undefined} className={cx(controlClasses({ invalid, numeric }), 'h-11', className)} {...props} />
+export function Input({ invalid, numeric, controlSize = 'md', leadingIcon: Icon, className, ...props }: InputProps) {
+  const height = controlSize === 'lg' ? 'h-12' : 'h-11'
+  if (!Icon) return <input aria-invalid={invalid || undefined} className={cx(controlClasses({ invalid, numeric, controlSize }), height, className)} {...props} />
+  // With an icon, `className` sizes the wrapper (e.g. flex-1 in a toolbar).
   return (
-    <span className="relative flex min-w-0">
+    <span className={cx('relative flex min-w-0', className)}>
       <Icon aria-hidden="true" size={17} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
-      <input aria-invalid={invalid || undefined} className={cx(controlClasses({ invalid, numeric }), 'h-11 pl-10', className)} {...props} />
+      <input aria-invalid={invalid || undefined} className={cx(controlClasses({ invalid, numeric, controlSize }), height, 'pl-10')} {...props} />
     </span>
   )
 }

@@ -1,7 +1,7 @@
 # PRP: Migración gradual a la Guía UI 2.0
 
 > **Estado**: EN EJECUCIÓN (aprobado 2026-10-01)
-> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ (pendiente revisión manual) · Fase 4 siguiente
+> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ · Fase 4 ✅ (pendiente revisión manual) · Fase 5 siguiente
 > **Fecha**: 2026-10-01
 > **Proyecto**: LensSpace
 
@@ -147,7 +147,7 @@ $$;
 **Objetivo**: `MainNavigation` con un icono por destino (incluido Organizaciones, que no aparece en la guía), barra de acento, etiquetas de sección AA y "Nueva venta" como `Button`. Cabecera móvil en tinta y `MobileSidebar` con la misma lista. Bloque de usuario con avatar de iniciales, `profiles.display_name` y rol, y subtítulo con el nombre de la organización en lugar de "Gestión óptica". Ambos datos se leen en `(main)/layout.tsx`, que ya consulta las membresías. Los contadores de pendientes van en la Fase 11 (D2).
 **Validación**: revisión manual del usuario en escritorio y en 390 px por rol. Se mantienen la navegación por teclado, `aria-current` y el filtrado por `allowedHrefs`.
 
-### Fase 4: Piloto, Pedidos y cobros v2
+### Fase 4: Piloto, Pedidos y cobros v2 ✅ (2026-10-01)
 **Objetivo**: recomponer `orders/page.tsx` y `OrderPaymentsWorkspace` según la v2: `PageHeader` destacado con KPIs, chips con contador, `ListItem` con `Badge` por tono, panel de saldo, cobro con segmentado CUP/USD y equivalencia en vivo, pestañas Pagos/Historial, timeline y entrega bloqueada con explicación. Incluye la extensión aditiva de `list_accessible_orders` (D1) y la fuente de "cobrado hoy".
 **Validación**: lista de revisión manual del flujo completo (cobro CUP, cobro USD con tasa, saldo 0, entregar, filtros por chip y fecha, detalle en móvil con "volver"). Comparado a ojo con el mockup.
 
@@ -213,10 +213,20 @@ $$;
 - **Fix**: las utilidades del mismo grupo (color, fondo, peso, tamaño) se eligen de forma exclusiva con ternarios; el peso de fuente vive en cada variante del botón.
 - **Aplicar en**: toda primitiva con variantes y todo `className` que el consumidor sobrescriba; no "pisar" una clase pasando otra del mismo grupo.
 
+### 2026-10-01: Al consumir primitivas, `className` solo para layout
+- **Error**: en el piloto se pasaron `h-12 text-[20px]` a `Input`, `justify-start` a `Button` y un color a un `Button ghost`: chocan con las clases internas.
+- **Fix**: variantes explícitas (`Input controlSize="lg"`), envolver en un contenedor para alinear y no recolorear variantes. Con `leadingIcon`, el `className` de `Input` va al contenedor.
+- **Aplicar en**: todas las vistas de las fases 5–8: `className` de primitivas solo para layout (margin, flex, grid, width); el resto, por props.
+
+### 2026-10-01: D1 aplicado — payload de pedidos
+- `list_accessible_orders` agrega `paidCup`, `balanceCup`, `paidTodayCup` (por `payments.business_date` en la zona horaria de la organización, igual que la caja) y `hasOpenIncident` (incidencia sin `rework_job_id`). `get_order_payment_summary` agrega `notes`. Migración `20261002013055_extend_order_list_for_ui_v2.sql`, security invoker, advisors sin hallazgos nuevos.
+- El efecto de auto-apertura en escritorio no puede llamar `setState` directo (`react-hooks/set-state-in-effect`): se carga dentro de `startTransition` y se fija la selección al terminar.
+
 ---
 
 ## Gotchas
 
+- [ ] **Móvil obligatorio (usuario, 2026-10-01):** cada vista migrada debe funcionar completa en ~390 px (un panel a la vez en lista/detalle con "volver", diálogos que caben y hacen scroll, objetivos ≥ 44 px, inputs de 16 px, sin scroll horizontal). Cada checklist de revisión incluye pasos móviles.
 - [ ] **Validación visual manual (decisión del usuario, 2026-10-01):** no se hacen capturas con Playwright. Cada fase termina con una lista concreta de pantallas y detalles a revisar.
 
 - [ ] `tailwind.config.ts` redefine `rounded-lg` y `rounded-xl` como 7 px, y `slate`, `sky`, `emerald` y `red` como la paleta de marca. Hoy `sky-700` ya es teal, no azul. Cambiar estos valores es un cambio global. Solo se hace en la Fase 9.
