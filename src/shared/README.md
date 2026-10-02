@@ -4,6 +4,12 @@ Código compartido entre todas las features del proyecto.
 
 ## Estructura
 
+### `ui/`
+Primitivas UI 2.0 sin lógica de negocio (`Button`, `Field`, `Badge`, `Card`, `PageHeader`,
+`ListItem`, `StatCard`, `Tabs`, `FilterChips`, `Timeline`, `Alert`, `Dialog`, `Toast`…),
+construidas con los tokens de `tailwind.config.ts` según `docs/design/Guía UI LensSpace.dc.html`.
+El mapeo estado de negocio → `tone` vive en cada feature. Importar desde `@/shared/ui`.
+
 ### `components/`
 UI components genéricos reutilizables (Button, Card, Input, Modal, etc.)
 

@@ -1,7 +1,7 @@
 # PRP: Migración gradual a la Guía UI 2.0
 
 > **Estado**: EN EJECUCIÓN (aprobado 2026-10-01)
-> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 en curso
+> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 en curso
 > **Fecha**: 2026-10-01
 > **Proyecto**: LensSpace
 
@@ -139,7 +139,7 @@ $$;
 **Objetivo**: variables `--ls-*` en `globals.css` y tokens semánticos, radios `badge/control/card/panel` y sombras `e1–e3` en `tailwind.config.ts`, sin tocar vistas. Corrección de contraste como cambio mecánico de color: `slate-500` pasa a `#5F716C`, los literales `#74857F` (unos 100) se reemplazan por `#5F716C` y `#4D7A74` por `#7FB3AC`. No cambia ninguna forma ni ningún layout.
 **Validación**: lint, typecheck y build pasan. Revisión manual: solo cambian esos tonos de texto.
 
-### Fase 2: Primitivas en `src/shared/ui`
+### Fase 2: Primitivas en `src/shared/ui` ✅ (2026-10-01)
 **Objetivo**: implementar las primitivas listadas, accesibles (foco visible, `aria-*`, objetivos de 44 px), siguiendo las medidas de la guía, sin lógica de negocio y con iconos `lucide-react`.
 **Validación**: typecheck estricto sin `any`, lint y build pasan. Cada primitiva se usa al menos una vez en la Fase 4.
 
@@ -207,6 +207,11 @@ $$;
 - **Error**: riesgo de que definir `amber: { ink, soft }` borrara `amber-50/700` aún usados en auth.
 - **Fix**: verificado en el CSS compilado que Tailwind fusiona el objeto; `amber-50/700` siguen existiendo.
 - **Aplicar en**: cualquier token semántico nuevo que comparta nombre con una paleta de Tailwind.
+
+### 2026-10-01: Utilidades de Tailwind en conflicto dentro de una primitiva
+- **Error**: `controlClasses` apilaba `text-text` + `text-ink`, dos `bg-*` y `font-semibold` + `font-bold` según la variante. Tailwind resuelve por orden del stylesheet, no por orden de clases, así que el resultado era impredecible.
+- **Fix**: las utilidades del mismo grupo (color, fondo, peso, tamaño) se eligen de forma exclusiva con ternarios; el peso de fuente vive en cada variante del botón.
+- **Aplicar en**: toda primitiva con variantes y todo `className` que el consumidor sobrescriba; no "pisar" una clase pasando otra del mismo grupo.
 
 ---
 
