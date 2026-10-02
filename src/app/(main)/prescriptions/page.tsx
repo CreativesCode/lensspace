@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { PrescriptionWorkspace } from '@/features/prescriptions/components'
 import type { Tables } from '@/lib/supabase/database.types'
 import { createClient } from '@/lib/supabase/server'
+import { PageContainer, PageHeader } from '@/shared/ui'
 
 export default async function PrescriptionsPage() {
   const supabase = await createClient()
@@ -49,13 +50,9 @@ export default async function PrescriptionsPage() {
     .limit(100)
 
   return (
-    <section className="mx-auto max-w-[1280px] px-5 py-8 lg:px-8">
-      <div className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D7A72]">Clínica</p>
-        <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-[#07322F]">Recetas</h1>
-        <p className="mt-2 text-sm text-[#5F716C]">Originales privados y correcciones preservadas por cliente.</p>
-      </div>
+    <PageContainer narrow>
+      <PageHeader eyebrow="Clínica" title="Recetas" description="Originales privados y correcciones preservadas por cliente." />
       <PrescriptionWorkspace scopes={uniqueScopes} customers={(customerData ?? []) as never} />
-    </section>
+    </PageContainer>
   )
 }

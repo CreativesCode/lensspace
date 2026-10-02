@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { CustomerWorkspace } from '@/features/customers/components'
 import { createClient } from '@/lib/supabase/server'
 import type { Tables } from '@/lib/supabase/database.types'
+import { PageContainer, PageHeader } from '@/shared/ui'
 
 export default async function CustomersPage() {
   const supabase = await createClient()
@@ -62,13 +63,9 @@ export default async function CustomersPage() {
   const uniqueScopes = [...new Map(scopes.map((scope) => [`${scope.organizationId}:${scope.branchId}`, scope])).values()]
 
   return (
-    <section className="mx-auto max-w-[1440px] px-5 py-7 sm:px-7 lg:px-10">
-      <div className="mb-6">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#0D7A72]">Ventas ópticas</p>
-        <h1 className="mt-1 font-display text-3xl font-bold tracking-[-0.03em] text-[#07322F]">Clientes</h1>
-        <p className="mt-2 text-sm text-[#5F716C]">Busca por nombre o teléfono, reutiliza fichas existentes y registra nuevos clientes.</p>
-      </div>
+    <PageContainer>
+      <PageHeader eyebrow="Ventas ópticas" title="Clientes" description="Busca por nombre o teléfono, reutiliza fichas existentes y registra nuevos clientes." />
       <CustomerWorkspace scopes={uniqueScopes} />
-    </section>
+    </PageContainer>
   )
 }

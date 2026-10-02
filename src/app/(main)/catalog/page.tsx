@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { CatalogWorkspace } from '@/features/catalog/components'
 import type { Tables } from '@/lib/supabase/database.types'
 import { createClient } from '@/lib/supabase/server'
+import { PageContainer, PageHeader } from '@/shared/ui'
 
 export default async function CatalogPage() {
   const supabase = await createClient()
@@ -50,8 +51,8 @@ export default async function CatalogPage() {
   >[]
 
   return (
-    <section className="mx-auto max-w-[1440px] px-5 py-8 lg:px-8">
-      <div className="mb-6"><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D7A72]">{isPlatformAdmin ? 'Administración de plataforma' : 'Ventas ópticas'}</p><h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-[#07322F]">{isPlatformAdmin ? 'Catálogo base' : 'Catálogo y precios'}</h1><p className="mt-2 text-sm text-[#5F716C]">{isPlatformAdmin ? 'Mantén los artículos globales disponibles para las organizaciones.' : 'Configura precios por organización y simula combinaciones sin perder la moneda de origen.'}</p></div>
+    <PageContainer>
+      <PageHeader eyebrow={isPlatformAdmin ? 'Administración de plataforma' : 'Ventas ópticas'} title={isPlatformAdmin ? 'Catálogo base' : 'Catálogo y precios'} description={isPlatformAdmin ? 'Mantén los artículos globales disponibles para las organizaciones.' : 'Configura precios por organización y simula combinaciones sin perder la moneda de origen.'} />
       <CatalogWorkspace
         isPlatformAdmin={Boolean(isPlatformAdmin)}
         organizations={access}
@@ -60,6 +61,6 @@ export default async function CatalogPage() {
         rules={(rules ?? []) as Tables<'graduation_rules'>[]}
         prescriptions={prescriptionRevisions.map((revision) => ({ id: revision.id, organizationId: revision.organization_id, label: `Receta #${revision.prescription_id} · rev. ${revision.revision_number} · ${revision.prescription_date}` }))}
       />
-    </section>
+    </PageContainer>
   )
 }

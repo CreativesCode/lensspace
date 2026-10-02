@@ -1,7 +1,7 @@
 # PRP: Migración gradual a la Guía UI 2.0
 
 > **Estado**: EN EJECUCIÓN (aprobado 2026-10-01)
-> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ · Fase 4 ✅ (aprobada por el usuario) · Fase 5 ✅ (pendiente revisión manual) · Fase 6 siguiente
+> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ · Fase 4 ✅ (aprobada por el usuario) · Fase 5 ✅ · Fase 6 ✅ (pendiente revisión manual) · Fase 7 siguiente
 > **Fecha**: 2026-10-01
 > **Proyecto**: LensSpace
 
@@ -155,7 +155,7 @@ $$;
 **Objetivo**: login, signup, set-password, callback, `UpdatePasswordForm`, `PasswordInput` y `OrganizationOnboardingForm` sobre `Field`, `Button` y `Alert`, eliminando `sky-*` y `amber-*` (hallazgo 01).
 **Validación**: login, recuperación y activación funcionan. Un `grep` de `sky-|amber-` en esos archivos da 0.
 
-### Fase 6: Panel principal y `PageHeader` en todas las páginas
+### Fase 6: Panel principal y `PageHeader` en todas las páginas ✅ (2026-10-01)
 **Objetivo**: el dashboard por rol con `PageHeader` destacado (saludo, sucursal, fecha y cifras que ya se cargan), `DashboardCard` sin primarios que compitan y `OwnerAnalyticsDashboard` con `StatCard`. Reemplazar el bloque eyebrow + h1 repetido en las 12 `page.tsx`.
 **Validación**: revisión manual por rol. El panel ya no se titula "LensSpace" y cada página usa `PageHeader`.
 
@@ -223,6 +223,7 @@ $$;
 - `FormSelect` se alineó a la guía en la Fase 5 (44 px, radio 10, foco teal): su `className` solo afecta al contenedor, así que el cambio es global y seguro. Hasta migrar las fases 7–8, en formularios viejos puede verse 2–4 px más alto que los inputs antiguos.
 - **Diálogos con scroll**: el `overflow-y-auto` nunca va en el contenedor redondeado (la barra corta las esquinas). El `Dialog` compartido recorta con `overflow-hidden` y hace scroll solo en el cuerpo; tamaño `xl` (max-w-5xl) para formularios largos. Migrar cada diálogo hecho a mano a `Dialog` al tocar su vista.
 - **Revisión manual y Turbopack**: si una vista se ve a medio migrar (piezas nuevas mezcladas con markup viejo), es caché de Turbopack; recargar fuerte o reiniciar `npm run dev` antes de reportar un bug visual.
+- Fase 6: `PageContainer` unifica el contenedor de todas las páginas (max 1440, gutters de la guía, gap 20). KPIs de pedidos compartidos en `features/orders/order-kpis.ts` (panel + bandeja). `OrganizationList` en `dashboard/page.tsx` es código muerto previo (exportado, sin usos): retirarlo en la Fase 9 con aprobación.
 - El efecto de auto-apertura en escritorio no puede llamar `setState` directo (`react-hooks/set-state-in-effect`): se carga dentro de `startTransition` y se fija la selección al terminar.
 
 ---

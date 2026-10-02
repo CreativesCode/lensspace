@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { ProductionWorkspace, type AssignmentOrder, type ProductionJob, type Provider } from '@/features/production/components'
 import { createClient } from '@/lib/supabase/server'
+import { PageContainer, PageHeader } from '@/shared/ui'
 
 export default async function ProductionPage() {
   const supabase = await createClient()
@@ -22,5 +23,5 @@ export default async function ProductionPage() {
   const jobs = ((jobData ?? []) as unknown as ProductionJob[]).map((job) => ({ ...job, customerName: orderRows.find((order) => order.id === job.orderId)?.customers?.full_name ?? null }))
   const canManageTeam = (currentMembershipData ?? []).some(({ role }) => role === 'owner')
   const canAssignProduction = (currentMembershipData ?? []).some(({ role }) => role === 'owner' || role === 'seller')
-  return <section className="mx-auto max-w-[1440px] px-5 py-8 lg:px-8"><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D7A72]">Taller y proveedores</p><h1 className="mt-2 font-display text-3xl font-bold text-[#07322F]">Producción</h1><p className="mb-6 mt-2 text-sm text-[#5F716C]">Cada proveedor ve únicamente los trabajos asignados, sin precios ni pagos.</p><ProductionWorkspace initialJobs={jobs} orders={orders} providers={providers} canManageTeam={canManageTeam} canAssignProduction={canAssignProduction} /></section>
+  return <PageContainer><PageHeader eyebrow="Taller y proveedores" title="Producción" description="Cada proveedor ve únicamente los trabajos asignados, sin precios ni pagos." /><ProductionWorkspace initialJobs={jobs} orders={orders} providers={providers} canManageTeam={canManageTeam} canAssignProduction={canAssignProduction} /></PageContainer>
 }

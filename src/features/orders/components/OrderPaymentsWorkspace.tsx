@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { ButtonLink, EmptyState, PageHeader, StatCard, Toast, cx } from '@/shared/ui'
 
 import { formatAmount } from '../format'
-import { isFinished } from '../order-status'
+import { orderKpis } from '../order-kpis'
 import { friendlyPaymentError } from '../payment-errors'
 import type { Order, PaymentSummary, TimelineEvent } from '../types'
 import { OrderDetail } from './OrderDetail'
@@ -84,10 +84,7 @@ export function OrderPaymentsWorkspace({ initialOrders, initialCustomerFilter = 
     })
   }
 
-  const active = orders.filter((order) => !isFinished(order))
-  const balanceDue = active.reduce((sum, order) => sum + Number(order.balanceCup), 0)
-  const readyToDeliver = active.filter((order) => order.balanceCup <= 0).length
-  const collectedToday = orders.reduce((sum, order) => sum + Number(order.paidTodayCup), 0)
+  const kpis = orderKpis(orders)
   const selectedOrder = orders.find((order) => order.id === selectedId)
   const detailOpen = Boolean(summary && selectedOrder)
 
@@ -99,10 +96,10 @@ export function OrderPaymentsWorkspace({ initialOrders, initialCustomerFilter = 
         title="Pedidos y cobros"
         description="Registra efectivo, controla el saldo y entrega solo cuando el pedido esté pagado."
         stats={<>
-          <StatCard surface="ink" label="Pedidos activos" value={active.length} />
-          <StatCard surface="ink" tone="attention" label="Saldo por cobrar" value={formatAmount(balanceDue)} unit="CUP" />
-          <StatCard surface="ink" tone="positive" label="Pagados, por entregar" value={readyToDeliver} />
-          <StatCard surface="ink" label="Cobrado hoy" value={formatAmount(collectedToday)} unit="CUP" />
+          <StatCard surface="ink" label="Pedidos activos" value={kpis.activeCount} />
+          <StatCard surface="ink" tone="attention" label="Saldo por cobrar" value={formatAmount(kpis.balanceDue)} unit="CUP" />
+          <StatCard surface="ink" tone="positive" label="Pagados, por entregar" value={kpis.readyToDeliver} />
+          <StatCard surface="ink" label="Cobrado hoy" value={formatAmount(kpis.collectedToday)} unit="CUP" />
         </>}
       />
 

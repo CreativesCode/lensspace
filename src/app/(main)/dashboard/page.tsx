@@ -1,8 +1,15 @@
+import { Building, Factory, Plus } from 'lucide-react'
+
 import { PlatformAdminDashboard } from '@/features/admin/components'
 import { OwnerAnalyticsDashboard } from '@/features/analytics/components'
+import { MemberAccessCard, OwnerAccessCard } from '@/features/dashboard/components/AccessCards'
+import { formatAmount } from '@/features/orders/format'
+import { orderKpis } from '@/features/orders/order-kpis'
+import type { Order } from '@/features/orders/types'
 import { loadOwnedOrganizations } from '@/features/team/load-owned-organizations'
 import type { Tables } from '@/lib/supabase/database.types'
 import { createClient } from '@/lib/supabase/server'
+import { ButtonLink, EmptyState, PageContainer, PageHeader, StatCard } from '@/shared/ui'
 
 export default async function DashboardPage() {
   const defaultTo = new Date().toISOString().slice(0, 10)
@@ -10,71 +17,115 @@ export default async function DashboardPage() {
   fromDate.setUTCDate(fromDate.getUTCDate() - 29)
   const defaultFrom = fromDate.toISOString().slice(0, 10)
   const supabase = await createClient()
-  const { data: isPlatformAdmin } = await supabase.rpc(
-    'current_user_is_platform_admin',
-  )
-  const organizations = isPlatformAdmin
-    ? await loadOrganizations(supabase)
-    : []
-  const ownedOrganizations = isPlatformAdmin
-    ? []
-    : await loadOwnedOrganizations(supabase)
-  const memberAccess =
-    isPlatformAdmin || ownedOrganizations.length
-      ? []
-      : await loadMemberAccess(supabase)
+  const { data: { user } } = await supabase.auth.getUser()
+  const [{ data: isPlatformAdmin }, { data: profile }] = await Promise.all([
+    supabase.rpc('current_user_is_platform_admin'),
+    user ? supabase.from('profiles').select('display_name').eq('user_id', user.id).maybeSingle() : Promise.resolve({ data: null }),
+  ])
+  const displayName = (profile as Pick<Tables<'profiles'>, 'display_name'> | null)?.display_name ?? user?.email?.split('@')[0] ?? ''
+  const greeting = `${greetingFor(new Date())}, ${displayName.split(' ')[0]}`
+
+  if (isPlatformAdmin) {
+    const organizations = await loadOrganizations(supabase)
+    return (
+      <PageContainer>
+        <PageHeader
+          variant="featured"
+          eyebrow={`Plataforma LensSpace · ${todayLabel()}`}
+          title={greeting}
+          description="Panorama operativo y crecimiento de LensSpace."
+          actions={<ButtonLink href="/organizations" variant="mint" icon={Building}>Ver organizaciones</ButtonLink>}
+        />
+        <PlatformAdminDashboard organizations={organizations} />
+      </PageContainer>
+    )
+  }
+
+  const ownedOrganizations = await loadOwnedOrganizations(supabase)
+  const memberAccess = ownedOrganizations.length ? [] : await loadMemberAccess(supabase)
+  const ownedModules = ownedOrganizations.length ? await loadEnabledModules(supabase, ownedOrganizations.map(({ id }) => id)) : []
+  const canSell = ownedModules.includes('optical_sales') || memberAccess.some((access) => access.roles.includes('seller') && access.modules.includes('optical_sales'))
+  const hasCashbox = ownedModules.includes('cashbox') || memberAccess.some((access) => access.roles.includes('seller') && access.modules.includes('cashbox'))
+  const isProvider = memberAccess.some((access) => access.roles.some((role) => role === 'lens_provider' || role === 'mounting_provider') && access.modules.includes('production'))
+  const organizationNames = [...ownedOrganizations, ...memberAccess].map(({ name }) => name)
+  const scope = organizationNames.length === 1 ? organizationNames[0] : organizationNames.length > 1 ? `${organizationNames.length} organizaciones` : 'LensSpace'
+
+  const { data: orderData } = canSell ? await supabase.rpc('list_accessible_orders') : { data: null }
+  const kpis = canSell ? orderKpis((orderData ?? []) as unknown as Order[]) : null
+  const description = kpis
+    ? `${plural(kpis.readyToDeliver, 'pedido pagado listo', 'pedidos pagados listos')} para entregar y ${kpis.withBalance} con saldo pendiente.`
+    : isProvider ? 'Revisa y actualiza los trabajos que te asignaron.' : 'Tu actividad, accesos directos y estado operativo en un solo lugar.'
 
   return (
-    <section className="mx-auto max-w-7xl px-5 py-7 md:px-7">
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">
-        Panel principal
-      </p>
-      <h1 className="mt-2 font-display text-[26px] font-bold tracking-[-0.02em] text-slate-950">
-        {isPlatformAdmin ? 'Administración de organizaciones' : 'LensSpace'}
-      </h1>
-      {isPlatformAdmin ? (
-        <><p className="mt-3 max-w-2xl text-slate-600">Panorama operativo y crecimiento de LensSpace.</p><PlatformAdminDashboard organizations={organizations} /></>
+    <PageContainer>
+      <PageHeader
+        variant="featured"
+        eyebrow={`${scope} · ${todayLabel()}`}
+        title={greeting}
+        description={description}
+        actions={<>
+          {hasCashbox ? <ButtonLink href="/cashbox" variant="inverse">Ver caja</ButtonLink> : null}
+          {canSell ? <ButtonLink href="/sales" variant="mint" icon={Plus}>Nueva venta</ButtonLink> : null}
+          {isProvider && !canSell ? <ButtonLink href="/production" variant="mint" icon={Factory}>Ver trabajos asignados</ButtonLink> : null}
+        </>}
+        stats={kpis ? <>
+          <StatCard surface="ink" label="Pedidos activos" value={kpis.activeCount} />
+          <StatCard surface="ink" label="Cobrado hoy" value={formatAmount(kpis.collectedToday)} unit="CUP" />
+          <StatCard surface="ink" tone="positive" label="Listos para entregar" value={kpis.readyToDeliver} />
+          <StatCard surface="ink" tone="attention" label="Saldo por cobrar" value={formatAmount(kpis.balanceDue)} unit="CUP" />
+        </> : undefined}
+      />
+      {ownedOrganizations.length ? (
+        ownedOrganizations.map((organization) => (
+          <div key={organization.id} className="flex flex-col gap-5">
+            {organization.analyticsEnabled ? <OwnerAnalyticsDashboard
+              organizationId={organization.id}
+              branches={organization.branches}
+              sellers={organization.members
+                .filter((member) => member.role === 'seller' && member.status === 'active')
+                .map((member) => ({ id: member.userId, name: member.displayName, branchId: member.branchId }))}
+              defaultFrom={defaultFrom}
+              defaultTo={defaultTo}
+            /> : null}
+            <OwnerAccessCard
+              organizationName={organization.name}
+              links={[
+                { href: '/orders', label: 'Pedidos y cobros' },
+                { href: '/team', label: 'Administrar equipo' },
+                { href: '/catalog', label: 'Catálogo y precios' },
+              ]}
+            />
+          </div>
+        ))
+      ) : memberAccess.length ? (
+        <div className="grid gap-5 lg:grid-cols-2">
+          {memberAccess.map((organization) => <MemberAccessCard key={organization.id} organization={organization} links={dashboardLinks(organization.roles, organization.modules)} />)}
+        </div>
       ) : (
-        <>
-          <p className="mt-4 max-w-2xl text-slate-600">
-            Tu actividad, accesos directos y estado operativo en un solo lugar.
-          </p>
-          {ownedOrganizations.length ? (
-            ownedOrganizations.map((organization) => (
-              <div key={organization.id} className="mt-4 space-y-4">
-                {organization.analyticsEnabled ? <OwnerAnalyticsDashboard
-                  organizationId={organization.id}
-                  branches={organization.branches}
-                  sellers={organization.members
-                    .filter((member) => member.role === 'seller' && member.status === 'active')
-                    .map((member) => ({ id: member.userId, name: member.displayName, branchId: member.branchId }))}
-                  defaultFrom={defaultFrom}
-                  defaultTo={defaultTo}
-                /> : null}
-                <DashboardCard
-                  organizationName={organization.name}
-                  role="Propietario"
-                  branch="Todas las sucursales"
-                  links={[
-                    { href: '/sales', label: 'Nueva venta' },
-                    { href: '/orders', label: 'Pedidos y cobros' },
-                    { href: '/team', label: 'Administrar equipo' },
-                    { href: '/catalog', label: 'Catálogo y precios' },
-                  ]}
-                />
-              </div>
-            ))
-          ) : memberAccess.length ? (
-            <MemberAccessList access={memberAccess} />
-          ) : (
-            <p className="mt-8 rounded-xl border border-dashed border-slate-300 p-6 text-sm text-slate-500">
-              Tu cuenta no administra una organización activa.
-            </p>
-          )}
-        </>
+        <EmptyState icon={Building} title="Sin organización activa" description="Tu cuenta no administra ni pertenece a una organización activa." />
       )}
-    </section>
+    </PageContainer>
   )
+}
+
+// Cuba is the launch market; greetings and dates follow Havana time.
+const TIME_ZONE = 'America/Havana'
+
+function greetingFor(date: Date) {
+  const hour = Number(new Intl.DateTimeFormat('es-CU', { hour: 'numeric', hourCycle: 'h23', timeZone: TIME_ZONE }).format(date))
+  return hour < 12 ? 'Buenos días' : hour < 19 ? 'Buenas tardes' : 'Buenas noches'
+}
+
+function todayLabel() {
+  const label = new Intl.DateTimeFormat('es-CU', { weekday: 'long', day: 'numeric', month: 'short', timeZone: TIME_ZONE }).format(new Date()).replace('.', '').replace(',', '')
+  return label.charAt(0).toUpperCase() + label.slice(1)
+}
+
+const plural = (count: number, singular: string, many: string) => `${count} ${count === 1 ? singular : many}`
+
+async function loadEnabledModules(supabase: SupabaseServerClient, organizationIds: number[]) {
+  const { data } = await supabase.from('organization_modules').select('module_key').in('organization_id', organizationIds).eq('is_enabled', true)
+  return ((data ?? []) as Pick<Tables<'organization_modules'>, 'module_key'>[]).map(({ module_key }) => module_key)
 }
 
 async function loadMemberAccess(supabase: SupabaseServerClient) {
@@ -159,113 +210,16 @@ async function loadMemberAccess(supabase: SupabaseServerClient) {
   return access
 }
 
-type MemberAccess = Awaited<ReturnType<typeof loadMemberAccess>>[number]
-
-const roleLabels: Record<string, string> = {
-  seller: 'Vendedor',
-  lens_provider: 'Cristalero/laboratorio',
-  mounting_provider: 'Montador',
-}
-
-const moduleLabels: Record<string, string> = {
-  optical_sales: 'Ventas ópticas',
-  cashbox: 'Caja',
-  production: 'Producción',
-  whatsapp: 'WhatsApp',
-  analytics: 'Analítica',
-  multi_branch: 'Multisucursal',
-}
-
-function MemberAccessList({ access }: { access: MemberAccess[] }) {
-  return (
-    <div className="mt-8 grid gap-5 lg:grid-cols-2">
-      {access.map((organization) => (
-        <article
-          key={organization.id}
-          className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-        >
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h2 className="text-xl font-semibold text-slate-950">
-                {organization.name}
-              </h2>
-              <p className="mt-1 text-sm text-slate-500">
-                {organization.order_prefix}
-              </p>
-            </div>
-            <span
-              className={
-                organization.canOperate
-                  ? 'rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700'
-                  : 'rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700'
-              }
-            >
-              {organization.canOperate ? 'Operativa' : 'Solo lectura'}
-            </span>
-          </div>
-
-          <dl className="mt-5 grid gap-4 sm:grid-cols-2">
-            <div>
-              <dt className="text-sm text-slate-500">Rol</dt>
-              <dd className="font-medium text-slate-800">
-                {organization.roles
-                  .map((role) => roleLabels[role] ?? role)
-                  .join(', ')}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-sm text-slate-500">Sucursal</dt>
-              <dd className="font-medium text-slate-800">
-                {organization.branches.join(', ') || 'Acceso externo asignado'}
-              </dd>
-            </div>
-          </dl>
-
-          <div className="mt-5">
-            <p className="text-sm text-slate-500">Módulos disponibles</p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {organization.modules.map((moduleKey) => (
-                <span
-                  key={moduleKey}
-                  className="rounded-md bg-sky-50 px-2 py-1 text-xs text-sky-700"
-                >
-                  {moduleLabels[moduleKey] ?? moduleKey}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="mt-5 flex flex-wrap gap-2">
-            {dashboardLinks(organization.roles, organization.modules).map((link) => (
-              <a key={link.href} href={link.href} className="rounded-[7px] bg-[#07322F] px-4 py-2.5 text-sm font-semibold text-white">
-                {link.label}
-              </a>
-            ))}
-          </div>
-        </article>
-      ))}
-    </div>
-  )
-}
-
 function dashboardLinks(roles: string[], modules: string[]) {
   const links: { href: string; label: string }[] = []
   if (roles.includes('seller') && modules.includes('optical_sales')) {
-    links.push({ href: '/sales', label: 'Nueva venta' }, { href: '/orders', label: 'Ver pedidos' }, { href: '/customers', label: 'Buscar clientes' })
+    links.push({ href: '/orders', label: 'Ver pedidos' }, { href: '/customers', label: 'Buscar clientes' })
   }
   if (roles.includes('seller') && modules.includes('cashbox')) links.push({ href: '/cashbox', label: 'Mi caja' })
   if (roles.some((role) => role === 'lens_provider' || role === 'mounting_provider') && modules.includes('production')) {
     links.push({ href: '/production', label: 'Ver trabajos asignados' })
   }
   return links
-}
-
-function DashboardCard({ organizationName, role, branch, links }: { organizationName: string; role: string; branch: string; links: { href: string; label: string }[] }) {
-  return <article className="rounded-[10px] border border-[#E3EFED] bg-white p-6 shadow-sm">
-    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#0D7A72]">{role}</p>
-    <h2 className="mt-2 font-display text-xl font-bold text-[#07322F]">{organizationName}</h2>
-    <p className="mt-1 text-sm text-[#5F716C]">{branch}</p>
-    <div className="mt-5 flex flex-wrap gap-2">{links.map((link) => <a key={link.href} href={link.href} className="rounded-[7px] bg-[#07322F] px-4 py-2.5 text-sm font-semibold text-white">{link.label}</a>)}</div>
-  </article>
 }
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>
