@@ -89,7 +89,7 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 | QA-06 | Tenant catalog overrides cannot be saved (403 on upsert) | high | bug | SOLO-05, SALES-03 | done 2026-10-02 | S |
 | QA-07 | `/sales` shows base prices and disabled items, ignoring overrides | medium | data-integrity | SOLO-18, SALES-06 | done 2026-10-02 | S |
 | QA-08 | 'Pedido listo' WhatsApp fires on first lens reception and is never re-sent after rework | high | data-integrity | MR-03 | done 2026-10-02 | M |
-| QA-09 | `/production` crashes to 'This page couldn't load' when the post-mutation refetch fails | high | bug | RC-04 | confirmed | S |
+| QA-09 | `/production` crashes to 'This page couldn't load' when the post-mutation refetch fails | high | bug | RC-04 | done 2026-10-02 | S |
 | QA-10 | Delivery event attributed to 'Sistema' (no `delivered_by`) | medium | data-integrity | SOLO-09, MR-09 | confirmed | S |
 | QA-11 | Client 'today' in UTC: prescription date defaults to tomorrow after 20:00 Havana | medium | data-integrity | SALES-14, RC-13 | confirmed | S |
 | QA-12 | Sale customer picker: no search, capped at 200 customers / 200 revisions | high | friction | SALES-04, SOLO-17, PERF-03, RC-12 | confirmed | M |
@@ -304,6 +304,8 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 - **Root cause:** `src/features/production/components/ProductionWorkspace.tsx:69-73` (`if (error) throw error`) is awaited inside `startTransition` at :81/:91/:111/:121 with no try/catch. There is no `error.tsx` under `src/app`.
 - **Fix:** make `refreshJobs` return a boolean and show 'Guardado, pero no pudimos actualizar la lista. Recarga cuando vuelva la señal.' Add try/catch in the transition bodies. Add `src/app/(main)/error.tsx`, shared with QA-28.
 - **Verify:** abort the refetch after an assign → verificar: the page stays, the warning shows and the job exists.
+
+- **Done (2026-10-02):** `refreshJobs` returns a boolean instead of throwing. Every mutation then shows its success copy plus 'No pudimos actualizar la lista; recarga cuando vuelva la señal.' when the reload failed. A new `src/app/(main)/error.tsx` (Next 16 `retry` prop) replaces the framework error page with 'No pudimos cargar esta pantalla' and a 'Reintentar' button, keeping the sidebar. Verified: the QSB owner assigned a job with `list_accessible_production_jobs` aborted, the page stayed, the warning showed, and job 17 exists.
 
 ### QA-10 Delivery attributed to 'Sistema' (medium, S)
 - **Problem:** the timeline shows 'Pedido entregado · … · Sistema'. BUSINESS_LOGIC: 'Siempre se identifica al usuario que ejecutó la acción'.

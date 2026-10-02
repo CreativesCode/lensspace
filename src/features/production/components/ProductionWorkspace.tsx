@@ -73,11 +73,15 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [assignmentError, setAssignmentError] = useState('')
 
+  // Returns false instead of throwing: the mutation already committed, so a failed
+  // reload (weak signal) must not take the page down.
   async function refreshJobs() {
     const { data, error } = await supabase.rpc('list_accessible_production_jobs')
-    if (error) throw error
+    if (error) return false
     setJobs((data as unknown as ProductionJob[]).map((job) => ({ ...job, customerName: orders.find((order) => order.id === job.orderId)?.customerName ?? null })))
+    return true
   }
+  const savedMessage = (fresh: boolean, message: string) => fresh ? message : `${message} No pudimos actualizar la lista; recarga cuando vuelva la señal.`
 
   function assign(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -85,7 +89,7 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
     startTransition(async () => {
       const { error } = await supabase.rpc('assign_production_job', { target_order_id: Number(form.get('orderId')), job_type: jobType, provider_id: effectiveProviderId } as never)
       if (error) return setAssignmentError(error.message)
-      await refreshJobs(); setAssignmentOpen(false); setSelectedProviderId(''); setAssignmentError(''); setMessage('Trabajo asignado correctamente.')
+      const fresh = await refreshJobs(); setAssignmentOpen(false); setSelectedProviderId(''); setAssignmentError(''); setMessage(savedMessage(fresh, 'Trabajo asignado correctamente.'))
     })
   }
 
@@ -93,7 +97,7 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
     startTransition(async () => {
       const { error } = await supabase.rpc('transition_production_job', { target_job_id: job.id, target_status: transition.target, notes: null } as never)
       if (error) return setMessage(error.message)
-      await refreshJobs(); setMessage(`Estado actualizado a ${productionStatusLabel(transition.target, job.jobType)}.`)
+      const fresh = await refreshJobs(); setMessage(savedMessage(fresh, `Estado actualizado a ${productionStatusLabel(transition.target, job.jobType)}.`))
     })
   }
 
@@ -113,9 +117,9 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
     startTransition(async () => {
       const { error } = await supabase.rpc('report_production_incident', { target_job_id: incidentJob.id, description, cost_responsibility: incidentResponsibility } as never)
       if (error) return setIncidentError(error.message)
-      await refreshJobs()
+      const fresh = await refreshJobs()
       setIncidentJob(null)
-      setMessage('Incidencia registrada sin alterar el historial anterior.')
+      setMessage(savedMessage(fresh, 'Incidencia registrada sin alterar el historial anterior.'))
     })
   }
 
@@ -123,7 +127,7 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
     startTransition(async () => {
       const { error } = await supabase.rpc('create_production_rework', { target_incident_id: incidentId } as never)
       if (error) return setMessage(error.message)
-      await refreshJobs(); setMessage('Repetición creada y vinculada al trabajo original.')
+      const fresh = await refreshJobs(); setMessage(savedMessage(fresh, 'Repetición creada y vinculada al trabajo original.'))
     })
   }
 
