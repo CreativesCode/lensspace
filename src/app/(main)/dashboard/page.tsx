@@ -4,10 +4,10 @@ import { PlatformAdminDashboard } from '@/features/admin/components'
 import { OwnerAnalyticsDashboard } from '@/features/analytics/components'
 import { MemberAccessCard, OwnerAccessCard } from '@/features/dashboard/components/AccessCards'
 import { formatAmount } from '@/features/orders/format'
-import { orderKpis } from '@/features/orders/order-kpis'
-import type { Order } from '@/features/orders/types'
+import { loadPlatformOrganizations } from '@/features/admin/load-platform-organizations'
 import { loadOwnedOrganizations } from '@/features/team/load-owned-organizations'
 import type { Tables } from '@/lib/supabase/database.types'
+import { getCurrentUser } from '@/lib/supabase/current-user'
 import { createClient } from '@/lib/supabase/server'
 import { ButtonLink, EmptyState, PageContainer, PageHeader, StatCard } from '@/shared/ui'
 import { BUSINESS_TIME_ZONE, daysAgoIn, todayIn } from '@/shared/utils/dates'
@@ -16,7 +16,7 @@ export default async function DashboardPage() {
   const defaultTo = todayIn()
   const defaultFrom = daysAgoIn(29)
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getCurrentUser()
   const [{ data: isPlatformAdmin }, { data: profile }] = await Promise.all([
     supabase.rpc('current_user_is_platform_admin'),
     user ? supabase.from('profiles').select('display_name').eq('user_id', user.id).maybeSingle() : Promise.resolve({ data: null }),
@@ -25,7 +25,7 @@ export default async function DashboardPage() {
   const greeting = `${greetingFor(new Date())}, ${displayName.split(' ')[0]}`
 
   if (isPlatformAdmin) {
-    const organizations = await loadOrganizations(supabase)
+    const organizations = await loadPlatformOrganizations(supabase)
     return (
       <PageContainer>
         <PageHeader
@@ -40,17 +40,22 @@ export default async function DashboardPage() {
     )
   }
 
-  const ownedOrganizations = await loadOwnedOrganizations(supabase)
-  const memberAccess = ownedOrganizations.length ? [] : await loadMemberAccess(supabase)
-  const ownedModules = ownedOrganizations.length ? await loadEnabledModules(supabase, ownedOrganizations.map(({ id }) => id)) : []
+  // QA-31: independent loads in parallel. Memberships include the owner role, so the
+  // owner's enabled modules come from the same query. KPIs are aggregated server-side.
+  const [ownedOrganizations, allAccess, { data: kpiData }] = await Promise.all([
+    loadOwnedOrganizations(supabase),
+    loadMemberAccess(supabase),
+    supabase.rpc('get_order_kpis'),
+  ])
+  const memberAccess = ownedOrganizations.length ? [] : allAccess
+  const ownedModules = allAccess.filter((access) => access.roles.includes('owner')).flatMap((access) => access.modules)
   const canSell = ownedModules.includes('optical_sales') || memberAccess.some((access) => access.roles.includes('seller') && access.modules.includes('optical_sales'))
   const hasCashbox = ownedModules.includes('cashbox') || memberAccess.some((access) => access.roles.includes('seller') && access.modules.includes('cashbox'))
   const isProvider = memberAccess.some((access) => access.roles.some((role) => role === 'lens_provider' || role === 'mounting_provider') && access.modules.includes('production'))
   const organizationNames = [...ownedOrganizations, ...memberAccess].map(({ name }) => name)
   const scope = organizationNames.length === 1 ? organizationNames[0] : organizationNames.length > 1 ? `${organizationNames.length} organizaciones` : 'LensSpace'
 
-  const { data: orderData } = canSell ? await supabase.rpc('list_accessible_orders') : { data: null }
-  const kpis = canSell ? orderKpis((orderData ?? []) as unknown as Order[]) : null
+  const kpis = canSell && kpiData ? kpiData as unknown as OrderKpis : null
   const description = kpis
     ? `${plural(kpis.readyToDeliver, 'pedido pagado listo', 'pedidos pagados listos')} para entregar y ${kpis.withBalance} con saldo pendiente.`
     : isProvider ? 'Revisa y actualiza los trabajos que te asignaron.' : 'Tu actividad, accesos directos y estado operativo en un solo lugar.'
@@ -122,15 +127,10 @@ function todayLabel() {
 
 const plural = (count: number, singular: string, many: string) => `${count} ${count === 1 ? singular : many}`
 
-async function loadEnabledModules(supabase: SupabaseServerClient, organizationIds: number[]) {
-  const { data } = await supabase.from('organization_modules').select('module_key').in('organization_id', organizationIds).eq('is_enabled', true)
-  return ((data ?? []) as Pick<Tables<'organization_modules'>, 'module_key'>[]).map(({ module_key }) => module_key)
-}
+type OrderKpis = { activeCount: number; balanceDue: number; readyToDeliver: number; withBalance: number; collectedToday: number }
 
 async function loadMemberAccess(supabase: SupabaseServerClient) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await getCurrentUser()
   if (!user) return []
 
   const { data: membershipData } = await supabase
@@ -148,19 +148,11 @@ async function loadMemberAccess(supabase: SupabaseServerClient) {
   ]
   if (!organizationIds.length) return []
 
-  const { data: organizationData } = await supabase
-    .from('organizations')
-    .select('id, name, order_prefix, status')
-    .in('id', organizationIds)
-  const { data: branchData } = await supabase
-    .from('branches')
-    .select('id, organization_id, name')
-    .in('organization_id', organizationIds)
-  const { data: entitlementData } = await supabase
-    .from('organization_modules')
-    .select('organization_id, module_key, is_enabled')
-    .in('organization_id', organizationIds)
-    .eq('is_enabled', true)
+  const [{ data: organizationData }, { data: branchData }, { data: entitlementData }] = await Promise.all([
+    supabase.from('organizations').select('id, name, order_prefix, status').in('id', organizationIds),
+    supabase.from('branches').select('id, organization_id, name').in('organization_id', organizationIds),
+    supabase.from('organization_modules').select('organization_id, module_key, is_enabled').in('organization_id', organizationIds).eq('is_enabled', true),
+  ])
 
   const organizations = (organizationData ?? []) as Pick<
     Tables<'organizations'>,
@@ -175,8 +167,7 @@ async function loadMemberAccess(supabase: SupabaseServerClient) {
     'organization_id' | 'module_key' | 'is_enabled'
   >[]
 
-  const access = []
-  for (const organization of organizations) {
+  return Promise.all(organizations.map(async (organization) => {
     const { data: canOperate } = await supabase.rpc(
       'current_user_can_operate_organization',
       {
@@ -188,7 +179,7 @@ async function loadMemberAccess(supabase: SupabaseServerClient) {
       (membership) => membership.organization_id === organization.id,
     )
 
-    access.push({
+    return {
       ...organization,
       canOperate: Boolean(canOperate),
       roles: organizationMemberships.map(({ role }) => role),
@@ -203,10 +194,8 @@ async function loadMemberAccess(supabase: SupabaseServerClient) {
           (entitlement) => entitlement.organization_id === organization.id,
         )
         .map(({ module_key }) => module_key),
-    })
-  }
-
-  return access
+    }
+  }))
 }
 
 function dashboardLinks(roles: string[], modules: string[]) {
@@ -222,97 +211,3 @@ function dashboardLinks(roles: string[], modules: string[]) {
 }
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>
-
-async function loadOrganizations(supabase: SupabaseServerClient) {
-  const { data: organizations } = await supabase
-    .from('organizations')
-    .select('id, name, order_prefix, status, created_at')
-    .order('created_at', { ascending: false })
-  const { data: branches } = await supabase
-    .from('branches')
-    .select('id, organization_id, name, is_active')
-  const { data: subscriptions } = await supabase
-    .from('subscriptions')
-    .select('organization_id, status, expires_on, starts_on, amount, currency, billing_period')
-  const { data: entitlements } = await supabase
-    .from('organization_modules')
-    .select('organization_id, module_key, is_enabled')
-  const { data: ownerMemberships } = await supabase
-    .from('organization_memberships')
-    .select('organization_id, user_id')
-    .eq('role', 'owner')
-    .eq('status', 'active')
-  const { data: usageData } = await supabase.rpc('get_platform_usage')
-  const { data: supportData } = await supabase
-    .from('platform_support_sessions')
-    .select('id, organization_id, reason, started_at, expires_at')
-    .is('ended_at', null)
-    .gt('expires_at', new Date().toISOString())
-
-  const membershipRows = (ownerMemberships ?? []) as Pick<
-    Tables<'organization_memberships'>,
-    'organization_id' | 'user_id'
-  >[]
-  const ownerIds = [...new Set(membershipRows.map(({ user_id }) => user_id))]
-  const { data: ownerProfiles } = ownerIds.length
-    ? await supabase
-      .from('profiles')
-      .select('user_id, display_name')
-      .in('user_id', ownerIds)
-    : { data: [] }
-
-  const organizationRows = (organizations ?? []) as Pick<
-    Tables<'organizations'>,
-    'id' | 'name' | 'order_prefix' | 'status' | 'created_at'
-  >[]
-  const branchRows = (branches ?? []) as Pick<
-    Tables<'branches'>,
-    'id' | 'organization_id' | 'name' | 'is_active'
-  >[]
-  const subscriptionRows = (subscriptions ?? []) as Pick<
-    Tables<'subscriptions'>,
-    'organization_id' | 'status' | 'expires_on' | 'starts_on' | 'amount' | 'currency' | 'billing_period'
-  >[]
-  const entitlementRows = (entitlements ?? []) as Pick<
-    Tables<'organization_modules'>,
-    'organization_id' | 'module_key' | 'is_enabled'
-  >[]
-  const profileRows = (ownerProfiles ?? []) as Pick<
-    Tables<'profiles'>,
-    'user_id' | 'display_name'
-  >[]
-  const usageRows = (usageData ?? []) as unknown as {
-    organizationId: number; customers: number; orders: number; members: number
-    openProductionJobs: number; notificationAttempts: number; lastActivityAt: string | null
-  }[]
-  const supportRows = (supportData ?? []) as {
-    id: number; organization_id: number; reason: string; started_at: string; expires_at: string
-  }[]
-
-  return organizationRows.map((organization) => ({
-    ...organization,
-    branches: branchRows.filter(
-      (branch) => branch.organization_id === organization.id,
-    ),
-    subscription: subscriptionRows.find(
-      (subscription) => subscription.organization_id === organization.id,
-    ),
-    modules: entitlementRows.filter(
-      (entitlement) =>
-        entitlement.organization_id === organization.id &&
-        entitlement.is_enabled,
-    ),
-    owners: membershipRows
-      .filter(
-        (membership) => membership.organization_id === organization.id,
-      )
-      .map((membership) =>
-        profileRows.find(
-          (profile) => profile.user_id === membership.user_id,
-        ),
-      )
-      .filter((profile): profile is NonNullable<typeof profile> => Boolean(profile)),
-    usage: usageRows.find((usage) => usage.organizationId === organization.id),
-    supportSession: supportRows.find((session) => session.organization_id === organization.id),
-  }))
-}

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Source_Sans_3, Space_Grotesk } from 'next/font/google'
 
+import { ServiceWorkerRegistration } from '@/shared/components/ServiceWorkerRegistration'
 import { siteConfig } from '@/shared/config/site'
 
 import './globals.css'
@@ -41,7 +42,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" className={`${sourceSans.variable} ${spaceGrotesk.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <ServiceWorkerRegistration />
+      </body>
     </html>
   )
 }

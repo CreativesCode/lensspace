@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { Plus } from 'lucide-react'
 
 import type { Tables } from '@/lib/supabase/database.types'
+import { getCurrentUser } from '@/lib/supabase/current-user'
 import { createClient } from '@/lib/supabase/server'
 import { LensSpaceLogo, MainNavigation, MobileSidebar, OfflineBanner, RefreshOnFocus, SidebarAccount, type ShellIdentity } from '@/shared/components'
 
@@ -29,7 +30,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 }
 async function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getCurrentUser()
   if (!user) redirect('/login')
   const { allowedHrefs, counts, identity } = await loadShell(supabase, user.id, user.email ?? 'Usuario')
   const canCreateSale = allowedHrefs.includes('/sales')

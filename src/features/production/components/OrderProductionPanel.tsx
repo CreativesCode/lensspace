@@ -31,33 +31,14 @@ export function OrderProductionPanel({ orderId, canAssign, onReadinessChange }: 
   const [message, setMessage] = useState('')
   const [pending, startTransition] = useTransition()
 
+  // One RPC (QA-35) instead of 4 requests in 3 sequential stages.
   const load = useCallback(async () => {
-    const [{ data: order }, { data: jobRows, error: jobsError }, { data: { session } }] = await Promise.all([
-      supabase.from('orders').select('organization_id').eq('id', orderId).single(),
-      supabase.from('production_jobs').select('id, job_type, status, provider_id').eq('order_id', orderId).eq('is_current', true),
-      supabase.auth.getSession(),
-    ])
-    if (jobsError || !order) return setMessage('No pudimos cargar la producción de este pedido.')
-    const currentJobs = ((jobRows ?? []) as { id: number; job_type: JobType; status: string; provider_id: string }[]).map((row) => ({ id: row.id, jobType: row.job_type, status: row.status, providerId: row.provider_id }))
-    const userId = session?.user.id ?? ''
-    const { data: memberships } = await supabase.from('organization_memberships').select('user_id, role')
-      .eq('organization_id', (order as { organization_id: number }).organization_id).eq('status', 'active')
-      .in('role', ['lens_provider', 'mounting_provider', 'owner', 'seller'])
-    const rows = ((memberships ?? []) as { user_id: string; role: string }[])
-      // Owners/sellers act as an in-house workshop only for themselves.
-      .filter((row) => row.role === 'lens_provider' || row.role === 'mounting_provider' || row.user_id === userId)
-    const ids = [...new Set([...rows.map((row) => row.user_id), ...currentJobs.map((job) => job.providerId)])]
-    const { data: profiles } = ids.length ? await supabase.from('profiles').select('user_id, display_name').in('user_id', ids) : { data: [] }
-    const nameById = Object.fromEntries(((profiles ?? []) as { user_id: string; display_name: string }[]).map((profile) => [profile.user_id, profile.display_name]))
-    const byUser = new Map<string, Assignee>()
-    for (const row of rows) {
-      const entry = byUser.get(row.user_id) ?? { id: row.user_id, name: nameById[row.user_id] ?? 'Proveedor', roles: [] }
-      entry.roles.push(row.role === 'owner' || row.role === 'seller' ? 'in_house' : row.role)
-      byUser.set(row.user_id, entry)
-    }
-    setNames(nameById)
-    setAssignees([...byUser.values()])
-    setJobs(currentJobs)
+    const { data, error } = await supabase.rpc('get_order_production_panel', { target_order_id: orderId } as never)
+    if (error || !data) return setMessage('No pudimos cargar la producción de este pedido.')
+    const panel = data as unknown as { jobs: (CurrentJob & { providerName: string })[]; assignees: Assignee[] }
+    setNames(Object.fromEntries([...panel.assignees.map((assignee) => [assignee.id, assignee.name]), ...panel.jobs.map((job) => [job.providerId, job.providerName])]))
+    setAssignees(panel.assignees)
+    setJobs(panel.jobs)
   }, [orderId, supabase])
 
   useEffect(() => {

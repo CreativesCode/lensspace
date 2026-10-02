@@ -1,22 +1,33 @@
 import { redirect } from 'next/navigation'
 import { ProductionWorkspace, type AssignmentOrder, type ProductionJob, type Provider } from '@/features/production/components'
+import { getCurrentUser } from '@/lib/supabase/current-user'
 import { createClient } from '@/lib/supabase/server'
 import { PageContainer } from '@/shared/ui'
 
 export default async function ProductionPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getCurrentUser()
   if (!user) redirect('/login')
-  const [{ data: jobData }, { data: orderData }, { data: membershipData }, { data: currentMembershipData }] = await Promise.all([
+  const [{ data: jobData }, { data: currentMembershipData }] = await Promise.all([
     supabase.rpc('list_accessible_production_jobs'),
-    supabase.from('orders').select('id, organization_id, order_number, customer_id, commercial_status, customers(full_name)').order('created_at', { ascending: false }),
-    supabase.from('organization_memberships').select('organization_id, user_id, role').in('role', ['lens_provider', 'mounting_provider']).eq('status', 'active'),
     supabase.from('organization_memberships').select('organization_id, role').eq('user_id', user.id).eq('status', 'active'),
   ])
-  const memberships = (membershipData ?? []) as { organization_id: number; user_id: string; role: 'lens_provider' | 'mounting_provider' }[]
   const currentMemberships = (currentMembershipData ?? []) as { organization_id: number; role: string }[]
   // Owners and sellers can take the work themselves (in-house workshop or a one-person shop).
   const inHouseOrganizationIds = [...new Set(currentMemberships.filter(({ role }) => role === 'owner' || role === 'seller').map(({ organization_id }) => organization_id))]
+  const rawJobs = (jobData ?? []) as unknown as ProductionJob[]
+  // QA-32: providers only need their jobs. Optical actors load the orders they can
+  // still assign plus the ones behind listed jobs (customer names), not all history.
+  const jobOrderIds = [...new Set(rawJobs.map((job) => job.orderId))]
+  const [{ data: orderData }, { data: membershipData }] = inHouseOrganizationIds.length
+    ? await Promise.all([
+        supabase.from('orders').select('id, organization_id, order_number, customer_id, commercial_status, customers(full_name)')
+          .or(jobOrderIds.length ? `commercial_status.eq.accepted,id.in.(${jobOrderIds.join(',')})` : 'commercial_status.eq.accepted')
+          .order('created_at', { ascending: false }),
+        supabase.from('organization_memberships').select('organization_id, user_id, role').in('organization_id', inHouseOrganizationIds).in('role', ['lens_provider', 'mounting_provider']).eq('status', 'active'),
+      ])
+    : [{ data: [] }, { data: [] }]
+  const memberships = (membershipData ?? []) as { organization_id: number; user_id: string; role: 'lens_provider' | 'mounting_provider' }[]
   const providerIds = [...new Set([...memberships.map((membership) => membership.user_id), ...(inHouseOrganizationIds.length ? [user.id] : [])])]
   const { data: profileData } = providerIds.length ? await supabase.from('profiles').select('user_id, display_name').in('user_id', providerIds) : { data: [] }
   const profiles = (profileData ?? []) as { user_id: string; display_name: string }[]
@@ -30,7 +41,7 @@ export default async function ProductionPage() {
   const orderRows = (orderData ?? []) as unknown as { id: number; organization_id: number; order_number: string; customer_id: number; commercial_status: string; customers: { full_name: string } | null }[]
   // Only orders that can still be produced are offered for assignment (QA-13).
   const orders: AssignmentOrder[] = orderRows.filter((order) => order.commercial_status === 'accepted').map((order) => ({ id: order.id, organizationId: order.organization_id, orderNumber: order.order_number, customerName: order.customers?.full_name ?? null }))
-  const jobs = ((jobData ?? []) as unknown as ProductionJob[]).map((job) => ({ ...job, customerName: orderRows.find((order) => order.id === job.orderId)?.customers?.full_name ?? null }))
+  const jobs = rawJobs.map((job) => ({ ...job, customerName: orderRows.find((order) => order.id === job.orderId)?.customers?.full_name ?? null }))
   const canAssignProduction = inHouseOrganizationIds.length > 0
   return <PageContainer><ProductionWorkspace initialJobs={jobs} orders={orders} providers={providers} currentUserId={user.id} canAssignProduction={canAssignProduction} /></PageContainer>
 }

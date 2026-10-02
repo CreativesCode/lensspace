@@ -1,10 +1,11 @@
 import type { Tables } from '@/lib/supabase/database.types'
+import { getCurrentUser } from '@/lib/supabase/current-user'
 import { createClient } from '@/lib/supabase/server'
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>
 
 export async function loadOwnedOrganizations(supabase: SupabaseServerClient) {
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getCurrentUser()
   if (!user) return []
 
   const { data: ownerMembershipData } = await supabase.from('organization_memberships').select('organization_id').eq('user_id', user.id).eq('role', 'owner').eq('status', 'active')

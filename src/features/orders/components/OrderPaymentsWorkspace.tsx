@@ -10,7 +10,8 @@ import { friendlyError } from '@/shared/lib/friendly-error'
 import { useServerState } from '@/shared/hooks/use-server-state'
 import { refreshNavigationCounters } from '@/shared/lib/navigation-counters'
 
-import { formatAmount } from '../format'
+import { FINISHED_ORDERS_DAYS, formatAmount } from '../format'
+import { daysAgoIn } from '@/shared/utils/dates'
 import { orderKpis } from '../order-kpis'
 import { friendlyPaymentError, isNetworkError } from '../payment-errors'
 import type { Order, PaymentSummary, TimelineEvent } from '../types'
@@ -34,20 +35,21 @@ export function OrderPaymentsWorkspace({ initialOrders, initialCustomerFilter = 
   const [pending, startTransition] = useTransition()
 
   const loadDetail = useCallback(async (orderId: number) => {
-    const [summaryResult, historyResult] = await Promise.all([
-      supabase.rpc('get_order_payment_summary', { target_order_id: orderId } as never),
-      supabase.rpc('get_order_timeline', { target_order_id: orderId } as never),
-    ])
-    if (summaryResult.error) throw summaryResult.error
-    setSummary(summaryResult.data as unknown as PaymentSummary)
-    setTimeline(historyResult.error ? [] : historyResult.data as unknown as TimelineEvent[])
+    // One call for summary + history (QA-35): half the requests and preflights.
+    const { data, error: detailError } = await supabase.rpc('get_order_detail', { target_order_id: orderId } as never)
+    if (detailError) throw detailError
+    const detail = data as unknown as { summary: PaymentSummary; timeline: TimelineEvent[] }
+    setSummary(detail.summary)
+    setTimeline(detail.timeline ?? [])
   }, [supabase])
 
   const refreshOrders = useCallback(async () => {
     void refreshNavigationCounters()
-    const { data, error: listError } = await supabase.rpc('list_accessible_orders')
+    const { data, error: listError } = initialCustomerId || initialCustomerFilter
+      ? await supabase.rpc('list_accessible_orders')
+      : await supabase.rpc('list_accessible_orders', { finished_since: daysAgoIn(FINISHED_ORDERS_DAYS) } as never)
     if (!listError) setOrders(data as unknown as Order[])
-  }, [setOrders, supabase])
+  }, [initialCustomerFilter, initialCustomerId, setOrders, supabase])
 
   const select = useCallback((orderId: number) => {
     setSelectedId(orderId); setError('')
@@ -158,6 +160,7 @@ export function OrderPaymentsWorkspace({ initialOrders, initialCustomerFilter = 
             onSelect={select}
             initialQuery={initialCustomerFilter}
             initialCustomerId={initialCustomerId}
+            finishedWindowed={!initialCustomerId && !initialCustomerFilter}
             className={cx(detailOpen && 'hidden xl:block')}
           />
           <div className={cx(!detailOpen && 'hidden xl:block')}>

@@ -22,3 +22,7 @@ export const formatDateTime = (iso: string) => `${formatShortDate(iso)} · ${tim
 
 // Folio without the year segment for compact rows: VIS-2026-000128 → VIS-000128.
 export const shortOrderNumber = (orderNumber: string) => orderNumber.replace(/-\d{4}-/, '-')
+
+// QA-32: /orders lists every open order but finished ones only from this window;
+// a customer's full history opens with /orders?clienteId=….
+export const FINISHED_ORDERS_DAYS = 90

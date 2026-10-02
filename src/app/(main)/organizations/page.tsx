@@ -1,3 +1,4 @@
+import { getCurrentUser } from '@/lib/supabase/current-user'
 import { redirect } from 'next/navigation'
 
 import { PlatformAdminWorkspace } from '@/features/admin/components'
@@ -7,7 +8,7 @@ import { PageContainer, PageHeader } from '@/shared/ui'
 
 export default async function OrganizationsPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getCurrentUser()
   if (!user) redirect('/login')
   const { data: isPlatformAdmin } = await supabase.rpc('current_user_is_platform_admin')
   if (!isPlatformAdmin) redirect('/dashboard')

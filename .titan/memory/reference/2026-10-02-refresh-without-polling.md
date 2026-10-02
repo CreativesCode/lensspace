@@ -16,3 +16,17 @@ How LensSpace keeps data fresh on weak Cuban links (QA-24..27). No polling, no R
 - Effects that depend on server props (e.g. auto-opening the first order) must not
   reset what the user has open when fresh props arrive.
 - Sibling components must not share a React `key` (e.g. two panels keyed by order id).
+
+## Bandwidth and latency rules (Phase 4, QA-28..35)
+
+- Server auth: `getCurrentUser()` (`src/lib/supabase/current-user.ts`, React `cache`
+  + `getClaims`, ES256 local verification). Never call `auth.getUser()` in pages.
+- Independent server queries go in one `Promise.all`; per-org checks too.
+- Do not ship lists to compute a few numbers or one screen: aggregate or combine in an
+  RPC (`get_order_kpis`, `get_order_detail`, `get_order_production_panel`) or embed
+  (`customers … orders(commercial_status)`). `/orders` uses
+  `list_accessible_orders(finished_since)` (90 days of finished orders).
+- Sidebar prefetch only for `/orders` and `/sales`; other links show the
+  `useLinkStatus` spinner. Each prefetch re-sends the ~2.6 KB auth cookie.
+- `public/sw.js` only serves `public/offline.html` for failed navigations; it must
+  never cache tenant data, RSC or API responses. Bump `CACHE` when changing it.

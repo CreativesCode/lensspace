@@ -38,16 +38,25 @@ type CustomerResult = Pick<
   | 'messaging_consent'
 > & {
   customer_phones: CustomerPhone[]
+  orders?: { commercial_status: string }[]
   orderSummary?: { total: number; open: number; completed: number }
 }
 
-type CustomerOrder = { customerId: number; commercialStatus: string }
-
 const customerSelect =
-  'id, organization_id, branch_id, full_name, national_id, address, birth_date, notes, messaging_consent, customer_phones(id, phone_number, normalized_phone, label, is_primary, whatsapp_enabled)'
+  'id, organization_id, branch_id, full_name, national_id, address, birth_date, notes, messaging_consent, customer_phones(id, phone_number, normalized_phone, label, is_primary, whatsapp_enabled), orders(commercial_status)'
 
 // Duplicate checks compare canonical numbers (8-digit Cuban numbers get 53).
 const normalizePhone = canonicalPhone
+
+// QA-32: order counts come embedded in the customers query (RLS-scoped) instead of
+// downloading the whole order history on every search.
+function withOrderSummaries(customers: CustomerResult[]) {
+  return customers.map((customer) => {
+    const statuses = (customer.orders ?? []).map(({ commercial_status }) => commercial_status)
+    const completed = statuses.filter((status) => ['delivered', 'closed'].includes(status)).length
+    return { ...customer, orderSummary: { total: statuses.length, open: statuses.length - completed, completed } }
+  })
+}
 
 export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
   const supabase = useMemo(() => createClient(), [])
@@ -75,29 +84,6 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
   const activeScope = scopes.find(
     (scope) => `${scope.organizationId}:${scope.branchId}` === target,
   )
-
-  const withOrderSummaries = useCallback(async (customers: CustomerResult[]) => {
-    const ids = customers.map(({ id }) => id)
-    if (!ids.length) return customers
-    const { data, error } = await supabase.rpc('list_accessible_orders')
-    if (error) return customers
-
-    const orders = (data ?? []) as CustomerOrder[]
-    return customers.map((customer) => {
-      const customerOrders = orders.filter(({ customerId }) => customerId === customer.id)
-      const completed = customerOrders.filter(({ commercialStatus }) =>
-        ['delivered', 'closed'].includes(commercialStatus),
-      ).length
-      return {
-        ...customer,
-        orderSummary: {
-          total: customerOrders.length,
-          open: customerOrders.length - completed,
-          completed,
-        },
-      }
-    })
-  }, [supabase])
 
   const searchCustomers = useCallback(
     async (rawQuery: string) => {
@@ -137,11 +123,11 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
         setMessage('No pudimos consultar los clientes. Intenta nuevamente.')
       } else {
         const customers = (data ?? []) as CustomerResult[]
-        setResults(await withOrderSummaries(customers))
+        setResults(withOrderSummaries(customers))
       }
       setLoading(false)
     },
-    [supabase, withOrderSummaries],
+    [supabase],
   )
 
   const duplicateCandidates = useMemo(() => {
@@ -209,7 +195,7 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
         .select(customerSelect)
         .in('id', otherDuplicateIds)
         .is('archived_at', null)
-      setResults(await withOrderSummaries((matches ?? []) as CustomerResult[]))
+      setResults(withOrderSummaries((matches ?? []) as CustomerResult[]))
       setSearched(true)
       setQuery(fullName.trim())
       setDuplicateReviewed(true)

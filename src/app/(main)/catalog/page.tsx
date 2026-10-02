@@ -2,12 +2,13 @@ import { redirect } from 'next/navigation'
 
 import { CatalogWorkspace } from '@/features/catalog/components'
 import type { Tables } from '@/lib/supabase/database.types'
+import { getCurrentUser } from '@/lib/supabase/current-user'
 import { createClient } from '@/lib/supabase/server'
 import { PageContainer, PageHeader } from '@/shared/ui'
 
 export default async function CatalogPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getCurrentUser()
   if (!user) redirect('/login')
   const { data: isPlatformAdmin } = await supabase.rpc('current_user_is_platform_admin')
 
@@ -45,7 +46,7 @@ export default async function CatalogPage() {
     isPlatformAdmin ? itemsQuery.is('organization_id', null) : itemsQuery,
     isPlatformAdmin ? Promise.resolve({ data: [] }) : supabase.from('catalog_item_overrides').select('*'),
     isPlatformAdmin ? rulesQuery.is('organization_id', null) : rulesQuery,
-    isPlatformAdmin ? Promise.resolve({ data: [] }) : supabase.from('prescription_revisions').select('id, organization_id, prescription_id, revision_number, prescription_date').order('created_at', { ascending: false }).limit(100),
+    isPlatformAdmin ? Promise.resolve({ data: [] }) : supabase.from('prescription_revisions').select('id, organization_id, prescription_id, revision_number, prescription_date').order('created_at', { ascending: false }).limit(30),
   ])
   const prescriptionRevisions = (revisions ?? []) as unknown as Pick<
     Tables<'prescription_revisions'>,

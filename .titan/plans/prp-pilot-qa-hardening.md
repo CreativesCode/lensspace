@@ -108,15 +108,15 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 | QA-25 | Superseded incident jobs counted as active/incident forever | medium | bug | SOLO-07, MR-05 | done 2026-10-02 | S |
 | QA-26 | Back/forward restores stale lists (`useState(initialX)` freezes props) | medium | refresh | RC-06 | done 2026-10-02 | S |
 | QA-27 | No refetch on focus/reconnect/error: other users' changes, stale balances, renewal and module changes stay stale | medium | refresh | MR-04 (cross-user), RC-07, ADM-06 | done 2026-10-02 | S |
-| QA-28 | Offline navigation lands on the Chrome error page; no `loading.tsx`/`error.tsx`/offline banner | high | offline | SOLO-12, PERF-01, RC-08, MR-10 (offline view) | done 2026-10-02 (base; service worker pending) | S→M |
-| QA-29 | Every click waits 0.5–3 s with no feedback; nothing streams | medium | performance | PERF-05 | confirmed | S |
+| QA-28 | Offline navigation lands on the Chrome error page; no `loading.tsx`/`error.tsx`/offline banner | high | offline | SOLO-12, PERF-01, RC-08, MR-10 (offline view) | done 2026-10-02 (base + offline SW) | S→M |
+| QA-29 | Every click waits 0.5–3 s with no feedback; nothing streams | medium | performance | PERF-05 | done 2026-10-02 | S |
 | QA-30 | Raw technical errors ('TypeError: Failed to fetch', English RLS/privilege messages) | medium | ux-copy | SOLO-11, MR-10, SALES-09, ADM-07, RC-09 | done 2026-10-02 | S |
-| QA-31 | Server waterfalls (owner `/dashboard` 9 sequential round trips) and 2–3 `getUser()` per request | medium | performance | PERF-06, ADM-14 | confirmed | M |
-| QA-32 | Unbounded `list_accessible_orders`/jobs; customer search waterfall; `/production` loads all orders | medium | performance | PERF-07, SALES-16, RC-14, RC-15, MR-11 | confirmed | M |
-| QA-33 | Desktop sidebar prefetches 19 routes per page view (~50 KB upload) | low | performance | PERF-08 | plausible | S |
-| QA-34 | `/catalog` loads `select('*')` on 3 tables plus 100 revisions | low | performance | PERF-11 | confirmed | S |
-| QA-35 | `/orders` auto-loads first order detail (2 RPC + 2 preflights) | low | performance | PERF-13 | confirmed | S |
-| QA-36 | Full supabase-js browser client is 66.6 KB gz on every page | low | performance | PERF-10 | plausible | L |
+| QA-31 | Server waterfalls (owner `/dashboard` 9 sequential round trips) and 2–3 `getUser()` per request | medium | performance | PERF-06, ADM-14 | done 2026-10-02 (region check pending) | M |
+| QA-32 | Unbounded `list_accessible_orders`/jobs; customer search waterfall; `/production` loads all orders | medium | performance | PERF-07, SALES-16, RC-14, RC-15, MR-11 | done 2026-10-02 (jobs history deferred) | M |
+| QA-33 | Desktop sidebar prefetches 19 routes per page view (~50 KB upload) | low | performance | PERF-08 | done 2026-10-02 | S |
+| QA-34 | `/catalog` loads `select('*')` on 3 tables plus 100 revisions | low | performance | PERF-11 | partly done 2026-10-02 | S |
+| QA-35 | `/orders` auto-loads first order detail (2 RPC + 2 preflights) | low | performance | PERF-13 | done 2026-10-02 | S |
+| QA-36 | Full supabase-js browser client is 66.6 KB gz on every page | low | performance | PERF-10 | deferred (post-pilot) | L |
 | QA-37 | Suspended org/subscription is read-only, not blocked | — | decision | ADM-03 | closed: keep read-only (decision 2026-10-02) | — |
 | QA-38 | Superadmin can write tenant data and read every tenant without a support session | medium | security | ADM-04 | confirmed | M |
 | QA-39 | Invite enrolls existing accounts as ACTIVE with no consent; response reveals whether an account exists | medium | security | ADM-02 | confirmed | M |
@@ -593,6 +593,7 @@ Measured in the production build:
   - `OfflineBanner` (`useOffline` from `next/offline`) sits in the main layout: 'Sin conexión: lo que ves sigue aquí y reintentaremos al volver la señal.'
   - Verified as Javier on dev: going offline on `/customers` and tapping 'Pedidos y cobros' kept the app with the sidebar and banner and no Chrome error page. After reconnecting the navigation finished on `/orders` by itself and the banner disappeared.
   - Pending (Phase 4, item 5): a service worker for full offline reloads and the provider jobs snapshot.
+- **Done (2026-10-02, item 5 minimal):** `public/sw.js` intercepts only navigations (navigation preload on) and serves the static `public/offline.html` ('Sin conexión… Reintentar', reloads itself on `online`) when the network fails. It caches nothing else: no tenant data, RSC or API responses. Registered in production only (`ServiceWorkerRegistration` in the root layout); `next.config.ts` serves `/sw.js` with `no-cache` and a strict CSP. Verified on the prod build: controlled page → offline reload shows 'Sin conexión' → back online returns to `/dashboard`. Still pending (optional): a read-only snapshot of the provider's jobs.
 
 ### QA-29 Navigation feedback (medium, S)
 - **Problem:** the time from click to URL change is 0.5–2.8 s on a fast link and 0.9–3.0 s throttled. The old page stays on screen and the active state does not move, so users tap again. TTFB equals the full response time, so nothing streams.
@@ -600,6 +601,7 @@ Measured in the production build:
 - **Root cause:** there are no Suspense boundaries, and `src/shared/components/MainNavigation.tsx:52-55` has no pending indicator.
 - **Fix:** add the `loading.tsx` from QA-28 and use `useLinkStatus` in a nav-item child to show an inline pending state.
 - **Verify:** click any nav item → verificar: visual feedback in under 100 ms, then a skeleton.
+- **Done (2026-10-02):** `NavIcon` in `MainNavigation` uses `useLinkStatus` and swaps the item icon for a spinning `LoaderCircle` (same slot, no layout shift). Verified on the prod build with 600 ms latency / 40 KB/s: spinner visible 100 ms after tapping 'Recetas', gone on arrival.
 
 ### QA-30 Shared friendly error mapper (medium, S)
 - **Problem:** users see 'TypeError: Failed to fetch', 'permission denied for table catalog_item_overrides', 'new row violates row-level security policy for table "customers"' and the terse 'Pedido aceptado no disponible.' The payment form blames the amount when the real cause is the network.
@@ -634,6 +636,7 @@ Measured in the production build:
   - The platform dashboard should reuse `src/features/admin/load-platform-organizations.ts`.
   - Confirm the Vercel function region equals the Supabase region.
 - **Verify:** owner `/dashboard` TTFB in the prod build → verificar: ≤ 1 s from this machine; auth calls per request → verificar: 1 or 0.
+- **Done (2026-10-02):** `getCurrentUser()` (`src/lib/supabase/current-user.ts`) wraps `auth.getClaims()` in React `cache()`: one local ES256 verification per request shared by layout and page, no Auth round trip (RLS still verifies the JWT). Used by the `(main)` layout, all pages and `loadOwnedOrganizations`. `/dashboard` loads owned orgs, member access and KPIs in parallel, parallelizes the member-access queries and per-org checks, derives owner modules from the same memberships, and the platform view reuses `loadPlatformOrganizations`. Prod build TTFB from this machine: `/dashboard` 460–930 ms (was 2.2–2.6 s), `/orders` 450–1100, `/production` 425–940, `/sales` 465–970. Not done: Vercel region check (deploy setting).
 
 ### QA-32 Unbounded lists and search waterfall (medium, M)
 - **Problem:**
@@ -651,22 +654,32 @@ Measured in the production build:
   - Add a `p_include_history` flag to the jobs RPC.
   - Skip the orders, memberships and profiles queries for provider roles on `/production`.
 - **Verify:** customer search → verificar: 1 request; payload stays constant as orders grow; Claudia's `/production` → verificar: no orders query.
+- **Done (2026-10-02):**
+  - `/customers` embeds `orders(commercial_status)` in the customers query instead of downloading `list_accessible_orders`: a name search is 1 request (a phone search 2).
+  - Migration `20261002215450_add_order_kpis.sql`: `get_order_kpis()` aggregates the 5 figures server-side for `/dashboard`.
+  - Migration `20261002220316_window_accessible_orders.sql`: `list_accessible_orders(finished_since date)` keeps every open order but finished ones only from the last `FINISHED_ORDERS_DAYS` (90). `/orders` and its refreshes use it; with `?clienteId`/`?cliente` the full history loads. The 'Entregados' chip explains the window.
+  - `/production`: provider-only users run 2 queries (jobs + own memberships); optical actors load only assignable orders plus those behind listed jobs, and only their organizations' providers.
+  - Verified: search 1 request; dashboard KPIs match; Claudia's `/production` works.
+  - Deferred: the jobs RPC still returns full history (`p_include_history`), fine at pilot volume.
 
 ### QA-33 Sidebar prefetch volume (low, S, plausible)
 - **Problem:** each desktop page view issues 19 prefetch requests, each carrying the 2.6 KB auth cookie. That is about 50 KB of upload, enough to saturate a 20 KB/s uplink for about 3 s.
 - **Root cause:** default viewport prefetch at `MainNavigation.tsx:52-55`.
 - **Fix:** set `prefetch={false}` on the secondary links and keep it for `/sales`, `/orders` and `/customers`. Re-measure after QA-28.
 - **Verify:** desktop `/cashbox` → verificar: ≤ 4 prefetch requests.
+- **Done (2026-10-02):** only `/orders` (sidebar) and `/sales` ('Nueva venta') keep viewport prefetch; the rest use `prefetch={false}` plus the QA-29 spinner. Measured on a full load of `/cashbox`: 4 prefetch requests (was 19; Next 16 sends ~2 segment requests per route).
 
 ### QA-34 `/catalog` over-fetch (low, S)
 - **Root cause:** `src/app/(main)/catalog/page.tsx:40-46` uses `select('*')` on 3 tables and loads 100 revisions.
 - **Fix:** use explicit column lists and lazy-load the revisions when the simulator opens.
 - **Verify:** the `/catalog` RSC payload shrinks, and the simulator still works.
+- **Partly done (2026-10-02):** preloaded prescription revisions 100 → 30. Explicit column lists skipped: only a few timestamps/uuids, on a rarely used screen.
 
 ### QA-35 `/orders` auto-detail requests (low, S)
 - **Root cause:** `OrderPaymentsWorkspace.tsx:33-36,56-62` makes 2 RPCs plus 2 preflights on every desktop visit.
 - **Fix:** render the first order's summary on the server, or merge the two calls into a `get_order_detail` RPC.
 - **Verify:** `/orders` desktop cold → verificar: ≤ 1 browser→Supabase call.
+- **Done (2026-10-02):** `get_order_detail(order)` (migration `20261002220033`) returns summary + timeline in one call, and `get_order_production_panel(order)` (migration `20261002221216`) replaces the panel's 4 requests in 3 stages. Opening an order is now 2 calls (was 2 RPCs + 4 panel requests, each with a preflight).
 
 ### QA-36 supabase-js client bundle (low, L, plausible — defer)
 - **Problem:** the client is 66.6 KB gz (auth + realtime) on every page, and Realtime is unused. It is cached immutably after the first visit.

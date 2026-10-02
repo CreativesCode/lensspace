@@ -1,13 +1,24 @@
 'use client'
 
-import Link from 'next/link'
+import Link, { useLinkStatus } from 'next/link'
 import { usePathname } from 'next/navigation'
-import { BookOpen, Building, Factory, FileText, LayoutDashboard, Plus, ReceiptText, Tags, Users, UsersRound, Wallet, type LucideIcon } from 'lucide-react'
+import { BookOpen, Building, Factory, FileText, LayoutDashboard, LoaderCircle, Plus, ReceiptText, Tags, Users, UsersRound, Wallet, type LucideIcon } from 'lucide-react'
 
 import { useNavigationCounts } from '@/shared/lib/navigation-counters'
 import { ButtonLink, cx } from '@/shared/ui'
 
 const noCounts: Record<string, number> = {}
+// QA-33: each viewport prefetch re-sends the ~2.6 KB auth cookie. Keep it only for
+// the daily routes; the rest load on tap with the pending icon below (QA-29).
+const prefetchedHrefs = new Set(['/orders'])
+
+// QA-29: immediate feedback on tap, in the icon slot so nothing shifts.
+function NavIcon({ icon: Icon, isActive }: { icon: LucideIcon; isActive: boolean }) {
+  const { pending } = useLinkStatus()
+  return pending
+    ? <LoaderCircle aria-hidden="true" size={18} className="animate-spin text-mint" />
+    : <Icon aria-hidden="true" size={18} className={isActive ? 'text-mint' : 'text-on-ink-subtle'} />
+}
 
 const navigationSections: { label: string; items: { href: string; label: string; icon: LucideIcon }[] }[] = [
   {
@@ -59,6 +70,7 @@ export function MainNavigation({ allowedHrefs, counts: serverCounts = noCounts, 
               <Link
                 key={href}
                 href={href}
+                prefetch={prefetchedHrefs.has(href) ? undefined : false}
                 onClick={onNavigate}
                 aria-current={isActive ? 'page' : undefined}
                 className={cx(
@@ -67,7 +79,7 @@ export function MainNavigation({ allowedHrefs, counts: serverCounts = noCounts, 
                 )}
               >
                 <span aria-hidden="true" className={cx('absolute -left-3.5 bottom-2.5 top-2.5 w-[3px] rounded-r-[3px]', isActive ? 'bg-mint' : 'bg-transparent')} />
-                <Icon aria-hidden="true" size={18} className={isActive ? 'text-mint' : 'text-on-ink-subtle'} />
+                <NavIcon icon={Icon} isActive={isActive} />
                 <span className="flex-1">{label}</span>
                 {count > 0 ? <span className={cx('grid h-5 min-w-5 place-items-center rounded-full px-1.5 font-display text-[11.5px] font-bold tabular-nums text-ink', isActive ? 'bg-mint' : 'bg-line-soft')}><span className="sr-only">Pendientes: </span>{count > 99 ? '99+' : count}</span> : null}
               </Link>

@@ -1,3 +1,4 @@
+import { getCurrentUser } from '@/lib/supabase/current-user'
 import { redirect } from 'next/navigation'
 
 import { CustomerWorkspace } from '@/features/customers/components'
@@ -7,9 +8,7 @@ import { PageContainer, PageHeader } from '@/shared/ui'
 
 export default async function CustomersPage() {
   const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await getCurrentUser()
   if (!user) redirect('/login')
 
   const { data: membershipData } = await supabase

@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 import { Badge, Button, Card, CardHeader, Dialog, EmptyState, Field, FilterChips, IconButton, Input, ListItem, cx } from '@/shared/ui'
 
-import { formatAmount, formatShortDate, shortOrderNumber } from '../format'
+import { FINISHED_ORDERS_DAYS, formatAmount, formatShortDate, shortOrderNumber } from '../format'
 import { isFinished, orderStatus } from '../order-status'
 import type { Order } from '../types'
 
@@ -24,10 +24,12 @@ type OrdersInboxProps = {
   initialQuery: string
   // Exact customer id from /orders?clienteId=…, applied only while the query is untouched (avoids mixing homonyms).
   initialCustomerId?: number
+  // True when finished orders are limited to the last FINISHED_ORDERS_DAYS days.
+  finishedWindowed?: boolean
   className?: string
 }
 
-export function OrdersInbox({ orders, selectedId, onSelect, initialQuery, initialCustomerId, className }: OrdersInboxProps) {
+export function OrdersInbox({ orders, selectedId, onSelect, initialQuery, initialCustomerId, finishedWindowed = false, className }: OrdersInboxProps) {
   const [query, setQuery] = useState(initialQuery)
   const [chip, setChip] = useState<Chip>('all')
   const [dateFrom, setDateFrom] = useState('')
@@ -60,6 +62,7 @@ export function OrdersInbox({ orders, selectedId, onSelect, initialQuery, initia
         <FilterChips label="Filtrar por estado" value={chip} onChange={setChip} chips={chipDefinitions.map(({ value, label, matches }) => ({ value, label, count: base.filter(matches).length }))} />
       </div>
       <div className="xl:max-h-[68vh] xl:overflow-y-auto">
+        {finishedWindowed && chip === 'done' ? <p className="border-b border-line-soft px-4 py-2.5 text-[13px] text-text-muted md:px-[18px]">Entregados de los últimos {FINISHED_ORDERS_DAYS} días. El historial completo está en la ficha de cada cliente.</p> : null}
         {visible.map((order, index) => {
           const status = orderStatus(order)
           const owes = !isFinished(order) && order.balanceCup > 0

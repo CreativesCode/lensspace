@@ -1,3 +1,4 @@
+import { getCurrentUser } from '@/lib/supabase/current-user'
 import { redirect } from 'next/navigation'
 
 import { PrescriptionWorkspace } from '@/features/prescriptions/components'
@@ -7,7 +8,7 @@ import { PageContainer, PageHeader } from '@/shared/ui'
 
 export default async function PrescriptionsPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getCurrentUser()
   if (!user) redirect('/login')
 
   const { data: membershipData } = await supabase
