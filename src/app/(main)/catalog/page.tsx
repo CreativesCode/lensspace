@@ -51,7 +51,7 @@ export default async function CatalogPage() {
 
   return (
     <section className="mx-auto max-w-[1440px] px-5 py-8 lg:px-8">
-      <div className="mb-6"><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D7A72]">{isPlatformAdmin ? 'Administración de plataforma' : 'Ventas ópticas'}</p><h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-[#07322F]">{isPlatformAdmin ? 'Catálogo base' : 'Catálogo y precios'}</h1><p className="mt-2 text-sm text-[#74857F]">{isPlatformAdmin ? 'Mantén los artículos globales disponibles para las organizaciones.' : 'Configura precios por organización y simula combinaciones sin perder la moneda de origen.'}</p></div>
+      <div className="mb-6"><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D7A72]">{isPlatformAdmin ? 'Administración de plataforma' : 'Ventas ópticas'}</p><h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-[#07322F]">{isPlatformAdmin ? 'Catálogo base' : 'Catálogo y precios'}</h1><p className="mt-2 text-sm text-[#5F716C]">{isPlatformAdmin ? 'Mantén los artículos globales disponibles para las organizaciones.' : 'Configura precios por organización y simula combinaciones sin perder la moneda de origen.'}</p></div>
       <CatalogWorkspace
         isPlatformAdmin={Boolean(isPlatformAdmin)}
         organizations={access}

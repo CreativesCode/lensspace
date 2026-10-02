@@ -66,7 +66,7 @@ export default async function CustomersPage() {
       <div className="mb-6">
         <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#0D7A72]">Ventas ópticas</p>
         <h1 className="mt-1 font-display text-3xl font-bold tracking-[-0.03em] text-[#07322F]">Clientes</h1>
-        <p className="mt-2 text-sm text-[#74857F]">Busca por nombre o teléfono, reutiliza fichas existentes y registra nuevos clientes.</p>
+        <p className="mt-2 text-sm text-[#5F716C]">Busca por nombre o teléfono, reutiliza fichas existentes y registra nuevos clientes.</p>
       </div>
       <CustomerWorkspace scopes={uniqueScopes} />
     </section>

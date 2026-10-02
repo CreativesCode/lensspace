@@ -49,7 +49,7 @@ export default async function SalesPage() {
   type RevisionRow = { id: number; organization_id: number; branch_id: number; prescription_id: number; prescription_date: string; prescriptions: { customer_id: number } | null }
   type ItemRow = { id: number; organization_id: number | null; category: string; name: string; sale_price: number; currency: string }
   return <section className="mx-auto max-w-[1440px] px-5 py-8 lg:px-8">
-    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D7A72]">Ventas ópticas</p><h1 className="mt-2 font-display text-3xl font-bold text-[#07322F]">Nueva venta · cotización</h1><p className="mb-6 mt-2 text-sm text-[#74857F]">Cliente, receta, configuración y aceptación en un flujo trazable.</p>
+    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D7A72]">Ventas ópticas</p><h1 className="mt-2 font-display text-3xl font-bold text-[#07322F]">Nueva venta · cotización</h1><p className="mb-6 mt-2 text-sm text-[#5F716C]">Cliente, receta, configuración y aceptación en un flujo trazable.</p>
     <SalesWorkspace organizations={organizations}
       customers={((customerData ?? []) as unknown as CustomerRow[]).map((entry) => ({ id: entry.id, organizationId: entry.organization_id, branchId: entry.branch_id, name: entry.full_name }))}
       revisions={((revisionData ?? []) as unknown as RevisionRow[]).map((entry) => ({ id: entry.id, organizationId: entry.organization_id, branchId: entry.branch_id, customerId: entry.prescriptions?.customer_id ?? 0, label: `Receta #${entry.prescription_id} · ${entry.prescription_date}` }))}

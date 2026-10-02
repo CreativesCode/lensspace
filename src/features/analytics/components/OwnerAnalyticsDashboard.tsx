@@ -67,14 +67,14 @@ export function OwnerAnalyticsDashboard({ organizationId, branches, sellers, def
     {metrics ? <div className="mt-5 space-y-5">
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{[
         ['Ventas', `${money(metrics.salesCup)} CUP`], ['Cobros', `${money(metrics.collectionsCup)} CUP`], ['Saldo pendiente', `${money(metrics.outstandingCup)} CUP`], ['Pedidos', String(metrics.orders.total)]
-      ].map(([label, value]) => <div key={label} className="rounded-lg bg-[#F0FBF9] p-4"><p className="text-xs text-[#74857F]">{label}</p><p className="mt-1 font-display text-xl font-bold text-[#07322F]">{value}</p></div>)}</div>
+      ].map(([label, value]) => <div key={label} className="rounded-lg bg-[#F0FBF9] p-4"><p className="text-xs text-[#5F716C]">{label}</p><p className="mt-1 font-display text-xl font-bold text-[#07322F]">{value}</p></div>)}</div>
       <div className="grid gap-4 lg:grid-cols-3"><MetricList title="Por vendedor" rows={metrics.bySeller.map(x => [x.seller_name, `${money(x.sales_cup)} CUP · ${x.order_count}`])} /><MetricList title="Carga de proveedores" rows={metrics.providerLoads.map(x => [x.provider_name, `${x.active_jobs} · ${x.job_type}`])} /><MetricList title="Productos destacados" rows={metrics.topItems.map(x => [x.name, String(x.quantity)])} /></div>
-      <p className="text-xs text-[#74857F]">Incidencias: {metrics.orders.withIncidents} · Diferencia de caja: {money(metrics.cashDifferenceCup)} CUP · Promedio hasta entrega: {metrics.averageDeliveryHours ?? '—'} h</p>
-    </div> : <p className="mt-5 text-sm text-[#74857F]">{pending ? 'Cargando indicadores…' : 'No fue posible cargar los indicadores.'}</p>}
+      <p className="text-xs text-[#5F716C]">Incidencias: {metrics.orders.withIncidents} · Diferencia de caja: {money(metrics.cashDifferenceCup)} CUP · Promedio hasta entrega: {metrics.averageDeliveryHours ?? '—'} h</p>
+    </div> : <p className="mt-5 text-sm text-[#5F716C]">{pending ? 'Cargando indicadores…' : 'No fue posible cargar los indicadores.'}</p>}
     {message ? <p role="status" className="mt-3 text-sm text-[#C23C1C]">{message}</p> : null}
   </section>
 }
 
 function MetricList({ title, rows }: { title: string; rows: [string, string][] }) {
-  return <div className="rounded-lg border border-[#EEF5F4] p-4"><h3 className="font-display text-sm font-semibold text-[#07322F]">{title}</h3><div className="mt-3 space-y-2">{rows.length ? rows.map(([name, value], index) => <div key={`${name}:${index}`} className="flex justify-between gap-3 text-sm"><span className="truncate text-[#4A5B58]">{name}</span><strong className="shrink-0 text-[#07322F]">{value}</strong></div>) : <p className="text-xs text-[#74857F]">Sin datos en el rango.</p>}</div></div>
+  return <div className="rounded-lg border border-[#EEF5F4] p-4"><h3 className="font-display text-sm font-semibold text-[#07322F]">{title}</h3><div className="mt-3 space-y-2">{rows.length ? rows.map(([name, value], index) => <div key={`${name}:${index}`} className="flex justify-between gap-3 text-sm"><span className="truncate text-[#4A5B58]">{name}</span><strong className="shrink-0 text-[#07322F]">{value}</strong></div>) : <p className="text-xs text-[#5F716C]">Sin datos en el rango.</p>}</div></div>
 }

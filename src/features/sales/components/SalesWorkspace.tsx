@@ -394,7 +394,7 @@ export function SalesWorkspace({
 
   if (!organizations.length)
     return (
-      <p className="rounded-lg border border-dashed border-[#DCECEA] bg-white p-8 text-sm text-[#74857F]">
+      <p className="rounded-lg border border-dashed border-[#DCECEA] bg-white p-8 text-sm text-[#5F716C]">
         No tienes una sucursal comercial disponible.
       </p>
     );
@@ -500,7 +500,7 @@ export function SalesWorkspace({
                   <p className="text-sm font-semibold text-[#07322F]">
                     Tasa de esta venta
                   </p>
-                  <p className="text-xs leading-5 text-[#74857F]">
+                  <p className="text-xs leading-5 text-[#5F716C]">
                     Se usa para convertir importes en USD y queda congelada al
                     crear el pedido.
                   </p>
@@ -535,13 +535,13 @@ export function SalesWorkspace({
             <h2 className="font-display text-lg font-semibold text-[#07322F]">
               Configuración
             </h2>
-            <p className="mt-1 text-sm text-[#74857F]">
+            <p className="mt-1 text-sm text-[#5F716C]">
               Toca cada opción que formará parte de la cotización.
             </p>
             <div className="mt-5 space-y-5">
               {groupedItems.map(([category, categoryItems]) => (
                 <div key={category}>
-                  <h3 className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#74857F]">
+                  <h3 className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#5F716C]">
                     {categoryLabels[category] ?? "Otro concepto"}
                   </h3>
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
@@ -588,7 +588,7 @@ export function SalesWorkspace({
             <h2 className="font-display text-lg font-semibold text-[#07322F]">
               Cotización
             </h2>
-            <p className="mt-1 text-xs text-[#74857F]">
+            <p className="mt-1 text-xs text-[#5F716C]">
               {selected.length} conceptos seleccionados
             </p>
           </div>
@@ -604,7 +604,7 @@ export function SalesWorkspace({
                       </strong>
                     </div>
                     {Number(line.baseAmount) !== Number(line.amount) ? (
-                      <p className="mt-1 text-xs text-[#74857F]">
+                      <p className="mt-1 text-xs text-[#5F716C]">
                         Base {Number(line.baseAmount).toLocaleString("es-CU")} {line.currency} · {line.adjustmentReason}
                       </p>
                     ) : null}
@@ -623,7 +623,7 @@ export function SalesWorkspace({
                     </p>
                   ))}
                   {preview.cupEquivalent !== null ? (
-                    <p className="mt-2 text-right text-xs text-[#74857F]">
+                    <p className="mt-2 text-right text-xs text-[#5F716C]">
                       Equivalente:{" "}
                       {Number(preview.cupEquivalent).toLocaleString("es-CU")}{" "}
                       CUP
@@ -640,7 +640,7 @@ export function SalesWorkspace({
                 ))}
               </>
             ) : (
-              <p className="rounded-lg border border-dashed border-[#DCECEA] p-5 text-sm text-[#74857F]">
+              <p className="rounded-lg border border-dashed border-[#DCECEA] p-5 text-sm text-[#5F716C]">
                 Guarda para obtener el desglose definitivo.
               </p>
             )}
@@ -792,7 +792,7 @@ function AcceptedOrderWorkspace({ order, customerName, preview, onNewSale }: { o
       </div>
 
       <div className="rounded-[10px] border border-[#E3EFED] bg-white p-5">
-        <div><p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#74857F]">Saldo pendiente</p><p className="mt-1 font-display text-2xl font-bold text-[#07322F]">{summary ? `${Number(summary.balanceCup).toLocaleString("es-CU", { maximumFractionDigits: 2 })} CUP` : "Cargando…"}</p>{summary ? <p className="mt-1 text-xs text-[#74857F]">Cobrado: {Number(summary.paidCup).toLocaleString("es-CU", { maximumFractionDigits: 2 })} CUP equivalentes</p> : null}</div>
+        <div><p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#5F716C]">Saldo pendiente</p><p className="mt-1 font-display text-2xl font-bold text-[#07322F]">{summary ? `${Number(summary.balanceCup).toLocaleString("es-CU", { maximumFractionDigits: 2 })} CUP` : "Cargando…"}</p>{summary ? <p className="mt-1 text-xs text-[#5F716C]">Cobrado: {Number(summary.paidCup).toLocaleString("es-CU", { maximumFractionDigits: 2 })} CUP equivalentes</p> : null}</div>
         {summary && summary.balanceCup > 0 ? <form onSubmit={registerPayment} className="mt-4 grid gap-3 rounded-lg bg-[#F7FBFA] p-4 sm:grid-cols-2"><h3 className="font-display font-semibold text-[#07322F] sm:col-span-2">Registrar cobro en efectivo</h3><label className="text-xs font-semibold text-[#4A5B58]">Importe<input autoFocus className={`${inputClass} mt-1`} name="amount" type="number" min="0.01" step="0.01" required /></label><label className="text-xs font-semibold text-[#4A5B58]">Moneda<FormSelect className="mt-1" ariaLabel="Moneda del cobro" value={currency} onValueChange={setCurrency} options={[{ value: "CUP", label: "CUP" }, { value: "USD", label: "USD" }]} /></label>{currency === "USD" ? <label className="text-xs font-semibold text-[#4A5B58]">Tasa aplicada<input className={`${inputClass} mt-1`} name="rate" type="number" min="0.01" step="0.01" defaultValue={summary.saleRate ?? 420} required /></label> : null}<label className="text-xs font-semibold text-[#4A5B58]">Nota opcional<input className={`${inputClass} mt-1`} name="notes" maxLength={500} /></label><button disabled={pending} className="rounded-[8px] bg-[#0D7A72] px-4 py-3 text-sm font-semibold text-white disabled:opacity-50 sm:col-span-2">{pending ? "Registrando…" : "Registrar cobro"}</button></form> : summary ? <p className="mt-4 rounded-lg bg-[#E2F4F1] p-4 text-sm font-semibold text-[#07655C]">Pedido pagado completamente.</p> : null}
         {message ? <p role="alert" className="mt-4 rounded-lg border border-[#FFD9CD] bg-[#FFF6F2] p-3 text-sm text-[#7A3A26]">{message}</p> : null}
       </div>

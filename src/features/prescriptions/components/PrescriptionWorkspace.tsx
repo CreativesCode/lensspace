@@ -216,7 +216,7 @@ export function PrescriptionWorkspace({
 
   if (!customers.length) {
     return (
-      <div className="rounded-[10px] border border-dashed border-[#DCECEA] bg-white p-8 text-sm text-[#74857F]">
+      <div className="rounded-[10px] border border-dashed border-[#DCECEA] bg-white p-8 text-sm text-[#5F716C]">
         Primero registra un cliente accesible desde la sección Clientes.
       </div>
     )
@@ -245,7 +245,7 @@ export function PrescriptionWorkspace({
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h2 className="font-display text-base font-semibold text-[#07322F]">{mode === 'new' ? 'Nueva receta' : 'Nueva revisión inmutable'}</h2>
-              <p className="mt-1 text-[13px] text-[#74857F]">El original se preserva; cada corrección registra autor y fecha.</p>
+              <p className="mt-1 text-[13px] text-[#5F716C]">El original se preserva; cada corrección registra autor y fecha.</p>
             </div>
             <div className="flex gap-2">
               <button type="button" onClick={() => setMode('new')} className={`rounded-[7px] px-3 py-2 text-xs font-semibold ${mode === 'new' ? 'bg-[#0D7A72] text-white' : 'border border-[#DCECEA] text-[#4A5B58]'}`}>Nueva receta</button>
@@ -263,15 +263,15 @@ export function PrescriptionWorkspace({
 
         <aside className="space-y-3">
           <h2 className="font-display text-[15px] font-semibold text-[#07322F]">Historial preservado</h2>
-          {loading ? <p className="text-sm text-[#74857F]">Cargando…</p> : null}
-          {!loading && !records.length ? <p className="rounded-[10px] border border-dashed border-[#DCECEA] bg-white p-5 text-sm text-[#74857F]">Este cliente aún no tiene recetas.</p> : null}
+          {loading ? <p className="text-sm text-[#5F716C]">Cargando…</p> : null}
+          {!loading && !records.length ? <p className="rounded-[10px] border border-dashed border-[#DCECEA] bg-white p-5 text-sm text-[#5F716C]">Este cliente aún no tiene recetas.</p> : null}
           {records.map((record) => (
             <article key={record.id} className="rounded-[10px] border border-[#E3EFED] bg-white p-4">
               <h3 className="font-display text-sm font-semibold text-[#07322F]">Receta #{record.id}</h3>
               <div className="mt-3 space-y-3">
                 {record.prescription_revisions.map((revision) => (
                   <div key={revision.id} className="border-l-2 border-[#35C2A8] pl-3">
-                    <div className="flex justify-between gap-2"><p className="text-sm font-semibold text-[#07322F]">Revisión {revision.revision_number}</p><time className="text-xs text-[#74857F]">{revision.prescription_date}</time></div>
+                    <div className="flex justify-between gap-2"><p className="text-sm font-semibold text-[#07322F]">Revisión {revision.revision_number}</p><time className="text-xs text-[#5F716C]">{revision.prescription_date}</time></div>
                     <p className="mt-1 font-display text-xs text-[#4A5B58]">OD {formatOptical(revision.right_sphere)} / {formatOptical(revision.right_cylinder)} · OI {formatOptical(revision.left_sphere)} / {formatOptical(revision.left_cylinder)}</p>
                     {revision.change_reason ? <p className="mt-1 text-xs text-[#A35A15]">{revision.change_reason}</p> : null}
                     {revision.prescription_files.map((file) => <button key={file.id} type="button" onClick={() => void downloadFile(file)} className="mt-2 block text-left text-xs font-semibold text-[#0D7A72]">↓ {file.file_name}</button>)}

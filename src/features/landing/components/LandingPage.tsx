@@ -67,7 +67,7 @@ export function LandingPage() {
               LensSpace conecta clientes, ventas, cobros y producción para que cada pedido avance con información clara y cada persona acceda solo a lo que necesita.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
-              <a href="#como-funciona" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#FF6B4A] px-5 font-display text-sm font-bold text-white shadow-[0_12px_30px_rgba(255,107,74,0.22)] transition hover:-translate-y-0.5 hover:bg-[#E95B3C]">
+              <a href="#como-funciona" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#FF6B4A] px-5 font-display text-sm font-bold text-[#07322F] shadow-[0_12px_30px_rgba(255,107,74,0.22)] transition hover:-translate-y-0.5 hover:bg-[#FF8466]">
                 Ver cómo funciona <ArrowRight aria-hidden="true" size={17} />
               </a>
               <Link href="/login" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-[#B9D8D3] bg-white/70 px-5 font-display text-sm font-bold text-[#07322F] transition hover:border-[#0D7A72] hover:bg-white">

@@ -53,7 +53,7 @@ export default async function PrescriptionsPage() {
       <div className="mb-6">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D7A72]">Clínica</p>
         <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-[#07322F]">Recetas</h1>
-        <p className="mt-2 text-sm text-[#74857F]">Originales privados y correcciones preservadas por cliente.</p>
+        <p className="mt-2 text-sm text-[#5F716C]">Originales privados y correcciones preservadas por cliente.</p>
       </div>
       <PrescriptionWorkspace scopes={uniqueScopes} customers={(customerData ?? []) as never} />
     </section>

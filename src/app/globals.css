@@ -12,6 +12,23 @@
     --vs-highlight: #f0fbf9;
     --vs-canvas: #f7fbfa;
     --vs-border: #dcecea;
+    /* UI 2.0 tokens (docs/design/Guía UI LensSpace.dc.html); --vs-* stay until cleanup */
+    --ls-ink: #07322f;
+    --ls-ink-2: #10463f;
+    --ls-action: #0d7a72;
+    --ls-action-hover: #0a625c;
+    --ls-action-soft: #e2f4f1;
+    --ls-mint: #35c2a8;
+    --ls-coral: #ff6b4a;
+    --ls-coral-ink: #c23c1c;
+    --ls-coral-soft: #fff0eb;
+    --ls-amber-ink: #a35a15;
+    --ls-amber-soft: #fff4e8;
+    --ls-text: #1c3a37;
+    --ls-muted: #5f716c;
+    --ls-line: #dcecea;
+    --ls-canvas: #f7fbfa;
+    --ls-surface: #ffffff;
   }
 
   html { background: var(--vs-canvas); }

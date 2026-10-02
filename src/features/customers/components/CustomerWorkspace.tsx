@@ -264,7 +264,7 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
 
   if (!scopes.length) {
     return (
-      <div className="rounded-[10px] border border-dashed border-[#DCECEA] bg-white p-8 text-sm text-[#74857F]">
+      <div className="rounded-[10px] border border-dashed border-[#DCECEA] bg-white p-8 text-sm text-[#5F716C]">
         Tu cuenta no tiene acceso de dueño o vendedor a una sucursal.
       </div>
     )
@@ -280,13 +280,13 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
           <h2 className="font-display text-base font-semibold text-[#07322F]">
             Buscar o registrar al cliente
           </h2>
-          <p className="mt-1 text-[13px] text-[#74857F]">
+          <p className="mt-1 text-[13px] text-[#5F716C]">
             El teléfono no es único: varias personas pueden compartirlo.
           </p>
 
           <form onSubmit={submitSearch} className="mt-4 flex flex-col gap-2 sm:flex-row">
             <label className="flex min-w-0 flex-1 items-center gap-2 rounded-lg border border-[#DCECEA] bg-[#FBFEFD] px-3 py-2.5 focus-within:border-[#0D7A72] focus-within:ring-4 focus-within:ring-[#E2F4F1]">
-              <span aria-hidden="true" className="text-[#74857F]">⌕</span>
+              <span aria-hidden="true" className="text-[#5F716C]">⌕</span>
               <span className="sr-only">Buscar por nombre o teléfono</span>
               <input
                 value={query}
@@ -302,7 +302,7 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
 
           <div className="mt-3 space-y-2" aria-live="polite">
             {loading ? (
-              <p className="py-5 text-sm text-[#74857F]">Buscando clientes…</p>
+              <p className="py-5 text-sm text-[#5F716C]">Buscando clientes…</p>
             ) : results.length ? (
               results.map((customer) => {
                 const scope = scopes.find(
@@ -321,14 +321,14 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
                         : 'border-[#E3EFED] bg-white hover:bg-[#FBFEFD]'
                     }`}
                   >
-                    <span className={`flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full font-display text-xs font-bold ${isSelected ? 'bg-[#0D7A72] text-white' : 'bg-[#EEF5F4] text-[#74857F]'}`}>
+                    <span className={`flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full font-display text-xs font-bold ${isSelected ? 'bg-[#0D7A72] text-white' : 'bg-[#EEF5F4] text-[#5F716C]'}`}>
                       {initials(customer.full_name)}
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-semibold text-[#07322F]">
                         {customer.full_name}
                       </span>
-                      <span className="block truncate text-xs text-[#74857F]">
+                      <span className="block truncate text-xs text-[#5F716C]">
                         {customer.customer_phones.map(({ phone_number }) => phone_number).join(' · ')}
                         {scope ? ` · ${scope.branchName}` : ''}
                       </span>
@@ -336,7 +336,7 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
                         <span className="rounded bg-[#EEF5F4] px-2 py-1 text-[#4A5B58]">
                           {customer.orderSummary?.total ?? 0} {(customer.orderSummary?.total ?? 0) === 1 ? 'trabajo' : 'trabajos'}
                         </span>
-                        <span className={`rounded px-2 py-1 ${(customer.orderSummary?.open ?? 0) > 0 ? 'bg-[#FFF0EB] text-[#A34732]' : 'bg-[#F4F7F6] text-[#74857F]'}`}>
+                        <span className={`rounded px-2 py-1 ${(customer.orderSummary?.open ?? 0) > 0 ? 'bg-[#FFF0EB] text-[#A34732]' : 'bg-[#F4F7F6] text-[#5F716C]'}`}>
                           {customer.orderSummary?.open ?? 0} abiertos
                         </span>
                         <span className="rounded bg-[#D9F5EE] px-2 py-1 text-[#07655C]">
@@ -351,11 +351,11 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
                 )
               })
             ) : searched ? (
-              <p className="rounded-lg border border-dashed border-[#DCECEA] p-5 text-sm text-[#74857F]">
+              <p className="rounded-lg border border-dashed border-[#DCECEA] p-5 text-sm text-[#5F716C]">
                 No encontramos coincidencias. Puedes registrar una ficha nueva.
               </p>
             ) : (
-              <p className="rounded-lg border border-dashed border-[#DCECEA] p-5 text-sm text-[#74857F]">
+              <p className="rounded-lg border border-dashed border-[#DCECEA] p-5 text-sm text-[#5F716C]">
                 Busca por nombre o teléfono antes de registrar una ficha nueva.
               </p>
             )}
@@ -382,7 +382,7 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h2 className="font-display text-base font-semibold text-[#07322F]">{editingCustomer ? 'Editar ficha' : 'Nueva ficha'}</h2>
-                <p className="mt-1 text-[13px] text-[#74857F]">{editingCustomer ? 'Actualiza los datos vigentes del cliente.' : 'Revisa las coincidencias antes de guardar.'}</p>
+                <p className="mt-1 text-[13px] text-[#5F716C]">{editingCustomer ? 'Actualiza los datos vigentes del cliente.' : 'Revisa las coincidencias antes de guardar.'}</p>
               </div>
               {!activeScope?.canWrite ? (
                 <span className="rounded-[5px] bg-[#FFF4E8] px-2 py-1 text-xs font-semibold text-[#A35A15]">Solo lectura</span>
@@ -417,15 +417,15 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
         <h2 className="font-display text-[15px] font-semibold text-[#07322F]">Ficha seleccionada</h2>
         {selected ? (
           <><dl className="mt-4 space-y-4 text-sm">
-            <div><dt className="text-xs text-[#74857F]">Cliente</dt><dd className="mt-1 font-semibold text-[#07322F]">{selected.full_name}</dd></div>
-            <div><dt className="text-xs text-[#74857F]">Teléfonos</dt><dd className="mt-1 text-[#1C3A37]">{selected.customer_phones.map(({ phone_number }) => phone_number).join(' · ')}</dd></div>
-            <div><dt className="text-xs text-[#74857F]">Dirección</dt><dd className="mt-1 text-[#1C3A37]">{selected.address || '—'}</dd></div>
-            <div><dt className="text-xs text-[#74857F]">Nacimiento</dt><dd className="mt-1 text-[#1C3A37]">{selected.birth_date || '—'}</dd></div>
-            <div><dt className="text-xs text-[#74857F]">WhatsApp</dt><dd className={`mt-1 font-semibold ${selected.messaging_consent ? 'text-[#0D7A72]' : 'text-[#74857F]'}`}>{selected.messaging_consent ? 'Consentimiento otorgado' : 'Sin consentimiento'}</dd></div>
-            <div><dt className="text-xs text-[#74857F]">Trabajos</dt><dd className="mt-2 grid grid-cols-3 gap-2 text-center"><span className="rounded-lg bg-[#EEF5F4] px-2 py-2"><strong className="block text-base text-[#07322F]">{selected.orderSummary?.total ?? 0}</strong><small className="text-[#74857F]">Total</small></span><span className="rounded-lg bg-[#FFF0EB] px-2 py-2"><strong className="block text-base text-[#A34732]">{selected.orderSummary?.open ?? 0}</strong><small className="text-[#A34732]">Abiertos</small></span><span className="rounded-lg bg-[#D9F5EE] px-2 py-2"><strong className="block text-base text-[#07655C]">{selected.orderSummary?.completed ?? 0}</strong><small className="text-[#07655C]">Finalizados</small></span></dd></div>
+            <div><dt className="text-xs text-[#5F716C]">Cliente</dt><dd className="mt-1 font-semibold text-[#07322F]">{selected.full_name}</dd></div>
+            <div><dt className="text-xs text-[#5F716C]">Teléfonos</dt><dd className="mt-1 text-[#1C3A37]">{selected.customer_phones.map(({ phone_number }) => phone_number).join(' · ')}</dd></div>
+            <div><dt className="text-xs text-[#5F716C]">Dirección</dt><dd className="mt-1 text-[#1C3A37]">{selected.address || '—'}</dd></div>
+            <div><dt className="text-xs text-[#5F716C]">Nacimiento</dt><dd className="mt-1 text-[#1C3A37]">{selected.birth_date || '—'}</dd></div>
+            <div><dt className="text-xs text-[#5F716C]">WhatsApp</dt><dd className={`mt-1 font-semibold ${selected.messaging_consent ? 'text-[#0D7A72]' : 'text-[#5F716C]'}`}>{selected.messaging_consent ? 'Consentimiento otorgado' : 'Sin consentimiento'}</dd></div>
+            <div><dt className="text-xs text-[#5F716C]">Trabajos</dt><dd className="mt-2 grid grid-cols-3 gap-2 text-center"><span className="rounded-lg bg-[#EEF5F4] px-2 py-2"><strong className="block text-base text-[#07322F]">{selected.orderSummary?.total ?? 0}</strong><small className="text-[#5F716C]">Total</small></span><span className="rounded-lg bg-[#FFF0EB] px-2 py-2"><strong className="block text-base text-[#A34732]">{selected.orderSummary?.open ?? 0}</strong><small className="text-[#A34732]">Abiertos</small></span><span className="rounded-lg bg-[#D9F5EE] px-2 py-2"><strong className="block text-base text-[#07655C]">{selected.orderSummary?.completed ?? 0}</strong><small className="text-[#07655C]">Finalizados</small></span></dd></div>
           </dl><div className="mt-5 grid gap-2"><Link href={`/orders?clienteId=${selected.id}&cliente=${encodeURIComponent(selected.full_name)}`} className="w-full rounded-[7px] bg-[#0D7A72] px-4 py-2.5 text-center text-sm font-semibold text-white">Ver pedidos de este cliente</Link><button type="button" onClick={() => { setEditingCustomer(selected); setTarget(`${selected.organization_id}:${selected.branch_id}`); setFullName(selected.full_name); setPhones([...selected.customer_phones].sort((a, b) => Number(b.is_primary) - Number(a.is_primary)).map((phone) => ({ number: phone.phone_number, label: phone.label, whatsappEnabled: phone.whatsapp_enabled }))); setDuplicateReviewed(false); setShowForm(true); setMessage(null) }} className="w-full rounded-[7px] border border-[#9BCDC6] px-4 py-2.5 text-sm font-semibold text-[#0D7A72]">Editar cliente</button></div></>
         ) : (
-          <p className="mt-4 text-sm leading-6 text-[#74857F]">Selecciona una coincidencia para revisar su ficha y reutilizarla.</p>
+          <p className="mt-4 text-sm leading-6 text-[#5F716C]">Selecciona una coincidencia para revisar su ficha y reutilizarla.</p>
         )}
       </aside>
     </div>

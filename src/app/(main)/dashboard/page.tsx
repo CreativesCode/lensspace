@@ -263,7 +263,7 @@ function DashboardCard({ organizationName, role, branch, links }: { organization
   return <article className="rounded-[10px] border border-[#E3EFED] bg-white p-6 shadow-sm">
     <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#0D7A72]">{role}</p>
     <h2 className="mt-2 font-display text-xl font-bold text-[#07322F]">{organizationName}</h2>
-    <p className="mt-1 text-sm text-[#74857F]">{branch}</p>
+    <p className="mt-1 text-sm text-[#5F716C]">{branch}</p>
     <div className="mt-5 flex flex-wrap gap-2">{links.map((link) => <a key={link.href} href={link.href} className="rounded-[7px] bg-[#07322F] px-4 py-2.5 text-sm font-semibold text-white">{link.label}</a>)}</div>
   </article>
 }

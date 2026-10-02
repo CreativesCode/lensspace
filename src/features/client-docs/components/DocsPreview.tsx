@@ -10,7 +10,7 @@ export function DocsPreview({ section }: { section: DocSection }) {
     <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#0D7A72]">{section.title}</p>
     <div className="mt-4 space-y-2">{section.content.split('\n').map((raw, index) => {
       const line = raw.trim(); if (!line) return <div key={index} className="h-2" />
-      const image = line.match(imageLine); if (image) return <figure key={index} className="my-5 overflow-hidden rounded-[10px] border border-[#DCECEA]"><img src={image[2]} alt={image[1]} className="w-full" /><figcaption className="bg-[#F7FBFA] px-4 py-2 text-xs text-[#74857F]">{image[1]}</figcaption></figure>
+      const image = line.match(imageLine); if (image) return <figure key={index} className="my-5 overflow-hidden rounded-[10px] border border-[#DCECEA]"><img src={image[2]} alt={image[1]} className="w-full" /><figcaption className="bg-[#F7FBFA] px-4 py-2 text-xs text-[#5F716C]">{image[1]}</figcaption></figure>
       if (line.startsWith('# ')) return <h2 key={index} className="font-display text-2xl font-bold tracking-tight text-[#07322F]">{line.slice(2)}</h2>
       if (line.startsWith('## ')) return <h3 key={index} className="pt-4 font-display text-base font-semibold text-[#07322F]">{line.slice(3)}</h3>
       if (line.startsWith('- ')) return <div key={index} className="flex gap-3 text-sm leading-6 text-[#4A5B58]"><span className="font-bold text-[#0D7A72]">•</span><span>{line.slice(2)}</span></div>

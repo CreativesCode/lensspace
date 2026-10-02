@@ -7,7 +7,7 @@ export function PrescriptionFormFields({ fieldClass }: { fieldClass: string }) {
     <>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[650px] border-collapse">
-          <thead><tr className="text-left text-[11px] uppercase tracking-[0.08em] text-[#74857F]"><th className="p-2" /><th className="p-2">Esfera</th><th className="p-2">Cilindro</th><th className="p-2">Eje</th><th className="p-2">Adición</th><th className="p-2">DP</th><th className="p-2">Altura</th></tr></thead>
+          <thead><tr className="text-left text-[11px] uppercase tracking-[0.08em] text-[#5F716C]"><th className="p-2" /><th className="p-2">Esfera</th><th className="p-2">Cilindro</th><th className="p-2">Eje</th><th className="p-2">Adición</th><th className="p-2">DP</th><th className="p-2">Altura</th></tr></thead>
           <tbody>
             {(['right', 'left'] as const).map((eye) => (
               <tr key={eye}>
@@ -38,7 +38,7 @@ export function PrescriptionFormFields({ fieldClass }: { fieldClass: string }) {
       </div>
 
       <label className="block rounded-lg border border-dashed border-[#B9DFD9] bg-[#F7FDFC] p-4 text-sm text-[#4A5B58]">
-        Original privado <span className="text-xs text-[#74857F]">(opcional, máx. 10 MB)</span>
+        Original privado <span className="text-xs text-[#5F716C]">(opcional, máx. 10 MB)</span>
         <input className="mt-2 block w-full text-xs" name="attachment" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" />
       </label>
     </>
