@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
@@ -11,6 +12,11 @@ export type LoginState = {
 
 export type PasswordState = {
   error: string | null
+}
+
+export type ResetRequestState = {
+  error: string | null
+  sent: boolean
 }
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
@@ -93,4 +99,24 @@ export async function updatePassword(
 
   revalidatePath('/', 'layout')
   redirect('/dashboard')
+}
+
+// QA-23: self-service recovery. The answer is always neutral so the form cannot be
+// used to discover which emails have an account.
+export async function requestPasswordReset(
+  _previousState: ResetRequestState,
+  formData: FormData,
+): Promise<ResetRequestState> {
+  const email = formData.get('email')
+  const normalizedEmail = typeof email === 'string' ? email.trim() : ''
+  if (!isValidEmail(normalizedEmail)) {
+    return { error: 'Escribe un correo electrónico válido.', sent: false }
+  }
+
+  const origin = (await headers()).get('origin') ?? ''
+  const supabase = await createClient()
+  await supabase.auth.resetPasswordForEmail(normalizedEmail, {
+    redirectTo: origin ? `${origin}/auth/callback` : undefined,
+  })
+  return { error: null, sent: true }
 }

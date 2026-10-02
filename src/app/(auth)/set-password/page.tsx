@@ -13,7 +13,7 @@ export default async function SetPasswordPage() {
       <AuthCard
         eyebrow="Acceso seguro"
         title="Crea tu contraseña"
-        description="Termina de activar tu cuenta para entrar a la óptica."
+        description="Elige tu contraseña para entrar a la óptica."
         logoSubtitle="Activación de cuenta"
       >
         <UpdatePasswordForm />

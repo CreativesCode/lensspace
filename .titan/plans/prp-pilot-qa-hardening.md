@@ -103,7 +103,7 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 | QA-20 | Phones stored in two formats ('50000101' vs '5350000101'); duplicates missed | medium | data-integrity | SALES-13 | done 2026-10-02 | S |
 | QA-21 | No pending label and no request timeout on Save/Accept/Pay | medium | friction | SALES-18 (labels), RC-10 | done 2026-10-02 | S |
 | QA-22 | Rate hardcoded to 420; absurd rate accepted; native English validation | low | friction | SOLO-15, SALES-18 (rate) | done 2026-10-02 (/catalog simulator still 420) | S |
-| QA-23 | No password recovery (self-service or admin) | medium | missing-feature | ADM-05 | confirmed | S |
+| QA-23 | No password recovery (self-service or admin) | medium | missing-feature | ADM-05 | done 2026-10-02 (self-service; admin action pending) | S |
 | QA-24 | Sidebar counters never refresh after mutations or soft navigation | medium | refresh | SOLO-06, MR-04, SALES-15, PERF-04, RC-05 | confirmed | S |
 | QA-25 | Superseded incident jobs counted as active/incident forever | medium | bug | SOLO-07, MR-05 | confirmed | S |
 | QA-26 | Back/forward restores stale lists (`useState(initialX)` freezes props) | medium | refresh | RC-06 | confirmed | S |
@@ -504,6 +504,7 @@ Target for a solo owner on a phone:
 
 Principle for the pilot: **no polling and no Realtime**, to keep bandwidth low. Refresh after the user's own mutations, on window focus or visibility change, on the `online` event, and after an error.
 
+- **Done (2026-10-02, self-service):** the `/login` link '¿Olvidaste tu contraseña?' leads to `/forgot-password` (`ForgotPasswordForm`). The `requestPasswordReset` server action calls `resetPasswordForEmail` with `redirectTo: <request origin>/auth/callback` (already routes `recovery` to `/set-password`) and always returns the same neutral message. Verified: an unknown email gets the neutral confirmation. Not verified: the real email link (no test mailbox). The origin must be in Supabase Auth's redirect allowlist, otherwise the Site URL is used. Pending: the superadmin 'Enviar enlace de restablecimiento' action.
 ### QA-24 Sidebar counters stale (medium, S)
 - **Problem:** 'Pedidos y cobros' and 'Producción' badges stay unchanged through accept, payment, delivery and assign, and through soft navigation. Only a hard reload updates them. This undermines the feature from commit 699a383.
 - **Evidence:** RC `02-refresh.mjs` showed the badge at 5 through every step and 6 after a reload; `refresh-cache-code/02-badge-stale-after-accept.png`. The intercepted soft-navigation RSC payload contains no layout.

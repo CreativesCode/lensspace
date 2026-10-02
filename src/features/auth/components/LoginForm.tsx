@@ -1,6 +1,7 @@
 'use client'
 
 import { LogIn } from 'lucide-react'
+import Link from 'next/link'
 import { useActionState } from 'react'
 
 import { login, type LoginState } from '../actions'
@@ -39,6 +40,7 @@ export function LoginForm({ next = '/dashboard' }: { next?: string }) {
       <Button type="submit" size="lg" icon={LogIn} block disabled={pending}>
         {pending ? 'Entrando…' : 'Iniciar sesión'}
       </Button>
+      <p className="text-center text-sm"><Link href="/forgot-password" className="font-semibold text-action hover:underline">¿Olvidaste tu contraseña?</Link></p>
     </form>
   )
 }
