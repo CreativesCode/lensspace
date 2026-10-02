@@ -2186,7 +2186,13 @@ export type Database = {
       }
       get_navigation_counters: { Args: never; Returns: Json }
       get_openwa_runtime_config: { Args: never; Returns: Json }
+      get_order_detail: { Args: { target_order_id: number }; Returns: Json }
+      get_order_kpis: { Args: never; Returns: Json }
       get_order_payment_summary: {
+        Args: { target_order_id: number }
+        Returns: Json
+      }
+      get_order_production_panel: {
         Args: { target_order_id: number }
         Returns: Json
       }
@@ -2210,7 +2216,9 @@ export type Database = {
         }
         Returns: Json
       }
-      list_accessible_orders: { Args: never; Returns: Json }
+      list_accessible_orders:
+        | { Args: never; Returns: Json }
+        | { Args: { finished_since: string }; Returns: Json }
       list_accessible_production_jobs: { Args: never; Returns: Json }
       manage_organization_member: {
         Args: {
