@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from
 import { createClient } from '@/lib/supabase/client'
 import { ButtonLink, EmptyState, PageHeader, StatCard, Toast, cx } from '@/shared/ui'
 import { newRequestId } from '@/shared/utils/request-id'
+import { friendlyError } from '@/shared/lib/friendly-error'
 
 import { formatAmount } from '../format'
 import { orderKpis } from '../order-kpis'
@@ -48,7 +49,7 @@ export function OrderPaymentsWorkspace({ initialOrders, initialCustomerFilter = 
   const select = useCallback((orderId: number) => {
     setSelectedId(orderId); setError('')
     startTransition(async () => {
-      try { await loadDetail(orderId) } catch (loadError) { setSummary(null); setError(loadError instanceof Error ? loadError.message : 'No se pudo abrir el pedido.') }
+      try { await loadDetail(orderId) } catch (loadError) { setSummary(null); setError(friendlyError(loadError instanceof Error ? loadError : null, 'No se pudo abrir el pedido.')) }
     })
   }, [loadDetail])
 
@@ -87,7 +88,7 @@ export function OrderPaymentsWorkspace({ initialOrders, initialCustomerFilter = 
     const requestId = readyRequest.current.id
     startTransition(async () => {
       const { error: notifyError } = await supabase.rpc('notify_order_ready', { target_order_id: selectedId, request_id: requestId } as never)
-      if (notifyError) return setError(isNetworkError(notifyError) ? 'Sin conexión: no sabemos si el aviso salió. Pulsa «Avisar» otra vez cuando vuelva la señal; no se enviará dos veces.' : notifyError.message)
+      if (notifyError) return setError(isNetworkError(notifyError) ? 'Sin conexión: no sabemos si el aviso salió. Pulsa «Avisar» otra vez cuando vuelva la señal; no se enviará dos veces.' : friendlyError(notifyError, 'No pudimos enviar el aviso.'))
       readyRequest.current = null
       setError('')
       setToast('Aviso «Pedido listo» en camino. El resultado aparecerá en el historial.')
@@ -99,7 +100,12 @@ export function OrderPaymentsWorkspace({ initialOrders, initialCustomerFilter = 
   function deliver() {
     startTransition(async () => {
       const { error: deliveryError } = await supabase.rpc('mark_order_delivered', { target_order_id: selectedId } as never)
-      if (deliveryError) return setError(deliveryError.message)
+      if (deliveryError) {
+        setError(friendlyError(deliveryError, 'No pudimos marcar el pedido como entregado.'))
+        // Someone may have delivered or paid it meanwhile: show the current state.
+        await Promise.all([loadDetail(selectedId), refreshOrders()]).catch(() => undefined)
+        return
+      }
       setError('')
       await Promise.all([loadDetail(selectedId), refreshOrders()]).catch(() => undefined)
       setToast('Pedido marcado como entregado.')

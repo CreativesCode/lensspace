@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import type { Tables } from '@/lib/supabase/database.types'
 import { FormSelect } from '@/shared/components'
 import { Alert, Badge, Button, Card, CardHeader, Dialog, EmptyState, Field, IconButton, Input, Switch, Toast, cx } from '@/shared/ui'
+import { friendlyError } from '@/shared/lib/friendly-error'
 
 type OrganizationAccess = { id: number; name: string; canManage: boolean; canCalculate: boolean }
 type CatalogItem = Tables<'catalog_items'>
@@ -136,7 +137,7 @@ export function CatalogWorkspace({
       usd_to_cup_rate: numericRate,
     } as never)
     if (error) {
-      setError(error.message || 'No se pudo calcular el precio.')
+      setError(friendlyError(error, 'No se pudo calcular el precio.'))
       setResult(null)
     } else {
       setResult(data as unknown as PriceResult)
@@ -167,7 +168,7 @@ export function CatalogWorkspace({
     let { error } = exists ? await updateExisting() : await supabase.from('catalog_item_overrides').insert(entry as never)
     if (error?.code === '23505') ({ error } = await updateExisting())
     if (error) {
-      setError(error.message || 'No se pudo guardar la personalización.')
+      setError(friendlyError(error, 'No se pudo guardar la personalización.'))
     } else {
       setOverrides((current) => [
         ...current.filter(
@@ -201,7 +202,7 @@ export function CatalogWorkspace({
       .eq('id', item.id)
       .is('organization_id', null)
     if (error) {
-      setError(error.message || 'No se pudo actualizar el artículo base.')
+      setError(friendlyError(error, 'No se pudo actualizar el artículo base.'))
     } else {
       setItems((current) => current.map((entry) =>
         entry.id === item.id ? { ...entry, ...changes } : entry,
@@ -237,7 +238,7 @@ export function CatalogWorkspace({
       .select('*')
       .single()
     if (error) {
-      setError(error.message || 'No se pudo crear el artículo.')
+      setError(friendlyError(error, 'No se pudo crear el artículo.'))
     } else {
       setItems((current) => [...current, data as CatalogItem])
       formElement.reset()

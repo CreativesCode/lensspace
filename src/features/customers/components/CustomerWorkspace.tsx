@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import type { Tables } from '@/lib/supabase/database.types'
 import { FormSelect } from '@/shared/components'
 import { Alert, Avatar, Badge, Button, ButtonLink, Card, CardHeader, EmptyState, Field, Input, ListItem } from '@/shared/ui'
+import { friendlyError } from '@/shared/lib/friendly-error'
 import { CustomerFormFields, customerFormValues, type CustomerPhoneDraft } from './CustomerFormFields'
 
 type AccessScope = {
@@ -238,7 +239,7 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
         } as never)
 
     if (error) {
-      setMessage(error.message || 'No se pudo registrar el cliente.')
+      setMessage(friendlyError(error, 'No se pudo registrar el cliente.'))
       setSaving(false)
       return
     }

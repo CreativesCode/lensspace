@@ -5,6 +5,7 @@ import { FormEvent, useMemo, useState, useTransition } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { FilterPanel, FormSelect } from '@/shared/components'
 import { Alert, Badge, Button, Card, CardHeader, EmptyState, Field, Input, ListItem, PageHeader, StatCard, Toast, cx } from '@/shared/ui'
+import { friendlyError } from '@/shared/lib/friendly-error'
 
 type Closure = { id: number; type: 'primary' | 'complementary'; sequenceNumber: number; expectedAmount: number; declaredAmount: number; differenceAmount: number; closedAt: string }
 export type Cashbox = { id: number; branchName: string; sellerId: string; sellerName: string; businessDate: string; currency: 'CUP' | 'USD'; receivedAmount: number; paymentCount: number; pendingPostCloseAmount: number; primaryClosed: boolean; closedExpectedAmount: number; closedDeclaredAmount: number; closedDifferenceAmount: number; closures: Closure[] }
@@ -42,9 +43,9 @@ export function CashboxWorkspace({ initialCashboxes, currentUserId }: { initialC
     setMessage('')
     startTransition(async () => {
       const { error } = await supabase.rpc('close_cashbox', { target_cashbox_id: selected.id, closure_type: closureType, declared_amount: Number(form.get('declaredAmount')) } as never)
-      if (error) return setMessage(error.message)
+      if (error) return setMessage(friendlyError(error, 'No pudimos cerrar la caja.'))
       const { data, error: refreshError } = await supabase.rpc('list_accessible_cashboxes', { target_branch_id: null, target_business_date: null, target_seller_id: null } as never)
-      if (refreshError) return setMessage(refreshError.message)
+      if (refreshError) return setMessage(friendlyError(refreshError, 'El cierre se guardó, pero no pudimos actualizar la lista. Recarga cuando vuelva la señal.'))
       setCashboxes(data as unknown as Cashbox[])
       setToast(closureType === 'primary' ? 'Cierre principal registrado.' : 'Cierre complementario registrado.')
     })

@@ -1,9 +1,8 @@
-type PaymentError = { code?: string; message?: string } | null
+import { friendlyError, isNetworkError } from '@/shared/lib/friendly-error'
 
-// supabase-js reports a dropped connection as an error without a Postgres code.
-export function isNetworkError(error: PaymentError) {
-  return Boolean(error) && !error?.code && /fetch|network|load failed|aborted|timeout/i.test(error?.message ?? '')
-}
+export { isNetworkError }
+
+type PaymentError = { code?: string; message?: string } | null
 
 export function friendlyPaymentError(error: PaymentError) {
   const message = error?.message ?? ''
@@ -27,5 +26,5 @@ export function friendlyPaymentError(error: PaymentError) {
   if (error?.code === '42501') {
     return 'No tienes permiso para registrar este cobro. Verifica tu acceso a la organización y la sucursal.'
   }
-  return 'No pudimos registrar el cobro. Revisa el importe e inténtalo nuevamente.'
+  return friendlyError(error, 'No pudimos registrar el cobro. Inténtalo nuevamente.')
 }

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { FilterPanel, FormSelect } from '@/shared/components'
 import { Alert, Badge, Button, ButtonLink, Card, CardHeader, Dialog, EmptyState, Field, Input, Switch, Textarea, Toast } from '@/shared/ui'
+import { friendlyError } from '@/shared/lib/friendly-error'
 import { OrganizationOnboardingForm } from './OrganizationOnboardingForm'
 
 const modules = [
@@ -75,7 +76,7 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
         target_module_keys: modules.filter(([key]) => enabledModules.includes(key)).map(([key]) => key),
         change_reason: String(form.get('reason')),
       } as never)
-      if (saveError) return setError(saveError.message)
+      if (saveError) return setError(friendlyError(saveError, 'No pudimos guardar los cambios de la organización.'))
       setError('')
       setToast('Contrato y controles operativos actualizados con auditoría.')
       router.refresh()
@@ -91,7 +92,7 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
         support_reason: String(form.get('supportReason')),
         duration_minutes: Number(form.get('duration')),
       } as never)
-      if (supportError) return setError(supportError.message)
+      if (supportError) return setError(friendlyError(supportError, 'No pudimos iniciar la asistencia.'))
       setError('')
       setToast('Sesión de asistencia iniciada y auditada.')
       router.refresh()
@@ -101,7 +102,7 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
   function endSupport(sessionId: number) {
     startTransition(async () => {
       const { error: endError } = await supabase.rpc('end_platform_support_session', { target_session_id: sessionId } as never)
-      if (endError) return setError(endError.message)
+      if (endError) return setError(friendlyError(endError, 'No pudimos cerrar la asistencia.'))
       setError('')
       setToast('Sesión de asistencia cerrada.')
       router.refresh()

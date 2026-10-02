@@ -108,9 +108,9 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 | QA-25 | Superseded incident jobs counted as active/incident forever | medium | bug | SOLO-07, MR-05 | confirmed | S |
 | QA-26 | Back/forward restores stale lists (`useState(initialX)` freezes props) | medium | refresh | RC-06 | confirmed | S |
 | QA-27 | No refetch on focus/reconnect/error: other users' changes, stale balances, renewal and module changes stay stale | medium | refresh | MR-04 (cross-user), RC-07, ADM-06 | confirmed | S |
-| QA-28 | Offline navigation lands on the Chrome error page; no `loading.tsx`/`error.tsx`/offline banner | high | offline | SOLO-12, PERF-01, RC-08, MR-10 (offline view) | confirmed | S→M |
+| QA-28 | Offline navigation lands on the Chrome error page; no `loading.tsx`/`error.tsx`/offline banner | high | offline | SOLO-12, PERF-01, RC-08, MR-10 (offline view) | done 2026-10-02 (base; service worker pending) | S→M |
 | QA-29 | Every click waits 0.5–3 s with no feedback; nothing streams | medium | performance | PERF-05 | confirmed | S |
-| QA-30 | Raw technical errors ('TypeError: Failed to fetch', English RLS/privilege messages) | medium | ux-copy | SOLO-11, MR-10, SALES-09, ADM-07, RC-09 | confirmed | S |
+| QA-30 | Raw technical errors ('TypeError: Failed to fetch', English RLS/privilege messages) | medium | ux-copy | SOLO-11, MR-10, SALES-09, ADM-07, RC-09 | done 2026-10-02 | S |
 | QA-31 | Server waterfalls (owner `/dashboard` 9 sequential round trips) and 2–3 `getUser()` per request | medium | performance | PERF-06, ADM-14 | confirmed | M |
 | QA-32 | Unbounded `list_accessible_orders`/jobs; customer search waterfall; `/production` loads all orders | medium | performance | PERF-07, SALES-16, RC-14, RC-15, MR-11 | confirmed | M |
 | QA-33 | Desktop sidebar prefetches 19 routes per page view (~50 KB upload) | low | performance | PERF-08 | plausible | S |
@@ -540,6 +540,14 @@ Measured in the production build:
   5. Later, via tf-add-mobile: a minimal `public/sw.js` that precaches static assets and serves an `/offline` fallback for navigations, and an optional read-only snapshot of the provider's jobs.
 - **Verify:** go offline on `/customers` and tap 'Pedidos y cobros' → verificar: still in the app, banner shown, navigation completes after reconnecting; offline reload → verificar: fallback page shown (once the SW ships).
 
+- **Done (2026-10-02, base):** what changed:
+  - `next.config.ts` sets `experimental: { useOffline: true }`.
+  - `src/app/(main)/loading.tsx` adds a skeleton that serves as the route shell.
+  - `src/app/(main)/error.tsx` (from QA-09) and `src/app/global-error.tsx` (own html/body, inline styles, Next 16 `retry`) are in place.
+  - `OfflineBanner` (`useOffline` from `next/offline`) sits in the main layout: 'Sin conexión: lo que ves sigue aquí y reintentaremos al volver la señal.'
+  - Verified as Javier on dev: going offline on `/customers` and tapping 'Pedidos y cobros' kept the app with the sidebar and banner and no Chrome error page. After reconnecting the navigation finished on `/orders` by itself and the banner disappeared.
+  - Pending (Phase 4, item 5): a service worker for full offline reloads and the provider jobs snapshot.
+
 ### QA-29 Navigation feedback (medium, S)
 - **Problem:** the time from click to URL change is 0.5–2.8 s on a fast link and 0.9–3.0 s throttled. The old page stays on screen and the active state does not move, so users tap again. TTFB equals the full response time, so nothing streams.
 - **Evidence:** `performance-network/nav-fast.json`, `nav-throttle.json`.
@@ -563,6 +571,12 @@ Measured in the production build:
   - otherwise pass the Spanish DB message through.
   Use it at every site, and after a delivery error reload the order.
 - **Verify:** `grep -rn "error.message" src/features` → verificar: it only appears inside the mapper; offline submit on each workspace → verificar: Spanish copy.
+
+- **Done (2026-10-02):** what changed:
+  - `src/shared/lib/friendly-error.ts` adds `friendlyError(error, fallback)`, `isNetworkError` and `offlineMessage`. Spanish RPC messages pass through; network errors get the 'Sin conexión…' copy; English permission/RLS errors become 'No tienes permiso… o la organización está en solo lectura.'; other technical English errors fall back to per-screen copy.
+  - It is applied in admin, analytics, cashbox, catalog, customers, orders, production, sales and team. `friendlyPaymentError` and `friendlyPrescriptionError` reuse it.
+  - A failed delivery reloads the order.
+  - Verified offline: creating a customer and saving a quotation both show 'Sin conexión: no pudimos completar la acción. Revisa la señal e inténtalo de nuevo.'
 
 ### QA-31 Server waterfalls and duplicate auth calls (medium, M)
 - **Problem:** owner `/dashboard` makes 9 sequential Supabase round trips and the provider dashboard makes 10. TTFB is 2.2–2.6 s from this machine, and `getUser()` runs 2–3 times per request. `/catalog` has 6 levels and `/sales` has 5.

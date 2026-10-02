@@ -5,6 +5,7 @@ import { FormEvent, useMemo, useState, useTransition } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { FormSelect, OperationalFilters } from '@/shared/components'
 import { Alert, Button, ButtonLink, Dialog, EmptyState, Field, IconButton, PageHeader, SegmentedControl, StatCard, Textarea } from '@/shared/ui'
+import { friendlyError } from '@/shared/lib/friendly-error'
 
 import { productionStatusLabel, responsibilityLabels, statusLabels } from '../production-status'
 import { ProductionJobCard } from './ProductionJobCard'
@@ -88,7 +89,7 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
     const form = new FormData(event.currentTarget)
     startTransition(async () => {
       const { error } = await supabase.rpc('assign_production_job', { target_order_id: Number(form.get('orderId')), job_type: jobType, provider_id: effectiveProviderId } as never)
-      if (error) return setAssignmentError(error.message)
+      if (error) return setAssignmentError(friendlyError(error, 'No pudimos asignar el trabajo.'))
       const fresh = await refreshJobs(); setAssignmentOpen(false); setSelectedProviderId(''); setAssignmentError(''); setMessage(savedMessage(fresh, 'Trabajo asignado correctamente.'))
     })
   }
@@ -96,7 +97,7 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
   function transitionProduction(job: ProductionJob, transition: JobAction) {
     startTransition(async () => {
       const { error } = await supabase.rpc('transition_production_job', { target_job_id: job.id, target_status: transition.target, notes: null } as never)
-      if (error) return setMessage(error.message)
+      if (error) return setMessage(friendlyError(error, 'No pudimos actualizar el estado.'))
       const fresh = await refreshJobs(); setMessage(savedMessage(fresh, `Estado actualizado a ${productionStatusLabel(transition.target, job.jobType)}.`))
     })
   }
@@ -116,7 +117,7 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
     setIncidentError('')
     startTransition(async () => {
       const { error } = await supabase.rpc('report_production_incident', { target_job_id: incidentJob.id, description, cost_responsibility: incidentResponsibility } as never)
-      if (error) return setIncidentError(error.message)
+      if (error) return setIncidentError(friendlyError(error, 'No pudimos registrar la incidencia.'))
       const fresh = await refreshJobs()
       setIncidentJob(null)
       setMessage(savedMessage(fresh, 'Incidencia registrada sin alterar el historial anterior.'))
@@ -126,7 +127,7 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
   function createRework(incidentId: number) {
     startTransition(async () => {
       const { error } = await supabase.rpc('create_production_rework', { target_incident_id: incidentId } as never)
-      if (error) return setMessage(error.message)
+      if (error) return setMessage(friendlyError(error, 'No pudimos crear la repetición.'))
       const fresh = await refreshJobs(); setMessage(savedMessage(fresh, 'Repetición creada y vinculada al trabajo original.'))
     })
   }

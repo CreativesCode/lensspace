@@ -5,6 +5,7 @@ import { FormEvent, useEffect, useMemo, useState, useTransition } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { FormSelect } from '@/shared/components'
 import { Alert, Button, Card, CardHeader, Field, Input, StatCard } from '@/shared/ui'
+import { friendlyError } from '@/shared/lib/friendly-error'
 
 type Option = { id: number; name: string }
 type Seller = { id: string; name: string; branchId: number | null }
@@ -35,7 +36,7 @@ export function OwnerAnalyticsDashboard({ organizationId, branches, sellers, def
         date_from: from,
         date_to: to,
       } as never)
-      if (error) return setMessage(error.message)
+      if (error) return setMessage(friendlyError(error, 'No pudimos calcular los indicadores.'))
       setMetrics(data as unknown as Metrics)
       setMessage('')
     })

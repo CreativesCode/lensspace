@@ -3,7 +3,7 @@
 import { Plus, Save, Store, UserPlus } from "lucide-react";
 import { useMemo, useState, useTransition, type FormEvent, type ReactNode } from "react";
 
-import { isNetworkError } from "@/features/orders/payment-errors";
+import { friendlyError, isNetworkError } from "@/shared/lib/friendly-error";
 import { CustomerFormFields, customerFormValues, type CustomerPhoneDraft } from "@/features/customers/components";
 import { PrescriptionFormFields } from "@/features/prescriptions/components";
 import {
@@ -186,7 +186,7 @@ export function SalesWorkspace({
       phone_entries: values.phones,
     } as never);
     if (error) {
-      setDialogMessage(error.message || "No se pudo registrar el cliente.");
+      setDialogMessage(friendlyError(error, "No se pudo registrar el cliente."));
       setSavingQuick(false);
       return;
     }
@@ -317,7 +317,7 @@ export function SalesWorkspace({
           line_adjustments: lineAdjustments,
         } as never,
       );
-      if (priceError) return setMessage(priceError.message);
+      if (priceError) return setMessage(friendlyError(priceError, "No pudimos calcular la cotización."));
       const { data, error } = await supabase.rpc("save_quotation", {
         target_quotation_id: quotationId,
         target_organization_id: organizationId,
@@ -329,7 +329,7 @@ export function SalesWorkspace({
         target_notes: notes,
         target_line_adjustments: lineAdjustments,
       } as never);
-      if (error) return setMessage(error.message);
+      if (error) return setMessage(friendlyError(error, "No pudimos guardar la cotización."));
       setPreview(price as unknown as PriceResult);
       setQuotationId(Number(data));
       setMessage("Cotización guardada. Confirma los importes con el cliente.");
@@ -350,7 +350,7 @@ export function SalesWorkspace({
         return setMessage(
           isNetworkError(error)
             ? "Sin conexión: no pudimos confirmar el pedido. Pulsa “Cliente acepta” otra vez cuando vuelva la señal; no se creará un pedido duplicado."
-            : error.message,
+            : friendlyError(error, "No pudimos confirmar el pedido."),
         );
       const result = data as unknown as AcceptedOrder;
       setMessage(

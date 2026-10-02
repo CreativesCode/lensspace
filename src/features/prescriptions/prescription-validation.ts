@@ -1,3 +1,5 @@
+import { isNetworkError, offlineMessage } from '@/shared/lib/friendly-error'
+
 type NumericRule = {
   name: string
   label: string
@@ -114,6 +116,7 @@ const constraintMessages: Record<string, string> = {
 
 export function friendlyPrescriptionError(message?: string) {
   const normalized = message?.toLowerCase() ?? ''
+  if (isNetworkError({ message })) return offlineMessage
   const match = Object.entries(constraintMessages).find(([constraint]) => normalized.includes(constraint))
   return match?.[1] ?? 'No pudimos guardar la receta. Revisa los valores introducidos e inténtalo nuevamente.'
 }

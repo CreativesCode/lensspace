@@ -6,6 +6,7 @@ import { useMemo, useState, type FormEvent } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { FormSelect } from '@/shared/components'
 import { Alert, Badge, Button, Card, CardHeader, Dialog, Field, Input, ListItem, Toast, type Tone } from '@/shared/ui'
+import { friendlyError } from '@/shared/lib/friendly-error'
 
 type ManagedRole = 'seller' | 'lens_provider' | 'mounting_provider'
 type TeamMember = { id: number; displayName: string; role: string; status: string; branchId: number | null; branchName: string | null }
@@ -41,7 +42,7 @@ export function OrganizationTeamManager({ organizationId, organizationName, bran
   async function manageMember(member: TeamMember, nextStatus: 'active' | 'inactive', nextBranchId: number | null) {
     setPending(true); setError(null)
     const { error: manageError } = await supabase.rpc('manage_organization_member', { target_membership_id: member.id, target_status: nextStatus, target_branch_id: nextBranchId } as never)
-    if (manageError) { setError(manageError.message || 'No se pudo actualizar el miembro.'); setPending(false); return }
+    if (manageError) { setError(friendlyError(manageError, 'No se pudo actualizar el miembro.')); setPending(false); return }
     setToast('Miembro actualizado correctamente.'); setEditingMember(null); router.refresh(); setPending(false)
   }
 
