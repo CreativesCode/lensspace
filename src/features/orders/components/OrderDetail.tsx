@@ -1,9 +1,11 @@
 'use client'
 
 import { ArrowLeft, Banknote, CircleCheck, Hourglass, Lock, MessageCircle, PackageCheck } from 'lucide-react'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
-import { Alert, Avatar, Badge, Button, Card, ProgressBar, Tabs, Timeline, cx } from '@/shared/ui'
+import { OrderProductionPanel, type ProductionReadiness } from '@/features/production/components'
+
+import { Alert, Avatar, Badge, Button, Card, Dialog, ProgressBar, Tabs, Timeline, cx } from '@/shared/ui'
 
 import { formatAmount, formatDateTime, formatLongDate } from '../format'
 import { isFinished, orderStatus, paymentStatusLabels, timelineKind } from '../order-status'
@@ -24,6 +26,11 @@ type OrderDetailProps = {
 
 export function OrderDetail({ order, summary, timeline, pending, error, onBack, onRegisterPayment, onDeliver, onNotifyReady }: OrderDetailProps) {
   const [tab, setTab] = useState<'payments' | 'history'>('payments')
+  const [readiness, setReadiness] = useState<ProductionReadiness | null>(null)
+  const [confirmDelivery, setConfirmDelivery] = useState(false)
+  const handleReadiness = useCallback((value: ProductionReadiness) => setReadiness(value), [])
+  // Product decision (QA-14): delivering before production is reviewed warns, never blocks.
+  const requestDelivery = () => (readiness?.ready ? onDeliver() : setConfirmDelivery(true))
   const status = orderStatus({ ...order, balanceCup: summary.balanceCup, commercialStatus: summary.commercialStatus, paymentStatus: summary.paymentStatus })
   const finished = isFinished(summary)
   const owes = summary.balanceCup > 0 && !finished
@@ -82,6 +89,8 @@ export function OrderDetail({ order, summary, timeline, pending, error, onBack, 
         )}
         {error ? <Alert tone="danger" role="alert">{error}</Alert> : null}
 
+        <OrderProductionPanel key={summary.orderId} orderId={summary.orderId} canAssign={summary.commercialStatus === 'accepted'} onReadinessChange={handleReadiness} />
+
         <div>
           <Tabs label="Detalle del pedido" value={tab} onChange={setTab} tabs={[{ value: 'payments', label: 'Pagos', count: paymentCount }, { value: 'history', label: 'Historial', count: history.length }]} />
           {tab === 'payments' ? (
@@ -117,10 +126,21 @@ export function OrderDetail({ order, summary, timeline, pending, error, onBack, 
           </p>
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
             <Button variant="secondary" icon={MessageCircle} onClick={onNotifyReady} disabled={pending} className="w-full sm:w-auto">Avisar: listo para recoger</Button>
-            <Button variant="ink" icon={PackageCheck} onClick={onDeliver} disabled={owes || pending} className="w-full sm:w-auto">Marcar como entregado</Button>
+            <Button variant="ink" icon={PackageCheck} onClick={requestDelivery} disabled={owes || pending} className="w-full sm:w-auto">Marcar como entregado</Button>
           </div>
         </div>
       ) : null}
+
+      <Dialog
+        open={confirmDelivery}
+        onClose={() => setConfirmDelivery(false)}
+        title="¿Entregar igual?"
+        description={readiness?.hasJobs ? 'La producción de este pedido todavía no está recibida y revisada por la óptica.' : 'Este pedido no se ha enviado a producción.'}
+        footer={<>
+          <Button variant="ghost" onClick={() => setConfirmDelivery(false)}>Volver</Button>
+          <Button variant="ink" icon={PackageCheck} onClick={() => { setConfirmDelivery(false); onDeliver() }}>Entregar igual</Button>
+        </>}
+      />
     </Card>
   )
 }

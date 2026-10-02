@@ -7,6 +7,7 @@ import { PaymentForm, type PaymentInput } from '@/features/orders/components/Pay
 import { formatAmount } from '@/features/orders/format'
 import { friendlyPaymentError, isNetworkError } from '@/features/orders/payment-errors'
 import type { PaymentSummary } from '@/features/orders/types'
+import { OrderProductionPanel } from '@/features/production/components'
 import { createClient } from '@/lib/supabase/client'
 import { Alert, Button, ButtonLink, Card, CardHeader, ProgressBar, Toast } from '@/shared/ui'
 
@@ -103,6 +104,7 @@ export function AcceptedOrderPanel({ order, customerName, preview, onNewSale }: 
         {summary && !owes ? <Alert tone="success">Pedido pagado completamente.</Alert> : null}
         {error ? <Alert tone="danger" role="alert">{error}</Alert> : null}
       </Card>
+      <OrderProductionPanel orderId={order.orderId} canAssign />
       <Toast message={toast} onDismiss={() => setToast('')} />
     </div>
   )

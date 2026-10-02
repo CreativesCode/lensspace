@@ -93,8 +93,8 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 | QA-10 | Delivery event attributed to 'Sistema' (no `delivered_by`) | medium | data-integrity | SOLO-09, MR-09 | done 2026-10-02 | S |
 | QA-11 | Client 'today' in UTC: prescription date defaults to tomorrow after 20:00 Havana | medium | data-integrity | SALES-14, RC-13 | done 2026-10-02 | S |
 | QA-12 | Sale customer picker: no search, capped at 200 customers / 200 revisions | high | friction | SALES-04, SOLO-17, PERF-03, RC-12 | done 2026-10-02 | M |
-| QA-13 | Production assignment only from `/production`, order chosen by number only, no auto provider | medium | friction | MR-12, MR-11 (selector), RC-15 (label) | confirmed | M |
-| QA-14 | Delivery not tied to production; no 'Listo para recoger' or production strip in order detail | medium | missing-feature | SOLO-10, MR-08 | confirmed | M |
+| QA-13 | Production assignment only from `/production`, order chosen by number only, no auto provider | medium | friction | MR-12, MR-11 (selector), RC-15 (label) | done 2026-10-02 | M |
+| QA-14 | Delivery not tied to production; no 'Listo para recoger' or production strip in order detail | medium | missing-feature | SOLO-10, MR-08 | done 2026-10-02 | M |
 | QA-15 | Two-step save/accept, no total before saving, redundant `calculate_sale_price` round trip | medium | friction | SALES-11, PERF-12 | done 2026-10-02 | M |
 | QA-16 | Mobile: total and Save/Accept buttons ~3000 px down, no sticky bar | medium | mobile | SOLO-16, SALES-12 | done 2026-10-02 | S |
 | QA-17 | Sale draft lost on reload/back/tab kill; saved quotations cannot be resumed | medium | offline | SALES-07, PERF-09, RC-11 | confirmed | S |
@@ -377,6 +377,11 @@ Target for a solo owner on a phone:
   - In the dialog, filter to accepted orders without a current job of that type and label options '`JAV-…-000003 · Cliente`'.
 - **Verify:** solo owner: accept → 'Enviar a taller' → verificar: 1 click creates the job for the right order; dialog → verificar: delivered orders are absent.
 
+- **Done (2026-10-02):** what changed:
+  - New `OrderProductionPanel` (production feature) shows the current lens/mounting jobs with their responsible and status. For missing job types it offers a responsible select (providers plus the user as 'taller propio', auto-selected when it is the only option) and 'Enviar'. It appears on the post-sale `AcceptedOrderPanel` and in the `/orders` detail.
+  - In `/production` the assignment dialog lists only accepted orders without an active job of that type, labelled 'número · cliente', with none preselected.
+  - Verified: on QSB-2026-000007 right after the sale, lens and mounting were sent with 1 tap each; the dialog lists '000006 · QA PILOTO Adjuntos' and excludes orders that already have a job.
+
 ### QA-14 Delivery tied to production / 'Listo para recoger' (medium, M — needs a product decision)
 - **Problem:** an order can be delivered while lenses are pending, in incident, or still at the provider, with no warning. OrderDetail shows no production status. The delivery dimension in BUSINESS_LOGIC (no listo / listo para recoger / cliente notificado / entregado) and the 'cerrado' status are not implemented. The guard even forces delivered→closed, but nothing ever sets it.
 - **Evidence:** QAS-2026-000001 was delivered while job 10 was dispatched. MR `05-orders` showed detailMentionsProduction=false.
@@ -387,6 +392,8 @@ Target for a solo owner on a phone:
   - Show a non-blocking confirm before delivering early: 'La producción no está revisada, ¿entregar igual?'.
   - Product owner decides whether 'cerrado' and 'cliente notificado' are stored states or are dropped from the model.
 - **Verify:** order with pending lens → verificar: the strip shows 'Pendiente' and delivering asks for confirmation; all reviewed → verificar: 'Listo para recoger'.
+
+- **Done (2026-10-02, product decision: warn, not block):** the order production panel shows each job's status and a 'Listo para recoger' badge when every current job is received/reviewed. 'Marcar como entregado' with unfinished or missing production opens '¿Entregar igual?' ('Volver' / 'Entregar igual'). 'Cerrado' and 'cliente notificado' remain derived and are not stored. Verified on QSB-2026-000007: fully paid, delivery showed the warning and 'Volver' kept it accepted.
 
 ### QA-15 Live total and one-step accept (medium, M)
 - **Problem:** no price appears until 'Guardar cotización'. Save runs `calculate_sale_price` and then `save_quotation` sequentially, even though `save_quotation` recomputes the price. Then 'Cliente acepta' is a separate step, and every change resets the quote. The 'Organización y sucursal' select shows even with a single scope.

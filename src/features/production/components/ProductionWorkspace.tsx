@@ -61,7 +61,7 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
   const [message, setMessage] = useState('')
   const [pending, startTransition] = useTransition()
   const [jobType, setJobType] = useState<'lens' | 'mounting'>('lens')
-  const [selectedOrderId, setSelectedOrderId] = useState(orders[0]?.id ?? 0)
+  const [selectedOrderId, setSelectedOrderId] = useState(0)
   const [selectedProviderId, setSelectedProviderId] = useState('')
   const [incidentJob, setIncidentJob] = useState<ProductionJob | null>(null)
   const [incidentResponsibility, setIncidentResponsibility] = useState<IncidentResponsibility>('organization')
@@ -90,7 +90,7 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
     startTransition(async () => {
       const { error } = await supabase.rpc('assign_production_job', { target_order_id: Number(form.get('orderId')), job_type: jobType, provider_id: effectiveProviderId } as never)
       if (error) return setAssignmentError(friendlyError(error, 'No pudimos asignar el trabajo.'))
-      const fresh = await refreshJobs(); setAssignmentOpen(false); setSelectedProviderId(''); setAssignmentError(''); setMessage(savedMessage(fresh, 'Trabajo asignado correctamente.'))
+      const fresh = await refreshJobs(); setAssignmentOpen(false); setSelectedProviderId(''); setSelectedOrderId(0); setAssignmentError(''); setMessage(savedMessage(fresh, 'Trabajo asignado correctamente.'))
     })
   }
 
@@ -132,7 +132,9 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
     })
   }
 
-  const selectedOrder = orders.find((order) => order.id === selectedOrderId)
+  // Orders that still lack an active job of the chosen type; none preselected.
+  const assignableOrders = orders.filter((order) => !jobs.some((job) => job.orderId === order.id && job.jobType === jobType && job.status !== 'incident'))
+  const selectedOrder = assignableOrders.find((order) => order.id === selectedOrderId)
   const matchingProviders = providers.filter((provider) => provider.organizationId === selectedOrder?.organizationId && (provider.role === 'in_house' || provider.role === (jobType === 'lens' ? 'lens_provider' : 'mounting_provider')))
   const effectiveProviderId = selectedProviderId || (matchingProviders.length === 1 ? matchingProviders[0].id : '')
   const filteredJobs = useMemo(() => {
@@ -200,11 +202,11 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
       size="md"
       footer={<>
         <Button variant="ghost" onClick={() => setAssignmentOpen(false)} disabled={pending}>Cancelar</Button>
-        <Button type="submit" form="production-assign" icon={Plus} disabled={pending || !effectiveProviderId}>{pending ? 'Asignando…' : 'Asignar trabajo'}</Button>
+        <Button type="submit" form="production-assign" icon={Plus} disabled={pending || !effectiveProviderId || !selectedOrder}>{pending ? 'Asignando…' : 'Asignar trabajo'}</Button>
       </>}
     >
       <form id="production-assign" onSubmit={assign} className="flex flex-col gap-4">
-        <Field label="Pedido"><FormSelect name="orderId" ariaLabel="Pedido" value={String(selectedOrderId)} onValueChange={(value) => { setSelectedOrderId(Number(value)); setSelectedProviderId('') }} options={orders.map((order) => ({ value: String(order.id), label: order.orderNumber }))} /></Field>
+        <Field label="Pedido"><FormSelect name="orderId" ariaLabel="Pedido" value={String(selectedOrderId)} onValueChange={(value) => { setSelectedOrderId(Number(value)); setSelectedProviderId('') }} options={[{ value: '0', label: assignableOrders.length ? 'Selecciona pedido' : 'No hay pedidos pendientes de este trabajo' }, ...assignableOrders.map((order) => ({ value: String(order.id), label: order.customerName ? `${order.orderNumber} · ${order.customerName}` : order.orderNumber }))]} /></Field>
         <Field as="div" label="Tipo de trabajo"><SegmentedControl label="Tipo de trabajo" value={jobType} onChange={(value) => { setJobType(value); setSelectedProviderId('') }} options={[{ value: 'lens', label: 'Cristales' }, { value: 'mounting', label: 'Montaje' }]} /></Field>
         <Field label="Proveedor"><FormSelect name="providerId" ariaLabel="Proveedor" required value={effectiveProviderId} onValueChange={setSelectedProviderId} options={[{ value: '', label: matchingProviders.length ? 'Selecciona proveedor' : `No hay ${jobType === 'lens' ? 'cristaleros' : 'montadores'} activos` }, ...matchingProviders.map((provider) => ({ value: provider.id, label: provider.name }))]} /></Field>
         {assignmentError ? <Alert tone="danger" role="alert">{assignmentError}</Alert> : null}
