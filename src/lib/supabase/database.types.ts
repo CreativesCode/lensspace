@@ -1029,6 +1029,21 @@ export type Database = {
         Args: { request_id: string; target_order_id: number }
         Returns: Json
       }
+      save_sale_quotation: {
+        Args: {
+          quotation_request_id?: string | null
+          selected_item_ids: number[]
+          target_branch_id: number
+          target_customer_id: number
+          target_line_adjustments?: Json
+          target_notes?: string | null
+          target_organization_id: number
+          target_prescription_revision_id: number | null
+          target_quotation_id: number | null
+          target_usd_to_cup_rate: number | null
+        }
+        Returns: Json
+      }
       register_cash_payment: {
         Args: {
           payment_amount: number

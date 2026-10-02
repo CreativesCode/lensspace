@@ -1,6 +1,6 @@
 'use client'
 
-import { Pencil, ReceiptText, Save, Search, SearchX, UserPlus, Users, X } from 'lucide-react'
+import { Pencil, Plus, ReceiptText, Save, Search, SearchX, UserPlus, Users, X } from 'lucide-react'
 import { useCallback, useMemo, useRef, useState, type FormEvent } from 'react'
 
 import { createClient } from '@/lib/supabase/client'
@@ -390,7 +390,8 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
                 </div>
               </dl>
               <div className="mt-5 grid gap-2">
-                <ButtonLink href={`/orders?clienteId=${selected.id}&cliente=${encodeURIComponent(selected.full_name)}`} icon={ReceiptText} block>Ver pedidos de este cliente</ButtonLink>
+                <ButtonLink href={`/sales?clienteId=${selected.id}`} icon={Plus} block>Nueva venta</ButtonLink>
+                <ButtonLink href={`/orders?clienteId=${selected.id}&cliente=${encodeURIComponent(selected.full_name)}`} variant="secondary" icon={ReceiptText} block>Ver pedidos de este cliente</ButtonLink>
                 <Button variant="secondary" icon={Pencil} block onClick={() => editSelected(selected)}>Editar cliente</Button>
               </div>
             </>

@@ -1,13 +1,14 @@
 'use client'
 
-import { Download, FileText, Save, UserPlus, Users } from 'lucide-react'
+import { Download, FileText, Paperclip, Save, UserPlus, Users } from 'lucide-react'
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 
 import { createClient } from '@/lib/supabase/client'
 import type { Tables } from '@/lib/supabase/database.types'
 import { FormSelect } from '@/shared/components'
 import { Alert, Button, ButtonLink, Card, EmptyState, Field, Input } from '@/shared/ui'
-import { friendlyPrescriptionError, prescriptionAttachmentError, prescriptionFileExtension, prescriptionRevisionValues, validatePrescriptionForm } from '../prescription-validation'
+import { friendlyPrescriptionError, prescriptionAttachmentError, prescriptionRevisionValues, validatePrescriptionForm } from '../prescription-validation'
+import { uploadPrescriptionOriginal } from '../upload-original'
 import { PrescriptionFormFields } from './PrescriptionFormFields'
 
 type AccessScope = {
@@ -62,6 +63,7 @@ export function PrescriptionWorkspace({
   const [mode, setMode] = useState<'new' | 'revision'>('new')
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [attachingRevisionId, setAttachingRevisionId] = useState<number | null>(null)
   const [message, setMessage] = useState<string | null>(null)
 
   const customer = customers.find(({ id }) => id === customerId)
@@ -156,36 +158,9 @@ export function PrescriptionWorkspace({
     }
 
     const revision = data as unknown as RevisionResult
-    let attachmentFailed = false
-    if (attachment instanceof File && attachment.size) {
-      const path = `${customer.organization_id}/${customer.branch_id}/${revision.prescriptionId}/${revision.revisionId}/${crypto.randomUUID()}.${prescriptionFileExtension(attachment)}`
-      const { error: uploadError } = await supabase.storage
-        .from('prescription-originals')
-        .upload(path, attachment, { contentType: attachment.type, upsert: false })
-
-      if (uploadError) {
-        attachmentFailed = true
-      } else {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser()
-        const { error: metadataError } = await supabase.from('prescription_files').insert({
-          organization_id: customer.organization_id,
-          branch_id: customer.branch_id,
-          prescription_id: revision.prescriptionId,
-          revision_id: revision.revisionId,
-          storage_path: path,
-          file_name: attachment.name,
-          mime_type: attachment.type,
-          byte_size: attachment.size,
-          uploaded_by: user!.id,
-        } as never)
-        if (metadataError) {
-          attachmentFailed = true
-          await supabase.storage.from('prescription-originals').remove([path])
-        }
-      }
-    }
+    const attachmentFailed =
+      attachment instanceof File && attachment.size > 0 &&
+      !(await uploadPrescriptionOriginal(supabase, { organizationId: customer.organization_id, branchId: customer.branch_id, prescriptionId: revision.prescriptionId, revisionId: revision.revisionId }, attachment))
 
     event.currentTarget.reset()
     setSelectedPrescriptionId(revision.prescriptionId)
@@ -197,6 +172,19 @@ export function PrescriptionWorkspace({
         : `Revisión ${revision.revisionNumber} guardada correctamente.`,
     )
     setSaving(false)
+  }
+
+  // Attach the original to a revision saved without it (or when the upload failed).
+  async function attachOriginal(record: { id: number; organization_id: number; branch_id: number }, revisionId: number, file: File | undefined) {
+    if (!file || !customer) return
+    const attachmentError = prescriptionAttachmentError(file)
+    if (attachmentError) return setMessage(attachmentError)
+    setAttachingRevisionId(revisionId)
+    setMessage(null)
+    const stored = await uploadPrescriptionOriginal(supabase, { organizationId: record.organization_id, branchId: record.branch_id, prescriptionId: record.id, revisionId }, file)
+    await loadPrescriptions(customer.id)
+    setAttachingRevisionId(null)
+    setMessage(stored ? 'Original adjuntado a la revisión.' : 'No pudimos adjuntar el original. Revisa la señal e inténtalo de nuevo.')
   }
 
   async function downloadFile(file: PrescriptionFile) {
@@ -272,6 +260,13 @@ export function PrescriptionWorkspace({
                     <p className="mt-1 font-display text-[13px] tabular-nums text-text-secondary">OD {formatOptical(revision.right_sphere)} / {formatOptical(revision.right_cylinder)} · OI {formatOptical(revision.left_sphere)} / {formatOptical(revision.left_cylinder)}</p>
                     {revision.change_reason ? <p className="mt-1 text-[13px] text-amber-ink">{revision.change_reason}</p> : null}
                     {revision.prescription_files.map((file) => <Button key={file.id} variant="ghost" size="sm" icon={Download} onClick={() => void downloadFile(file)} className="-ml-3 mt-1">{file.file_name}</Button>)}
+                    {scope?.canWrite ? (
+                      <label className="mt-1 inline-flex min-h-9 cursor-pointer items-center gap-1.5 text-[13px] font-semibold text-action hover:underline">
+                        <Paperclip aria-hidden="true" size={15} />
+                        {attachingRevisionId === revision.id ? 'Adjuntando…' : 'Adjuntar original'}
+                        <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" className="sr-only" disabled={attachingRevisionId !== null} onChange={(event) => { void attachOriginal(record, revision.id, event.target.files?.[0]); event.target.value = '' }} />
+                      </label>
+                    ) : null}
                   </div>
                 ))}
               </div>

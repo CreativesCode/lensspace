@@ -83,7 +83,7 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 |----|-------|----------|----------|-------------------|--------|--------|
 | QA-01 | Owner/seller cannot record provider stages or self-assign; solo owner cannot finish production or use mounting | blocker | bug | SOLO-01, MR-02 | done 2026-10-02 | M |
 | QA-02 | Owner can receive cash but cannot close his own cashbox | blocker | bug | SOLO-02 | done 2026-10-02 | S |
-| QA-03 | Payments not idempotent: lost response + retry, or a burst, creates duplicate immutable payments | high | data-integrity | SOLO-04, MR-01, SALES-01, SALES-10, PERF-02, RC-01, RC-02 | done 2026-10-02 (payments; quotation/customer keys pending) | M |
+| QA-03 | Payments not idempotent: lost response + retry, or a burst, creates duplicate immutable payments | high | data-integrity | SOLO-04, MR-01, SALES-01, SALES-10, PERF-02, RC-01, RC-02 | done 2026-10-02 (customer key pending; mitigated by QA-19) | M |
 | QA-04 | `accept_quotation` not idempotent: lost response strands the seller, order exists unseen | high | data-integrity | SOLO-08, SALES-02, RC-03 | done 2026-10-02 | S |
 | QA-05 | Prescription original upload/download broken for every role (missing EXECUTE grant) | high | bug | SOLO-03, ADM-01 | done 2026-10-02 | S |
 | QA-06 | Tenant catalog overrides cannot be saved (403 on upsert) | high | bug | SOLO-05, SALES-03 | done 2026-10-02 | S |
@@ -92,10 +92,10 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 | QA-09 | `/production` crashes to 'This page couldn't load' when the post-mutation refetch fails | high | bug | RC-04 | done 2026-10-02 | S |
 | QA-10 | Delivery event attributed to 'Sistema' (no `delivered_by`) | medium | data-integrity | SOLO-09, MR-09 | done 2026-10-02 | S |
 | QA-11 | Client 'today' in UTC: prescription date defaults to tomorrow after 20:00 Havana | medium | data-integrity | SALES-14, RC-13 | done 2026-10-02 | S |
-| QA-12 | Sale customer picker: no search, capped at 200 customers / 200 revisions | high | friction | SALES-04, SOLO-17, PERF-03, RC-12 | done 2026-10-02 (deep link from /customers pending) | M |
+| QA-12 | Sale customer picker: no search, capped at 200 customers / 200 revisions | high | friction | SALES-04, SOLO-17, PERF-03, RC-12 | done 2026-10-02 | M |
 | QA-13 | Production assignment only from `/production`, order chosen by number only, no auto provider | medium | friction | MR-12, MR-11 (selector), RC-15 (label) | confirmed | M |
 | QA-14 | Delivery not tied to production; no 'Listo para recoger' or production strip in order detail | medium | missing-feature | SOLO-10, MR-08 | confirmed | M |
-| QA-15 | Two-step save/accept, no total before saving, redundant `calculate_sale_price` round trip | medium | friction | SALES-11, PERF-12 | done 2026-10-02 (interim Promise.all) | M |
+| QA-15 | Two-step save/accept, no total before saving, redundant `calculate_sale_price` round trip | medium | friction | SALES-11, PERF-12 | done 2026-10-02 | M |
 | QA-16 | Mobile: total and Save/Accept buttons ~3000 px down, no sticky bar | medium | mobile | SOLO-16, SALES-12 | done 2026-10-02 | S |
 | QA-17 | Sale draft lost on reload/back/tab kill; saved quotations cannot be resumed | medium | offline | SALES-07, PERF-09, RC-11 | confirmed | S |
 | QA-18 | Paying the full balance in USD leaves a CUP residue that blocks delivery | medium | bug | SALES-08 | done 2026-10-02 | S |
@@ -481,6 +481,11 @@ Target for a solo owner on a phone:
   - Add an 'Enviar enlace de restablecimiento' action in the superadmin org detail.
   - Check the redirect allowlist and the SMTP rate limit.
 - **Verify:** request a reset for the QA owner → verificar: the email link → `/set-password` → login works; an unknown email → verificar: the same neutral message.
+
+- **Pending items closed (2026-10-02):**
+  - Migration `20261002191121_add_retry_safe_priced_quotation_save.sql` adds `save_sale_quotation`. It saves and returns `{quotationId, pricing}` in one call, and with `quotation_request_id` it reuses the quotation of an earlier attempt, backed by `quotations.client_request_id`, a unique index (seller, key) and an UPDATE grant on that column only. Verified: a lost save response followed by a retry made 2 save calls, created 1 quotation and then accepted; a normal accept is 2 RPCs.
+  - The `/customers` card has a primary 'Nueva venta' link to `/sales?clienteId=…`; the page loads that customer and their prescriptions server-side and selects their branch. Verified: QSB-2026-000006 was created for the linked customer.
+  - The 'Adjuntar original' action on each revision in `/prescriptions` uses a shared `uploadPrescriptionOriginal` helper that now also backs the sale and prescription forms. Verified: a PDF was added to an existing revision that already had a PNG.
 
 ## Phase 3 — Refresh and staleness
 

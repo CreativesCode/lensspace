@@ -9,11 +9,12 @@ import { PrescriptionFormFields } from "@/features/prescriptions/components";
 import {
   friendlyPrescriptionError,
   prescriptionAttachmentError,
-  prescriptionFileExtension,
   prescriptionRevisionValues,
   validatePrescriptionForm,
 } from "@/features/prescriptions/prescription-validation";
+import { uploadPrescriptionOriginal } from "@/features/prescriptions/upload-original";
 import { createClient } from "@/lib/supabase/client";
+import { newRequestId } from "@/shared/utils/request-id";
 import { FormSelect } from "@/shared/components";
 import { Alert, Button, Card, Dialog, EmptyState, Field, Input, Steps, Textarea } from "@/shared/ui";
 
@@ -47,20 +48,25 @@ type PrescriptionResult = {
 export function SalesWorkspace({
   organizations,
   recentCustomers,
+  initialCustomer,
+  initialRevisions,
   items,
 }: {
   organizations: Organization[];
   recentCustomers: SaleCustomer[];
+  initialCustomer: SaleCustomer | null;
+  initialRevisions: Revision[];
   items: SaleItem[];
 }) {
   const supabase = useMemo(() => createClient(), []);
+  const initialScope =
+    organizations.find((entry) => initialCustomer && entry.id === initialCustomer.organizationId && entry.branchId === initialCustomer.branchId) ??
+    organizations[0];
   const [scopeKey, setScopeKey] = useState(
-    organizations[0]
-      ? `${organizations[0].id}:${organizations[0].branchId}`
-      : "",
+    initialScope ? `${initialScope.id}:${initialScope.branchId}` : "",
   );
-  const [selectedCustomer, setSelectedCustomer] = useState<SaleCustomer | null>(null);
-  const [revisionRows, setRevisionRows] = useState<Revision[]>([]);
+  const [selectedCustomer, setSelectedCustomer] = useState<SaleCustomer | null>(initialCustomer);
+  const [revisionRows, setRevisionRows] = useState<Revision[]>(initialRevisions);
   const [revisionId, setRevisionId] = useState(0);
   const [selected, setSelected] = useState<number[]>([]);
   const [agreedPrices, setAgreedPrices] = useState<Record<number, string>>({});
@@ -79,6 +85,9 @@ export function SalesWorkspace({
   const [newCustomerPhones, setNewCustomerPhones] = useState<CustomerPhoneDraft[]>([{ number: "", label: "Principal", whatsappEnabled: true }]);
   const [pending, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
+  // One id per quotation attempt, kept until the quote changes, so a retry after a
+  // lost response reuses the quotation instead of creating another one.
+  const quoteRequestId = useRef<string | null>(null);
 
   const organization = organizations.find(
     (entry) => `${entry.id}:${entry.branchId}` === scopeKey,
@@ -137,6 +146,7 @@ export function SalesWorkspace({
   }
 
   function resetQuote() {
+    quoteRequestId.current = null;
     setQuotationId(null);
     setPreview(null);
   }
@@ -238,38 +248,9 @@ export function SalesWorkspace({
       return;
     }
     const result = data as unknown as PrescriptionResult;
-    let attachmentFailed = false;
-    if (attachment instanceof File && attachment.size) {
-      const path = `${organization.id}/${organization.branchId}/${result.prescriptionId}/${result.revisionId}/${crypto.randomUUID()}.${prescriptionFileExtension(attachment)}`;
-      const { error: uploadError } = await supabase.storage
-        .from("prescription-originals")
-        .upload(path, attachment, {
-          contentType: attachment.type,
-          upsert: false,
-        });
-      if (uploadError) {
-        attachmentFailed = true;
-      } else {
-        const { data: userData } = await supabase.auth.getUser();
-        const { error: metadataError } = await supabase
-          .from("prescription_files")
-          .insert({
-            organization_id: organization.id,
-            branch_id: organization.branchId,
-            prescription_id: result.prescriptionId,
-            revision_id: result.revisionId,
-            storage_path: path,
-            file_name: attachment.name,
-            mime_type: attachment.type,
-            byte_size: attachment.size,
-            uploaded_by: userData.user!.id,
-          } as never);
-        if (metadataError) {
-          attachmentFailed = true;
-          await supabase.storage.from("prescription-originals").remove([path]);
-        }
-      }
-    }
+    const attachmentFailed =
+      attachment instanceof File && attachment.size > 0 &&
+      !(await uploadPrescriptionOriginal(supabase, { organizationId: organization.id, branchId: organization.branchId, prescriptionId: result.prescriptionId, revisionId: result.revisionId }, attachment));
     const date = String(form.get("prescriptionDate"));
     const created: Revision = {
       id: result.revisionId,
@@ -312,40 +293,32 @@ export function SalesWorkspace({
     return lineAdjustments;
   }
 
-  // Prices and saves in parallel (save_quotation reprices on its own); returns the
+  // One round trip: save_sale_quotation saves and returns the pricing. Returns the
   // quotation id, or null after reporting the error.
   async function persistQuote(lineAdjustments: Record<string, { amount: number; reason: string }>) {
     if (!organization) return null;
     const notes = String(new FormData(formRef.current ?? undefined).get("notes") ?? "");
-    const numericRate = rate ? Number(rate) : null;
-    const [{ data: price, error: priceError }, { data, error }] = await Promise.all([
-      supabase.rpc("calculate_sale_price", {
-        target_organization_id: organizationId,
-        selected_item_ids: selected,
-        target_prescription_revision_id: revisionId || null,
-        usd_to_cup_rate: numericRate,
-        line_adjustments: lineAdjustments,
-      } as never),
-      supabase.rpc("save_quotation", {
-        target_quotation_id: quotationId,
-        target_organization_id: organizationId,
-        target_branch_id: organization.branchId,
-        target_customer_id: customerId,
-        target_prescription_revision_id: revisionId || null,
-        selected_item_ids: selected,
-        target_usd_to_cup_rate: numericRate,
-        target_notes: notes,
-        target_line_adjustments: lineAdjustments,
-      } as never),
-    ]);
+    quoteRequestId.current ??= newRequestId();
+    const { data, error } = await supabase.rpc("save_sale_quotation", {
+      target_quotation_id: quotationId,
+      target_organization_id: organizationId,
+      target_branch_id: organization.branchId,
+      target_customer_id: customerId,
+      target_prescription_revision_id: revisionId || null,
+      selected_item_ids: selected,
+      target_usd_to_cup_rate: rate ? Number(rate) : null,
+      target_notes: notes,
+      target_line_adjustments: lineAdjustments,
+      quotation_request_id: quoteRequestId.current,
+    } as never);
     if (error) {
       setMessage(friendlyError(error, "No pudimos guardar la cotización."));
       return null;
     }
-    if (priceError) setMessage(friendlyError(priceError, "La cotización se guardó, pero no pudimos mostrar el desglose."));
-    else setPreview(price as unknown as PriceResult);
-    setQuotationId(Number(data));
-    return Number(data);
+    const result = data as unknown as { quotationId: number; pricing: PriceResult };
+    setPreview(result.pricing);
+    setQuotationId(result.quotationId);
+    return result.quotationId;
   }
 
   function save(event: FormEvent<HTMLFormElement>) {
