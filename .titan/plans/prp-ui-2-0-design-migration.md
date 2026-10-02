@@ -1,7 +1,7 @@
 # PRP: Migración gradual a la Guía UI 2.0
 
-> **Estado**: EN EJECUCIÓN (aprobado 2026-10-01)
-> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ · Fase 4 ✅ (aprobada por el usuario) · Fase 5 ✅ · Fase 6 ✅ · Fase 7 ✅ · Fase 8 ✅ (pendiente revisión manual) · Fase 9 ✅ · Fase 10 🟡 (checks automáticos ✅, falta revisión manual del usuario) · Fase 11 ✅ (pendiente revisión manual)
+> **Estado**: CERRADO (2026-10-02, aprobado por el usuario tras la revisión manual)
+> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ · Fase 4 ✅ (aprobada por el usuario) · Fase 5 ✅ · Fase 6 ✅ · Fase 7 ✅ · Fase 8 ✅ · Fase 9 ✅ · Fase 10 ✅ · Fase 11 ✅
 > **Fecha**: 2026-10-01
 > **Proyecto**: LensSpace
 
@@ -175,9 +175,9 @@ $$;
 **Objetivo**: todo el sistema coherente de punta a punta.
 **Validación**:
 - [x] `npm run lint`, `npm run typecheck` y `npm run build` pasan (2026-10-02)
-- [ ] Revisión manual del usuario por ruta, rol y viewport con la lista entregada
+- [x] Revisión manual del usuario por ruta, rol y viewport con la lista entregada (2026-10-02)
 - [x] Revisión de contraste AA en textos de apoyo, navegación y badges (2026-10-02): todos los pares de texto ≥ 4,5:1 (muted 4,95–5,17; badges 5,2–7,1; textos sobre tinta 5,9–11,7; tinta sobre coral 4,95). Excepciones justificadas: `text-disabled` (2,4) solo en iconos decorativos, punto del badge y botones deshabilitados (exentos WCAG); `text-placeholder` (2,9) es el valor de la guía y todo input tiene etiqueta visible con `Field`.
-- [ ] Criterios de éxito cumplidos
+- [x] Criterios de éxito cumplidos
 
 ### Fase 11: Contadores en la navegación (D2) ✅ (2026-10-02)
 **Objetivo**: contadores de pendientes en el menú (pedidos con saldo, trabajos de producción pendientes), con una sola consulta liviana y respetando RLS desde `(main)/layout.tsx`. Medir el costo por request antes de dejarlo activo.
