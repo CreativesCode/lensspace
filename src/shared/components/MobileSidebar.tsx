@@ -7,7 +7,7 @@ import { MainNavigation } from './MainNavigation'
 import { LensSpaceLogo } from './LensSpaceLogo'
 import { SidebarAccount, type ShellIdentity } from './SidebarAccount'
 
-export function MobileSidebar({ allowedHrefs, identity }: { allowedHrefs: string[]; identity: ShellIdentity }) {
+export function MobileSidebar({ allowedHrefs, counts, identity }: { allowedHrefs: string[]; counts?: Record<string, number>; identity: ShellIdentity }) {
   const [open, setOpen] = useState(false)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
@@ -40,7 +40,7 @@ export function MobileSidebar({ allowedHrefs, identity }: { allowedHrefs: string
               <X aria-hidden="true" size={20} />
             </button>
           </div>
-          <MainNavigation allowedHrefs={allowedHrefs} onNavigate={() => setOpen(false)} />
+          <MainNavigation allowedHrefs={allowedHrefs} counts={counts} onNavigate={() => setOpen(false)} />
           <div className="mt-auto pt-[22px]"><SidebarAccount identity={identity} /></div>
         </aside>
       </div> : null}

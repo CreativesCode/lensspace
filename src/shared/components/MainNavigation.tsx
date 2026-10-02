@@ -30,7 +30,8 @@ const navigationSections: { label: string; items: { href: string; label: string;
 ]
 
 // The active accent bar sits at -14px: containers must keep a 14px (px-3.5) horizontal padding.
-export function MainNavigation({ allowedHrefs, onNavigate }: { allowedHrefs: string[]; onNavigate?: () => void }) {
+// `counts` maps an href to its pending figure (guide: pill after the label, hidden at 0).
+export function MainNavigation({ allowedHrefs, counts = {}, onNavigate }: { allowedHrefs: string[]; counts?: Record<string, number>; onNavigate?: () => void }) {
   const pathname = usePathname()
   const canCreateSale = allowedHrefs.includes('/sales')
   const visibleSections = navigationSections
@@ -49,6 +50,7 @@ export function MainNavigation({ allowedHrefs, onNavigate }: { allowedHrefs: str
           <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-on-ink-subtle">{section.label}</p>
           {section.items.map(({ href, label, icon: Icon }) => {
             const isActive = pathname === href || pathname.startsWith(`${href}/`)
+            const count = counts[href] ?? 0
             return (
               <Link
                 key={href}
@@ -63,6 +65,7 @@ export function MainNavigation({ allowedHrefs, onNavigate }: { allowedHrefs: str
                 <span aria-hidden="true" className={cx('absolute -left-3.5 bottom-2.5 top-2.5 w-[3px] rounded-r-[3px]', isActive ? 'bg-mint' : 'bg-transparent')} />
                 <Icon aria-hidden="true" size={18} className={isActive ? 'text-mint' : 'text-on-ink-subtle'} />
                 <span className="flex-1">{label}</span>
+                {count > 0 ? <span className={cx('grid h-5 min-w-5 place-items-center rounded-full px-1.5 font-display text-[11.5px] font-bold tabular-nums text-ink', isActive ? 'bg-mint' : 'bg-line-soft')}><span className="sr-only">Pendientes: </span>{count > 99 ? '99+' : count}</span> : null}
               </Link>
             )
           })}

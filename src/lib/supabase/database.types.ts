@@ -998,6 +998,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_navigation_counters: { Args: never; Returns: Json }
       get_order_payment_summary: {
         Args: { target_order_id: number }
         Returns: Json

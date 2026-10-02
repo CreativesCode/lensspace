@@ -31,7 +31,7 @@ async function AuthenticatedLayout({ children }: { children: React.ReactNode }) 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
-  const { allowedHrefs, identity } = await loadShell(supabase, user.id, user.email ?? 'Usuario')
+  const { allowedHrefs, counts, identity } = await loadShell(supabase, user.id, user.email ?? 'Usuario')
   const canCreateSale = allowedHrefs.includes('/sales')
 
   return (
@@ -40,7 +40,7 @@ async function AuthenticatedLayout({ children }: { children: React.ReactNode }) 
         <div className="px-1.5">
           <LensSpaceLogo compact inverse subtitle={identity.organizationName} />
         </div>
-        <MainNavigation allowedHrefs={allowedHrefs} />
+        <MainNavigation allowedHrefs={allowedHrefs} counts={counts} />
         <div className="mt-auto pt-[22px]">
           <SidebarAccount identity={identity} />
         </div>
@@ -60,7 +60,7 @@ async function AuthenticatedLayout({ children }: { children: React.ReactNode }) 
                 <Plus aria-hidden="true" size={20} strokeWidth={2.5} />
               </Link>
             ) : null}
-            <MobileSidebar allowedHrefs={allowedHrefs} identity={identity} />
+            <MobileSidebar allowedHrefs={allowedHrefs} counts={counts} identity={identity} />
           </div>
         </header>
         <main>{children}</main>
@@ -71,17 +71,24 @@ async function AuthenticatedLayout({ children }: { children: React.ReactNode }) 
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>
 
-async function loadShell(supabase: SupabaseServerClient, userId: string, email: string): Promise<{ allowedHrefs: string[]; identity: ShellIdentity }> {
-  const [{ data: isPlatformAdmin }, { data: profile }, { data: membershipData }] = await Promise.all([
+type NavigationCounters = { ordersWithBalance: number; activeProductionJobs: number }
+
+async function loadShell(supabase: SupabaseServerClient, userId: string, email: string): Promise<{ allowedHrefs: string[]; counts: Record<string, number>; identity: ShellIdentity }> {
+  // Counters run in the same parallel batch (one light RLS-scoped query, ~5 ms).
+  const [{ data: isPlatformAdmin }, { data: profile }, { data: membershipData }, { data: counterData }] = await Promise.all([
     supabase.rpc('current_user_is_platform_admin'),
     supabase.from('profiles').select('display_name').eq('user_id', userId).maybeSingle(),
     supabase.from('organization_memberships').select('organization_id, role').eq('user_id', userId).eq('status', 'active'),
+    supabase.rpc('get_navigation_counters'),
   ])
+  const counters = counterData as unknown as NavigationCounters | null
+  const counts = { '/orders': Number(counters?.ordersWithBalance ?? 0), '/production': Number(counters?.activeProductionJobs ?? 0) }
   const displayName = (profile as Pick<Tables<'profiles'>, 'display_name'> | null)?.display_name ?? email.split('@')[0]
 
   if (isPlatformAdmin) {
     return {
       allowedHrefs: ['/dashboard', '/organizations', '/catalog', '/manual'],
+      counts: {},
       identity: { displayName, roleLabel: 'Administración de plataforma', organizationName: 'Plataforma LensSpace' },
     }
   }
@@ -93,7 +100,7 @@ async function loadShell(supabase: SupabaseServerClient, userId: string, email: 
   const organizationIds = [...new Set(memberships.map(({ organization_id }) => organization_id))]
   const mainRole = rolePriority.find((role) => memberships.some((membership) => membership.role === role))
   const identity: ShellIdentity = { displayName, roleLabel: mainRole ? roleLabels[mainRole] : 'Sin acceso activo', organizationName: 'Gestión óptica' }
-  if (!organizationIds.length) return { allowedHrefs: ['/dashboard'], identity }
+  if (!organizationIds.length) return { allowedHrefs: ['/dashboard'], counts: {}, identity }
 
   const [{ data: moduleData }, { data: organizationData }] = await Promise.all([
     supabase.from('organization_modules').select('organization_id, module_key').in('organization_id', organizationIds).eq('is_enabled', true),
@@ -122,5 +129,5 @@ async function loadShell(supabase: SupabaseServerClient, userId: string, email: 
     allowed.push('/production')
   }
 
-  return { allowedHrefs: allowed, identity }
+  return { allowedHrefs: allowed, counts, identity }
 }

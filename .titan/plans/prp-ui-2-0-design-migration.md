@@ -1,7 +1,7 @@
 # PRP: Migración gradual a la Guía UI 2.0
 
 > **Estado**: EN EJECUCIÓN (aprobado 2026-10-01)
-> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ · Fase 4 ✅ (aprobada por el usuario) · Fase 5 ✅ · Fase 6 ✅ · Fase 7 ✅ · Fase 8 ✅ (pendiente revisión manual) · Fase 9 ✅ · Fase 10 🟡 (checks automáticos ✅, falta revisión manual del usuario) · Fase 11 siguiente
+> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ · Fase 4 ✅ (aprobada por el usuario) · Fase 5 ✅ · Fase 6 ✅ · Fase 7 ✅ · Fase 8 ✅ (pendiente revisión manual) · Fase 9 ✅ · Fase 10 🟡 (checks automáticos ✅, falta revisión manual del usuario) · Fase 11 ✅ (pendiente revisión manual)
 > **Fecha**: 2026-10-01
 > **Proyecto**: LensSpace
 
@@ -179,7 +179,7 @@ $$;
 - [x] Revisión de contraste AA en textos de apoyo, navegación y badges (2026-10-02): todos los pares de texto ≥ 4,5:1 (muted 4,95–5,17; badges 5,2–7,1; textos sobre tinta 5,9–11,7; tinta sobre coral 4,95). Excepciones justificadas: `text-disabled` (2,4) solo en iconos decorativos, punto del badge y botones deshabilitados (exentos WCAG); `text-placeholder` (2,9) es el valor de la guía y todo input tiene etiqueta visible con `Field`.
 - [ ] Criterios de éxito cumplidos
 
-### Fase 11: Contadores en la navegación (D2)
+### Fase 11: Contadores en la navegación (D2) ✅ (2026-10-02)
 **Objetivo**: contadores de pendientes en el menú (pedidos con saldo, trabajos de producción pendientes), con una sola consulta liviana y respetando RLS desde `(main)/layout.tsx`. Medir el costo por request antes de dejarlo activo.
 **Validación**: los contadores coinciden con la bandeja y con producción para cada rol; el TTFB del layout no empeora de forma apreciable.
 
@@ -227,6 +227,11 @@ $$;
 - Todos los hex derivados pasaron a tokens semánticos en `tailwind.config.ts` (reemplazo mecánico `prefijo-[#HEX]` → `prefijo-token`, sin cambio visual). Los anillos con sombra usan `theme(colors.x)` dentro del valor arbitrario. Únicas excepciones: landing (D3), logo/OG (arte de marca) y `manifest.ts` (necesita hex reales).
 - Se eliminaron los remapeos `slate/sky/emerald/red`, `rounded-lg/xl/2xl/3xl`, `shadow-sm/xl` y las `--vs-*`. La landing conserva su aspecto con valores arbitrarios equivalentes (`rounded-[7px]`, etc.).
 - **Error**: el selector de `no-restricted-syntax` con `\b` no disparaba (esquery no interpreta ese escape). **Fix**: regex sin escapes `/(^|[[_])#[0-9A-Fa-f]{6}/`, que además no marca copy como "Pedido #123456". Probado con un archivo sonda.
+
+### 2026-10-02: Fase 11 — contadores del menú
+- RPC `get_navigation_counters()` (migración `20261002102043_add_navigation_counters.sql`), security invoker, solo `authenticated`: `ordersWithBalance` (pedidos no entregados/cerrados con saldo > 0, igual que la v2 de la guía) y `activeProductionJobs` (status ≠ received/reviewed, igual que la stat "Trabajos activos"). Se llama dentro del `Promise.all` existente de `loadShell`: sin round-trip extra; ~5 ms de ejecución. Advisors sin hallazgos nuevos.
+- Verificado impersonando owner, seller y lens_provider (transacción revertida): los contadores coinciden con lo que calculan la bandeja y producción. Pill de la guía: 20 px, mint en el ítem activo y `line-soft` en el resto, oculto en 0, tope 99+.
+- Tipos: entrada agregada a mano en `database.types.ts` (una línea) en vez de regenerar todo el archivo.
 
 ### 2026-10-01: D1 aplicado — payload de pedidos
 - `list_accessible_orders` agrega `paidCup`, `balanceCup`, `paidTodayCup` (por `payments.business_date` en la zona horaria de la organización, igual que la caja) y `hasOpenIncident` (incidencia sin `rework_job_id`). `get_order_payment_summary` agrega `notes`. Migración `20261002013055_extend_order_list_for_ui_v2.sql`, security invoker, advisors sin hallazgos nuevos.
