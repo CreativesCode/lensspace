@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { FilterPanel, FormSelect } from '@/shared/components'
+import { Dialog } from '@/shared/ui'
 import { OrganizationOnboardingForm } from './OrganizationOnboardingForm'
 
 const modules = [
@@ -125,7 +126,7 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
       </article>
     })}</div>
     {!filteredOrganizations.length ? <p className="mt-4 rounded-[10px] border border-dashed border-[#DCECEA] bg-white p-8 text-center text-sm text-[#5F716C]">No hay organizaciones que coincidan con los filtros.</p> : null}
-    {createOpen ? <div role="dialog" aria-modal="true" aria-labelledby="create-organization-title" className="fixed inset-0 z-50 grid place-items-center bg-[#07322F]/60 p-4" onMouseDown={(event) => { if (event.target === event.currentTarget) setCreateOpen(false) }}><div className="max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-[12px] bg-[#F7FBFA] shadow-2xl"><div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#E3EFED] bg-white p-5"><div><p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#0D7A72]">Alta de tenant</p><h2 id="create-organization-title" className="font-display text-xl font-bold text-[#07322F]">Nueva organización</h2></div><button type="button" onClick={() => setCreateOpen(false)} className="rounded-lg border border-[#DCECEA] px-3 py-2 text-sm font-semibold text-[#07322F]">Cerrar</button></div><div className="p-5"><OrganizationOnboardingForm onCreated={() => setCreateOpen(false)} /></div></div></div> : null}
+    <Dialog open={createOpen} onClose={() => setCreateOpen(false)} eyebrow="Alta de tenant" title="Nueva organización" size="xl"><OrganizationOnboardingForm onCreated={() => setCreateOpen(false)} /></Dialog>
     {message ? <p role="status" className="mt-4 rounded-lg bg-[#F0FBF9] px-4 py-3 text-sm text-[#0D7A72]">{message}</p> : null}
   </section>
 }

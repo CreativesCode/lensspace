@@ -98,7 +98,7 @@ export function OrganizationOnboardingForm({ onCreated }: { onCreated?: () => vo
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-8 rounded-card border border-[#E3EFED] bg-surface p-5 shadow-e1 md:p-6">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-8">
       <fieldset className="grid gap-[18px] md:grid-cols-2">
         <legend className="mb-4 font-display text-[17px] font-semibold text-ink">Organización y primera sucursal</legend>
         <Field label="Nombre de la óptica"><Input name="organizationName" required /></Field>

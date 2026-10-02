@@ -221,6 +221,8 @@ $$;
 ### 2026-10-01: D1 aplicado — payload de pedidos
 - `list_accessible_orders` agrega `paidCup`, `balanceCup`, `paidTodayCup` (por `payments.business_date` en la zona horaria de la organización, igual que la caja) y `hasOpenIncident` (incidencia sin `rework_job_id`). `get_order_payment_summary` agrega `notes`. Migración `20261002013055_extend_order_list_for_ui_v2.sql`, security invoker, advisors sin hallazgos nuevos.
 - `FormSelect` se alineó a la guía en la Fase 5 (44 px, radio 10, foco teal): su `className` solo afecta al contenedor, así que el cambio es global y seguro. Hasta migrar las fases 7–8, en formularios viejos puede verse 2–4 px más alto que los inputs antiguos.
+- **Diálogos con scroll**: el `overflow-y-auto` nunca va en el contenedor redondeado (la barra corta las esquinas). El `Dialog` compartido recorta con `overflow-hidden` y hace scroll solo en el cuerpo; tamaño `xl` (max-w-5xl) para formularios largos. Migrar cada diálogo hecho a mano a `Dialog` al tocar su vista.
+- **Revisión manual y Turbopack**: si una vista se ve a medio migrar (piezas nuevas mezcladas con markup viejo), es caché de Turbopack; recargar fuerte o reiniciar `npm run dev` antes de reportar un bug visual.
 - El efecto de auto-apertura en escritorio no puede llamar `setState` directo (`react-hooks/set-state-in-effect`): se carga dentro de `startTransition` y se fija la selección al terminar.
 
 ---

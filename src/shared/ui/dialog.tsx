@@ -13,12 +13,12 @@ type DialogProps = {
   description?: ReactNode
   icon?: LucideIcon
   tone?: 'default' | 'danger'
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md' | 'lg' | 'xl'
   footer?: ReactNode
   children?: ReactNode
 }
 
-const widths = { sm: 'max-w-[460px]', md: 'max-w-[520px]', lg: 'max-w-3xl' }
+const widths = { sm: 'max-w-[460px]', md: 'max-w-[520px]', lg: 'max-w-3xl', xl: 'max-w-5xl' }
 
 // Shared modal: Escape and backdrop close, body scroll lock, initial focus and focus
 // restore — the behaviour the hand-written dialogs repeat today.

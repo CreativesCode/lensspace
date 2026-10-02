@@ -8,6 +8,7 @@ import { controlClasses, cx } from '@/shared/ui'
 type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> & { invalid?: boolean }
 
 // UI 2.0 field styling is built in; `className` is for layout of the wrapper only.
+// The toggle is inset 1px so its hover background never covers the field border.
 export function PasswordInput({ className, invalid, ...props }: Props) {
   const [visible, setVisible] = useState(false)
   const label = visible ? 'Ocultar contraseña' : 'Mostrar contraseña'
@@ -21,7 +22,7 @@ export function PasswordInput({ className, invalid, ...props }: Props) {
         aria-pressed={visible}
         title={label}
         onClick={() => setVisible((current) => !current)}
-        className="absolute inset-y-0 right-0 grid w-11 place-items-center rounded-r-control text-text-muted transition hover:bg-action-soft hover:text-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-action"
+        className="absolute bottom-px right-px top-px grid w-11 place-items-center rounded-r-[9px] text-text-muted transition hover:bg-action-soft hover:text-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-action"
       >
         {visible ? <EyeOff aria-hidden="true" size={18} /> : <Eye aria-hidden="true" size={18} />}
       </button>
