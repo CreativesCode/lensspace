@@ -9,7 +9,7 @@ import { FormSelect } from '@/shared/components'
 import { Alert, Badge, Button, Card, CardHeader, Dialog, EmptyState, Field, IconButton, Input, Switch, Toast, cx } from '@/shared/ui'
 import { friendlyError } from '@/shared/lib/friendly-error'
 
-type OrganizationAccess = { id: number; name: string; canManage: boolean; canCalculate: boolean }
+type OrganizationAccess = { id: number; name: string; canManage: boolean; canCalculate: boolean; usdToCupRate: number | null }
 type CatalogItem = Tables<'catalog_items'>
 type CatalogOverride = Tables<'catalog_item_overrides'>
 type GraduationRule = Tables<'graduation_rules'>
@@ -71,7 +71,7 @@ export function CatalogWorkspace({
   const [overrides, setOverrides] = useState(initialOverrides)
   const [selected, setSelected] = useState<number[]>([])
   const [prescriptionRevisionId, setPrescriptionRevisionId] = useState<number | null>(null)
-  const [rate, setRate] = useState('420')
+  const [rate, setRate] = useState(String(organizations[0]?.usdToCupRate ?? 420))
   const [result, setResult] = useState<PriceResult | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [toast, setToast] = useState('')
@@ -261,7 +261,7 @@ export function CatalogWorkspace({
       {!isPlatformAdmin ? (
         <Card className="flex flex-col gap-4">
           <div className="grid gap-4 lg:grid-cols-3">
-            <Field label="Organización"><FormSelect ariaLabel="Organización" value={String(organizationId)} onValueChange={(value) => { setOrganizationId(Number(value)); setSelected([]); setResult(null); setPrescriptionRevisionId(null) }} options={organizations.map((organization) => ({ value: String(organization.id), label: organization.name }))} /></Field>
+            <Field label="Organización"><FormSelect ariaLabel="Organización" value={String(organizationId)} onValueChange={(value) => { setOrganizationId(Number(value)); setRate(String(organizations.find((entry) => entry.id === Number(value))?.usdToCupRate ?? 420)); setSelected([]); setResult(null); setPrescriptionRevisionId(null) }} options={organizations.map((organization) => ({ value: String(organization.id), label: organization.name }))} /></Field>
             <Field label="Receta para sugerencias"><FormSelect ariaLabel="Receta para sugerencias" value={String(prescriptionRevisionId ?? '')} onValueChange={(value) => { setPrescriptionRevisionId(value ? Number(value) : null); setResult(null) }} options={[{ value: '', label: 'Sin receta' }, ...prescriptions.filter(({ organizationId: id }) => id === organizationId).map((prescription) => ({ value: String(prescription.id), label: prescription.label }))]} /></Field>
             <Field label="Tasa de esta simulación" help="CUP por 1 USD; no altera los importes originales."><Input value={rate} onChange={(event) => { setRate(event.target.value); setResult(null) }} type="number" inputMode="decimal" min="0.01" step="0.01" numeric /></Field>
           </div>

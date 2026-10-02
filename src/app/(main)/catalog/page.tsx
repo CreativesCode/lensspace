@@ -22,16 +22,18 @@ export default async function CatalogPage() {
   const memberships = (membershipData ?? []) as Pick<Tables<'organization_memberships'>, 'organization_id' | 'role'>[]
   const organizationIds = [...new Set(memberships.map(({ organization_id }) => organization_id))]
   const { data: organizationData } = organizationIds.length
-    ? await supabase.from('organizations').select('id, name').in('id', organizationIds)
+    ? await supabase.from('organizations').select('id, name, usd_to_cup_rate').in('id', organizationIds)
     : { data: [] }
-  const organizations = (organizationData ?? []) as Pick<Tables<'organizations'>, 'id' | 'name'>[]
+  const organizations = (organizationData ?? []) as Pick<Tables<'organizations'>, 'id' | 'name' | 'usd_to_cup_rate'>[]
   const access = await Promise.all(organizations.map(async (organization) => {
     const { data: canCalculate } = await supabase.rpc('current_user_can_operate_organization', {
       target_organization_id: organization.id,
       required_module_key: 'optical_sales',
     } as never)
     return {
-      ...organization,
+      id: organization.id,
+      name: organization.name,
+      usdToCupRate: organization.usd_to_cup_rate === null ? null : Number(organization.usd_to_cup_rate),
       canManage: memberships.some(({ organization_id, role }) => organization_id === organization.id && role === 'owner') && Boolean(canCalculate),
       canCalculate: Boolean(canCalculate),
     }

@@ -27,7 +27,7 @@ export async function loadPlatformOrganizations(supabase: Client): Promise<Platf
     branches: ((branches ?? []) as Pick<Tables<'branches'>, 'id' | 'organization_id' | 'name' | 'is_active'>[]).filter((row) => row.organization_id === organization.id).map(({ id, name, is_active }) => ({ id, name, is_active })),
     subscription: ((subscriptions ?? []) as Pick<Tables<'subscriptions'>, 'organization_id' | 'status' | 'amount' | 'currency' | 'billing_period' | 'starts_on' | 'expires_on'>[]).find((row) => row.organization_id === organization.id),
     modules: ((entitlements ?? []) as Pick<Tables<'organization_modules'>, 'organization_id' | 'module_key' | 'is_enabled'>[]).filter((row) => row.organization_id === organization.id),
-    owners: ownerRows.filter((row) => row.organization_id === organization.id).map((row) => profileRows.find((profile) => profile.user_id === row.user_id)).filter((profile): profile is NonNullable<typeof profile> => Boolean(profile)).map(({ display_name }) => ({ display_name })),
+    owners: ownerRows.filter((row) => row.organization_id === organization.id).map((row) => profileRows.find((profile) => profile.user_id === row.user_id)).filter((profile): profile is NonNullable<typeof profile> => Boolean(profile)).map(({ user_id, display_name }) => ({ user_id, display_name })),
     usage: usageRows.find((row) => row.organizationId === organization.id),
     supportSession: supportRows.find((row) => row.organization_id === organization.id),
   }))

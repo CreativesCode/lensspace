@@ -116,13 +116,14 @@ Deno.serve(async (request) => {
   const chatId = phoneToChatId(prepared.recipient, defaultCountryCode)
   let response: Response
   let raw: Record<string, unknown> = {}
+  let responseText = ''
   try {
     response = await fetch(`${openwaBaseUrl}/sessions/${openwaSessionId}/messages/send-text`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-API-Key': openwaApiKey },
       body: JSON.stringify({ chatId, text: prepared.message }),
     })
-    const responseText = await response.text()
+    responseText = await response.text()
     try { raw = JSON.parse(responseText) as Record<string, unknown> } catch { raw = {} }
   } catch (sendError) {
     const failureMessage = sendError instanceof Error ? sendError.message : 'No se pudo contactar OpenWA.'
@@ -136,14 +137,17 @@ Deno.serve(async (request) => {
 
   const sent = response.ok && raw.success !== false
   const messageId = providerMessageId(raw)
-  const failureMessage = sent ? null : String(raw.message ?? raw.error ?? `OpenWA respondió HTTP ${response.status}`).slice(0, 500)
+  // QA-61: OpenWA can deliver and then answer 5xx. The outcome is unknown, so it is
+  // recorded apart from a real rejection and must never be retried automatically.
+  const failureCode = sent ? null : response.status >= 500 ? 'provider_unconfirmed' : `provider_http_${response.status}`
+  const failureMessage = sent ? null : String(raw.message ?? raw.error ?? (responseText.trim() || `OpenWA respondió HTTP ${response.status}`)).slice(0, 500)
   await finish(sent ? 'sent' : 'failed', {
-    failure_code: sent ? null : `provider_http_${response.status}`,
+    failure_code: failureCode,
     failure_message: failureMessage,
     provider_message_id: messageId,
     provider_chat_id: chatId,
   })
 
-  if (!sent) return jsonResponse({ ok: false, failureCode: `provider_http_${response.status}`, error: failureMessage }, 502)
+  if (!sent) return jsonResponse({ ok: false, failureCode, error: failureMessage }, 502)
   return jsonResponse({ ok: true, messageId })
 })

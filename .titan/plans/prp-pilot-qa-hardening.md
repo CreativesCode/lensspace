@@ -213,7 +213,7 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
   - `PaymentForm` sends one id per attempt, reuses it on retry, resets it when the amount, currency or rate changes, and adds a synchronous in-flight guard.
   - Network errors show 'Sin conexión: no sabemos si el cobro llegó…' and the balance is re-read.
   - Verified on QSB-2026-000003: a lost response followed by a retry stored 1 row; a triple synchronous click sent 1 request and stored 1 row; 3 concurrent RPCs with the same key stored 1 row (the other two returned `duplicate: true`).
-  - Still pending from item 4: request keys for `save_quotation` and `create_customer_with_phones`. They are not financial, and the duplicate-customer warning (QA-19) mitigates the customer case.
+  - Item 4 closed: quotations use `save_sale_quotation` with a request key (see the pending items under QA-23), and migration `20261002195106_make_customer_creation_retry_safe.sql` adds a `create_customer_with_phones` overload with a required `customer_request_id` (unique `(created_by, client_request_id)`, advisory lock, early return). `/customers` and the sale's quick customer reuse the key until success or a non-network error. Verified in SQL: two calls with the same key return the same customer id.
 
 ### QA-04 Accept is not idempotent (high, S)
 - **Problem:** a lost 'Cliente acepta · crear pedido' response creates the order. The retry raises 'Cotización pendiente no encontrada.', the seller never sees the order number or the payment panel, and is likely to redo the sale.
@@ -340,6 +340,7 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
   1. Fix OpenWA so a successful send returns 2xx and a `messageId`, starting with the session UUID check.
   2. Harden the Edge Function: a 5xx/timeout after the request reached OpenWA is ambiguous. Record it as `failed` with `failure_code 'provider_unconfirmed'`, or add an `outcome 'unconfirmed'` if the check constraint allows it, plus a Spanish history label such as 'WhatsApp enviado sin confirmación del proveedor'. Never offer an automatic retry for it.
   3. Keep the raw provider body (truncated) when it is not JSON.
+- **Done (2026-10-02, our side):** the Edge Function records a 5xx answer as `failure_code 'provider_unconfirmed'` (non-JSON bodies kept, truncated) and `get_order_timeline` labels it 'WhatsApp enviado sin confirmación del proveedor' (migration `20261002195414`). The 6 historical `provider_http_500` attempts keep their old code. Still pending: the OpenWA fix on the VPS (session UUID in Vault).
 - **Copy polish (low):** the payment message should state the amount paid and format money as '54 100,00 CUP' (es-CU grouping) instead of '54100.00'.
 - **Verify:** continue JAV-2026-000018 → verificar:
   - the next notification is stored `sent` with a `provider_message_id` and arrives once;
@@ -484,7 +485,12 @@ Target for a solo owner on a phone:
   - Ask for confirmation when the rate is more than 30 % away from the last one.
 - **Verify:** sell at 410 and reopen `/sales` → verificar: 410; enter 99999 → verificar: a confirm prompt.
 
-- **Done (2026-10-02):** `/sales` defaults the rate to the organization's latest order rate, falling back to 420, and switches it per scope. The form is `noValidate`, so a missing or ≤0 rate is rejected with Spanish copy. A non-blocking warning appears when the rate is more than 30 % away from the last one. Verified: after selling at 410, `/sales` defaulted to 410, and 999 showed the warning. The `/catalog` simulator still uses 420.
+- **Done (2026-10-02):** `/sales` defaults the rate to the organization's latest order rate, falling back to 420, and switches it per scope. The form is `noValidate`, so a missing or ≤0 rate is rejected with Spanish copy. A non-blocking warning appears when the rate is more than 30 % away from the last one. Verified: after selling at 410, `/sales` defaulted to 410, and 999 showed the warning.
+- **elTOQUE rate (2026-10-02, product owner request):** 'Actualizar con elTOQUE' under the sale rate.
+  - The Edge Function `refresh-exchange-rate` calls `tasas.eltoque.com/v1/trmi` (Bearer `ELTOQUE_API_TOKEN` secret; request one at https://tasas-token.eltoque.com/) at most once per Havana day for the whole platform, caching the day in `market_exchange_rates` (service-role writes only).
+  - `adopt_market_usd_rate(org)` (owner/seller with `optical_sales`) copies that value to `organizations.usd_to_cup_rate`; it takes no rate parameter, so it cannot be faked. The rate stays until the next tap; a second tap on the same day reuses it without a network call ('Usar tasa de hoy').
+  - Default rate order in `/sales` and the `/catalog` simulator: business rate → last order rate → 420. The seller can still type another rate for one sale.
+  - Migration `20261002194704_add_eltoque_exchange_rate.sql`. Verified: without a token the button shows 'Falta configurar el acceso a elTOQUE.'; with a seeded market row it set 455, kept it after a reload, and `/catalog` defaulted to 455. Not verified: a real elTOQUE response (no token yet). Needs: the `ELTOQUE_API_TOKEN` secret.
 
 ### QA-23 Password recovery (medium, S)
 - **Problem:** a sole owner who forgets the password has no way back except the Supabase dashboard.
@@ -505,6 +511,7 @@ Target for a solo owner on a phone:
 Principle for the pilot: **no polling and no Realtime**, to keep bandwidth low. Refresh after the user's own mutations, on window focus or visibility change, on the `online` event, and after an error.
 
 - **Done (2026-10-02, self-service):** the `/login` link '¿Olvidaste tu contraseña?' leads to `/forgot-password` (`ForgotPasswordForm`). The `requestPasswordReset` server action calls `resetPasswordForEmail` with `redirectTo: <request origin>/auth/callback` (already routes `recovery` to `/set-password`) and always returns the same neutral message. Verified: an unknown email gets the neutral confirmation. Not verified: the real email link (no test mailbox). The origin must be in Supabase Auth's redirect allowlist, otherwise the Site URL is used. Pending: the superadmin 'Enviar enlace de restablecimiento' action.
+- **Done (2026-10-02, admin):** the organization detail in `/organizations` lists active owners with 'Enviar enlace de restablecimiento'. The `sendOwnerPasswordReset` server action resolves the email with `platform_owner_email(user_id)` (platform admin only, owners only; migration `20261002195224`) and calls `resetPasswordForEmail`. Verified: Auth logged `user_recovery_requested` for the QA owner; it was rejected only because `@lensspace.test` cannot receive mail, which now reads 'El correo … no puede recibir mensajes.'
 ### QA-24 Sidebar counters stale (medium, S)
 - **Problem:** 'Pedidos y cobros' and 'Producción' badges stay unchanged through accept, payment, delivery and assign, and through soft navigation. Only a hard reload updates them. This undermines the feature from commit 699a383.
 - **Evidence:** RC `02-refresh.mjs` showed the badge at 5 through every step and 6 after a reload; `refresh-cache-code/02-badge-stale-after-accept.png`. The intercepted soft-navigation RSC payload contains no layout.

@@ -16,7 +16,7 @@ import {
 import { uploadPrescriptionOriginal } from "@/features/prescriptions/upload-original";
 import { createClient } from "@/lib/supabase/client";
 import { newRequestId } from "@/shared/utils/request-id";
-import { FormSelect } from "@/shared/components";
+import { ExchangeRateRefresh, FormSelect, type BusinessRate } from "@/shared/components";
 import { Alert, Button, Card, Dialog, EmptyState, Field, Input, Steps, Textarea } from "@/shared/ui";
 
 import { AcceptedOrderPanel } from "./AcceptedOrderPanel";
@@ -81,6 +81,7 @@ export function SalesWorkspace({
   organizations,
   userId,
   lastRates,
+  businessRates,
   recentCustomers,
   initialCustomer,
   initialRevisions,
@@ -89,6 +90,7 @@ export function SalesWorkspace({
   organizations: Organization[];
   userId: string;
   lastRates: Record<number, number>;
+  businessRates: Record<number, BusinessRate>;
   recentCustomers: SaleCustomer[];
   initialCustomer: SaleCustomer | null;
   initialRevisions: Revision[];
@@ -107,7 +109,10 @@ export function SalesWorkspace({
   const [selected, setSelected] = useState<number[]>([]);
   const [agreedPrices, setAgreedPrices] = useState<Record<number, string>>({});
   const [adjustmentReasons, setAdjustmentReasons] = useState<Record<number, string>>({});
-  const [rate, setRate] = useState(String(lastRates[initialScope?.id ?? 0] ?? 420));
+  // The stored elTOQUE rate wins over the last order rate; 420 only as a last resort.
+  const [adoptedRates, setAdoptedRates] = useState(businessRates);
+  const referenceRate = (id: number) => adoptedRates[id]?.rate ?? lastRates[id] ?? 420;
+  const [rate, setRate] = useState(String(referenceRate(initialScope?.id ?? 0)));
   const [notes, setNotes] = useState("");
   const [restorable, setRestorable] = useState<SaleDraft | null>(null);
   const [quotationId, setQuotationId] = useState<number | null>(null);
@@ -127,18 +132,20 @@ export function SalesWorkspace({
   // One id per quotation attempt, kept until the quote changes, so a retry after a
   // lost response reuses the quotation instead of creating another one.
   const quoteRequestId = useRef<string | null>(null);
+  // Same idea for the quick customer: a retry after a lost response reuses the customer.
+  const customerRequestId = useRef<string | null>(null);
 
   const organization = organizations.find(
     (entry) => `${entry.id}:${entry.branchId}` === scopeKey,
   );
   const organizationId = organization?.id ?? 0;
   const draftKey = `lensspace:sale-draft:${userId}:${scopeKey}`;
-  const lastRate = lastRates[organizationId] ?? 420;
+  const lastRate = referenceRate(organizationId);
   const rateValue = Number(rate);
   const rateWarning = !rate || !Number.isFinite(rateValue) || rateValue <= 0
     ? "Indica una tasa mayor que 0."
     : Math.abs(rateValue - lastRate) / lastRate > 0.3
-      ? `La tasa se aleja más de un 30 % de la última usada (${lastRate}). Revísala antes de crear el pedido.`
+      ? `La tasa se aleja más de un 30 % de la tasa de referencia (${lastRate}). Revísala antes de crear el pedido.`
       : "";
   const customerId = selectedCustomer?.id ?? 0;
   const availableRecentCustomers = recentCustomers.filter(
@@ -249,7 +256,7 @@ export function SalesWorkspace({
   }
   function changeScope(value: string) {
     setScopeKey(value);
-    setRate(String(lastRates[Number(value.split(":")[0])] ?? 420));
+    setRate(String(referenceRate(Number(value.split(":")[0]))));
     setSelectedCustomer(null);
     setRevisionId(0);
     setSelected([]);
@@ -284,10 +291,12 @@ export function SalesWorkspace({
         return;
       }
     }
+    customerRequestId.current ??= newRequestId();
     const { data, error } = await supabase.rpc("create_customer_with_phones", {
       target_organization_id: organization.id,
       target_branch_id: organization.branchId,
       customer_full_name: name,
+      customer_request_id: customerRequestId.current,
       customer_national_id: values.nationalId,
       customer_address: values.address,
       customer_birth_date: values.birthDate,
@@ -296,10 +305,12 @@ export function SalesWorkspace({
       phone_entries: values.phones,
     } as never);
     if (error) {
+      if (!isNetworkError(error)) customerRequestId.current = null;
       setDialogMessage(friendlyError(error, "No se pudo registrar el cliente."));
       setSavingQuick(false);
       return;
     }
+    customerRequestId.current = null;
     setSelectedCustomer({
       id: Number(data),
       organizationId: organization.id,
@@ -552,6 +563,13 @@ export function SalesWorkspace({
                 <span>CUP</span>
               </label>
             </div>
+            {organization?.canOperate ? (
+              <ExchangeRateRefresh
+                organizationId={organizationId}
+                current={adoptedRates[organizationId] ?? null}
+                onRefreshed={(next) => { setAdoptedRates((current) => ({ ...current, [organizationId]: next })); setRate(String(next.rate)); resetQuote(); }}
+              />
+            ) : null}
             {rateWarning ? <Alert tone="warning">{rateWarning}</Alert> : null}
           </Card>
 

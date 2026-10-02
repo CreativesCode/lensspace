@@ -21,6 +21,13 @@ answers HTTP 500 after sending, so attempts are stored as failed (QA-61).
 - Cache strategy approved: never cache tenant RSC data, balances, payments,
   cashbox or order status; cache static assets, sale drafts and an optional
   provider jobs snapshot locally.
+- Business USD→CUP rate comes from elTOQUE on demand: a button fetches it (one
+  elTOQUE call per Havana day for the whole platform, cached in
+  `market_exchange_rates`) and the organization keeps it until the next tap.
+  Scraping eltoque.com is not viable (Cloudflare challenge); the official API needs
+  the `ELTOQUE_API_TOKEN` Edge Function secret. Default order: business rate →
+  last order rate → 420; a sale can still override it.
+- WhatsApp messages carry the shop name, the sender's name and phone (QA-08 follow-up).
 
 ## Test accounts and data
 

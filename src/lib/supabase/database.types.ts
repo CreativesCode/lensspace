@@ -102,6 +102,115 @@ export type Database = {
           },
         ]
       }
+      cashbox_closure_payments: {
+        Row: {
+          allocated_amount: number
+          allocated_at: string
+          closure_id: number
+          payment_id: number
+        }
+        Insert: {
+          allocated_amount: number
+          allocated_at?: string
+          closure_id: number
+          payment_id: number
+        }
+        Update: {
+          allocated_amount?: number
+          allocated_at?: string
+          closure_id?: number
+          payment_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cashbox_closure_payments_closure_id_fkey"
+            columns: ["closure_id"]
+            isOneToOne: false
+            referencedRelation: "cashbox_closures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cashbox_closure_payments_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: true
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cashbox_closures: {
+        Row: {
+          branch_id: number
+          business_date: string
+          cashbox_id: number
+          closed_at: string
+          closed_by: string
+          closure_type: string
+          currency: string
+          declared_amount: number
+          difference_amount: number | null
+          expected_amount: number
+          id: number
+          organization_id: number
+          seller_id: string
+          sequence_number: number
+        }
+        Insert: {
+          branch_id: number
+          business_date: string
+          cashbox_id: number
+          closed_at?: string
+          closed_by: string
+          closure_type: string
+          currency: string
+          declared_amount: number
+          difference_amount?: number | null
+          expected_amount: number
+          id?: never
+          organization_id: number
+          seller_id: string
+          sequence_number: number
+        }
+        Update: {
+          branch_id?: number
+          business_date?: string
+          cashbox_id?: number
+          closed_at?: string
+          closed_by?: string
+          closure_type?: string
+          currency?: string
+          declared_amount?: number
+          difference_amount?: number | null
+          expected_amount?: number
+          id?: never
+          organization_id?: number
+          seller_id?: string
+          sequence_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cashbox_closures_cashbox_id_organization_id_branch_id_sell_fkey"
+            columns: [
+              "cashbox_id",
+              "organization_id",
+              "branch_id",
+              "seller_id",
+              "business_date",
+              "currency",
+            ]
+            isOneToOne: false
+            referencedRelation: "seller_cashboxes"
+            referencedColumns: [
+              "id",
+              "organization_id",
+              "branch_id",
+              "seller_id",
+              "business_date",
+              "currency",
+            ]
+          },
+        ]
+      }
       catalog_item_compatibilities: {
         Row: {
           created_at: string
@@ -126,10 +235,46 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: never
           is_allowed?: boolean
+          left_item_id?: number
           message?: string
+          organization_id?: number | null
+          right_item_id?: number
+          updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "catalog_item_compatibilities_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "catalog_item_compatibilities_left_item_id_fkey"
+            columns: ["left_item_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_item_compatibilities_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_item_compatibilities_right_item_id_fkey"
+            columns: ["right_item_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_items"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       catalog_item_overrides: {
         Row: {
@@ -153,14 +298,38 @@ export type Database = {
           sale_price: number
         }
         Update: {
+          catalog_item_id?: number
           changed_at?: string
           changed_by?: string
           cost_amount?: number
           currency?: string
           is_enabled?: boolean
+          organization_id?: number
           sale_price?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "catalog_item_overrides_catalog_item_id_fkey"
+            columns: ["catalog_item_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_item_overrides_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "catalog_item_overrides_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       catalog_items: {
         Row: {
@@ -197,13 +366,33 @@ export type Database = {
           category?: string
           code?: string
           cost_amount?: number
+          created_at?: string
+          created_by?: string | null
           currency?: string
           description?: string | null
+          id?: never
           is_active?: boolean
           name?: string
+          organization_id?: number | null
           sale_price?: number
+          updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "catalog_items_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "catalog_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       customer_phones: {
         Row: {
@@ -261,6 +450,7 @@ export type Database = {
           archived_at: string | null
           birth_date: string | null
           branch_id: number
+          client_request_id: string | null
           created_at: string
           created_by: string
           full_name: string
@@ -276,6 +466,7 @@ export type Database = {
           archived_at?: string | null
           birth_date?: string | null
           branch_id: number
+          client_request_id?: string | null
           created_at?: string
           created_by: string
           full_name: string
@@ -291,6 +482,7 @@ export type Database = {
           archived_at?: string | null
           birth_date?: string | null
           branch_id?: number
+          client_request_id?: string | null
           created_at?: string
           created_by?: string
           full_name?: string
@@ -365,15 +557,73 @@ export type Database = {
         Update: {
           applies_to_item_id?: number | null
           code?: string
+          created_at?: string
+          created_by?: string | null
+          id?: never
           is_active?: boolean
           message?: string
           minimum_absolute_cylinder?: number | null
           minimum_absolute_sphere?: number | null
           minimum_addition?: number | null
           name?: string
+          organization_id?: number | null
           recommended_item_id?: number | null
           surcharge_amount?: number
           surcharge_currency?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "graduation_rules_applies_to_item_id_fkey"
+            columns: ["applies_to_item_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "graduation_rules_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "graduation_rules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "graduation_rules_recommended_item_id_fkey"
+            columns: ["recommended_item_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_exchange_rates: {
+        Row: {
+          fetched_at: string
+          rate_date: string
+          rates: Json
+          source: string
+          usd_to_cup: number
+        }
+        Insert: {
+          fetched_at?: string
+          rate_date: string
+          rates?: Json
+          source: string
+          usd_to_cup: number
+        }
+        Update: {
+          fetched_at?: string
+          rate_date?: string
+          rates?: Json
+          source?: string
+          usd_to_cup?: number
         }
         Relationships: []
       }
@@ -436,6 +686,369 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      notification_attempts: {
+        Row: {
+          attempted_at: string
+          attempted_by: string
+          branch_id: number
+          channel: string
+          customer_id: number
+          failure_code: string | null
+          failure_message: string | null
+          id: number
+          message_snapshot: string
+          order_id: number
+          organization_id: number
+          outcome: string
+          provider_chat_id: string | null
+          provider_key: string
+          provider_message_id: string | null
+          recipient_snapshot: string | null
+          source_event_key: string | null
+          template_key: string
+        }
+        Insert: {
+          attempted_at?: string
+          attempted_by: string
+          branch_id: number
+          channel?: string
+          customer_id: number
+          failure_code?: string | null
+          failure_message?: string | null
+          id?: never
+          message_snapshot: string
+          order_id: number
+          organization_id: number
+          outcome: string
+          provider_chat_id?: string | null
+          provider_key?: string
+          provider_message_id?: string | null
+          recipient_snapshot?: string | null
+          source_event_key?: string | null
+          template_key: string
+        }
+        Update: {
+          attempted_at?: string
+          attempted_by?: string
+          branch_id?: number
+          channel?: string
+          customer_id?: number
+          failure_code?: string | null
+          failure_message?: string | null
+          id?: never
+          message_snapshot?: string
+          order_id?: number
+          organization_id?: number
+          outcome?: string
+          provider_chat_id?: string | null
+          provider_key?: string
+          provider_message_id?: string | null
+          recipient_snapshot?: string | null
+          source_event_key?: string | null
+          template_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_attempts_customer_id_organization_id_branch_i_fkey"
+            columns: ["customer_id", "organization_id", "branch_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id", "organization_id", "branch_id"]
+          },
+          {
+            foreignKeyName: "notification_attempts_order_id_organization_id_branch_id_fkey"
+            columns: ["order_id", "organization_id", "branch_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id", "organization_id", "branch_id"]
+          },
+          {
+            foreignKeyName: "notification_attempts_template_key_fkey"
+            columns: ["template_key"]
+            isOneToOne: false
+            referencedRelation: "notification_templates"
+            referencedColumns: ["key"]
+          },
+        ]
+      }
+      notification_templates: {
+        Row: {
+          body_template: string
+          channel: string
+          created_at: string
+          is_active: boolean
+          key: string
+          name: string
+        }
+        Insert: {
+          body_template: string
+          channel?: string
+          created_at?: string
+          is_active?: boolean
+          key: string
+          name: string
+        }
+        Update: {
+          body_template?: string
+          channel?: string
+          created_at?: string
+          is_active?: boolean
+          key?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      order_confirmations: {
+        Row: {
+          branch_id: number
+          confirmation_method: string
+          confirmed_at: string
+          confirmed_by: string
+          cup_equivalent: number | null
+          id: number
+          order_id: number
+          organization_id: number
+          totals: Json
+          usd_to_cup_rate: number | null
+        }
+        Insert: {
+          branch_id: number
+          confirmation_method?: string
+          confirmed_at?: string
+          confirmed_by: string
+          cup_equivalent?: number | null
+          id?: never
+          order_id: number
+          organization_id: number
+          totals: Json
+          usd_to_cup_rate?: number | null
+        }
+        Update: {
+          branch_id?: number
+          confirmation_method?: string
+          confirmed_at?: string
+          confirmed_by?: string
+          cup_equivalent?: number | null
+          id?: never
+          order_id?: number
+          organization_id?: number
+          totals?: Json
+          usd_to_cup_rate?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_confirmations_order_id_organization_id_branch_id_fkey"
+            columns: ["order_id", "organization_id", "branch_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id", "organization_id", "branch_id"]
+          },
+        ]
+      }
+      order_counters: {
+        Row: {
+          last_value: number
+          order_year: number
+          organization_id: number
+        }
+        Insert: {
+          last_value?: number
+          order_year: number
+          organization_id: number
+        }
+        Update: {
+          last_value?: number
+          order_year?: number
+          organization_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_counters_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_items: {
+        Row: {
+          amount: number
+          base_amount: number
+          branch_id: number
+          catalog_item_id: number | null
+          category: string | null
+          created_at: string
+          currency: string
+          discount_authorized_by: string | null
+          id: number
+          line_kind: string
+          name: string
+          order_id: number
+          organization_id: number
+          position: number
+          price_adjusted_by: string | null
+          price_adjustment_reason: string | null
+          source_code: string | null
+        }
+        Insert: {
+          amount: number
+          base_amount: number
+          branch_id: number
+          catalog_item_id?: number | null
+          category?: string | null
+          created_at?: string
+          currency: string
+          discount_authorized_by?: string | null
+          id?: never
+          line_kind: string
+          name: string
+          order_id: number
+          organization_id: number
+          position: number
+          price_adjusted_by?: string | null
+          price_adjustment_reason?: string | null
+          source_code?: string | null
+        }
+        Update: {
+          amount?: number
+          base_amount?: number
+          branch_id?: number
+          catalog_item_id?: number | null
+          category?: string | null
+          created_at?: string
+          currency?: string
+          discount_authorized_by?: string | null
+          id?: never
+          line_kind?: string
+          name?: string
+          order_id?: number
+          organization_id?: number
+          position?: number
+          price_adjusted_by?: string | null
+          price_adjustment_reason?: string | null
+          source_code?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_catalog_item_id_fkey"
+            columns: ["catalog_item_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_order_id_organization_id_branch_id_fkey"
+            columns: ["order_id", "organization_id", "branch_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id", "organization_id", "branch_id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          accepted_at: string
+          branch_id: number
+          commercial_status: string
+          created_at: string
+          cup_equivalent: number
+          customer_id: number
+          delivered_at: string | null
+          delivered_by: string | null
+          id: number
+          order_number: string
+          organization_id: number
+          payment_status: string
+          prescription_revision_id: number | null
+          primary_seller_id: string
+          quotation_id: number
+          totals: Json
+          usd_to_cup_rate: number
+        }
+        Insert: {
+          accepted_at?: string
+          branch_id: number
+          commercial_status?: string
+          created_at?: string
+          cup_equivalent: number
+          customer_id: number
+          delivered_at?: string | null
+          delivered_by?: string | null
+          id?: never
+          order_number: string
+          organization_id: number
+          payment_status?: string
+          prescription_revision_id?: number | null
+          primary_seller_id: string
+          quotation_id: number
+          totals: Json
+          usd_to_cup_rate: number
+        }
+        Update: {
+          accepted_at?: string
+          branch_id?: number
+          commercial_status?: string
+          created_at?: string
+          cup_equivalent?: number
+          customer_id?: number
+          delivered_at?: string | null
+          delivered_by?: string | null
+          id?: never
+          order_number?: string
+          organization_id?: number
+          payment_status?: string
+          prescription_revision_id?: number | null
+          primary_seller_id?: string
+          quotation_id?: number
+          totals?: Json
+          usd_to_cup_rate?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_branch_id_organization_id_fkey"
+            columns: ["branch_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id", "organization_id"]
+          },
+          {
+            foreignKeyName: "orders_customer_id_organization_id_branch_id_fkey"
+            columns: ["customer_id", "organization_id", "branch_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id", "organization_id", "branch_id"]
+          },
+          {
+            foreignKeyName: "orders_delivered_by_fkey"
+            columns: ["delivered_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "orders_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_prescription_revision_id_fkey"
+            columns: ["prescription_revision_id"]
+            isOneToOne: false
+            referencedRelation: "prescription_revisions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_quotation_id_organization_id_branch_id_fkey"
+            columns: ["quotation_id", "organization_id", "branch_id"]
+            isOneToOne: false
+            referencedRelation: "quotations"
+            referencedColumns: ["id", "organization_id", "branch_id"]
+          },
+        ]
       }
       organization_memberships: {
         Row: {
@@ -541,6 +1154,11 @@ export type Database = {
           status: string
           timezone: string
           updated_at: string
+          usd_rate_date: string | null
+          usd_rate_source: string | null
+          usd_rate_updated_at: string | null
+          usd_rate_updated_by: string | null
+          usd_to_cup_rate: number | null
         }
         Insert: {
           created_at?: string
@@ -551,6 +1169,11 @@ export type Database = {
           status?: string
           timezone?: string
           updated_at?: string
+          usd_rate_date?: string | null
+          usd_rate_source?: string | null
+          usd_rate_updated_at?: string | null
+          usd_rate_updated_by?: string | null
+          usd_to_cup_rate?: number | null
         }
         Update: {
           created_at?: string
@@ -561,8 +1184,137 @@ export type Database = {
           status?: string
           timezone?: string
           updated_at?: string
+          usd_rate_date?: string | null
+          usd_rate_source?: string | null
+          usd_rate_updated_at?: string | null
+          usd_rate_updated_by?: string | null
+          usd_to_cup_rate?: number | null
         }
         Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          applied_rate: number
+          branch_id: number
+          business_date: string
+          cashbox_id: number
+          client_request_id: string | null
+          currency: string
+          equivalent_cup: number | null
+          id: number
+          is_post_close: boolean
+          notes: string | null
+          order_id: number
+          organization_id: number
+          payment_method: string
+          received_at: string
+          received_by: string
+        }
+        Insert: {
+          amount: number
+          applied_rate: number
+          branch_id: number
+          business_date: string
+          cashbox_id: number
+          client_request_id?: string | null
+          currency: string
+          equivalent_cup?: number | null
+          id?: never
+          is_post_close?: boolean
+          notes?: string | null
+          order_id: number
+          organization_id: number
+          payment_method?: string
+          received_at?: string
+          received_by: string
+        }
+        Update: {
+          amount?: number
+          applied_rate?: number
+          branch_id?: number
+          business_date?: string
+          cashbox_id?: number
+          client_request_id?: string | null
+          currency?: string
+          equivalent_cup?: number | null
+          id?: never
+          is_post_close?: boolean
+          notes?: string | null
+          order_id?: number
+          organization_id?: number
+          payment_method?: string
+          received_at?: string
+          received_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_cashbox_id_organization_id_branch_id_received_by__fkey"
+            columns: [
+              "cashbox_id",
+              "organization_id",
+              "branch_id",
+              "received_by",
+              "business_date",
+              "currency",
+            ]
+            isOneToOne: false
+            referencedRelation: "seller_cashboxes"
+            referencedColumns: [
+              "id",
+              "organization_id",
+              "branch_id",
+              "seller_id",
+              "business_date",
+              "currency",
+            ]
+          },
+          {
+            foreignKeyName: "payments_order_id_organization_id_branch_id_fkey"
+            columns: ["order_id", "organization_id", "branch_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id", "organization_id", "branch_id"]
+          },
+        ]
+      }
+      platform_support_sessions: {
+        Row: {
+          administrator_id: string
+          ended_at: string | null
+          expires_at: string
+          id: number
+          organization_id: number
+          reason: string
+          started_at: string
+        }
+        Insert: {
+          administrator_id: string
+          ended_at?: string | null
+          expires_at: string
+          id?: never
+          organization_id: number
+          reason: string
+          started_at?: string
+        }
+        Update: {
+          administrator_id?: string
+          ended_at?: string | null
+          expires_at?: string
+          id?: never
+          organization_id?: number
+          reason?: string
+          started_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "platform_support_sessions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       prescription_files: {
         Row: {
@@ -794,6 +1546,183 @@ export type Database = {
           },
         ]
       }
+      production_incidents: {
+        Row: {
+          branch_id: number
+          cost_responsibility: string
+          description: string
+          id: number
+          job_id: number
+          opened_at: string
+          opened_by: string
+          organization_id: number
+          rework_job_id: number | null
+        }
+        Insert: {
+          branch_id: number
+          cost_responsibility: string
+          description: string
+          id?: never
+          job_id: number
+          opened_at?: string
+          opened_by: string
+          organization_id: number
+          rework_job_id?: number | null
+        }
+        Update: {
+          branch_id?: number
+          cost_responsibility?: string
+          description?: string
+          id?: never
+          job_id?: number
+          opened_at?: string
+          opened_by?: string
+          organization_id?: number
+          rework_job_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "production_incidents_job_id_organization_id_branch_id_fkey"
+            columns: ["job_id", "organization_id", "branch_id"]
+            isOneToOne: false
+            referencedRelation: "production_jobs"
+            referencedColumns: ["id", "organization_id", "branch_id"]
+          },
+          {
+            foreignKeyName: "production_incidents_rework_job_id_fkey"
+            columns: ["rework_job_id"]
+            isOneToOne: false
+            referencedRelation: "production_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      production_job_events: {
+        Row: {
+          actor_id: string
+          actor_role: string
+          branch_id: number
+          from_status: string | null
+          id: number
+          job_id: number
+          notes: string | null
+          occurred_at: string
+          organization_id: number
+          to_status: string
+        }
+        Insert: {
+          actor_id: string
+          actor_role: string
+          branch_id: number
+          from_status?: string | null
+          id?: never
+          job_id: number
+          notes?: string | null
+          occurred_at?: string
+          organization_id: number
+          to_status: string
+        }
+        Update: {
+          actor_id?: string
+          actor_role?: string
+          branch_id?: number
+          from_status?: string | null
+          id?: never
+          job_id?: number
+          notes?: string | null
+          occurred_at?: string
+          organization_id?: number
+          to_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "production_job_events_job_id_organization_id_branch_id_fkey"
+            columns: ["job_id", "organization_id", "branch_id"]
+            isOneToOne: false
+            referencedRelation: "production_jobs"
+            referencedColumns: ["id", "organization_id", "branch_id"]
+          },
+        ]
+      }
+      production_jobs: {
+        Row: {
+          assigned_at: string
+          assigned_by: string
+          branch_id: number
+          completed_at: string | null
+          dispatched_at: string | null
+          id: number
+          is_current: boolean
+          job_type: string
+          order_id: number
+          organization_id: number
+          original_job_id: number | null
+          provider_id: string
+          received_at: string | null
+          status: string
+          superseded_at: string | null
+          work_snapshot: Json
+        }
+        Insert: {
+          assigned_at?: string
+          assigned_by: string
+          branch_id: number
+          completed_at?: string | null
+          dispatched_at?: string | null
+          id?: never
+          is_current?: boolean
+          job_type: string
+          order_id: number
+          organization_id: number
+          original_job_id?: number | null
+          provider_id: string
+          received_at?: string | null
+          status?: string
+          superseded_at?: string | null
+          work_snapshot: Json
+        }
+        Update: {
+          assigned_at?: string
+          assigned_by?: string
+          branch_id?: number
+          completed_at?: string | null
+          dispatched_at?: string | null
+          id?: never
+          is_current?: boolean
+          job_type?: string
+          order_id?: number
+          organization_id?: number
+          original_job_id?: number | null
+          provider_id?: string
+          received_at?: string | null
+          status?: string
+          superseded_at?: string | null
+          work_snapshot?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "production_jobs_order_id_organization_id_branch_id_fkey"
+            columns: ["order_id", "organization_id", "branch_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id", "organization_id", "branch_id"]
+          },
+          {
+            foreignKeyName: "production_jobs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "production_jobs_original_job_id_fkey"
+            columns: ["original_job_id"]
+            isOneToOne: false
+            referencedRelation: "production_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -820,6 +1749,212 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      quotation_items: {
+        Row: {
+          amount: number
+          base_amount: number
+          branch_id: number
+          catalog_item_id: number | null
+          category: string | null
+          created_at: string
+          currency: string
+          discount_authorized_by: string | null
+          id: number
+          line_kind: string
+          name: string
+          organization_id: number
+          position: number
+          price_adjusted_by: string | null
+          price_adjustment_reason: string | null
+          quotation_id: number
+          source_code: string | null
+        }
+        Insert: {
+          amount: number
+          base_amount: number
+          branch_id: number
+          catalog_item_id?: number | null
+          category?: string | null
+          created_at?: string
+          currency: string
+          discount_authorized_by?: string | null
+          id?: never
+          line_kind: string
+          name: string
+          organization_id: number
+          position: number
+          price_adjusted_by?: string | null
+          price_adjustment_reason?: string | null
+          quotation_id: number
+          source_code?: string | null
+        }
+        Update: {
+          amount?: number
+          base_amount?: number
+          branch_id?: number
+          catalog_item_id?: number | null
+          category?: string | null
+          created_at?: string
+          currency?: string
+          discount_authorized_by?: string | null
+          id?: never
+          line_kind?: string
+          name?: string
+          organization_id?: number
+          position?: number
+          price_adjusted_by?: string | null
+          price_adjustment_reason?: string | null
+          quotation_id?: number
+          source_code?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotation_items_catalog_item_id_fkey"
+            columns: ["catalog_item_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotation_items_quotation_id_organization_id_branch_id_fkey"
+            columns: ["quotation_id", "organization_id", "branch_id"]
+            isOneToOne: false
+            referencedRelation: "quotations"
+            referencedColumns: ["id", "organization_id", "branch_id"]
+          },
+        ]
+      }
+      quotations: {
+        Row: {
+          accepted_at: string | null
+          branch_id: number
+          client_request_id: string | null
+          created_at: string
+          cup_equivalent: number
+          customer_id: number
+          id: number
+          notes: string | null
+          organization_id: number
+          prescription_revision_id: number | null
+          seller_id: string
+          status: string
+          totals: Json
+          updated_at: string
+          usd_to_cup_rate: number
+          warnings: Json
+        }
+        Insert: {
+          accepted_at?: string | null
+          branch_id: number
+          client_request_id?: string | null
+          created_at?: string
+          cup_equivalent: number
+          customer_id: number
+          id?: never
+          notes?: string | null
+          organization_id: number
+          prescription_revision_id?: number | null
+          seller_id: string
+          status?: string
+          totals?: Json
+          updated_at?: string
+          usd_to_cup_rate: number
+          warnings?: Json
+        }
+        Update: {
+          accepted_at?: string | null
+          branch_id?: number
+          client_request_id?: string | null
+          created_at?: string
+          cup_equivalent?: number
+          customer_id?: number
+          id?: never
+          notes?: string | null
+          organization_id?: number
+          prescription_revision_id?: number | null
+          seller_id?: string
+          status?: string
+          totals?: Json
+          updated_at?: string
+          usd_to_cup_rate?: number
+          warnings?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotations_branch_id_organization_id_fkey"
+            columns: ["branch_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id", "organization_id"]
+          },
+          {
+            foreignKeyName: "quotations_customer_id_organization_id_branch_id_fkey"
+            columns: ["customer_id", "organization_id", "branch_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id", "organization_id", "branch_id"]
+          },
+          {
+            foreignKeyName: "quotations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotations_prescription_revision_id_fkey"
+            columns: ["prescription_revision_id"]
+            isOneToOne: false
+            referencedRelation: "prescription_revisions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seller_cashboxes: {
+        Row: {
+          branch_id: number
+          business_date: string
+          created_at: string
+          currency: string
+          id: number
+          organization_id: number
+          seller_id: string
+        }
+        Insert: {
+          branch_id: number
+          business_date: string
+          created_at?: string
+          currency: string
+          id?: never
+          organization_id: number
+          seller_id: string
+        }
+        Update: {
+          branch_id?: number
+          business_date?: string
+          created_at?: string
+          currency?: string
+          id?: never
+          organization_id?: number
+          seller_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_cashboxes_branch_id_organization_id_fkey"
+            columns: ["branch_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id", "organization_id"]
+          },
+          {
+            foreignKeyName: "seller_cashboxes_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       subscriptions: {
         Row: {
@@ -879,6 +2014,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_quotation: { Args: { target_quotation_id: number }; Returns: Json }
       add_organization_member: {
         Args: {
           actor_user_id: string
@@ -889,6 +2025,22 @@ export type Database = {
           target_user_id: string
         }
         Returns: number
+      }
+      adopt_market_usd_rate: {
+        Args: { target_organization_id: number }
+        Returns: Json
+      }
+      assign_production_job: {
+        Args: { job_type: string; provider_id: string; target_order_id: number }
+        Returns: number
+      }
+      begin_platform_support_session: {
+        Args: {
+          duration_minutes?: number
+          support_reason: string
+          target_organization_id: number
+        }
+        Returns: Json
       }
       bootstrap_organization: {
         Args: {
@@ -913,58 +2065,100 @@ export type Database = {
         Args: {
           selected_item_ids: number[]
           target_organization_id: number
-          target_prescription_revision_id: number | null
-          usd_to_cup_rate: number | null
+          target_prescription_revision_id: number
+          usd_to_cup_rate: number
         }
         Returns: Json
       }
-      accept_quotation: {
-        Args: { target_quotation_id: number }
-        Returns: Json
-      }
-      create_customer_with_phones: {
+      calculate_sale_price: {
         Args: {
-          customer_address?: string
-          customer_birth_date?: string
-          customer_full_name: string
-          customer_messaging_consent?: boolean
-          customer_national_id?: string
-          customer_notes?: string
-          phone_entries?: Json
-          target_branch_id: number
+          line_adjustments?: Json
+          selected_item_ids: number[]
           target_organization_id: number
+          target_prescription_revision_id: number
+          usd_to_cup_rate: number
         }
-        Returns: number
+        Returns: Json
       }
+      close_cashbox: {
+        Args: {
+          closure_type: string
+          declared_amount: number
+          target_cashbox_id: number
+        }
+        Returns: Json
+      }
+      complete_automatic_notification_dispatch: {
+        Args: {
+          target_dispatch_id: number
+          target_failure_code?: string
+          target_outcome: string
+        }
+        Returns: undefined
+      }
+      create_customer_with_phones:
+        | {
+            Args: {
+              customer_address?: string
+              customer_birth_date?: string
+              customer_full_name: string
+              customer_messaging_consent?: boolean
+              customer_national_id?: string
+              customer_notes?: string
+              phone_entries?: Json
+              target_branch_id: number
+              target_organization_id: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              customer_address?: string
+              customer_birth_date?: string
+              customer_full_name: string
+              customer_messaging_consent?: boolean
+              customer_national_id?: string
+              customer_notes?: string
+              customer_request_id: string
+              phone_entries?: Json
+              target_branch_id: number
+              target_organization_id: number
+            }
+            Returns: number
+          }
       create_prescription_revision: {
         Args: {
-          revision_change_reason: string | null
-          revision_left_addition: number | null
-          revision_left_axis: number | null
-          revision_left_cylinder: number | null
-          revision_left_height: number | null
-          revision_left_prism: number | null
-          revision_left_prism_base: string | null
-          revision_left_pupillary_distance: number | null
-          revision_left_sphere: number | null
-          revision_notes: string | null
-          revision_prescriber_name: string | null
+          revision_change_reason: string
+          revision_left_addition: number
+          revision_left_axis: number
+          revision_left_cylinder: number
+          revision_left_height: number
+          revision_left_prism: number
+          revision_left_prism_base: string
+          revision_left_pupillary_distance: number
+          revision_left_sphere: number
+          revision_notes: string
+          revision_prescriber_name: string
           revision_prescription_date: string
-          revision_pupillary_distance_total: number | null
-          revision_right_addition: number | null
-          revision_right_axis: number | null
-          revision_right_cylinder: number | null
-          revision_right_height: number | null
-          revision_right_prism: number | null
-          revision_right_prism_base: string | null
-          revision_right_pupillary_distance: number | null
-          revision_right_sphere: number | null
+          revision_pupillary_distance_total: number
+          revision_right_addition: number
+          revision_right_axis: number
+          revision_right_cylinder: number
+          revision_right_height: number
+          revision_right_prism: number
+          revision_right_prism_base: string
+          revision_right_pupillary_distance: number
+          revision_right_sphere: number
           target_branch_id: number
           target_customer_id: number
           target_organization_id: number
-          target_prescription_id: number | null
+          target_prescription_id: number
         }
         Returns: Json
+      }
+      create_production_rework: {
+        Args: { target_incident_id: number }
+        Returns: number
       }
       current_user_can_manage_organization: {
         Args: { target_organization_id: number }
@@ -975,21 +2169,9 @@ export type Database = {
         Returns: boolean
       }
       current_user_is_platform_admin: { Args: never; Returns: boolean }
-      close_cashbox: {
-        Args: {
-          closure_type: string
-          declared_amount: number
-          target_cashbox_id: number
-        }
-        Returns: Json
-      }
-      assign_production_job: {
-        Args: { job_type: string; provider_id: string; target_order_id: number }
-        Returns: number
-      }
-      create_production_rework: {
-        Args: { target_incident_id: number }
-        Returns: number
+      end_platform_support_session: {
+        Args: { target_session_id: number }
+        Returns: boolean
       }
       find_auth_user_by_email: {
         Args: { target_email: string }
@@ -998,21 +2180,38 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_automatic_notification_payload: {
+        Args: { target_dispatch_id: number }
+        Returns: Json
+      }
       get_navigation_counters: { Args: never; Returns: Json }
+      get_openwa_runtime_config: { Args: never; Returns: Json }
       get_order_payment_summary: {
         Args: { target_order_id: number }
         Returns: Json
       }
-      list_accessible_orders: { Args: never; Returns: Json }
-      list_accessible_production_jobs: { Args: never; Returns: Json }
-      list_accessible_cashboxes: {
+      get_order_timeline: { Args: { target_order_id: number }; Returns: Json }
+      get_owner_dashboard: {
         Args: {
-          target_branch_id?: number | null
-          target_business_date?: string | null
-          target_seller_id?: string | null
+          date_from?: string
+          date_to?: string
+          target_branch_id?: number
+          target_organization_id: number
+          target_seller_id?: string
         }
         Returns: Json
       }
+      get_platform_usage: { Args: never; Returns: Json }
+      list_accessible_cashboxes: {
+        Args: {
+          target_branch_id?: number
+          target_business_date?: string
+          target_seller_id?: string
+        }
+        Returns: Json
+      }
+      list_accessible_orders: { Args: never; Returns: Json }
+      list_accessible_production_jobs: { Args: never; Returns: Json }
       manage_organization_member: {
         Args: {
           target_branch_id: number
@@ -1029,19 +2228,16 @@ export type Database = {
         Args: { request_id: string; target_order_id: number }
         Returns: Json
       }
-      save_sale_quotation: {
-        Args: {
-          quotation_request_id?: string | null
-          selected_item_ids: number[]
-          target_branch_id: number
-          target_customer_id: number
-          target_line_adjustments?: Json
-          target_notes?: string | null
-          target_organization_id: number
-          target_prescription_revision_id: number | null
-          target_quotation_id: number | null
-          target_usd_to_cup_rate: number | null
-        }
+      platform_owner_email: {
+        Args: { target_user_id: string }
+        Returns: string
+      }
+      prepare_manual_notification: {
+        Args: { target_order_id: number; target_template_key: string }
+        Returns: Json
+      }
+      prepare_openwa_notification: {
+        Args: { target_order_id: number; target_template_key: string }
         Returns: Json
       }
       register_cash_payment: {
@@ -1049,14 +2245,18 @@ export type Database = {
           payment_amount: number
           payment_applied_rate: number
           payment_currency: string
-          payment_notes?: string | null
-          payment_request_id?: string | null
+          payment_notes?: string
+          payment_request_id?: string
           target_order_id: number
         }
         Returns: Json
       }
       report_production_incident: {
-        Args: { cost_responsibility: string; description: string; target_job_id: number }
+        Args: {
+          cost_responsibility: string
+          description: string
+          target_job_id: number
+        }
         Returns: number
       }
       save_quotation: {
@@ -1064,17 +2264,61 @@ export type Database = {
           selected_item_ids: number[]
           target_branch_id: number
           target_customer_id: number
-          target_notes?: string | null
+          target_line_adjustments?: Json
+          target_notes?: string
           target_organization_id: number
-          target_prescription_revision_id: number | null
-          target_quotation_id: number | null
-          target_usd_to_cup_rate: number | null
+          target_prescription_revision_id: number
+          target_quotation_id: number
+          target_usd_to_cup_rate: number
         }
         Returns: number
       }
+      save_sale_quotation: {
+        Args: {
+          quotation_request_id?: string
+          selected_item_ids: number[]
+          target_branch_id: number
+          target_customer_id: number
+          target_line_adjustments?: Json
+          target_notes?: string
+          target_organization_id: number
+          target_prescription_revision_id: number
+          target_quotation_id: number
+          target_usd_to_cup_rate: number
+        }
+        Returns: Json
+      }
       transition_production_job: {
-        Args: { notes?: string | null; target_job_id: number; target_status: string }
+        Args: { notes?: string; target_job_id: number; target_status: string }
         Returns: undefined
+      }
+      update_customer_with_phones: {
+        Args: {
+          customer_address?: string
+          customer_birth_date?: string
+          customer_full_name: string
+          customer_messaging_consent?: boolean
+          customer_national_id?: string
+          customer_notes?: string
+          phone_entries?: Json
+          target_customer_id: number
+        }
+        Returns: number
+      }
+      update_platform_organization: {
+        Args: {
+          change_reason: string
+          target_amount: number
+          target_billing_period: string
+          target_currency: string
+          target_expires_on: string
+          target_module_keys: string[]
+          target_organization_id: number
+          target_organization_status: string
+          target_starts_on: string
+          target_subscription_status: string
+        }
+        Returns: Json
       }
     }
     Enums: {

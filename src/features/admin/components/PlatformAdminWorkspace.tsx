@@ -1,12 +1,13 @@
 'use client'
 
-import { Building, LifeBuoy, Plus, SearchX } from 'lucide-react'
+import { Building, KeyRound, LifeBuoy, Plus, SearchX } from 'lucide-react'
 import { FormEvent, useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { FilterPanel, FormSelect } from '@/shared/components'
 import { Alert, Badge, Button, ButtonLink, Card, CardHeader, Dialog, EmptyState, Field, Input, Switch, Textarea, Toast } from '@/shared/ui'
 import { friendlyError } from '@/shared/lib/friendly-error'
+import { sendOwnerPasswordReset } from '../actions'
 import { OrganizationOnboardingForm } from './OrganizationOnboardingForm'
 
 const modules = [
@@ -23,7 +24,7 @@ const organizationStatusLabels: Record<string, string> = {
 export type PlatformOrganization = {
   id: number; name: string; order_prefix: string; status: string
   branches: { id: number; name: string; is_active: boolean }[]
-  owners: { display_name: string }[]
+  owners: { user_id: string; display_name: string }[]
   subscription?: { status: string; amount: number; currency: string; billing_period: string; starts_on: string; expires_on: string }
   modules: { module_key: string; is_enabled: boolean }[]
   usage?: { customers: number; orders: number; members: number; openProductionJobs: number; notificationAttempts: number; lastActivityAt: string | null }
@@ -54,6 +55,15 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
     setError('')
     setEnabledModules(organization.modules.filter(({ is_enabled }) => is_enabled).map(({ module_key }) => module_key))
     setOpenId(organization.id)
+  }
+
+  function sendReset(ownerUserId: string) {
+    startTransition(async () => {
+      setError('')
+      const result = await sendOwnerPasswordReset(ownerUserId)
+      if (result.error) return setError(result.error)
+      setToast(`Enlace de restablecimiento enviado a ${result.email}.`)
+    })
   }
 
   function toggleModule(key: string, enabled: boolean) {
@@ -187,6 +197,13 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
               <Button type="submit" variant="secondary" icon={LifeBuoy} block disabled={pending}>Iniciar asistencia</Button>
             </form>
           )}
+          <CardHeader title="Acceso del propietario" />
+          {openOrganization.owners.length ? openOrganization.owners.map((owner) => (
+            <div key={owner.user_id} className="flex flex-wrap items-center justify-between gap-2 text-sm">
+              <span className="font-semibold text-ink">{owner.display_name}</span>
+              <Button size="sm" variant="secondary" icon={KeyRound} disabled={pending} onClick={() => sendReset(owner.user_id)}>Enviar enlace de restablecimiento</Button>
+            </div>
+          )) : <p className="text-sm text-text-muted">Sin propietario activo.</p>}
           <ButtonLink href="/catalog" variant="ghost">Administrar catálogo base</ButtonLink>
         </div>
       </div> : null}

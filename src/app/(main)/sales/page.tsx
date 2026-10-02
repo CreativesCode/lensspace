@@ -14,7 +14,7 @@ export default async function SalesPage({ searchParams }: { searchParams: Promis
   const organizationIds = [...new Set(memberships.map((entry) => entry.organization_id))]
   const empty = Promise.resolve({ data: [] })
   const [{ data: organizationData }, { data: branchData }, { data: itemData }, { data: overrideData }, { data: rateData }] = await Promise.all([
-    organizationIds.length ? supabase.from('organizations').select('id, name').in('id', organizationIds) : empty,
+    organizationIds.length ? supabase.from('organizations').select('id, name, usd_to_cup_rate, usd_rate_date').in('id', organizationIds) : empty,
     organizationIds.length ? supabase.from('branches').select('id, organization_id, name').in('organization_id', organizationIds).eq('is_active', true) : empty,
     organizationIds.length ? supabase.from('catalog_items').select('id, organization_id, category, name, sale_price, currency').eq('is_active', true).order('category').order('name') : empty,
     organizationIds.length ? supabase.from('catalog_item_overrides').select('organization_id, catalog_item_id, sale_price, currency, is_enabled').in('organization_id', organizationIds) : empty,
@@ -25,7 +25,9 @@ export default async function SalesPage({ searchParams }: { searchParams: Promis
   for (const row of (rateData ?? []) as { organization_id: number; usd_to_cup_rate: number | null }[]) {
     if (row.usd_to_cup_rate && !(row.organization_id in lastRates)) lastRates[row.organization_id] = Number(row.usd_to_cup_rate)
   }
-  const organizationRows = (organizationData ?? []) as unknown as { id: number; name: string }[]
+  const organizationRows = (organizationData ?? []) as unknown as { id: number; name: string; usd_to_cup_rate: number | null; usd_rate_date: string | null }[]
+  // Business rate adopted from elTOQUE; it stays until someone refreshes it again.
+  const businessRates = Object.fromEntries(organizationRows.flatMap((row) => row.usd_to_cup_rate && row.usd_rate_date ? [[row.id, { rate: Number(row.usd_to_cup_rate), rateDate: row.usd_rate_date }]] : []))
   const branchRows = (branchData ?? []) as unknown as { id: number; organization_id: number; name: string }[]
   const scopes = memberships.flatMap((membership) => {
     const availableBranches = membership.role === 'owner'
@@ -71,7 +73,7 @@ export default async function SalesPage({ searchParams }: { searchParams: Promis
   }))
   return <PageContainer>
     <PageHeader eyebrow="Ventas ópticas" title="Nueva venta" description="Cliente, receta, configuración y aceptación en un flujo trazable." />
-    <SalesWorkspace organizations={organizations} userId={user.id} lastRates={lastRates}
+    <SalesWorkspace organizations={organizations} userId={user.id} lastRates={lastRates} businessRates={businessRates}
       initialCustomer={requestedCustomer ? { id: (requestedCustomer as CustomerRow).id, organizationId: (requestedCustomer as CustomerRow).organization_id, branchId: (requestedCustomer as CustomerRow).branch_id, name: (requestedCustomer as CustomerRow).full_name } : null}
       initialRevisions={requestedCustomer ? ((requestedRevisions ?? []) as unknown as { id: number; organization_id: number; branch_id: number; prescription_id: number; prescription_date: string }[]).map((row) => ({ id: row.id, organizationId: row.organization_id, branchId: row.branch_id, customerId: requestedCustomerId, label: `Receta #${row.prescription_id} · ${row.prescription_date}` })) : []}
       recentCustomers={((customerData ?? []) as unknown as CustomerRow[]).map((entry) => ({ id: entry.id, organizationId: entry.organization_id, branchId: entry.branch_id, name: entry.full_name }))}

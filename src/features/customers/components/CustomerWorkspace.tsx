@@ -7,7 +7,8 @@ import { createClient } from '@/lib/supabase/client'
 import type { Tables } from '@/lib/supabase/database.types'
 import { FormSelect } from '@/shared/components'
 import { Alert, Avatar, Badge, Button, ButtonLink, Card, CardHeader, EmptyState, Field, Input, ListItem } from '@/shared/ui'
-import { friendlyError } from '@/shared/lib/friendly-error'
+import { friendlyError, isNetworkError } from '@/shared/lib/friendly-error'
+import { newRequestId } from '@/shared/utils/request-id'
 import { canonicalPhone } from '../phone'
 import { CustomerFormFields, customerFormValues, type CustomerPhoneDraft } from './CustomerFormFields'
 
@@ -68,6 +69,8 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
     { number: '', label: 'Principal', whatsappEnabled: true },
   ])
   const selectedRef = useRef<HTMLDivElement>(null)
+  // One id per new-customer attempt, reused on retry so a lost response never duplicates it.
+  const customerRequestId = useRef<string | null>(null)
 
   const activeScope = scopes.find(
     (scope) => `${scope.organizationId}:${scope.branchId}` === target,
@@ -215,6 +218,7 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
       return
     }
 
+    if (!editingCustomer) customerRequestId.current ??= newRequestId()
     const { data, error } = editingCustomer
       ? await supabase.rpc('update_customer_with_phones', {
           target_customer_id: editingCustomer.id,
@@ -230,6 +234,7 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
           target_organization_id: activeScope.organizationId,
           target_branch_id: activeScope.branchId,
           customer_full_name: values.fullName,
+          customer_request_id: customerRequestId.current,
           customer_national_id: values.nationalId,
           customer_address: values.address,
           customer_birth_date: values.birthDate,
@@ -239,10 +244,12 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
         } as never)
 
     if (error) {
+      if (!isNetworkError(error)) customerRequestId.current = null
       setMessage(friendlyError(error, 'No se pudo registrar el cliente.'))
       setSaving(false)
       return
     }
+    customerRequestId.current = null
 
     setQuery(fullName.trim())
     setShowForm(false)
