@@ -2,6 +2,7 @@
 
 import { X, type LucideIcon } from 'lucide-react'
 import { useEffect, useId, useRef, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 
 import { cx } from './cx'
 
@@ -46,8 +47,11 @@ export function Dialog({ open, onClose, title, eyebrow, description, icon: Icon,
     }
   }, [open])
 
-  if (!open) return null
-  return (
+  // Rendered in <body>: a dialog opened from a sticky/positioned ancestor (e.g. the
+  // sidebar's 'Mi perfil') must not be trapped in that stacking context, where page
+  // fields and selects would paint over it.
+  if (!open || typeof document === 'undefined') return null
+  return createPortal(
     <div className="fixed inset-0 z-50 grid place-items-center bg-[rgba(7,50,47,0.55)] p-4 md:p-6" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}>
       <div
         ref={panelRef}
@@ -76,6 +80,7 @@ export function Dialog({ open, onClose, title, eyebrow, description, icon: Icon,
         {children ? <div className="min-h-0 overflow-y-auto px-6 py-5">{children}</div> : null}
         {footer ? <div className="flex flex-wrap items-center justify-end gap-2.5 bg-canvas px-6 py-4">{footer}</div> : null}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

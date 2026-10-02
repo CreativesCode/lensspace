@@ -1,6 +1,6 @@
 'use client'
 
-import { Factory, Plus, RotateCcw, SearchX, SlidersHorizontal, TriangleAlert } from 'lucide-react'
+import { Factory, Plus, RefreshCcw, RotateCcw, SearchX, SlidersHorizontal, TriangleAlert } from 'lucide-react'
 import { FormEvent, useMemo, useState, useTransition } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { FormSelect, OperationalFilters } from '@/shared/components'
@@ -38,14 +38,14 @@ export type PrescriptionSnapshot = {
 export type ProductionJob = { id: number; orderId: number; orderNumber: string; customerName?: string | null; jobType: 'lens' | 'mounting'; providerId: string; providerName: string; status: string; snapshot: { items?: { name: string }[]; prescription?: PrescriptionSnapshot | null }; originalJobId: number | null; assignedAt: string; incidents: Incident[]; isCurrent?: boolean }
 export type AssignmentOrder = { id: number; organizationId: number; orderNumber: string; customerName?: string | null }
 export type Provider = { id: string; organizationId: number; name: string; role: 'lens_provider' | 'mounting_provider' | 'in_house' }
-type JobAction = { target: string; label: string }
+type JobAction = { target: string; label: string; onBehalf?: boolean }
 
 // Optical actors (owner/seller) may also record the provider's steps: directly on
 // their own in-house jobs, or "en nombre del proveedor" on someone else's.
 function jobActions(job: ProductionJob, opticalActor: boolean, currentUserId: string): { primary?: JobAction; secondary?: JobAction } {
   const opticalTransitions: Record<string, { target: string; label: string }> = job.jobType === 'lens'
-    ? { pending: { target: 'ready_to_send', label: 'Marcar listo para enviar' }, ready_to_send: { target: 'dispatched', label: 'Marcar enviado' }, completed: { target: 'received', label: 'Marcar recibido' } }
-    : { pending: { target: 'ready_to_send', label: 'Marcar listo para enviar' }, ready_to_send: { target: 'dispatched', label: 'Marcar enviado' }, completed: { target: 'received', label: 'Marcar recibido' }, received: { target: 'reviewed', label: 'Marcar revisado' } }
+    ? { pending: { target: 'ready_to_send', label: 'Listo para enviar' }, ready_to_send: { target: 'dispatched', label: 'Marcar enviado' }, completed: { target: 'received', label: 'Marcar recibido' } }
+    : { pending: { target: 'ready_to_send', label: 'Listo para enviar' }, ready_to_send: { target: 'dispatched', label: 'Marcar enviado' }, completed: { target: 'received', label: 'Marcar recibido' }, received: { target: 'reviewed', label: 'Marcar revisado' } }
   const providerTransitions: Record<string, { target: string; label: string }> = job.jobType === 'lens'
     ? { pending: { target: 'in_production', label: 'Iniciar fabricación' }, dispatched: { target: 'in_production', label: 'Iniciar fabricación' }, in_production: { target: 'completed', label: 'Marcar trabajo listo' } }
     : { pending: { target: 'in_mounting', label: 'Iniciar montaje' }, dispatched: { target: 'in_mounting', label: 'Iniciar montaje' }, in_mounting: { target: 'completed', label: 'Marcar trabajo listo' } }
@@ -53,7 +53,9 @@ function jobActions(job: ProductionJob, opticalActor: boolean, currentUserId: st
   const provider = providerTransitions[job.status]
   if (!opticalActor) return { primary: provider }
   if (job.providerId === currentUserId) return { primary: provider ?? optical }
-  const onBehalf = provider ? { ...provider, label: `${provider.label} (en nombre del proveedor)` } : undefined
+  // Short label on the button; 'en nombre del proveedor' goes in its tooltip and
+  // accessible name (the job events already record who acted).
+  const onBehalf = provider ? { ...provider, onBehalf: true } : undefined
   return optical ? { primary: optical, secondary: onBehalf } : { primary: onBehalf }
 }
 
@@ -75,6 +77,9 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
   const [assignmentOpen, setAssignmentOpen] = useState(false)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [assignmentError, setAssignmentError] = useState('')
+  // QA-41: a rework can go to another responsible person (original one by default).
+  const [reworkTarget, setReworkTarget] = useState<{ incidentId: number; job: ProductionJob } | null>(null)
+  const [reworkProviderId, setReworkProviderId] = useState('')
 
   // Returns false instead of throwing: the mutation already committed, so a failed
   // reload (weak signal) must not take the page down.
@@ -127,10 +132,27 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
     })
   }
 
-  function createRework(incidentId: number) {
+  function openRework(job: ProductionJob, incidentId: number) {
+    setReworkTarget({ incidentId, job })
+    setReworkProviderId(job.providerId)
+  }
+
+  function reworkProviderOptions(job: ProductionJob) {
+    const organizationId = orders.find((order) => order.id === job.orderId)?.organizationId
+    const options = providers
+      .filter((provider) => (!organizationId || provider.organizationId === organizationId) && (provider.role === 'in_house' || provider.role === (job.jobType === 'lens' ? 'lens_provider' : 'mounting_provider')))
+      .map((provider) => ({ value: provider.id, label: provider.name }))
+    const unique = [...new Map(options.map((option) => [option.value, option])).values()]
+    return unique.some((option) => option.value === job.providerId) ? unique : [{ value: job.providerId, label: job.providerName }, ...unique]
+  }
+
+  function createRework() {
+    if (!reworkTarget) return
+    const { incidentId, job } = reworkTarget
     startTransition(async () => {
-      const { error } = await supabase.rpc('create_production_rework', { target_incident_id: incidentId } as never)
+      const { error } = await supabase.rpc('create_production_rework', { target_incident_id: incidentId, new_provider_id: reworkProviderId || job.providerId } as never)
       if (error) return setMessage(friendlyError(error, 'No pudimos crear la repetición.'))
+      setReworkTarget(null)
       const fresh = await refreshJobs(); setMessage(savedMessage(fresh, 'Repetición creada y vinculada al trabajo original.'))
     })
   }
@@ -191,7 +213,7 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
     <div className="grid items-start gap-4 lg:grid-cols-2 2xl:grid-cols-3">
       {filteredJobs.map((job) => {
         const { primary, secondary } = jobActions(job, canAssignProduction, currentUserId)
-        return <ProductionJobCard key={job.id} job={job} showCustomer={canAssignProduction} transitionLabel={primary?.label} secondaryTransitionLabel={secondary?.label} pending={pending} onTransition={() => primary && transitionProduction(job, primary)} onSecondaryTransition={() => secondary && transitionProduction(job, secondary)} onReportIncident={() => openIncidentDialog(job)} onCreateRework={createRework} />
+        return <ProductionJobCard key={job.id} job={job} showCustomer={canAssignProduction} canAuthorizeRework={canAssignProduction} transitionLabel={primary?.label} transitionOnBehalf={primary?.onBehalf} secondaryTransitionLabel={secondary?.label} secondaryOnBehalf={secondary?.onBehalf} pending={pending} onTransition={() => primary && transitionProduction(job, primary)} onSecondaryTransition={() => secondary && transitionProduction(job, secondary)} onReportIncident={() => openIncidentDialog(job)} onCreateRework={(incidentId) => openRework(job, incidentId)} />
       })}
     </div>
     {!jobs.length ? <EmptyState icon={Factory} title="Sin trabajos asignados" description={canAssignProduction ? 'Cuando completes los requisitos anteriores y pulses “Asignar trabajo”, aparecerán aquí.' : 'Aún no tienes trabajos de producción asignados.'} /> : null}
@@ -250,6 +272,28 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
         <Field label="Responsable del costo"><FormSelect ariaLabel="Responsable del costo" menuPlacement="top" value={incidentResponsibility} onValueChange={(value) => setIncidentResponsibility(value as IncidentResponsibility)} options={Object.entries(responsibilityLabels).map(([value, label]) => ({ value, label }))} /></Field>
         {incidentError ? <Alert tone="danger" role="alert">{incidentError}</Alert> : null}
       </form>
+    </Dialog>
+
+    <Dialog
+      open={Boolean(reworkTarget)}
+      onClose={() => { if (!pending) setReworkTarget(null) }}
+      eyebrow={reworkTarget ? `${reworkTarget.job.orderNumber} · ${reworkTarget.job.jobType === 'lens' ? 'Cristales' : 'Montaje'}` : undefined}
+      title="Aceptar repetición"
+      icon={RefreshCcw}
+      size="md"
+      footer={<>
+        <Button variant="ghost" onClick={() => setReworkTarget(null)} disabled={pending}>Cancelar</Button>
+        <Button variant="attention" icon={RefreshCcw} onClick={createRework} disabled={pending}>{pending ? 'Creando…' : 'Crear repetición'}</Button>
+      </>}
+    >
+      {reworkTarget ? (
+        <div className="flex flex-col gap-3">
+          <p className="text-sm text-text-secondary">Se crea un trabajo nuevo con la misma configuración. El anterior queda en el historial como sustituido.</p>
+          <Field as="div" label="Responsable de la repetición">
+            <FormSelect ariaLabel="Responsable de la repetición" value={reworkProviderId} onValueChange={setReworkProviderId} options={reworkProviderOptions(reworkTarget.job)} />
+          </Field>
+        </div>
+      ) : null}
     </Dialog>
   </div>
 }

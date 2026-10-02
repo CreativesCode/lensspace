@@ -11,8 +11,12 @@ import type { PrescriptionSnapshot, ProductionJob } from './ProductionWorkspace'
 type ProductionJobCardProps = {
   job: ProductionJob
   showCustomer: boolean
+  // Only the optical (owner/seller) decides on a rework; providers just see it pending.
+  canAuthorizeRework: boolean
   transitionLabel?: string
   secondaryTransitionLabel?: string
+  transitionOnBehalf?: boolean
+  secondaryOnBehalf?: boolean
   pending: boolean
   onTransition: () => void
   onSecondaryTransition: () => void
@@ -20,7 +24,7 @@ type ProductionJobCardProps = {
   onCreateRework: (incidentId: number) => void
 }
 
-export function ProductionJobCard({ job, showCustomer, transitionLabel, secondaryTransitionLabel, pending, onTransition, onSecondaryTransition, onReportIncident, onCreateRework }: ProductionJobCardProps) {
+export function ProductionJobCard({ job, showCustomer, canAuthorizeRework, transitionLabel, secondaryTransitionLabel, transitionOnBehalf, secondaryOnBehalf, pending, onTransition, onSecondaryTransition, onReportIncident, onCreateRework }: ProductionJobCardProps) {
   const hasIncident = job.status === 'incident'
   // QA-25: a job replaced by an accepted rework is history; keep it short and inert.
   if (job.isCurrent === false) {
@@ -51,14 +55,14 @@ export function ProductionJobCard({ job, showCustomer, transitionLabel, secondar
         <div key={incident.id} className="flex flex-col gap-2 rounded-[12px] border border-coral-line bg-coral-tint px-4 py-3 text-sm text-coral-deep">
           <p className="flex gap-2"><TriangleAlert aria-hidden="true" size={16} className="mt-0.5 shrink-0 text-coral-ink" />{incident.description}</p>
           <p className="font-semibold">Costo: {responsibilityLabels[incident.costResponsibility] ?? incident.costResponsibility}</p>
-          {!incident.reworkJobId ? (
+          {incident.reworkJobId ? <p>Repetición vinculada</p> : canAuthorizeRework ? (
             <div><Button variant="attention" size="sm" icon={RefreshCcw} disabled={pending} onClick={() => onCreateRework(incident.id)}>Aceptar repetición</Button></div>
-          ) : <p>Repetición vinculada</p>}
+          ) : <p>Pendiente de decisión de la óptica</p>}
         </div>
       ))}
-      <div className="mt-auto flex flex-col gap-2 pt-1 sm:flex-row">
-        {transitionLabel ? <Button disabled={pending} onClick={onTransition} className="sm:flex-1">{transitionLabel}</Button> : null}
-        {secondaryTransitionLabel ? <Button variant="secondary" disabled={pending} onClick={onSecondaryTransition} className="sm:flex-1">{secondaryTransitionLabel}</Button> : null}
+      <div className="mt-auto flex flex-col gap-2 pt-1 sm:flex-row sm:flex-wrap">
+        {transitionLabel ? <Button disabled={pending} onClick={onTransition} title={transitionOnBehalf ? `${transitionLabel} en nombre del proveedor` : undefined} aria-label={transitionOnBehalf ? `${transitionLabel} en nombre del proveedor` : undefined} className="sm:flex-1">{transitionLabel}</Button> : null}
+        {secondaryTransitionLabel ? <Button variant="secondary" disabled={pending} onClick={onSecondaryTransition} title={secondaryOnBehalf ? `${secondaryTransitionLabel} en nombre del proveedor` : undefined} aria-label={secondaryOnBehalf ? `${secondaryTransitionLabel} en nombre del proveedor` : undefined} className="sm:flex-1">{secondaryTransitionLabel}</Button> : null}
         {!hasIncident ? <Button variant="danger" icon={TriangleAlert} disabled={pending} onClick={onReportIncident}>Incidencia</Button> : null}
       </div>
     </Card>
