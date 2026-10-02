@@ -1,15 +1,9 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-  type FormEvent,
-  type ReactNode,
-} from "react";
-import { createClient } from "@/lib/supabase/client";
-import { FormSelect } from "@/shared/components";
+import { Plus, Save, Store, UserPlus } from "lucide-react";
+import { useMemo, useState, useTransition, type FormEvent, type ReactNode } from "react";
+
+import { CustomerFormFields, customerFormValues, type CustomerPhoneDraft } from "@/features/customers/components";
 import { PrescriptionFormFields } from "@/features/prescriptions/components";
 import {
   friendlyPrescriptionError,
@@ -18,8 +12,14 @@ import {
   prescriptionRevisionValues,
   validatePrescriptionForm,
 } from "@/features/prescriptions/prescription-validation";
-import { friendlyPaymentError } from "@/features/orders/payment-errors";
-import { CustomerFormFields, customerFormValues, type CustomerPhoneDraft } from "@/features/customers/components";
+import { createClient } from "@/lib/supabase/client";
+import { FormSelect } from "@/shared/components";
+import { Alert, Button, Card, Dialog, EmptyState, Field, Input, Steps, Textarea } from "@/shared/ui";
+
+import { AcceptedOrderPanel } from "./AcceptedOrderPanel";
+import { ItemPicker } from "./ItemPicker";
+import { QuoteSummary } from "./QuoteSummary";
+import type { AcceptedOrder, PriceResult, SaleItem } from "./sale-types";
 
 type Organization = {
   id: number;
@@ -42,36 +42,10 @@ type Revision = {
   customerId: number;
   label: string;
 };
-type Item = {
-  id: number;
-  organizationId: number | null;
-  name: string;
-  category: string;
-  price: number;
-  currency: string;
-};
-type PriceResult = {
-  lineItems: { name: string; baseAmount: number; amount: number; currency: string; adjustmentReason?: string | null }[];
-  totals: Record<string, number>;
-  cupEquivalent: number | null;
-  warnings: { message: string }[];
-};
 type PrescriptionResult = {
   prescriptionId: number;
   revisionId: number;
   revisionNumber: number;
-};
-type AcceptedOrder = { orderId: number; orderNumber: string };
-type Payment = { id: number; amount: number; currency: string; appliedRate: number; equivalentCup: number; receivedAt: string };
-type OrderSummary = { orderId: number; orderNumber: string; totalCup: number; paidCup: number; balanceCup: number; paymentStatus: string; saleRate: number | null; payments: Payment[] };
-
-const categoryLabels: Record<string, string> = {
-  vision_type: "Tipo de visión",
-  lens_material: "Material del cristal",
-  treatment: "Tratamiento",
-  frame: "Armadura",
-  mounting: "Montaje",
-  adjustment: "Ajuste",
 };
 
 export function SalesWorkspace({
@@ -83,7 +57,7 @@ export function SalesWorkspace({
   organizations: Organization[];
   customers: Customer[];
   revisions: Revision[];
-  items: Item[];
+  items: SaleItem[];
 }) {
   const supabase = useMemo(() => createClient(), []);
   const [scopeKey, setScopeKey] = useState(
@@ -132,7 +106,7 @@ export function SalesWorkspace({
       item.organizationId === null || item.organizationId === organizationId,
   );
   const groupedItems = Object.entries(
-    availableItems.reduce<Record<string, Item[]>>((groups, item) => {
+    availableItems.reduce<Record<string, SaleItem[]>>((groups, item) => {
       (groups[item.category] ??= []).push(item);
       return groups;
     }, {}),
@@ -140,21 +114,6 @@ export function SalesWorkspace({
   const selectedCustomer = customerRows.find(
     (entry) => entry.id === customerId,
   );
-  const inputClass =
-    "w-full rounded-[7px] border border-[#DCECEA] bg-[#FBFEFD] px-3 py-2.5 text-sm text-[#07322F] outline-none focus:border-[#0D7A72] focus:ring-4 focus:ring-[#E2F4F1]";
-
-  useEffect(() => {
-    if (!dialog) return;
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setDialog(null);
-    };
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [dialog]);
 
   function resetQuote() {
     setQuotationId(null);
@@ -393,14 +352,10 @@ export function SalesWorkspace({
   }
 
   if (!organizations.length)
-    return (
-      <p className="rounded-lg border border-dashed border-[#DCECEA] bg-white p-8 text-sm text-[#5F716C]">
-        No tienes una sucursal comercial disponible.
-      </p>
-    );
+    return <EmptyState icon={Store} title="Sin sucursal comercial" description="No tienes una sucursal comercial disponible." />;
   if (acceptedOrder && preview && selectedCustomer)
     return (
-      <AcceptedOrderWorkspace
+      <AcceptedOrderPanel
         order={acceptedOrder}
         customerName={selectedCustomer.name}
         preview={preview}
@@ -416,499 +371,136 @@ export function SalesWorkspace({
         }}
       />
     );
+
+  const currentStep = !customerId ? 0 : !selected.length ? 1 : !quotationId ? 2 : 3;
   return (
     <>
-      <form
-        onSubmit={save}
-        className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_390px]"
-      >
-        <div className="space-y-5">
-          <section className="rounded-[10px] border border-[#E3EFED] bg-white p-4 shadow-[0_8px_24px_rgba(7,50,47,0.04)] sm:p-5">
-            <div className="mb-4 flex gap-2">
-              {[1, 2, 3, 4].map((step) => (
-                <span
-                  key={step}
-                  className={`h-1.5 flex-1 rounded-full ${step <= 3 ? "bg-[#35C2A8]" : "bg-[#E3EFED]"}`}
-                />
-              ))}
-            </div>
-            <h2 className="font-display text-lg font-semibold text-[#07322F]">
-              Cliente y receta
-            </h2>
-            <div className="mt-4 space-y-3">
+      <form onSubmit={save} className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_390px]">
+        <div className="flex min-w-0 flex-col gap-5">
+          <Card className="flex flex-col gap-4">
+            <Steps label="Progreso de la venta" steps={["Cliente", "Configuración", "Cotización", "Pedido"]} current={currentStep} />
+            <h2 className="font-display text-[17px] font-semibold text-ink">Cliente y receta</h2>
+            <Field label="Organización y sucursal">
               <FormSelect
                 ariaLabel="Organización y sucursal"
                 value={scopeKey}
                 onValueChange={changeScope}
-                options={organizations.map((entry) => ({
-                  value: `${entry.id}:${entry.branchId}`,
-                  label: `${entry.name} · ${entry.branchName}`,
-                }))}
+                options={organizations.map((entry) => ({ value: `${entry.id}:${entry.branchId}`, label: `${entry.name} · ${entry.branchName}` }))}
               />
-              <QuickPicker
-                label="Cliente"
-                actionLabel="Nuevo cliente"
-                onAction={() => {
-                  setDialogMessage("");
-                  setDialog("customer");
-                }}
-              >
-                <FormSelect
-                  ariaLabel="Cliente"
-                  value={String(customerId)}
-                  onValueChange={(value) => {
-                    setCustomerId(Number(value));
-                    setRevisionId(0);
-                    resetQuote();
-                  }}
-                  options={[
-                    { value: "0", label: "Selecciona cliente" },
-                    ...availableCustomers.map((entry) => ({
-                      value: String(entry.id),
-                      label: entry.name,
-                    })),
-                  ]}
-                />
-              </QuickPicker>
-              <QuickPicker
-                label="Receta"
-                actionLabel="Nueva receta"
-                disabled={!customerId}
-                onAction={() => {
-                  setDialogMessage("");
-                  setDialog("prescription");
-                }}
-              >
-                <FormSelect
-                  ariaLabel="Receta asociada"
-                  value={String(revisionId)}
-                  onValueChange={(value) => {
-                    setRevisionId(Number(value));
-                    resetQuote();
-                  }}
-                  options={[
-                    { value: "0", label: "Sin receta asociada" },
-                    ...availableRevisions.map((entry) => ({
-                      value: String(entry.id),
-                      label: entry.label,
-                    })),
-                  ]}
-                />
-              </QuickPicker>
-              <div className="flex flex-col gap-3 rounded-lg border border-[#DCECEA] bg-[#F7FBFA] p-3 sm:flex-row sm:items-center">
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-[#07322F]">
-                    Tasa de esta venta
-                  </p>
-                  <p className="text-xs leading-5 text-[#5F716C]">
-                    Se usa para convertir importes en USD y queda congelada al
-                    crear el pedido.
-                  </p>
-                </div>
-                <label className="flex shrink-0 items-center gap-2 text-sm font-semibold text-[#4A5B58]">
-                  <span>1 USD =</span>
-                  <input
+            </Field>
+            <QuickPicker label="Cliente" actionLabel="Nuevo cliente" onAction={() => { setDialogMessage(""); setDialog("customer"); }}>
+              <FormSelect
+                ariaLabel="Cliente"
+                value={String(customerId)}
+                onValueChange={(value) => { setCustomerId(Number(value)); setRevisionId(0); resetQuote(); }}
+                options={[{ value: "0", label: "Selecciona cliente" }, ...availableCustomers.map((entry) => ({ value: String(entry.id), label: entry.name }))]}
+              />
+            </QuickPicker>
+            <QuickPicker label="Receta" actionLabel="Nueva receta" disabled={!customerId} onAction={() => { setDialogMessage(""); setDialog("prescription"); }}>
+              <FormSelect
+                ariaLabel="Receta asociada"
+                value={String(revisionId)}
+                onValueChange={(value) => { setRevisionId(Number(value)); resetQuote(); }}
+                options={[{ value: "0", label: "Sin receta asociada" }, ...availableRevisions.map((entry) => ({ value: String(entry.id), label: entry.label }))]}
+              />
+            </QuickPicker>
+            <div className="flex flex-col gap-3 rounded-control border border-line bg-canvas p-3.5 sm:flex-row sm:items-center">
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-ink">Tasa de esta venta</p>
+                <p className="text-[13px] leading-5 text-text-muted">Se usa para convertir importes en USD y queda congelada al crear el pedido.</p>
+              </div>
+              <label className="flex shrink-0 items-center gap-2 text-sm font-semibold text-[#4A5B58]">
+                <span>1 USD =</span>
+                <span className="w-28">
+                  <Input
                     aria-label="Tasa de cambio de USD a CUP"
-                    className={`${inputClass} w-28 text-right font-semibold`}
                     value={rate}
-                    onChange={(event) => {
-                      setRate(event.target.value);
-                      resetQuote();
-                    }}
+                    onChange={(event) => { setRate(event.target.value); resetQuote(); }}
                     type="number"
+                    inputMode="decimal"
                     min="0.01"
                     step="0.01"
+                    numeric
                     onBlur={() => {
                       const numericRate = Number(rate);
-                      if (Number.isFinite(numericRate))
-                        setRate(String(Math.round(numericRate * 100) / 100));
+                      if (Number.isFinite(numericRate)) setRate(String(Math.round(numericRate * 100) / 100));
                     }}
                     required
                   />
-                  <span>CUP</span>
-                </label>
-              </div>
+                </span>
+                <span>CUP</span>
+              </label>
             </div>
-          </section>
+          </Card>
 
-          <section className="rounded-[10px] border border-[#E3EFED] bg-white p-4 sm:p-5">
-            <h2 className="font-display text-lg font-semibold text-[#07322F]">
-              Configuración
-            </h2>
-            <p className="mt-1 text-sm text-[#5F716C]">
-              Toca cada opción que formará parte de la cotización.
-            </p>
-            <div className="mt-5 space-y-5">
-              {groupedItems.map(([category, categoryItems]) => (
-                <div key={category}>
-                  <h3 className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#5F716C]">
-                    {categoryLabels[category] ?? "Otro concepto"}
-                  </h3>
-                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                    {categoryItems.map((item) => {
-                      const active = selected.includes(item.id);
-                      const agreedAmount = agreedPrices[item.id] ?? String(item.price);
-                      const isAdjusted = Number(agreedAmount) !== item.price;
-                      return (
-                        <div key={item.id} className={`rounded-lg border p-3 transition ${active ? "border-[#0D7A72] bg-[#F0FBF9] ring-1 ring-[#0D7A72]" : "border-[#E3EFED] bg-white"}`}>
-                          <button type="button" aria-pressed={active} onClick={() => toggle(item.id)} className="w-full text-left">
-                            <strong className="block font-display text-sm text-[#07322F]">{item.name}</strong>
-                            <span className="mt-1 block text-sm font-semibold text-[#0D7A72]">Base: {item.price.toLocaleString("es-CU")} {item.currency}</span>
-                          </button>
-                          {active ? (
-                            <div className="mt-3 space-y-2 border-t border-[#DCECEA] pt-3">
-                              <label className="block text-xs font-semibold text-[#4A5B58]">Precio acordado ({item.currency})
-                                <input className={`${inputClass} mt-1`} type="number" min="0" step="0.01" value={agreedAmount} onChange={(event) => updateAgreedPrice(item.id, event.target.value)} />
-                              </label>
-                              {isAdjusted ? (
-                                <label className="block text-xs font-semibold text-[#4A5B58]">Motivo del ajuste
-                                  <input className={`${inputClass} mt-1`} minLength={5} maxLength={300} placeholder="Ej.: promoción o trabajo especial" value={adjustmentReasons[item.id] ?? ""} onChange={(event) => updateAdjustmentReason(item.id, event.target.value)} />
-                                </label>
-                              ) : null}
-                            </div>
-                          ) : null}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
+          <Card className="flex flex-col gap-5">
+            <div>
+              <h2 className="font-display text-[17px] font-semibold text-ink">Configuración</h2>
+              <p className="mt-1 text-sm text-text-muted">Toca cada opción que formará parte de la cotización.</p>
             </div>
-            <textarea
-              className={`${inputClass} mt-5 min-h-20`}
-              name="notes"
-              maxLength={1000}
-              placeholder="Notas comerciales opcionales"
+            <ItemPicker
+              groupedItems={groupedItems}
+              selected={selected}
+              agreedPrices={agreedPrices}
+              adjustmentReasons={adjustmentReasons}
+              onToggle={toggle}
+              onAgreedPriceChange={updateAgreedPrice}
+              onAdjustmentReasonChange={updateAdjustmentReason}
             />
-          </section>
+            <Field label="Notas comerciales" optional>
+              <Textarea name="notes" maxLength={1000} />
+            </Field>
+          </Card>
         </div>
 
-        <aside className="h-fit rounded-[10px] border border-[#E3EFED] bg-white xl:sticky xl:top-6">
-          <div className="border-b border-[#EEF5F4] p-5">
-            <h2 className="font-display text-lg font-semibold text-[#07322F]">
-              Cotización
-            </h2>
-            <p className="mt-1 text-xs text-[#5F716C]">
-              {selected.length} conceptos seleccionados
-            </p>
-          </div>
-          <div className="space-y-4 p-5">
-            {preview ? (
-              <>
-                {preview.lineItems.map((line, index) => (
-                  <div key={index} className="text-sm">
-                    <div className="flex justify-between gap-3">
-                      <span className="text-[#4A5B58]">{line.name}</span>
-                      <strong className="whitespace-nowrap text-[#07322F]">
-                        {Number(line.amount).toLocaleString("es-CU")} {line.currency}
-                      </strong>
-                    </div>
-                    {Number(line.baseAmount) !== Number(line.amount) ? (
-                      <p className="mt-1 text-xs text-[#5F716C]">
-                        Base {Number(line.baseAmount).toLocaleString("es-CU")} {line.currency} · {line.adjustmentReason}
-                      </p>
-                    ) : null}
-                  </div>
-                ))}
-                <div className="border-t border-dashed border-[#DCECEA] pt-3">
-                  {Object.entries(preview.totals).map(([currency, total]) => (
-                    <p
-                      key={currency}
-                      className="flex justify-between font-display text-xl font-bold text-[#07322F]"
-                    >
-                      <span>Total</span>
-                      <span>
-                        {Number(total).toLocaleString("es-CU")} {currency}
-                      </span>
-                    </p>
-                  ))}
-                  {preview.cupEquivalent !== null ? (
-                    <p className="mt-2 text-right text-xs text-[#5F716C]">
-                      Equivalente:{" "}
-                      {Number(preview.cupEquivalent).toLocaleString("es-CU")}{" "}
-                      CUP
-                    </p>
-                  ) : null}
-                </div>
-                {preview.warnings.map((warning, index) => (
-                  <p
-                    key={index}
-                    className="rounded-lg border border-[#FFD9CD] bg-[#FFF6F2] p-3 text-xs text-[#7A3A26]"
-                  >
-                    {warning.message}
-                  </p>
-                ))}
-              </>
-            ) : (
-              <p className="rounded-lg border border-dashed border-[#DCECEA] p-5 text-sm text-[#5F716C]">
-                Guarda para obtener el desglose definitivo.
-              </p>
-            )}
-            <button
-              disabled={pending || !organization?.canOperate}
-              className="w-full rounded-[8px] bg-[#0D7A72] px-4 py-3 text-sm font-semibold text-white disabled:opacity-50"
-            >
-              {quotationId ? "Actualizar cotización" : "Guardar cotización"}
-            </button>
-            {quotationId ? (
-              <button
-                type="button"
-                onClick={accept}
-                disabled={pending}
-                className="w-full rounded-[8px] bg-[#07322F] px-4 py-3 text-sm font-semibold text-white disabled:opacity-50"
-              >
-                Cliente acepta · crear pedido
-              </button>
-            ) : null}
-            {message ? (
-              <p role="status" className="text-sm text-[#4A5B58]">
-                {message}
-              </p>
-            ) : null}
-          </div>
-        </aside>
+        <QuoteSummary preview={preview} selectedCount={selected.length} quotationId={quotationId} pending={pending} canOperate={Boolean(organization?.canOperate)} message={message} onAccept={accept} />
       </form>
 
-      {dialog === "customer" ? (
-        <Dialog
-          title="Nuevo cliente"
-          subtitle={`${organization?.name} · ${organization?.branchName}`}
-          onClose={() => setDialog(null)}
-          wide
-        >
-          <form onSubmit={createCustomer} className="space-y-4">
-            <CustomerFormFields fullName={newCustomerName} onFullNameChange={setNewCustomerName} phones={newCustomerPhones} onPhonesChange={setNewCustomerPhones} fieldClass={`${inputClass} mt-1`} />
-            {dialogMessage ? (
-              <p
-                role="alert"
-                className="rounded-lg bg-[#FFF6F2] p-3 text-sm text-[#7A3A26]"
-              >
-                {dialogMessage}
-              </p>
-            ) : null}
-            <DialogActions
-              pending={savingQuick}
-              onCancel={() => setDialog(null)}
-              label="Crear y seleccionar"
-            />
-          </form>
-        </Dialog>
-      ) : null}
+      <Dialog
+        open={dialog === "customer"}
+        onClose={() => setDialog(null)}
+        eyebrow={`${organization?.name} · ${organization?.branchName}`}
+        title="Nuevo cliente"
+        size="lg"
+        footer={<>
+          <Button variant="ghost" onClick={() => setDialog(null)}>Cancelar</Button>
+          <Button type="submit" form="sales-new-customer" formNoValidate icon={UserPlus} disabled={savingQuick}>{savingQuick ? "Guardando…" : "Crear y seleccionar"}</Button>
+        </>}
+      >
+        <form id="sales-new-customer" onSubmit={createCustomer} className="flex flex-col gap-4">
+          <CustomerFormFields fullName={newCustomerName} onFullNameChange={setNewCustomerName} phones={newCustomerPhones} onPhonesChange={setNewCustomerPhones} />
+          {dialogMessage ? <Alert tone="danger" role="alert">{dialogMessage}</Alert> : null}
+        </form>
+      </Dialog>
 
-      {dialog === "prescription" ? (
-        <Dialog
-          title="Nueva receta"
-          subtitle={selectedCustomer?.name ?? "Cliente"}
-          onClose={() => setDialog(null)}
-          wide
-        >
-          <form onSubmit={createPrescription} className="space-y-4" noValidate>
-            <PrescriptionFormFields fieldClass={`${inputClass} mt-1`} />
-            {dialogMessage ? (
-              <p
-                role="alert"
-                className="rounded-lg bg-[#FFF6F2] p-3 text-sm text-[#7A3A26]"
-              >
-                {dialogMessage}
-              </p>
-            ) : null}
-            <DialogActions
-              pending={savingQuick}
-              onCancel={() => setDialog(null)}
-              label="Guardar y asociar"
-            />
-          </form>
-        </Dialog>
-      ) : null}
+      <Dialog
+        open={dialog === "prescription"}
+        onClose={() => setDialog(null)}
+        eyebrow={selectedCustomer?.name ?? "Cliente"}
+        title="Nueva receta"
+        size="lg"
+        footer={<>
+          <Button variant="ghost" onClick={() => setDialog(null)}>Cancelar</Button>
+          <Button type="submit" form="sales-new-prescription" formNoValidate icon={Save} disabled={savingQuick}>{savingQuick ? "Guardando…" : "Guardar y asociar"}</Button>
+        </>}
+      >
+        <form id="sales-new-prescription" onSubmit={createPrescription} className="flex flex-col gap-4" noValidate>
+          <PrescriptionFormFields />
+          {dialogMessage ? <Alert tone="danger" role="alert">{dialogMessage}</Alert> : null}
+        </form>
+      </Dialog>
     </>
   );
 }
 
-function AcceptedOrderWorkspace({ order, customerName, preview, onNewSale }: { order: AcceptedOrder; customerName: string; preview: PriceResult; onNewSale: () => void }) {
-  const supabase = useMemo(() => createClient(), []);
-  const inputClass = "w-full rounded-[7px] border border-[#DCECEA] bg-[#FBFEFD] px-3 py-2.5 text-sm text-[#07322F] outline-none focus:border-[#0D7A72] focus:ring-4 focus:ring-[#E2F4F1]";
-  const [summary, setSummary] = useState<OrderSummary | null>(null);
-  const [currency, setCurrency] = useState("CUP");
-  const [message, setMessage] = useState("Pedido creado. Puedes registrar ahora el primer cobro.");
-  const [pending, startTransition] = useTransition();
-
-  async function refresh() {
-    const { data, error } = await supabase.rpc("get_order_payment_summary", { target_order_id: order.orderId } as never);
-    if (error) throw error;
-    const next = data as unknown as OrderSummary;
-    setSummary(next);
-    return next;
-  }
-
-  useEffect(() => {
-    let cancelled = false;
-    void supabase.rpc("get_order_payment_summary", { target_order_id: order.orderId } as never).then(({ data, error }) => {
-      if (cancelled) return;
-      if (error) setMessage("El pedido fue creado, pero no pudimos cargar su saldo. Puedes abrirlo desde Pedidos y cobros.");
-      else setSummary(data as unknown as OrderSummary);
-    });
-    return () => { cancelled = true; };
-  }, [order.orderId, supabase]);
-
-  function registerPayment(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const formElement = event.currentTarget;
-    const form = new FormData(formElement);
-    const amount = Number(form.get("amount"));
-    if (!Number.isFinite(amount) || amount <= 0) return setMessage("Indica un importe mayor que cero.");
-    startTransition(async () => {
-      setMessage("");
-      const { error } = await supabase.rpc("register_cash_payment", {
-        target_order_id: order.orderId,
-        payment_amount: amount,
-        payment_currency: currency,
-        payment_applied_rate: currency === "USD" ? Number(form.get("rate")) : 1,
-        payment_notes: String(form.get("notes") ?? ""),
-      } as never);
-      if (error) return setMessage(friendlyPaymentError(error));
-      try {
-        await refresh();
-        formElement.reset();
-        setMessage("Cobro registrado correctamente.");
-      } catch {
-        setMessage("El cobro se registró, pero no pudimos actualizar el saldo en pantalla.");
-      }
-    });
-  }
-
+function QuickPicker({ label, actionLabel, onAction, disabled = false, children }: { label: string; actionLabel: string; onAction: () => void; disabled?: boolean; children: ReactNode }) {
   return (
-    <section className="mx-auto max-w-3xl space-y-4">
-      <div className="rounded-[10px] border border-[#B9DFD9] bg-[#F0FBF9] p-5">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div><p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#0D7A72]">Pedido creado</p><h2 className="mt-1 font-display text-2xl font-bold text-[#07322F]">{order.orderNumber}</h2><p className="mt-1 text-sm text-[#4A5B58]">Cliente: {customerName}</p></div>
-          <button type="button" onClick={onNewSale} className="rounded-[8px] border border-[#0D7A72] px-4 py-2.5 text-sm font-semibold text-[#0D7A72]">Comenzar otra venta</button>
-        </div>
-      </div>
-
-      <div className="rounded-[10px] border border-[#E3EFED] bg-white p-5">
-        <h3 className="font-display text-lg font-semibold text-[#07322F]">Detalle del pedido</h3>
-        <div className="mt-3 divide-y divide-[#EEF5F4]">{preview.lineItems.map((line, index) => <div key={`${line.name}:${index}`} className="flex justify-between gap-4 py-3 text-sm"><span className="text-[#4A5B58]">{line.name}</span><strong className="shrink-0 text-[#07322F]">{Number(line.amount).toLocaleString("es-CU", { maximumFractionDigits: 2 })} {line.currency}</strong></div>)}</div>
-        <div className="mt-3 border-t border-dashed border-[#B9DFD9] pt-3">{Object.entries(preview.totals).map(([totalCurrency, total]) => <p key={totalCurrency} className="flex justify-between font-display text-xl font-bold text-[#07322F]"><span>Total</span><span>{Number(total).toLocaleString("es-CU", { maximumFractionDigits: 2 })} {totalCurrency}</span></p>)}</div>
-      </div>
-
-      <div className="rounded-[10px] border border-[#E3EFED] bg-white p-5">
-        <div><p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#5F716C]">Saldo pendiente</p><p className="mt-1 font-display text-2xl font-bold text-[#07322F]">{summary ? `${Number(summary.balanceCup).toLocaleString("es-CU", { maximumFractionDigits: 2 })} CUP` : "Cargando…"}</p>{summary ? <p className="mt-1 text-xs text-[#5F716C]">Cobrado: {Number(summary.paidCup).toLocaleString("es-CU", { maximumFractionDigits: 2 })} CUP equivalentes</p> : null}</div>
-        {summary && summary.balanceCup > 0 ? <form onSubmit={registerPayment} className="mt-4 grid gap-3 rounded-lg bg-[#F7FBFA] p-4 sm:grid-cols-2"><h3 className="font-display font-semibold text-[#07322F] sm:col-span-2">Registrar cobro en efectivo</h3><label className="text-xs font-semibold text-[#4A5B58]">Importe<input autoFocus className={`${inputClass} mt-1`} name="amount" type="number" min="0.01" step="0.01" required /></label><label className="text-xs font-semibold text-[#4A5B58]">Moneda<FormSelect className="mt-1" ariaLabel="Moneda del cobro" value={currency} onValueChange={setCurrency} options={[{ value: "CUP", label: "CUP" }, { value: "USD", label: "USD" }]} /></label>{currency === "USD" ? <label className="text-xs font-semibold text-[#4A5B58]">Tasa aplicada<input className={`${inputClass} mt-1`} name="rate" type="number" min="0.01" step="0.01" defaultValue={summary.saleRate ?? 420} required /></label> : null}<label className="text-xs font-semibold text-[#4A5B58]">Nota opcional<input className={`${inputClass} mt-1`} name="notes" maxLength={500} /></label><button disabled={pending} className="rounded-[8px] bg-[#0D7A72] px-4 py-3 text-sm font-semibold text-white disabled:opacity-50 sm:col-span-2">{pending ? "Registrando…" : "Registrar cobro"}</button></form> : summary ? <p className="mt-4 rounded-lg bg-[#E2F4F1] p-4 text-sm font-semibold text-[#07655C]">Pedido pagado completamente.</p> : null}
-        {message ? <p role="alert" className="mt-4 rounded-lg border border-[#FFD9CD] bg-[#FFF6F2] p-3 text-sm text-[#7A3A26]">{message}</p> : null}
-      </div>
-    </section>
-  );
-}
-
-function QuickPicker({
-  label,
-  actionLabel,
-  onAction,
-  disabled = false,
-  children,
-}: {
-  label: string;
-  actionLabel: string;
-  onAction: () => void;
-  disabled?: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <div>
-      <div className="mb-1.5 flex items-center justify-between gap-3">
-        <span className="text-xs font-semibold text-[#4A5B58]">{label}</span>
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={onAction}
-          className="text-xs font-semibold text-[#0D7A72] underline-offset-2 hover:underline disabled:cursor-not-allowed disabled:text-[#9AABA7]"
-        >
-          + {actionLabel}
-        </button>
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-[13px] font-semibold text-[#324E4A]">{label}</span>
+        <Button variant="ghost" size="sm" icon={Plus} disabled={disabled} onClick={onAction} className="-mr-2">{actionLabel}</Button>
       </div>
       {children}
-    </div>
-  );
-}
-
-function Dialog({
-  title,
-  subtitle,
-  onClose,
-  wide = false,
-  children,
-}: {
-  title: string;
-  subtitle: string;
-  onClose: () => void;
-  wide?: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="sales-dialog-title"
-      className="fixed inset-0 z-50 grid place-items-center bg-[#07322F]/60 p-3 sm:p-5"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
-      }}
-    >
-      <div
-        className={`max-h-[calc(100vh-1.5rem)] w-full overflow-y-auto rounded-[12px] bg-white shadow-2xl ${wide ? "max-w-4xl" : "max-w-2xl"}`}
-      >
-        <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-[#E3EFED] bg-white p-4 sm:p-5">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.13em] text-[#0D7A72]">
-              {subtitle}
-            </p>
-            <h2
-              id="sales-dialog-title"
-              className="mt-1 font-display text-xl font-bold text-[#07322F]"
-            >
-              {title}
-            </h2>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Cerrar diálogo"
-            className="grid h-10 w-10 place-items-center rounded-lg border border-[#DCECEA] text-xl text-[#07322F]"
-          >
-            ×
-          </button>
-        </div>
-        <div className="p-4 sm:p-5">{children}</div>
-      </div>
-    </div>
-  );
-}
-
-function DialogActions({
-  pending,
-  onCancel,
-  label,
-}: {
-  pending: boolean;
-  onCancel: () => void;
-  label: string;
-}) {
-  return (
-    <div className="flex flex-col-reverse gap-2 border-t border-[#EEF5F4] pt-4 sm:flex-row sm:justify-end">
-      <button
-        type="button"
-        onClick={onCancel}
-        className="rounded-[7px] border border-[#DCECEA] px-4 py-2.5 text-sm font-semibold text-[#4A5B58]"
-      >
-        Cancelar
-      </button>
-      <button
-        formNoValidate
-        disabled={pending}
-        className="rounded-[7px] bg-[#07322F] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
-      >
-        {pending ? "Guardando…" : label}
-      </button>
     </div>
   );
 }

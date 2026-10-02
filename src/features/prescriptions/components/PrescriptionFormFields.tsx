@@ -1,46 +1,65 @@
+import { Upload } from 'lucide-react'
+
 import { FormSelect } from '@/shared/components'
+import { Field, Input, Textarea } from '@/shared/ui'
 
-export function PrescriptionFormFields({ fieldClass }: { fieldClass: string }) {
-  const compactClass = fieldClass.replace('mt-1 ', '')
+const eyes = [
+  { key: 'right', label: 'OD', name: 'Ojo derecho' },
+  { key: 'left', label: 'OI', name: 'Ojo izquierdo' },
+] as const
 
+const measures = [
+  { suffix: 'Sphere', label: 'Esfera', min: '-40', max: '40', step: '0.25' },
+  { suffix: 'Cylinder', label: 'Cilindro', min: '-20', max: '20', step: '0.25' },
+  { suffix: 'Axis', label: 'Eje', min: '0', max: '180', step: '1' },
+  { suffix: 'Addition', label: 'Adición', min: '0', max: '8', step: '0.25' },
+  { suffix: 'PupillaryDistance', label: 'DP', min: '15', max: '50', step: '0.5' },
+  { suffix: 'Height', label: 'Altura', min: '0', max: '60', step: '0.5' },
+] as const
+
+const prismBases = [{ value: '', label: 'Sin base' }, { value: 'up', label: 'Arriba' }, { value: 'down', label: 'Abajo' }, { value: 'in', label: 'Interna' }, { value: 'out', label: 'Externa' }]
+
+// One block per eye: 3 columns on mobile, 6 from md, so no horizontal scroll is needed.
+export function PrescriptionFormFields() {
   return (
-    <>
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[650px] border-collapse">
-          <thead><tr className="text-left text-[11px] uppercase tracking-[0.08em] text-[#5F716C]"><th className="p-2" /><th className="p-2">Esfera</th><th className="p-2">Cilindro</th><th className="p-2">Eje</th><th className="p-2">Adición</th><th className="p-2">DP</th><th className="p-2">Altura</th></tr></thead>
-          <tbody>
-            {(['right', 'left'] as const).map((eye) => (
-              <tr key={eye}>
-                <th className="p-2 font-display text-sm text-[#07322F]">{eye === 'right' ? 'OD' : 'OI'}</th>
-                <td className="p-2"><input aria-label={`${eye} esfera`} className={compactClass} name={`${eye}Sphere`} type="number" min="-40" max="40" step="0.25" /></td>
-                <td className="p-2"><input aria-label={`${eye} cilindro`} className={compactClass} name={`${eye}Cylinder`} type="number" min="-20" max="20" step="0.25" /></td>
-                <td className="p-2"><input aria-label={`${eye} eje`} className={compactClass} name={`${eye}Axis`} type="number" min="0" max="180" step="1" /></td>
-                <td className="p-2"><input aria-label={`${eye} adición`} className={compactClass} name={`${eye}Addition`} type="number" min="0" max="8" step="0.25" /></td>
-                <td className="p-2"><input aria-label={`${eye} distancia pupilar`} className={compactClass} name={`${eye}PupillaryDistance`} type="number" min="15" max="50" step="0.5" /></td>
-                <td className="p-2"><input aria-label={`${eye} altura`} className={compactClass} name={`${eye}Height`} type="number" min="0" max="60" step="0.5" /></td>
-              </tr>
+    <div className="flex flex-col gap-5">
+      {eyes.map((eye) => (
+        <fieldset key={eye.key} className="rounded-card border border-[#E3EFED] bg-[#FBFEFD] p-4">
+          <legend className="sr-only">{eye.name}</legend>
+          <p aria-hidden="true" className="mb-3 flex items-center gap-2 font-display text-[15px] font-semibold text-ink">
+            <span className="grid h-7 min-w-9 place-items-center rounded-badge bg-ink px-1.5 text-xs font-bold text-white">{eye.label}</span>
+            {eye.name}
+          </p>
+          <div className="grid grid-cols-3 gap-3 md:grid-cols-6">
+            {measures.map((measure) => (
+              <Field key={measure.suffix} label={measure.label}>
+                <Input name={`${eye.key}${measure.suffix}`} type="number" inputMode="decimal" min={measure.min} max={measure.max} step={measure.step} numeric />
+              </Field>
             ))}
-          </tbody>
-        </table>
-      </div>
+          </div>
+        </fieldset>
+      ))}
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <label className="text-xs font-medium text-[#4A5B58]">DP conjunta<input className={fieldClass} name="pupillaryDistanceTotal" type="number" min="30" max="90" step="0.5" /></label>
-        {(['right', 'left'] as const).map((eye) => (
-          <div key={eye} className="grid grid-cols-2 gap-2">
-            <label className="text-xs font-medium text-[#4A5B58]">Prisma {eye === 'right' ? 'OD' : 'OI'}<input className={fieldClass} name={`${eye}Prism`} type="number" min="0" max="20" step="0.25" /></label>
-            <label className="text-xs font-medium text-[#4A5B58]">Base<FormSelect className="mt-1" name={`${eye}PrismBase`} ariaLabel={`Base del prisma ${eye === 'right' ? 'OD' : 'OI'}`} options={[{ value: '', label: 'Sin base' }, { value: 'up', label: 'Arriba' }, { value: 'down', label: 'Abajo' }, { value: 'in', label: 'Interna' }, { value: 'out', label: 'Externa' }]} /></label>
+      <div className="grid gap-[18px] md:grid-cols-2 lg:grid-cols-3">
+        <Field label="DP conjunta"><Input name="pupillaryDistanceTotal" type="number" inputMode="decimal" min="30" max="90" step="0.5" numeric /></Field>
+        {eyes.map((eye) => (
+          <div key={eye.key} className="grid grid-cols-2 gap-2">
+            <Field label={`Prisma ${eye.label}`}><Input name={`${eye.key}Prism`} type="number" inputMode="decimal" min="0" max="20" step="0.25" numeric /></Field>
+            <Field label="Base"><FormSelect name={`${eye.key}PrismBase`} ariaLabel={`Base del prisma ${eye.label}`} options={prismBases} /></Field>
           </div>
         ))}
-        <label className="text-xs font-medium text-[#4A5B58]">Fecha de la receta<input className={fieldClass} name="prescriptionDate" type="date" required defaultValue={new Date().toISOString().slice(0, 10)} /></label>
-        <label className="text-xs font-medium text-[#4A5B58] md:col-span-2">Médico u optometrista<input className={fieldClass} name="prescriberName" minLength={2} maxLength={160} /></label>
-        <label className="text-xs font-medium text-[#4A5B58] md:col-span-2 lg:col-span-3">Observaciones<textarea className={fieldClass} name="notes" rows={3} /></label>
+        <Field label="Fecha de la receta"><Input name="prescriptionDate" type="date" required defaultValue={new Date().toISOString().slice(0, 10)} /></Field>
+        <Field label="Médico u optometrista" className="md:col-span-2"><Input name="prescriberName" minLength={2} maxLength={160} /></Field>
+        <Field label="Observaciones" className="md:col-span-2 lg:col-span-3"><Textarea name="notes" rows={3} /></Field>
       </div>
 
-      <label className="block rounded-lg border border-dashed border-[#B9DFD9] bg-[#F7FDFC] p-4 text-sm text-[#4A5B58]">
-        Original privado <span className="text-xs text-[#5F716C]">(opcional, máx. 10 MB)</span>
-        <input className="mt-2 block w-full text-xs" name="attachment" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" />
+      <label className="flex cursor-pointer flex-col gap-2 rounded-card border border-dashed border-[#B9DFD9] bg-[#F7FDFC] p-4 text-[15px] text-text transition hover:border-action">
+        <span className="flex items-center gap-2 font-semibold text-ink">
+          <Upload aria-hidden="true" size={18} className="text-action" />
+          Original privado <span className="text-[13px] font-normal text-text-muted">(opcional, JPG, PNG, WebP o PDF, máx. 10 MB)</span>
+        </span>
+        <input className="block w-full text-sm text-text-muted file:mr-3 file:min-h-10 file:cursor-pointer file:rounded-[8px] file:border-0 file:bg-action-soft file:px-3 file:font-display file:text-[13px] file:font-semibold file:text-action" name="attachment" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" />
       </label>
-    </>
+    </div>
   )
 }

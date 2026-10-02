@@ -1,0 +1,101 @@
+'use client'
+
+import { CircleCheck, Plus, ReceiptText } from 'lucide-react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
+
+import { PaymentForm, type PaymentInput } from '@/features/orders/components/PaymentForm'
+import { formatAmount } from '@/features/orders/format'
+import { friendlyPaymentError } from '@/features/orders/payment-errors'
+import type { PaymentSummary } from '@/features/orders/types'
+import { createClient } from '@/lib/supabase/client'
+import { Alert, Button, ButtonLink, Card, CardHeader, ProgressBar, Toast } from '@/shared/ui'
+
+import type { AcceptedOrder, PriceResult } from './sale-types'
+
+// After acceptance the seller can take the first payment with the same form as /orders.
+export function AcceptedOrderPanel({ order, customerName, preview, onNewSale }: { order: AcceptedOrder; customerName: string; preview: PriceResult; onNewSale: () => void }) {
+  const supabase = useMemo(() => createClient(), [])
+  const [summary, setSummary] = useState<PaymentSummary | null>(null)
+  const [error, setError] = useState('')
+  const [toast, setToast] = useState('')
+  const [pending, startTransition] = useTransition()
+
+  useEffect(() => {
+    let cancelled = false
+    void supabase.rpc('get_order_payment_summary', { target_order_id: order.orderId } as never).then(({ data, error: loadError }) => {
+      if (cancelled) return
+      if (loadError) setError('El pedido fue creado, pero no pudimos cargar su saldo. Puedes abrirlo desde Pedidos y cobros.')
+      else setSummary(data as unknown as PaymentSummary)
+    })
+    return () => { cancelled = true }
+  }, [order.orderId, supabase])
+
+  function registerPayment(input: PaymentInput) {
+    return new Promise<boolean>((resolve) => {
+      startTransition(async () => {
+        const { error: paymentError } = await supabase.rpc('register_cash_payment', { target_order_id: order.orderId, payment_amount: input.amount, payment_currency: input.currency, payment_applied_rate: input.rate, payment_notes: input.notes } as never)
+        if (paymentError) { setError(friendlyPaymentError(paymentError)); return resolve(false) }
+        setError('')
+        const { data, error: refreshError } = await supabase.rpc('get_order_payment_summary', { target_order_id: order.orderId } as never)
+        if (refreshError) setError('El cobro se registró, pero no pudimos actualizar el saldo en pantalla.')
+        else setSummary(data as unknown as PaymentSummary)
+        setToast('Cobro registrado correctamente.')
+        resolve(true)
+      })
+    })
+  }
+
+  const owes = Boolean(summary && summary.balanceCup > 0)
+  return (
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
+      <div className="flex flex-col gap-4 rounded-card border border-[#A9E6D7] bg-[#E9FAF5] p-5 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex gap-3">
+          <span className="grid size-11 shrink-0 place-items-center rounded-[12px] bg-[#D9F5EE] text-[#07655C]"><CircleCheck aria-hidden="true" size={22} /></span>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#07655C]">Pedido creado</p>
+            <h2 className="mt-1 font-display text-2xl font-bold text-ink">{order.orderNumber}</h2>
+            <p className="mt-0.5 text-sm text-[#4A5B58]">Cliente: {customerName}</p>
+          </div>
+        </div>
+        <div className="grid gap-2 sm:flex">
+          <ButtonLink href="/orders" variant="secondary" icon={ReceiptText}>Ver en pedidos</ButtonLink>
+          <Button variant="secondary" icon={Plus} onClick={onNewSale}>Otra venta</Button>
+        </div>
+      </div>
+
+      <Card>
+        <CardHeader title="Detalle del pedido" />
+        <div className="mt-3 divide-y divide-[#EEF5F4]">
+          {preview.lineItems.map((line, index) => (
+            <div key={`${line.name}:${index}`} className="flex justify-between gap-4 py-3 text-sm">
+              <span className="text-[#4A5B58]">{line.name}</span>
+              <strong className="shrink-0 font-display tabular-nums text-ink">{formatAmount(line.amount)} {line.currency}</strong>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3 border-t border-dashed border-[#B9DFD9] pt-3">
+          {Object.entries(preview.totals).map(([currency, total]) => (
+            <p key={currency} className="flex justify-between font-display text-xl font-bold tabular-nums text-ink"><span>Total</span><span>{formatAmount(total)} {currency}</span></p>
+          ))}
+        </div>
+      </Card>
+
+      <Card className="flex flex-col gap-4">
+        <div>
+          <p className={owes ? 'text-[13px] font-semibold text-coral-ink' : 'text-[13px] font-semibold text-[#07655C]'}>Saldo pendiente</p>
+          <p className="mt-1 font-display text-[32px] font-bold leading-tight tabular-nums text-ink">{summary ? `${formatAmount(summary.balanceCup)} CUP` : 'Cargando…'}</p>
+          {summary ? (
+            <div className="mt-3">
+              <ProgressBar value={summary.totalCup ? (summary.paidCup / summary.totalCup) * 100 : 100} tone={owes ? 'attention' : 'success'} label="Porcentaje cobrado" />
+              <p className="mt-2 text-[13px] text-text-muted">Cobrado: {formatAmount(summary.paidCup)} CUP equivalentes</p>
+            </div>
+          ) : null}
+        </div>
+        {summary && owes ? <PaymentForm balanceCup={summary.balanceCup} defaultRate={summary.saleRate ?? 420} pending={pending} onSubmit={registerPayment} /> : null}
+        {summary && !owes ? <Alert tone="success">Pedido pagado completamente.</Alert> : null}
+        {error ? <Alert tone="danger" role="alert">{error}</Alert> : null}
+      </Card>
+      <Toast message={toast} onDismiss={() => setToast('')} />
+    </div>
+  )
+}

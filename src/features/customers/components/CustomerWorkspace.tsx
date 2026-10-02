@@ -1,11 +1,12 @@
 'use client'
 
-import Link from 'next/link'
-import { useCallback, useMemo, useState, type FormEvent } from 'react'
+import { Pencil, ReceiptText, Save, Search, SearchX, UserPlus, Users, X } from 'lucide-react'
+import { useCallback, useMemo, useRef, useState, type FormEvent } from 'react'
 
 import { createClient } from '@/lib/supabase/client'
 import type { Tables } from '@/lib/supabase/database.types'
 import { FormSelect } from '@/shared/components'
+import { Alert, Avatar, Badge, Button, ButtonLink, Card, CardHeader, EmptyState, Field, Input, ListItem } from '@/shared/ui'
 import { CustomerFormFields, customerFormValues, type CustomerPhoneDraft } from './CustomerFormFields'
 
 type AccessScope = {
@@ -46,15 +47,6 @@ function normalizePhone(value: string) {
   return value.replace(/\D/g, '')
 }
 
-function initials(name: string) {
-  return name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join('')
-}
-
 export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
   const supabase = useMemo(() => createClient(), [])
   const [query, setQuery] = useState('')
@@ -74,6 +66,7 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
   const [phones, setPhones] = useState<CustomerPhoneDraft[]>([
     { number: '', label: 'Principal', whatsappEnabled: true },
   ])
+  const selectedRef = useRef<HTMLDivElement>(null)
 
   const activeScope = scopes.find(
     (scope) => `${scope.organizationId}:${scope.branchId}` === target,
@@ -262,172 +255,149 @@ export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
     setSaving(false)
   }
 
-  if (!scopes.length) {
-    return (
-      <div className="rounded-[10px] border border-dashed border-[#DCECEA] bg-white p-8 text-sm text-[#5F716C]">
-        Tu cuenta no tiene acceso de dueño o vendedor a una sucursal.
-      </div>
-    )
+  function selectCustomer(customer: CustomerResult) {
+    setSelected(customer)
+    // Single-column layout below xl: bring the selected record into view.
+    if (!window.matchMedia('(min-width: 1280px)').matches) {
+      requestAnimationFrame(() => selectedRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+    }
   }
 
-  const fieldClass =
-    'mt-1 w-full rounded-[7px] border border-[#DCECEA] bg-[#FBFEFD] px-3 py-2.5 text-sm text-[#1C3A37] outline-none transition focus:border-[#0D7A72] focus:bg-white focus:ring-4 focus:ring-[#E2F4F1]'
+  function editSelected(customer: CustomerResult) {
+    setEditingCustomer(customer)
+    setTarget(`${customer.organization_id}:${customer.branch_id}`)
+    setFullName(customer.full_name)
+    setPhones([...customer.customer_phones].sort((a, b) => Number(b.is_primary) - Number(a.is_primary)).map((phone) => ({ number: phone.phone_number, label: phone.label, whatsappEnabled: phone.whatsapp_enabled })))
+    setDuplicateReviewed(false)
+    setShowForm(true)
+    setMessage(null)
+  }
+
+  function toggleNewCustomerForm() {
+    setEditingCustomer(null)
+    setShowForm((visible) => !visible)
+    if (!showForm && query && !normalizePhone(query)) setFullName(query)
+    if (!showForm && normalizePhone(query).length >= 5) {
+      setPhones([{ number: query, label: 'Principal', whatsappEnabled: true }])
+    }
+  }
+
+  if (!scopes.length) {
+    return <EmptyState icon={Users} title="Sin acceso a clientes" description="Tu cuenta no tiene acceso de dueño o vendedor a una sucursal." />
+  }
 
   return (
-    <div className="grid gap-[18px] xl:grid-cols-[minmax(0,1fr)_340px]">
-      <div className="space-y-4">
-        <section className="rounded-[10px] border border-[#E3EFED] bg-white p-5 shadow-[0_8px_24px_rgba(7,50,47,0.04)]">
-          <h2 className="font-display text-base font-semibold text-[#07322F]">
-            Buscar o registrar al cliente
-          </h2>
-          <p className="mt-1 text-[13px] text-[#5F716C]">
-            El teléfono no es único: varias personas pueden compartirlo.
-          </p>
+    <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="flex min-w-0 flex-col gap-5">
+        <Card>
+          <CardHeader title="Buscar o registrar al cliente" />
+          <p className="mt-1 text-[13px] text-text-muted">El teléfono no es único: varias personas pueden compartirlo.</p>
 
           <form onSubmit={submitSearch} className="mt-4 flex flex-col gap-2 sm:flex-row">
-            <label className="flex min-w-0 flex-1 items-center gap-2 rounded-lg border border-[#DCECEA] bg-[#FBFEFD] px-3 py-2.5 focus-within:border-[#0D7A72] focus-within:ring-4 focus-within:ring-[#E2F4F1]">
-              <span aria-hidden="true" className="text-[#5F716C]">⌕</span>
-              <span className="sr-only">Buscar por nombre o teléfono</span>
-              <input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                className="w-full bg-transparent text-sm text-[#1C3A37] outline-none"
-                placeholder="Nombre o teléfono"
-              />
-            </label>
-            <button className="rounded-[7px] bg-[#0D7A72] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#07322F]">
-              Buscar
-            </button>
+            <Input leadingIcon={Search} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Nombre o teléfono" aria-label="Buscar por nombre o teléfono" className="flex-1" />
+            <Button type="submit" icon={Search}>Buscar</Button>
           </form>
 
-          <div className="mt-3 space-y-2" aria-live="polite">
+          <div className="mt-4" aria-live="polite">
             {loading ? (
-              <p className="py-5 text-sm text-[#5F716C]">Buscando clientes…</p>
+              <p className="py-5 text-sm text-text-muted">Buscando clientes…</p>
             ) : results.length ? (
-              results.map((customer) => {
-                const scope = scopes.find(
-                  ({ organizationId, branchId }) =>
-                    organizationId === customer.organization_id && branchId === customer.branch_id,
-                )
-                const isSelected = selected?.id === customer.id
-                return (
-                  <button
-                    type="button"
-                    key={customer.id}
-                    onClick={() => setSelected(customer)}
-                    className={`flex w-full items-center gap-3 rounded-lg border p-3 text-left transition ${
-                      isSelected
-                        ? 'border-[1.5px] border-[#0D7A72] bg-[#F0FBF9]'
-                        : 'border-[#E3EFED] bg-white hover:bg-[#FBFEFD]'
-                    }`}
-                  >
-                    <span className={`flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full font-display text-xs font-bold ${isSelected ? 'bg-[#0D7A72] text-white' : 'bg-[#EEF5F4] text-[#5F716C]'}`}>
-                      {initials(customer.full_name)}
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm font-semibold text-[#07322F]">
-                        {customer.full_name}
-                      </span>
-                      <span className="block truncate text-xs text-[#5F716C]">
-                        {customer.customer_phones.map(({ phone_number }) => phone_number).join(' · ')}
-                        {scope ? ` · ${scope.branchName}` : ''}
-                      </span>
-                      <span className="mt-2 flex flex-wrap gap-1.5 text-[11px] font-semibold">
-                        <span className="rounded bg-[#EEF5F4] px-2 py-1 text-[#4A5B58]">
-                          {customer.orderSummary?.total ?? 0} {(customer.orderSummary?.total ?? 0) === 1 ? 'trabajo' : 'trabajos'}
+              <div className="-mx-5 border-t border-[#EEF5F4] md:-mx-[22px]">
+                {results.map((customer, index) => {
+                  const scope = scopes.find(({ organizationId, branchId }) => organizationId === customer.organization_id && branchId === customer.branch_id)
+                  const summary = customer.orderSummary ?? { total: 0, open: 0, completed: 0 }
+                  return (
+                    <ListItem
+                      key={customer.id}
+                      avatarName={customer.full_name}
+                      title={customer.full_name}
+                      meta={<>
+                        <span className="block truncate">{customer.customer_phones.map(({ phone_number }) => phone_number).join(' · ')}{scope ? ` · ${scope.branchName}` : ''}</span>
+                        <span className="mt-1.5 flex flex-wrap gap-1.5">
+                          <Badge tone="neutral" dot={false}>{summary.total} {summary.total === 1 ? 'trabajo' : 'trabajos'}</Badge>
+                          {summary.open ? <Badge tone="progress">{summary.open} {summary.open === 1 ? 'abierto' : 'abiertos'}</Badge> : null}
+                          {summary.completed ? <Badge tone="success">{summary.completed} {summary.completed === 1 ? 'finalizado' : 'finalizados'}</Badge> : null}
                         </span>
-                        <span className={`rounded px-2 py-1 ${(customer.orderSummary?.open ?? 0) > 0 ? 'bg-[#FFF0EB] text-[#A34732]' : 'bg-[#F4F7F6] text-[#5F716C]'}`}>
-                          {customer.orderSummary?.open ?? 0} abiertos
-                        </span>
-                        <span className="rounded bg-[#D9F5EE] px-2 py-1 text-[#07655C]">
-                          {customer.orderSummary?.completed ?? 0} finalizados
-                        </span>
-                      </span>
-                    </span>
-                    <span className="text-xs font-semibold text-[#0D7A72]">
-                      {isSelected ? 'Seleccionado' : 'Usar ficha'}
-                    </span>
-                  </button>
-                )
-              })
-            ) : searched ? (
-              <p className="rounded-lg border border-dashed border-[#DCECEA] p-5 text-sm text-[#5F716C]">
-                No encontramos coincidencias. Puedes registrar una ficha nueva.
-              </p>
+                      </>}
+                      selected={selected?.id === customer.id}
+                      onSelect={() => selectCustomer(customer)}
+                      last={index === results.length - 1}
+                    />
+                  )
+                })}
+              </div>
             ) : (
-              <p className="rounded-lg border border-dashed border-[#DCECEA] p-5 text-sm text-[#5F716C]">
-                Busca por nombre o teléfono antes de registrar una ficha nueva.
-              </p>
+              <EmptyState icon={searched ? SearchX : Search} title={searched ? 'Sin coincidencias' : 'Busca antes de registrar'} description={searched ? 'No encontramos coincidencias. Puedes registrar una ficha nueva.' : 'Busca por nombre o teléfono antes de registrar una ficha nueva.'} />
             )}
           </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              setEditingCustomer(null)
-              setShowForm((visible) => !visible)
-              if (!showForm && query && !normalizePhone(query)) setFullName(query)
-              if (!showForm && normalizePhone(query).length >= 5) {
-                setPhones([{ number: query, label: 'Principal', whatsappEnabled: true }])
-              }
-            }}
-            className="mt-4 rounded-[7px] border border-[#DCECEA] bg-white px-4 py-2.5 text-sm font-semibold text-[#07322F] transition hover:bg-[#F0FBF9]"
-          >
-            {showForm ? 'Cerrar formulario' : '+ Registrar cliente nuevo'}
-          </button>
-        </section>
+          <div className="mt-4">
+            <Button variant="secondary" icon={showForm ? X : UserPlus} onClick={toggleNewCustomerForm}>{showForm ? 'Cerrar formulario' : 'Registrar cliente nuevo'}</Button>
+          </div>
+        </Card>
 
         {showForm ? (
-          <form key={editingCustomer?.id ?? 'new'} onSubmit={saveCustomer} className="rounded-[10px] border border-[#E3EFED] bg-white p-5 shadow-[0_8px_24px_rgba(7,50,47,0.04)]">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <h2 className="font-display text-base font-semibold text-[#07322F]">{editingCustomer ? 'Editar ficha' : 'Nueva ficha'}</h2>
-                <p className="mt-1 text-[13px] text-[#5F716C]">{editingCustomer ? 'Actualiza los datos vigentes del cliente.' : 'Revisa las coincidencias antes de guardar.'}</p>
+          <form key={editingCustomer?.id ?? 'new'} onSubmit={saveCustomer}>
+            <Card className="flex flex-col gap-5">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h2 className="font-display text-[17px] font-semibold text-ink">{editingCustomer ? 'Editar ficha' : 'Nueva ficha'}</h2>
+                  <p className="mt-1 text-[13px] text-text-muted">{editingCustomer ? 'Actualiza los datos vigentes del cliente.' : 'Revisa las coincidencias antes de guardar.'}</p>
+                </div>
+                {!activeScope?.canWrite ? <Badge tone="warning">Solo lectura</Badge> : null}
               </div>
-              {!activeScope?.canWrite ? (
-                <span className="rounded-[5px] bg-[#FFF4E8] px-2 py-1 text-xs font-semibold text-[#A35A15]">Solo lectura</span>
+              <Field label="Organización y sucursal">
+                <FormSelect ariaLabel="Organización y sucursal" value={target} disabled={Boolean(editingCustomer)} onValueChange={setTarget} options={scopes.map((scope) => ({ value: `${scope.organizationId}:${scope.branchId}`, label: `${scope.organizationName} · ${scope.branchName}${scope.canWrite ? '' : ' (solo lectura)'}` }))} />
+              </Field>
+              <CustomerFormFields fullName={fullName} onFullNameChange={(value) => { setFullName(value); setDuplicateReviewed(false) }} phones={phones} onPhonesChange={(value) => { setPhones(value); setDuplicateReviewed(false) }} initialValues={editingCustomer ? { nationalId: editingCustomer.national_id, birthDate: editingCustomer.birth_date, address: editingCustomer.address, notes: editingCustomer.notes, messagingConsent: editingCustomer.messaging_consent } : undefined} />
+              {duplicateCandidates.length ? (
+                <Alert tone="warning" title="Posible duplicado.">Hay {duplicateCandidates.length} ficha(s) con el mismo nombre o teléfono. Revísalas arriba; el teléfono compartido no impide continuar.</Alert>
               ) : null}
-            </div>
-
-            <div className="mt-4">
-              <label className="text-xs font-medium text-[#4A5B58]">
-                Organización y sucursal
-                <FormSelect className="mt-1" ariaLabel="Organización y sucursal" value={target} disabled={Boolean(editingCustomer)} onValueChange={setTarget} options={scopes.map((scope) => ({ value: `${scope.organizationId}:${scope.branchId}`, label: `${scope.organizationName} · ${scope.branchName}${scope.canWrite ? '' : ' (solo lectura)'}` }))} />
-              </label>
-            </div>
-            <div className="mt-4"><CustomerFormFields fullName={fullName} onFullNameChange={(value) => { setFullName(value); setDuplicateReviewed(false) }} phones={phones} onPhonesChange={(value) => { setPhones(value); setDuplicateReviewed(false) }} fieldClass={fieldClass} initialValues={editingCustomer ? { nationalId: editingCustomer.national_id, birthDate: editingCustomer.birth_date, address: editingCustomer.address, notes: editingCustomer.notes, messagingConsent: editingCustomer.messaging_consent } : undefined} /></div>
-
-            {duplicateCandidates.length ? (
-              <div className="mt-5 rounded-lg border border-[#FFD9CD] bg-[#FFF6F2] p-4 text-sm text-[#7A3A26]">
-                <p className="font-semibold">Posible duplicado</p>
-                <p className="mt-1">Hay {duplicateCandidates.length} ficha(s) con el mismo nombre o teléfono. Revísalas arriba; el teléfono compartido no impide continuar.</p>
+              <div>
+                <Button type="submit" icon={Save} disabled={saving || !activeScope?.canWrite} className="w-full sm:w-auto">
+                  {saving ? 'Guardando…' : editingCustomer ? 'Guardar cambios' : duplicateReviewed ? 'Confirmar cliente distinto' : 'Guardar cliente'}
+                </Button>
               </div>
-            ) : null}
-
-            <button disabled={saving || !activeScope?.canWrite} className="mt-5 rounded-[7px] bg-[#0D7A72] px-4 py-2.5 font-display text-sm font-semibold text-white transition hover:bg-[#07322F] disabled:cursor-not-allowed disabled:opacity-50">
-              {saving ? 'Guardando…' : editingCustomer ? 'Guardar cambios' : duplicateReviewed ? 'Confirmar cliente distinto' : 'Guardar cliente'}
-            </button>
+            </Card>
           </form>
         ) : null}
 
-        {message ? <p role="status" className="rounded-lg border border-[#DCECEA] bg-white px-4 py-3 text-sm text-[#4A5B58]">{message}</p> : null}
+        {message ? <Alert tone="info">{message}</Alert> : null}
       </div>
 
-      <aside className="rounded-[10px] border border-[#E3EFED] bg-white p-5 shadow-[0_8px_24px_rgba(7,50,47,0.04)] xl:sticky xl:top-6">
-        <h2 className="font-display text-[15px] font-semibold text-[#07322F]">Ficha seleccionada</h2>
-        {selected ? (
-          <><dl className="mt-4 space-y-4 text-sm">
-            <div><dt className="text-xs text-[#5F716C]">Cliente</dt><dd className="mt-1 font-semibold text-[#07322F]">{selected.full_name}</dd></div>
-            <div><dt className="text-xs text-[#5F716C]">Teléfonos</dt><dd className="mt-1 text-[#1C3A37]">{selected.customer_phones.map(({ phone_number }) => phone_number).join(' · ')}</dd></div>
-            <div><dt className="text-xs text-[#5F716C]">Dirección</dt><dd className="mt-1 text-[#1C3A37]">{selected.address || '—'}</dd></div>
-            <div><dt className="text-xs text-[#5F716C]">Nacimiento</dt><dd className="mt-1 text-[#1C3A37]">{selected.birth_date || '—'}</dd></div>
-            <div><dt className="text-xs text-[#5F716C]">WhatsApp</dt><dd className={`mt-1 font-semibold ${selected.messaging_consent ? 'text-[#0D7A72]' : 'text-[#5F716C]'}`}>{selected.messaging_consent ? 'Consentimiento otorgado' : 'Sin consentimiento'}</dd></div>
-            <div><dt className="text-xs text-[#5F716C]">Trabajos</dt><dd className="mt-2 grid grid-cols-3 gap-2 text-center"><span className="rounded-lg bg-[#EEF5F4] px-2 py-2"><strong className="block text-base text-[#07322F]">{selected.orderSummary?.total ?? 0}</strong><small className="text-[#5F716C]">Total</small></span><span className="rounded-lg bg-[#FFF0EB] px-2 py-2"><strong className="block text-base text-[#A34732]">{selected.orderSummary?.open ?? 0}</strong><small className="text-[#A34732]">Abiertos</small></span><span className="rounded-lg bg-[#D9F5EE] px-2 py-2"><strong className="block text-base text-[#07655C]">{selected.orderSummary?.completed ?? 0}</strong><small className="text-[#07655C]">Finalizados</small></span></dd></div>
-          </dl><div className="mt-5 grid gap-2"><Link href={`/orders?clienteId=${selected.id}&cliente=${encodeURIComponent(selected.full_name)}`} className="w-full rounded-[7px] bg-[#0D7A72] px-4 py-2.5 text-center text-sm font-semibold text-white">Ver pedidos de este cliente</Link><button type="button" onClick={() => { setEditingCustomer(selected); setTarget(`${selected.organization_id}:${selected.branch_id}`); setFullName(selected.full_name); setPhones([...selected.customer_phones].sort((a, b) => Number(b.is_primary) - Number(a.is_primary)).map((phone) => ({ number: phone.phone_number, label: phone.label, whatsappEnabled: phone.whatsapp_enabled }))); setDuplicateReviewed(false); setShowForm(true); setMessage(null) }} className="w-full rounded-[7px] border border-[#9BCDC6] px-4 py-2.5 text-sm font-semibold text-[#0D7A72]">Editar cliente</button></div></>
-        ) : (
-          <p className="mt-4 text-sm leading-6 text-[#5F716C]">Selecciona una coincidencia para revisar su ficha y reutilizarla.</p>
-        )}
-      </aside>
+      <div ref={selectedRef} className="scroll-mt-20 xl:sticky xl:top-6">
+        <Card>
+          <CardHeader title="Ficha seleccionada" />
+          {selected ? (
+            <>
+              <div className="mt-4 flex items-center gap-3">
+                <Avatar name={selected.full_name} size="lg" strong />
+                <p className="min-w-0 font-display text-lg font-bold leading-tight text-ink">{selected.full_name}</p>
+              </div>
+              <dl className="mt-5 flex flex-col gap-4 text-sm">
+                <div><dt className="text-[13px] text-text-muted">Teléfonos</dt><dd className="mt-1 text-text">{selected.customer_phones.map(({ phone_number }) => phone_number).join(' · ')}</dd></div>
+                <div><dt className="text-[13px] text-text-muted">Dirección</dt><dd className="mt-1 text-text">{selected.address || '—'}</dd></div>
+                <div><dt className="text-[13px] text-text-muted">Nacimiento</dt><dd className="mt-1 text-text">{selected.birth_date || '—'}</dd></div>
+                <div><dt className="text-[13px] text-text-muted">WhatsApp</dt><dd className="mt-1.5"><Badge tone={selected.messaging_consent ? 'success' : 'neutral'}>{selected.messaging_consent ? 'Consentimiento otorgado' : 'Sin consentimiento'}</Badge></dd></div>
+                <div>
+                  <dt className="text-[13px] text-text-muted">Trabajos</dt>
+                  <dd className="mt-2 grid grid-cols-3 gap-2 text-center">
+                    <span className="rounded-control bg-[#EEF3F2] px-2 py-2.5"><strong className="block font-display text-lg text-ink">{selected.orderSummary?.total ?? 0}</strong><small className="text-[#4A5B58]">Total</small></span>
+                    <span className="rounded-control bg-action-soft px-2 py-2.5"><strong className="block font-display text-lg text-[#0B5A53]">{selected.orderSummary?.open ?? 0}</strong><small className="text-[#0B5A53]">Abiertos</small></span>
+                    <span className="rounded-control bg-[#D9F5EE] px-2 py-2.5"><strong className="block font-display text-lg text-[#07655C]">{selected.orderSummary?.completed ?? 0}</strong><small className="text-[#07655C]">Finalizados</small></span>
+                  </dd>
+                </div>
+              </dl>
+              <div className="mt-5 grid gap-2">
+                <ButtonLink href={`/orders?clienteId=${selected.id}&cliente=${encodeURIComponent(selected.full_name)}`} icon={ReceiptText} block>Ver pedidos de este cliente</ButtonLink>
+                <Button variant="secondary" icon={Pencil} block onClick={() => editSelected(selected)}>Editar cliente</Button>
+              </div>
+            </>
+          ) : (
+            <p className="mt-3 text-sm leading-6 text-text-muted">Selecciona una coincidencia para revisar su ficha y reutilizarla.</p>
+          )}
+        </Card>
+      </div>
     </div>
   )
 }

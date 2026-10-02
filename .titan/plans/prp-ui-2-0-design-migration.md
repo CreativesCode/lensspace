@@ -1,7 +1,7 @@
 # PRP: Migración gradual a la Guía UI 2.0
 
 > **Estado**: EN EJECUCIÓN (aprobado 2026-10-01)
-> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ · Fase 4 ✅ (aprobada por el usuario) · Fase 5 ✅ · Fase 6 ✅ (pendiente revisión manual) · Fase 7 siguiente
+> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ · Fase 4 ✅ (aprobada por el usuario) · Fase 5 ✅ · Fase 6 ✅ · Fase 7 ✅ (pendiente revisión manual) · Fase 8 siguiente
 > **Fecha**: 2026-10-01
 > **Proyecto**: LensSpace
 
@@ -159,7 +159,7 @@ $$;
 **Objetivo**: el dashboard por rol con `PageHeader` destacado (saludo, sucursal, fecha y cifras que ya se cargan), `DashboardCard` sin primarios que compitan y `OwnerAnalyticsDashboard` con `StatCard`. Reemplazar el bloque eyebrow + h1 repetido en las 12 `page.tsx`.
 **Validación**: revisión manual por rol. El panel ya no se titula "LensSpace" y cada página usa `PageHeader`.
 
-### Fase 7: Workspaces, ola A (flujo comercial)
+### Fase 7: Workspaces, ola A (flujo comercial) ✅ (2026-10-01)
 **Objetivo**: clientes, recetas y ventas (`CustomerWorkspace`, `CustomerFormFields`, `PrescriptionWorkspace`, `PrescriptionFormFields` y `SalesWorkspace`, que tiene 914 líneas) migrados a primitivas, sin copias de `inputClass` ni hex.
 **Validación**: revisión manual del flujo receta → cotización → aceptación → pedido. Si `SalesWorkspace` se parte, solo se hace para sacar piezas de UI, sin cambiar lógica.
 
@@ -224,6 +224,8 @@ $$;
 - **Diálogos con scroll**: el `overflow-y-auto` nunca va en el contenedor redondeado (la barra corta las esquinas). El `Dialog` compartido recorta con `overflow-hidden` y hace scroll solo en el cuerpo; tamaño `xl` (max-w-5xl) para formularios largos. Migrar cada diálogo hecho a mano a `Dialog` al tocar su vista.
 - **Revisión manual y Turbopack**: si una vista se ve a medio migrar (piezas nuevas mezcladas con markup viejo), es caché de Turbopack; recargar fuerte o reiniciar `npm run dev` antes de reportar un bug visual.
 - Fase 6: `PageContainer` unifica el contenedor de todas las páginas (max 1440, gutters de la guía, gap 20). KPIs de pedidos compartidos en `features/orders/order-kpis.ts` (panel + bandeja). `OrganizationList` en `dashboard/page.tsx` es código muerto previo (exportado, sin usos): retirarlo en la Fase 9 con aprobación.
+- Fase 7: `CustomerFormFields` y `PrescriptionFormFields` ya no reciben `fieldClass` (usan `Field`/`Input`); la receta pasó de tabla de 650 px a un bloque por ojo (3 columnas en móvil). `SalesWorkspace` 914 → 506 líneas: `ItemPicker`, `QuoteSummary`, `AcceptedOrderPanel` (reutiliza `PaymentForm` de pedidos) y `Dialog` compartido con `footer` + atributo `form`. Nueva primitiva `Steps` con el progreso real de la venta. `OrganizationList` muerto eliminado (aprobado).
+- Pendiente Fase 9: tokenizar los tonos derivados que aún aparecen como hex en features migradas (`#4A5B58` texto secundario, `#324E4A` etiqueta, `#E3EFED`/`#EEF5F4`/`#CFE3E0`/`#9BCDC6` bordes, `#F0FBF9` selección, `#07655C`/`#0B5A53` tintas de éxito y progreso) y reemplazarlos en bloque.
 - El efecto de auto-apertura en escritorio no puede llamar `setState` directo (`react-hooks/set-state-in-effect`): se carga dentro de `startTransition` y se fija la selección al terminar.
 
 ---

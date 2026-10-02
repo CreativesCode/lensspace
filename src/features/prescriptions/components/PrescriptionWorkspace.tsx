@@ -1,10 +1,12 @@
 'use client'
 
+import { Download, FileText, Save, UserPlus, Users } from 'lucide-react'
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 
 import { createClient } from '@/lib/supabase/client'
 import type { Tables } from '@/lib/supabase/database.types'
 import { FormSelect } from '@/shared/components'
+import { Alert, Button, ButtonLink, Card, EmptyState, Field, Input } from '@/shared/ui'
 import { friendlyPrescriptionError, prescriptionAttachmentError, prescriptionFileExtension, prescriptionRevisionValues, validatePrescriptionForm } from '../prescription-validation'
 import { PrescriptionFormFields } from './PrescriptionFormFields'
 
@@ -215,70 +217,65 @@ export function PrescriptionWorkspace({
   }
 
   if (!customers.length) {
-    return (
-      <div className="rounded-[10px] border border-dashed border-[#DCECEA] bg-white p-8 text-sm text-[#5F716C]">
-        Primero registra un cliente accesible desde la sección Clientes.
-      </div>
-    )
+    return <EmptyState icon={Users} title="Sin clientes todavía" description="Primero registra un cliente accesible desde la sección Clientes." action={<ButtonLink href="/customers" icon={UserPlus}>Ir a Clientes</ButtonLink>} />
   }
 
-  const fieldClass =
-    'mt-1 w-full rounded-[7px] border border-[#DCECEA] bg-[#FBFEFD] px-3 py-2.5 font-display text-sm text-[#07322F] outline-none focus:border-[#0D7A72] focus:bg-white focus:ring-4 focus:ring-[#E2F4F1]'
-
   return (
-    <div className="space-y-[18px]">
-      <section className="rounded-[10px] border border-[#E3EFED] bg-white p-5">
-        <div className="grid gap-4 md:grid-cols-2">
-          <label className="text-xs font-medium text-[#4A5B58]">
-            Cliente
-            <FormSelect className="mt-1" ariaLabel="Cliente" value={String(customerId)} onValueChange={(value) => { setCustomerId(Number(value)); setMode('new'); setMessage(null) }} options={customers.map((option) => ({ value: String(option.id), label: `${option.full_name} · ${option.customer_phones[0]?.phone_number ?? 'sin teléfono'}` }))} />
-          </label>
-          <label className="text-xs font-medium text-[#4A5B58]">
-            Receta existente
-            <FormSelect className="mt-1" ariaLabel="Receta existente" value={String(selectedPrescriptionId ?? '')} disabled={!records.length} onValueChange={(value) => { setSelectedPrescriptionId(Number(value)); setMode('revision') }} options={!records.length ? [{ value: '', label: 'Sin recetas previas' }] : records.map((record) => ({ value: String(record.id), label: `Receta #${record.id} · ${record.prescription_revisions.length} revisión(es)` }))} />
-          </label>
+    <div className="flex flex-col gap-5">
+      <Card>
+        <div className="grid gap-[18px] md:grid-cols-2">
+          <Field label="Cliente">
+            <FormSelect ariaLabel="Cliente" value={String(customerId)} onValueChange={(value) => { setCustomerId(Number(value)); setMode('new'); setMessage(null) }} options={customers.map((option) => ({ value: String(option.id), label: `${option.full_name} · ${option.customer_phones[0]?.phone_number ?? 'sin teléfono'}` }))} />
+          </Field>
+          <Field label="Receta existente">
+            <FormSelect ariaLabel="Receta existente" value={String(selectedPrescriptionId ?? '')} disabled={!records.length} onValueChange={(value) => { setSelectedPrescriptionId(Number(value)); setMode('revision') }} options={!records.length ? [{ value: '', label: 'Sin recetas previas' }] : records.map((record) => ({ value: String(record.id), label: `Receta #${record.id} · ${record.prescription_revisions.length} revisión(es)` }))} />
+          </Field>
         </div>
-      </section>
+      </Card>
 
-      <div className="grid gap-[18px] xl:grid-cols-[minmax(0,1fr)_360px]">
-        <form key={`${customerId}:${mode}:${selectedPrescriptionId ?? 'new'}`} onSubmit={saveRevision} className="rounded-[10px] border border-[#E3EFED] bg-white p-5 shadow-[0_8px_24px_rgba(7,50,47,0.04)]" noValidate>
-          <div className="flex flex-wrap items-start justify-between gap-3">
+      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <form key={`${customerId}:${mode}:${selectedPrescriptionId ?? 'new'}`} onSubmit={saveRevision} noValidate>
+          <Card className="flex flex-col gap-5">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="font-display text-[17px] font-semibold text-ink">{mode === 'new' ? 'Nueva receta' : 'Nueva revisión inmutable'}</h2>
+                <p className="mt-1 text-[13px] text-text-muted">El original se preserva; cada corrección registra autor y fecha.</p>
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" variant={mode === 'new' ? 'primary' : 'secondary'} aria-pressed={mode === 'new'} onClick={() => setMode('new')}>Nueva receta</Button>
+                <Button size="sm" variant={mode === 'revision' ? 'primary' : 'secondary'} aria-pressed={mode === 'revision'} disabled={!records.length} onClick={() => setMode('revision')}>Corregir</Button>
+              </div>
+            </div>
+
+            {!scope?.canWrite ? <Alert tone="warning">La organización está en modo de solo lectura.</Alert> : null}
+            {mode === 'revision' ? <Field label="Motivo de la corrección"><Input name="changeReason" required maxLength={300} /></Field> : null}
+
+            <PrescriptionFormFields />
+            {message ? <Alert tone="info">{message}</Alert> : null}
             <div>
-              <h2 className="font-display text-base font-semibold text-[#07322F]">{mode === 'new' ? 'Nueva receta' : 'Nueva revisión inmutable'}</h2>
-              <p className="mt-1 text-[13px] text-[#5F716C]">El original se preserva; cada corrección registra autor y fecha.</p>
+              <Button type="submit" icon={Save} disabled={saving || !scope?.canWrite} className="w-full sm:w-auto">{saving ? 'Guardando…' : mode === 'new' ? 'Guardar receta' : 'Guardar nueva revisión'}</Button>
             </div>
-            <div className="flex gap-2">
-              <button type="button" onClick={() => setMode('new')} className={`rounded-[7px] px-3 py-2 text-xs font-semibold ${mode === 'new' ? 'bg-[#0D7A72] text-white' : 'border border-[#DCECEA] text-[#4A5B58]'}`}>Nueva receta</button>
-              <button type="button" disabled={!records.length} onClick={() => setMode('revision')} className={`rounded-[7px] px-3 py-2 text-xs font-semibold disabled:opacity-40 ${mode === 'revision' ? 'bg-[#0D7A72] text-white' : 'border border-[#DCECEA] text-[#4A5B58]'}`}>Corregir</button>
-            </div>
-          </div>
-
-          {!scope?.canWrite ? <p className="mt-4 rounded-lg bg-[#FFF4E8] px-4 py-3 text-sm text-[#A35A15]">La organización está en modo de solo lectura.</p> : null}
-          {mode === 'revision' ? <label className="mt-4 block text-xs font-medium text-[#4A5B58]">Motivo de la corrección<input className={fieldClass} name="changeReason" required maxLength={300} /></label> : null}
-
-          <div className="mt-5 space-y-5"><PrescriptionFormFields fieldClass={fieldClass} /></div>
-          <button disabled={saving || !scope?.canWrite} className="mt-5 rounded-[7px] bg-[#0D7A72] px-4 py-2.5 font-display text-sm font-semibold text-white hover:bg-[#07322F] disabled:cursor-not-allowed disabled:opacity-50">{saving ? 'Guardando…' : mode === 'new' ? 'Guardar receta' : 'Guardar nueva revisión'}</button>
-          {message ? <p role="status" className="mt-4 rounded-lg border border-[#DCECEA] px-4 py-3 text-sm text-[#4A5B58]">{message}</p> : null}
+          </Card>
         </form>
 
-        <aside className="space-y-3">
-          <h2 className="font-display text-[15px] font-semibold text-[#07322F]">Historial preservado</h2>
-          {loading ? <p className="text-sm text-[#5F716C]">Cargando…</p> : null}
-          {!loading && !records.length ? <p className="rounded-[10px] border border-dashed border-[#DCECEA] bg-white p-5 text-sm text-[#5F716C]">Este cliente aún no tiene recetas.</p> : null}
+        <aside className="flex flex-col gap-3 xl:sticky xl:top-6">
+          <h2 className="font-display text-[17px] font-semibold text-ink">Historial preservado</h2>
+          {loading ? <p className="text-sm text-text-muted">Cargando…</p> : null}
+          {!loading && !records.length ? <EmptyState icon={FileText} title="Sin recetas" description="Este cliente aún no tiene recetas." /> : null}
           {records.map((record) => (
-            <article key={record.id} className="rounded-[10px] border border-[#E3EFED] bg-white p-4">
-              <h3 className="font-display text-sm font-semibold text-[#07322F]">Receta #{record.id}</h3>
-              <div className="mt-3 space-y-3">
+            <Card key={record.id} padded={false} className="p-4">
+              <h3 className="font-display text-[15px] font-semibold text-ink">Receta #{record.id}</h3>
+              <div className="mt-3 flex flex-col gap-3">
                 {record.prescription_revisions.map((revision) => (
-                  <div key={revision.id} className="border-l-2 border-[#35C2A8] pl-3">
-                    <div className="flex justify-between gap-2"><p className="text-sm font-semibold text-[#07322F]">Revisión {revision.revision_number}</p><time className="text-xs text-[#5F716C]">{revision.prescription_date}</time></div>
-                    <p className="mt-1 font-display text-xs text-[#4A5B58]">OD {formatOptical(revision.right_sphere)} / {formatOptical(revision.right_cylinder)} · OI {formatOptical(revision.left_sphere)} / {formatOptical(revision.left_cylinder)}</p>
-                    {revision.change_reason ? <p className="mt-1 text-xs text-[#A35A15]">{revision.change_reason}</p> : null}
-                    {revision.prescription_files.map((file) => <button key={file.id} type="button" onClick={() => void downloadFile(file)} className="mt-2 block text-left text-xs font-semibold text-[#0D7A72]">↓ {file.file_name}</button>)}
+                  <div key={revision.id} className="border-l-2 border-mint pl-3">
+                    <div className="flex justify-between gap-2"><p className="text-sm font-semibold text-ink">Revisión {revision.revision_number}</p><time className="text-[13px] text-text-muted">{revision.prescription_date}</time></div>
+                    <p className="mt-1 font-display text-[13px] tabular-nums text-[#4A5B58]">OD {formatOptical(revision.right_sphere)} / {formatOptical(revision.right_cylinder)} · OI {formatOptical(revision.left_sphere)} / {formatOptical(revision.left_cylinder)}</p>
+                    {revision.change_reason ? <p className="mt-1 text-[13px] text-amber-ink">{revision.change_reason}</p> : null}
+                    {revision.prescription_files.map((file) => <Button key={file.id} variant="ghost" size="sm" icon={Download} onClick={() => void downloadFile(file)} className="-ml-3 mt-1">{file.file_name}</Button>)}
                   </div>
                 ))}
               </div>
-            </article>
+            </Card>
           ))}
         </aside>
       </div>
