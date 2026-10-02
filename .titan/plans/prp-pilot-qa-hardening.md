@@ -88,7 +88,7 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 | QA-05 | Prescription original upload/download broken for every role (missing EXECUTE grant) | high | bug | SOLO-03, ADM-01 | done 2026-10-02 | S |
 | QA-06 | Tenant catalog overrides cannot be saved (403 on upsert) | high | bug | SOLO-05, SALES-03 | done 2026-10-02 | S |
 | QA-07 | `/sales` shows base prices and disabled items, ignoring overrides | medium | data-integrity | SOLO-18, SALES-06 | done 2026-10-02 | S |
-| QA-08 | 'Pedido listo' WhatsApp fires on first lens reception and is never re-sent after rework | high | data-integrity | MR-03 | confirmed | M |
+| QA-08 | 'Pedido listo' WhatsApp fires on first lens reception and is never re-sent after rework | high | data-integrity | MR-03 | done 2026-10-02 | M |
 | QA-09 | `/production` crashes to 'This page couldn't load' when the post-mutation refetch fails | high | bug | RC-04 | confirmed | S |
 | QA-10 | Delivery event attributed to 'Sistema' (no `delivered_by`) | medium | data-integrity | SOLO-09, MR-09 | confirmed | S |
 | QA-11 | Client 'today' in UTC: prescription date defaults to tomorrow after 20:00 Havana | medium | data-integrity | SALES-14, RC-13 | confirmed | S |
@@ -280,6 +280,18 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
   - Add an explicit 'Avisar: listo para recoger' action in OrderDetail that calls a SECURITY DEFINER `queue_order_ready(order_id)`, keyed per event so it can be re-sent after a rework.
   - This action also feeds the delivery dimension (QA-14).
 - **Verify:** a lens-only order received → verificar: no dispatch row; owner clicks 'Avisar' → verificar: 1 dispatch; after a rework, 'Avisar' again → verificar: a 2nd dispatch is allowed.
+
+- **Done (2026-10-02):** what changed:
+  - Migration `20261002180000_make_order_ready_notification_manual.sql`, applied and registered by the product owner. It drops the automatic trigger and adds `notify_order_ready(order_id, request_id)`, which checks permissions and the WhatsApp module and uses one dispatch key per click, so a retry is safe and a re-send after a rework is allowed.
+  - The OrderDetail footer has an 'Avisar: listo para recoger' button, with copy explaining that 'Pedido listo' is manual.
+  - The request-id helper moved to `src/shared/utils/request-id.ts`.
+  - Verified with JAV-2026-000018 and the product owner's number:
+    - lens job 16 taken to `received` → no `order_ready` dispatch;
+    - 2 'Avisar' clicks → 2 `order_ready` dispatches with distinct keys;
+    - full payment → `payment_received`;
+    - delivery → `order_delivered`.
+    - All attempts are stored `provider_http_500` (QA-61 false negative).
+  - Related UI fix requested by the product owner: the production card's 'Ver receta de fabricación' now opens a dialog instead of an inline `<details>`, so expanding it no longer stretches the grid row (`ProductionJobCard.tsx`).
 
 ### QA-09 `/production` crashes when the refetch fails (high, S)
 - **Problem:** after a successful assign, transition, incident or rework, a failed `list_accessible_production_jobs` refetch replaces the whole route with 'This page couldn't load', even though the mutation committed.

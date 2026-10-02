@@ -1,10 +1,11 @@
 'use client'
 
 import { Glasses, Plus } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 
 import { createClient } from '@/lib/supabase/client'
 import { ButtonLink, EmptyState, PageHeader, StatCard, Toast, cx } from '@/shared/ui'
+import { newRequestId } from '@/shared/utils/request-id'
 
 import { formatAmount } from '../format'
 import { orderKpis } from '../order-kpis'
@@ -79,6 +80,22 @@ export function OrderPaymentsWorkspace({ initialOrders, initialCustomerFilter = 
     })
   }
 
+  // Reused until the notice is queued so a retry after a lost response is not sent twice.
+  const readyRequest = useRef<{ orderId: number; id: string } | null>(null)
+  function notifyReady() {
+    if (readyRequest.current?.orderId !== selectedId) readyRequest.current = { orderId: selectedId, id: newRequestId() }
+    const requestId = readyRequest.current.id
+    startTransition(async () => {
+      const { error: notifyError } = await supabase.rpc('notify_order_ready', { target_order_id: selectedId, request_id: requestId } as never)
+      if (notifyError) return setError(isNetworkError(notifyError) ? 'Sin conexión: no sabemos si el aviso salió. Pulsa «Avisar» otra vez cuando vuelva la señal; no se enviará dos veces.' : notifyError.message)
+      readyRequest.current = null
+      setError('')
+      setToast('Aviso «Pedido listo» en camino. El resultado aparecerá en el historial.')
+      // The WhatsApp attempt is recorded asynchronously by the Edge Function.
+      setTimeout(() => { void loadDetail(selectedId).catch(() => undefined) }, 4000)
+    })
+  }
+
   function deliver() {
     startTransition(async () => {
       const { error: deliveryError } = await supabase.rpc('mark_order_delivered', { target_order_id: selectedId } as never)
@@ -136,6 +153,7 @@ export function OrderPaymentsWorkspace({ initialOrders, initialCustomerFilter = 
                 onBack={() => { setSummary(null); setTimeline([]); setSelectedId(0); setError('') }}
                 onRegisterPayment={registerPayment}
                 onDeliver={deliver}
+                onNotifyReady={notifyReady}
               />
             ) : (
               <EmptyState icon={Glasses} title={pending ? 'Abriendo pedido…' : 'Selecciona un pedido'} description={error || 'Elige un pedido de la bandeja para ver su saldo, pagos e historial.'} />

@@ -4,21 +4,12 @@ import { Banknote } from 'lucide-react'
 import { useRef, useState, type FormEvent } from 'react'
 
 import { Button, Field, Input, SegmentedControl, cx } from '@/shared/ui'
+import { newRequestId } from '@/shared/utils/request-id'
 
 import { formatAmount } from '../format'
 
 type Currency = 'CUP' | 'USD'
 export type PaymentInput = { amount: number; currency: Currency; rate: number; notes: string; requestId: string }
-
-// randomUUID needs a secure context (HTTPS/localhost); getRandomValues does not.
-function newRequestId() {
-  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
-  const bytes = crypto.getRandomValues(new Uint8Array(16))
-  bytes[6] = (bytes[6] & 0x0f) | 0x40
-  bytes[8] = (bytes[8] & 0x3f) | 0x80
-  const hex = Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('')
-  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`
-}
 
 // Live equivalence and over-balance feedback are informative; the server RPC still
 // rejects overpayments and validates every field.

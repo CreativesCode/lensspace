@@ -1,8 +1,9 @@
 'use client'
 
-import { ChevronDown, RefreshCcw, TriangleAlert } from 'lucide-react'
+import { FileText, RefreshCcw, TriangleAlert } from 'lucide-react'
+import { useState } from 'react'
 
-import { Badge, Button, Card } from '@/shared/ui'
+import { Badge, Button, Card, Dialog } from '@/shared/ui'
 
 import { productionStatusLabel, responsibilityLabels, statusTone } from '../production-status'
 import type { PrescriptionSnapshot, ProductionJob } from './ProductionWorkspace'
@@ -32,7 +33,7 @@ export function ProductionJobCard({ job, showCustomer, transitionLabel, secondar
         <p className="mt-0.5 text-[13px] text-text-muted">{job.jobType === 'lens' ? 'Cristales' : 'Montaje'} · {job.providerName} · {new Date(job.assignedAt).toLocaleDateString('es-CU')}</p>
       </div>
       <p className="text-sm leading-6 text-text-secondary">{job.snapshot.items?.map((item) => item.name).join(' · ') || 'Configuración preservada en la asignación.'}</p>
-      <PrescriptionDetails prescription={job.snapshot.prescription} />
+      <PrescriptionDetails prescription={job.snapshot.prescription} eyebrow={`${job.orderNumber} · ${job.jobType === 'lens' ? 'Cristales' : 'Montaje'}`} />
       {job.incidents.map((incident) => (
         <div key={incident.id} className="flex flex-col gap-2 rounded-[12px] border border-coral-line bg-coral-tint px-4 py-3 text-sm text-coral-deep">
           <p className="flex gap-2"><TriangleAlert aria-hidden="true" size={16} className="mt-0.5 shrink-0 text-coral-ink" />{incident.description}</p>
@@ -54,36 +55,37 @@ export function ProductionJobCard({ job, showCustomer, transitionLabel, secondar
 const prismBaseLabels: Record<string, string> = { up: 'Arriba', down: 'Abajo', in: 'Interna', out: 'Externa' }
 const prescriptionValue = (value: number | null | undefined, suffix = '') => value === null || value === undefined ? '—' : `${Number(value).toLocaleString('es-CU', { maximumFractionDigits: 2 })}${suffix}`
 
+// Opens in a dialog so expanding one card never stretches its grid row.
 // One block per eye (3 columns on mobile) instead of a wide table.
-function PrescriptionDetails({ prescription }: { prescription?: PrescriptionSnapshot | null }) {
+function PrescriptionDetails({ prescription, eyebrow }: { prescription?: PrescriptionSnapshot | null; eyebrow: string }) {
+  const [open, setOpen] = useState(false)
   if (!prescription) return <p className="rounded-control border border-dashed border-line px-3 py-2.5 text-[13px] text-text-muted">Este trabajo no tiene una receta asociada.</p>
   const eyes = [
     { label: 'OD', values: [['Esfera', prescriptionValue(prescription.right_sphere)], ['Cilindro', prescriptionValue(prescription.right_cylinder)], ['Eje', prescriptionValue(prescription.right_axis, '°')], ['Adición', prescriptionValue(prescription.right_addition)], ['DP', prescriptionValue(prescription.right_pupillary_distance, ' mm')], ['Altura', prescriptionValue(prescription.right_height, ' mm')]] },
     { label: 'OI', values: [['Esfera', prescriptionValue(prescription.left_sphere)], ['Cilindro', prescriptionValue(prescription.left_cylinder)], ['Eje', prescriptionValue(prescription.left_axis, '°')], ['Adición', prescriptionValue(prescription.left_addition)], ['DP', prescriptionValue(prescription.left_pupillary_distance, ' mm')], ['Altura', prescriptionValue(prescription.left_height, ' mm')]] },
   ]
   return (
-    <details className="group rounded-control border border-line-focus bg-action-wash">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-3.5 text-sm font-semibold text-action">
-        Ver receta de fabricación
-        <ChevronDown aria-hidden="true" size={16} className="transition-transform group-open:rotate-180" />
-      </summary>
-      <div className="flex flex-col gap-3 border-t border-line px-3.5 py-3">
-        {eyes.map((eye) => (
-          <div key={eye.label}>
-            <p className="mb-1.5 font-display text-xs font-bold text-ink">{eye.label}</p>
-            <dl className="grid grid-cols-3 gap-x-3 gap-y-2 md:grid-cols-6">
-              {eye.values.map(([label, value]) => <div key={label}><dt className="text-[12px] text-text-muted">{label}</dt><dd className="font-display text-sm font-semibold tabular-nums text-ink">{value}</dd></div>)}
-            </dl>
+    <>
+      <Button variant="secondary" icon={FileText} onClick={() => setOpen(true)} className="w-full">Ver receta de fabricación</Button>
+      <Dialog open={open} onClose={() => setOpen(false)} eyebrow={eyebrow} title="Receta de fabricación" size="md" footer={<Button onClick={() => setOpen(false)}>Cerrar</Button>}>
+        <div className="flex flex-col gap-3">
+          {eyes.map((eye) => (
+            <div key={eye.label}>
+              <p className="mb-1.5 font-display text-xs font-bold text-ink">{eye.label}</p>
+              <dl className="grid grid-cols-3 gap-x-3 gap-y-2 sm:grid-cols-6">
+                {eye.values.map(([label, value]) => <div key={label}><dt className="text-[12px] text-text-muted">{label}</dt><dd className="font-display text-sm font-semibold tabular-nums text-ink">{value}</dd></div>)}
+              </dl>
+            </div>
+          ))}
+          <div className="grid gap-1.5 border-t border-line pt-3 text-[13px] text-text-secondary sm:grid-cols-2">
+            <p><strong className="text-ink">DP conjunta:</strong> {prescriptionValue(prescription.pupillary_distance_total, ' mm')}</p>
+            <p><strong className="text-ink">Fecha:</strong> {prescription.prescription_date ?? '—'}</p>
+            <p><strong className="text-ink">Prisma OD:</strong> {prescriptionValue(prescription.right_prism)} {prescription.right_prism_base ? `· ${prismBaseLabels[prescription.right_prism_base] ?? prescription.right_prism_base}` : ''}</p>
+            <p><strong className="text-ink">Prisma OI:</strong> {prescriptionValue(prescription.left_prism)} {prescription.left_prism_base ? `· ${prismBaseLabels[prescription.left_prism_base] ?? prescription.left_prism_base}` : ''}</p>
+            {prescription.prescriber_name ? <p className="sm:col-span-2"><strong className="text-ink">Médico u optometrista:</strong> {prescription.prescriber_name}</p> : null}
           </div>
-        ))}
-        <div className="grid gap-1.5 border-t border-line pt-3 text-[13px] text-text-secondary sm:grid-cols-2">
-          <p><strong className="text-ink">DP conjunta:</strong> {prescriptionValue(prescription.pupillary_distance_total, ' mm')}</p>
-          <p><strong className="text-ink">Fecha:</strong> {prescription.prescription_date ?? '—'}</p>
-          <p><strong className="text-ink">Prisma OD:</strong> {prescriptionValue(prescription.right_prism)} {prescription.right_prism_base ? `· ${prismBaseLabels[prescription.right_prism_base] ?? prescription.right_prism_base}` : ''}</p>
-          <p><strong className="text-ink">Prisma OI:</strong> {prescriptionValue(prescription.left_prism)} {prescription.left_prism_base ? `· ${prismBaseLabels[prescription.left_prism_base] ?? prescription.left_prism_base}` : ''}</p>
-          {prescription.prescriber_name ? <p className="sm:col-span-2"><strong className="text-ink">Médico u optometrista:</strong> {prescription.prescriber_name}</p> : null}
         </div>
-      </div>
-    </details>
+      </Dialog>
+    </>
   )
 }

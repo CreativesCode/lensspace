@@ -1025,6 +1025,10 @@ export type Database = {
         Args: { target_order_id: number }
         Returns: undefined
       }
+      notify_order_ready: {
+        Args: { request_id: string; target_order_id: number }
+        Returns: Json
+      }
       register_cash_payment: {
         Args: {
           payment_amount: number

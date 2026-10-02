@@ -19,9 +19,10 @@ type OrderDetailProps = {
   onBack: () => void
   onRegisterPayment: (input: PaymentInput) => Promise<boolean>
   onDeliver: () => void
+  onNotifyReady: () => void
 }
 
-export function OrderDetail({ order, summary, timeline, pending, error, onBack, onRegisterPayment, onDeliver }: OrderDetailProps) {
+export function OrderDetail({ order, summary, timeline, pending, error, onBack, onRegisterPayment, onDeliver, onNotifyReady }: OrderDetailProps) {
   const [tab, setTab] = useState<'payments' | 'history'>('payments')
   const status = orderStatus({ ...order, balanceCup: summary.balanceCup, commercialStatus: summary.commercialStatus, paymentStatus: summary.paymentStatus })
   const finished = isFinished(summary)
@@ -105,7 +106,7 @@ export function OrderDetail({ order, summary, timeline, pending, error, onBack, 
           )}
         </div>
 
-        <Alert tone="info" icon={MessageCircle}>Confirmación, pedido listo, pago recibido y entrega se notifican solos al WhatsApp autorizado del cliente. Cada envío queda en el historial.</Alert>
+        <Alert tone="info" icon={MessageCircle}>Confirmación, pago recibido y entrega se notifican solos al WhatsApp autorizado del cliente. «Pedido listo» lo envías tú con «Avisar: listo para recoger» cuando los espejuelos estén revisados. Cada envío queda en el historial.</Alert>
       </div>
 
       {summary.commercialStatus === 'accepted' ? (
@@ -114,7 +115,10 @@ export function OrderDetail({ order, summary, timeline, pending, error, onBack, 
             {owes ? <Lock aria-hidden="true" size={16} className="shrink-0 text-text-disabled" /> : <PackageCheck aria-hidden="true" size={16} className="shrink-0" />}
             {owes ? `Disponible cuando el saldo llegue a 0 · faltan ${formatAmount(summary.balanceCup)} CUP` : 'Todo cobrado. Puedes entregar el pedido.'}
           </p>
-          <Button variant="ink" icon={PackageCheck} onClick={onDeliver} disabled={owes || pending} className="w-full sm:w-auto">Marcar como entregado</Button>
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+            <Button variant="secondary" icon={MessageCircle} onClick={onNotifyReady} disabled={pending} className="w-full sm:w-auto">Avisar: listo para recoger</Button>
+            <Button variant="ink" icon={PackageCheck} onClick={onDeliver} disabled={owes || pending} className="w-full sm:w-auto">Marcar como entregado</Button>
+          </div>
         </div>
       ) : null}
     </Card>
