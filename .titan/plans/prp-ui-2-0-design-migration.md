@@ -1,7 +1,7 @@
 # PRP: Migración gradual a la Guía UI 2.0
 
 > **Estado**: EN EJECUCIÓN (aprobado 2026-10-01)
-> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ · Fase 4 ✅ (pendiente revisión manual) · Fase 5 siguiente
+> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ · Fase 4 ✅ (aprobada por el usuario) · Fase 5 ✅ (pendiente revisión manual) · Fase 6 siguiente
 > **Fecha**: 2026-10-01
 > **Proyecto**: LensSpace
 
@@ -151,7 +151,7 @@ $$;
 **Objetivo**: recomponer `orders/page.tsx` y `OrderPaymentsWorkspace` según la v2: `PageHeader` destacado con KPIs, chips con contador, `ListItem` con `Badge` por tono, panel de saldo, cobro con segmentado CUP/USD y equivalencia en vivo, pestañas Pagos/Historial, timeline y entrega bloqueada con explicación. Incluye la extensión aditiva de `list_accessible_orders` (D1) y la fuente de "cobrado hoy".
 **Validación**: lista de revisión manual del flujo completo (cobro CUP, cobro USD con tasa, saldo 0, entregar, filtros por chip y fecha, detalle en móvil con "volver"). Comparado a ojo con el mockup.
 
-### Fase 5: Pantallas de auth y alta de organización
+### Fase 5: Pantallas de auth y alta de organización ✅ (2026-10-01)
 **Objetivo**: login, signup, set-password, callback, `UpdatePasswordForm`, `PasswordInput` y `OrganizationOnboardingForm` sobre `Field`, `Button` y `Alert`, eliminando `sky-*` y `amber-*` (hallazgo 01).
 **Validación**: login, recuperación y activación funcionan. Un `grep` de `sky-|amber-` en esos archivos da 0.
 
@@ -220,6 +220,7 @@ $$;
 
 ### 2026-10-01: D1 aplicado — payload de pedidos
 - `list_accessible_orders` agrega `paidCup`, `balanceCup`, `paidTodayCup` (por `payments.business_date` en la zona horaria de la organización, igual que la caja) y `hasOpenIncident` (incidencia sin `rework_job_id`). `get_order_payment_summary` agrega `notes`. Migración `20261002013055_extend_order_list_for_ui_v2.sql`, security invoker, advisors sin hallazgos nuevos.
+- `FormSelect` se alineó a la guía en la Fase 5 (44 px, radio 10, foco teal): su `className` solo afecta al contenedor, así que el cambio es global y seguro. Hasta migrar las fases 7–8, en formularios viejos puede verse 2–4 px más alto que los inputs antiguos.
 - El efecto de auto-apertura en escritorio no puede llamar `setState` directo (`react-hooks/set-state-in-effect`): se carga dentro de `startTransition` y se fija la selección al terminar.
 
 ---

@@ -1,9 +1,11 @@
 'use client'
 
+import { LogIn } from 'lucide-react'
 import { useActionState } from 'react'
 
 import { login, type LoginState } from '../actions'
 import { PasswordInput } from '@/shared/components'
+import { Alert, Button, Field, Input } from '@/shared/ui'
 
 const initialState: LoginState = { error: null }
 
@@ -11,14 +13,11 @@ export function LoginForm({ next = '/dashboard' }: { next?: string }) {
   const [state, formAction, pending] = useActionState(login, initialState)
 
   return (
-    <form action={formAction} className="space-y-5">
+    <form action={formAction} className="flex flex-col gap-[18px]">
       <input type="hidden" name="next" value={next} />
 
-      <div className="space-y-2">
-        <label htmlFor="email" className="text-sm font-medium text-slate-700">
-          Correo electrónico
-        </label>
-        <input
+      <Field label="Correo electrónico">
+        <Input
           id="email"
           name="email"
           type="email"
@@ -28,36 +27,18 @@ export function LoginForm({ next = '/dashboard' }: { next?: string }) {
           pattern="[^\s@]+@[^\s@]+\.[^\s@]{2,}"
           title="Escribe un correo válido, por ejemplo nombre@dominio.com"
           required
-          className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-sky-600 focus:ring-4 focus:ring-sky-100"
         />
-      </div>
+      </Field>
 
-      <div className="space-y-2">
-        <label htmlFor="password" className="text-sm font-medium text-slate-700">
-          Contraseña
-        </label>
-        <PasswordInput
-          id="password"
-          name="password"
-          autoComplete="current-password"
-          required
-          className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-sky-600 focus:ring-4 focus:ring-sky-100"
-        />
-      </div>
+      <Field label="Contraseña">
+        <PasswordInput id="password" name="password" autoComplete="current-password" required />
+      </Field>
 
-      {state.error ? (
-        <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-          {state.error}
-        </p>
-      ) : null}
+      {state.error ? <Alert tone="danger" role="alert">{state.error}</Alert> : null}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="w-full rounded-xl bg-sky-700 px-4 py-3 font-semibold text-white transition hover:bg-sky-800 disabled:cursor-not-allowed disabled:opacity-60"
-      >
+      <Button type="submit" size="lg" icon={LogIn} block disabled={pending}>
         {pending ? 'Entrando…' : 'Iniciar sesión'}
-      </button>
+      </Button>
     </form>
   )
 }

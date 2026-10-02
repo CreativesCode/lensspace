@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/client'
-import { LensSpaceLogo } from '@/shared/components'
+import { AuthCard } from '@/features/auth/components'
 
 export default function AuthCallbackPage() {
   const router = useRouter()
@@ -63,18 +63,12 @@ export default function AuthCallbackPage() {
   }, [router])
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-6">
-      <div className="max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-        <div className="mb-7 flex justify-center">
-          <LensSpaceLogo compact />
-        </div>
-        <h1 className="font-display text-2xl font-bold text-slate-950">
-          {error ? 'No pudimos completar el acceso' : 'Completando acceso…'}
-        </h1>
-        <p className="mt-3 text-slate-600">
-          {error ?? 'Estamos verificando tu invitación de LensSpace.'}
-        </p>
-      </div>
+    <main className="flex min-h-screen items-center justify-center bg-canvas px-4 py-10 sm:px-6">
+      <AuthCard
+        centered
+        title={error ? 'No pudimos completar el acceso' : 'Completando acceso…'}
+        description={error ?? 'Estamos verificando tu invitación de LensSpace.'}
+      />
     </main>
   )
 }

@@ -1,5 +1,6 @@
-import { LoginForm } from '@/features/auth/components'
+import { AuthCard, LoginForm } from '@/features/auth/components'
 import { LensSpaceLogo } from '@/shared/components'
+import { Alert } from '@/shared/ui'
 
 type LoginPageProps = {
   searchParams: Promise<{ next?: string; notice?: string }>
@@ -8,46 +9,36 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const { next, notice } = await searchParams
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-[minmax(320px,0.9fr)_1.1fr]">
-      <aside className="hidden bg-slate-950 p-12 text-white lg:flex lg:flex-col lg:justify-between">
-        <LensSpaceLogo inverse subtitle="De la receta a la entrega" />
-        <div className="max-w-md">
-          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-[#7FB3AC]">
-            Gestión óptica integral
-          </p>
+    <div className="grid min-h-screen bg-canvas lg:grid-cols-[minmax(320px,0.9fr)_1.1fr]">
+      <aside className="relative hidden overflow-hidden bg-ink p-12 text-white lg:flex lg:flex-col lg:justify-between">
+        <span aria-hidden="true" className="pointer-events-none absolute -right-28 -top-36 size-[420px] rounded-full border border-[#16544C]" />
+        <span aria-hidden="true" className="pointer-events-none absolute -top-12 right-10 size-[230px] rounded-full border border-[#16544C]" />
+        <div className="relative"><LensSpaceLogo inverse subtitle="De la receta a la entrega" /></div>
+        <div className="relative max-w-md">
+          <p className="mb-4 text-xs font-bold uppercase tracking-[0.16em] text-[#7FD8C8]">Gestión óptica integral</p>
           <h2 className="font-display text-4xl font-bold leading-tight tracking-[-0.03em]">
             Claridad para cada paso de tu óptica.
           </h2>
-          <p className="mt-5 text-base leading-7 text-[#A7CFC9]">
+          <p className="mt-5 text-base leading-7 text-[#B9DDD7]">
             Clientes, recetas, ventas y producción en un solo flujo.
           </p>
         </div>
-        <p className="text-xs text-[#6F9C96]">LensSpace · Caribe moderno</p>
+        <p className="relative text-xs text-[#7FB3AC]">LensSpace · Caribe moderno</p>
       </aside>
 
-      <main className="flex items-center justify-center px-6 py-12">
-        <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 shadow-xl">
-          <div className="mb-8 lg:hidden">
-            <LensSpaceLogo subtitle="De la receta a la entrega" />
-          </div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">
-            Acceso seguro
-          </p>
-          <h1 className="font-display text-3xl font-bold tracking-[-0.03em] text-slate-950">
-            Bienvenido
-          </h1>
-          <p className="mb-8 mt-2 leading-6 text-slate-600">
-            Accede con la cuenta creada por el administrador de tu óptica.
-          </p>
-
+      <main className="flex items-center justify-center px-4 py-10 sm:px-6 sm:py-12">
+        <AuthCard
+          eyebrow="Acceso seguro"
+          title="Bienvenido"
+          description="Accede con la cuenta creada por el administrador de tu óptica."
+          logoSubtitle="De la receta a la entrega"
+          logoClassName="lg:hidden"
+        >
           {notice === 'managed' ? (
-            <p className="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-              El registro no es público. Solicita acceso al administrador de LensSpace.
-            </p>
+            <Alert tone="warning" className="mb-5">El registro no es público. Solicita acceso al administrador de LensSpace.</Alert>
           ) : null}
-
           <LoginForm next={next} />
-        </div>
+        </AuthCard>
       </main>
     </div>
   )

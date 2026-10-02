@@ -1,8 +1,7 @@
 import { redirect } from 'next/navigation'
 
-import { UpdatePasswordForm } from '@/features/auth/components'
+import { AuthCard, UpdatePasswordForm } from '@/features/auth/components'
 import { createClient } from '@/lib/supabase/server'
-import { LensSpaceLogo } from '@/shared/components'
 
 export default async function SetPasswordPage() {
   const supabase = await createClient()
@@ -10,20 +9,15 @@ export default async function SetPasswordPage() {
   if (!user) redirect('/login')
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-6 py-12">
-      <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 shadow-xl">
-        <LensSpaceLogo subtitle="Activación de cuenta" />
-        <p className="mt-8 text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">
-          Acceso seguro
-        </p>
-        <h1 className="mt-2 font-display text-3xl font-bold tracking-[-0.03em] text-slate-950">
-          Crea tu contraseña
-        </h1>
-        <p className="mb-8 mt-2 text-slate-600">
-          Termina de activar tu cuenta para entrar a la óptica.
-        </p>
+    <main className="flex min-h-screen items-center justify-center bg-canvas px-4 py-10 sm:px-6 sm:py-12">
+      <AuthCard
+        eyebrow="Acceso seguro"
+        title="Crea tu contraseña"
+        description="Termina de activar tu cuenta para entrar a la óptica."
+        logoSubtitle="Activación de cuenta"
+      >
         <UpdatePasswordForm />
-      </div>
+      </AuthCard>
     </main>
   )
 }

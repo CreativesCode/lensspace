@@ -1,9 +1,11 @@
 'use client'
 
+import { KeyRound } from 'lucide-react'
 import { useActionState } from 'react'
 
 import { updatePassword, type PasswordState } from '../actions'
 import { PasswordInput } from '@/shared/components'
+import { Alert, Button, Field } from '@/shared/ui'
 
 const initialState: PasswordState = { error: null }
 
@@ -14,39 +16,17 @@ export function UpdatePasswordForm() {
   )
 
   return (
-    <form action={formAction} className="space-y-5">
-      <label className="block text-sm font-medium text-slate-700">
-        Nueva contraseña
-        <PasswordInput
-          name="password"
-          minLength={10}
-          autoComplete="new-password"
-          required
-          className="mt-1 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-sky-600 focus:ring-4 focus:ring-sky-100"
-        />
-      </label>
-      <label className="block text-sm font-medium text-slate-700">
-        Repite la contraseña
-        <PasswordInput
-          name="passwordConfirmation"
-          minLength={10}
-          autoComplete="new-password"
-          required
-          className="mt-1 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-sky-600 focus:ring-4 focus:ring-sky-100"
-        />
-      </label>
-      {state.error ? (
-        <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-          {state.error}
-        </p>
-      ) : null}
-      <button
-        type="submit"
-        disabled={pending}
-        className="w-full rounded-xl bg-sky-700 px-4 py-3 font-semibold text-white hover:bg-sky-800 disabled:opacity-60"
-      >
+    <form action={formAction} className="flex flex-col gap-[18px]">
+      <Field label="Nueva contraseña" help="Mínimo 10 caracteres.">
+        <PasswordInput name="password" minLength={10} autoComplete="new-password" required />
+      </Field>
+      <Field label="Repite la contraseña">
+        <PasswordInput name="passwordConfirmation" minLength={10} autoComplete="new-password" required />
+      </Field>
+      {state.error ? <Alert tone="danger" role="alert">{state.error}</Alert> : null}
+      <Button type="submit" size="lg" icon={KeyRound} block disabled={pending}>
         {pending ? 'Guardando…' : 'Guardar contraseña'}
-      </button>
+      </Button>
     </form>
   )
 }
