@@ -27,6 +27,10 @@ answers HTTP 500 after sending, so attempts are stored as failed (QA-61).
   Scraping eltoque.com is not viable (Cloudflare challenge); the official API needs
   the `ELTOQUE_API_TOKEN` Edge Function secret. Default order: business rate →
   last order rate → 420; a sale can still override it.
+  **Status 2026-10-02: waiting for the elTOQUE token** (requested by the product
+  owner; approval may take up to a week). Then set the `ELTOQUE_API_TOKEN` secret.
+- OpenWA false negative (QA-61): our side done; the VPS fix (Vault session UUID,
+  OpenWA logs) stays pending with the product owner.
 - WhatsApp messages carry the shop name, the sender's name and phone (QA-08 follow-up).
 
 ## Test accounts and data

@@ -340,6 +340,7 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
   1. Fix OpenWA so a successful send returns 2xx and a `messageId`, starting with the session UUID check.
   2. Harden the Edge Function: a 5xx/timeout after the request reached OpenWA is ambiguous. Record it as `failed` with `failure_code 'provider_unconfirmed'`, or add an `outcome 'unconfirmed'` if the check constraint allows it, plus a Spanish history label such as 'WhatsApp enviado sin confirmación del proveedor'. Never offer an automatic retry for it.
   3. Keep the raw provider body (truncated) when it is not JSON.
+- **Status (2026-10-02): PENDING on the VPS (product owner).** Our side is done; the OpenWA fix stays open until the product owner checks the Vault session id and the OpenWA logs.
 - **Done (2026-10-02, our side):** the Edge Function records a 5xx answer as `failure_code 'provider_unconfirmed'` (non-JSON bodies kept, truncated) and `get_order_timeline` labels it 'WhatsApp enviado sin confirmación del proveedor' (migration `20261002195414`). The 6 historical `provider_http_500` attempts keep their old code. Still pending: the OpenWA fix on the VPS (session UUID in Vault).
 - **Copy polish (low):** the payment message should state the amount paid and format money as '54 100,00 CUP' (es-CU grouping) instead of '54100.00'.
 - **Verify:** continue JAV-2026-000018 → verificar:
@@ -491,6 +492,7 @@ Target for a solo owner on a phone:
   - `adopt_market_usd_rate(org)` (owner/seller with `optical_sales`) copies that value to `organizations.usd_to_cup_rate`; it takes no rate parameter, so it cannot be faked. The rate stays until the next tap; a second tap on the same day reuses it without a network call ('Usar tasa de hoy').
   - Default rate order in `/sales` and the `/catalog` simulator: business rate → last order rate → 420. The seller can still type another rate for one sale.
   - Migration `20261002194704_add_eltoque_exchange_rate.sql`. Verified: without a token the button shows 'Falta configurar el acceso a elTOQUE.'; with a seeded market row it set 455, kept it after a reload, and `/catalog` defaulted to 455. Not verified: a real elTOQUE response (no token yet). Needs: the `ELTOQUE_API_TOKEN` secret.
+  - **Status (2026-10-02): WAITING.** The product owner requested the token at tasas-token.eltoque.com (origin declared as server; elTOQUE says approval can take up to a week). When it arrives: store it as the Edge Function secret `ELTOQUE_API_TOKEN`, press 'Actualizar con elTOQUE' once and confirm the rate and `market_exchange_rates` row. Until then the button explains the missing configuration and sales default to the last order rate.
 
 ### QA-23 Password recovery (medium, S)
 - **Problem:** a sole owner who forgets the password has no way back except the Supabase dashboard.
@@ -858,7 +860,7 @@ Measured in the production build:
 
 All on the remote Supabase project. Real users' passwords are deliberately not recorded. Every QA customer has `messaging_consent = false` and fake numbers +53 5000 0xxx, and no real WhatsApp was sent.
 
-- **2026-10-02 (pending items + Phase 3):** QAS orders QAS-2026-000005..8 (Monofocal · Blanco, paid; 000006..8 with an in-house lens job), customer 'QA PILOTO Clave Cliente'. **Cleanup required:** the seeded `market_exchange_rates` row for 2026-10-02 (`rates->>'QA' = 'seed'`, 455 CUP) and the QAS rate adopted from it; while that row exists the real elTOQUE rate is not fetched that day. The MCP declined the cleanup statement.
+- **2026-10-02 (pending items + Phase 3):** QAS orders QAS-2026-000005..8 (Monofocal · Blanco, paid; 000006..8 with an in-house lens job), customer 'QA PILOTO Clave Cliente'. The seeded `market_exchange_rates` row (455 CUP) and the QAS rate adopted from it were deleted by the product owner on 2026-10-02 (verified: 0 market rows, 0 organizations with an adopted rate).
 
 **Organizations**
 
