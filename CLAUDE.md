@@ -15,7 +15,7 @@ no una plantilla nueva: no se regenera, se extiende.
 
 - Reglas de negocio: `BUSINESS_LOGIC.md` (fuente de verdad del dominio).
 - Diseño visual: `docs/design/` manda sobre cualquier design system generico
-  (ver `.titan/memory/project/2026-09-13-design-system.md`). Los estilos de
+  (ver `.titan/memory/project/2026-10-01-ui-2-0-design-system.md`). Los estilos de
   `.claude/design-systems/` solo aplican si el usuario los pide explicitamente.
 - Idioma: identificadores, comentarios, commits y rutas tecnicas en ingles; el copy
   visible al usuario final en español.

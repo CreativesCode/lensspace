@@ -1,5 +1,8 @@
 # Design system and view precedence
 
+> Superseded on 2026-10-01 by `2026-10-01-ui-2-0-design-system.md`. The Vision Studio
+> files referenced below were removed from `docs/design/`.
+
 Date: 2026-09-13
 
 ## Decision

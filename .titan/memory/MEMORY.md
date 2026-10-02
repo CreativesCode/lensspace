@@ -13,6 +13,7 @@ Read relevant entries only. Store decisions with dates and evidence.
 
 ## Project decisions
 
+- [2026-10-01 — UI 2.0 design system and view precedence](project/2026-10-01-ui-2-0-design-system.md)
 - [2026-10-01 — Dual-agent tooling: Claude Code and Codex](project/2026-10-01-dual-agent-tooling.md)
 - [2026-10-01 — Portable Codex tooling](project/2026-10-01-portable-codex-tooling.md)
 - [2026-09-21 — Manual integrado de LensSpace](project/2026-09-21-manual-generator.md)
@@ -33,7 +34,7 @@ Read relevant entries only. Store decisions with dates and evidence.
 - [2026-09-13 — Cash payments, balances and delivery](project/2026-09-13-payments-balances-delivery.md)
 - [2026-09-13 — Quotation acceptance and immutable order snapshots](project/2026-09-13-quotation-order-snapshots.md)
 - [2026-09-13 — Catalog pricing and advisory rules](project/2026-09-13-catalog-pricing.md)
-- [2026-09-13 — Design system and view precedence](project/2026-09-13-design-system.md)
+- [2026-09-13 — Design system and view precedence (superseded)](project/2026-09-13-design-system.md)
 - [2026-09-12 — Application stack](project/2026-09-12-application-stack.md)
 - [2026-09-12 — Vision Studio product scope](project/2026-09-12-vision-studio-scope.md)
 
