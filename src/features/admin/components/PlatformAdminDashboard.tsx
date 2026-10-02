@@ -1,4 +1,6 @@
-import Link from 'next/link'
+import { Building } from 'lucide-react'
+
+import { ButtonLink, Card, CardHeader, EmptyState, ListItem, StatCard } from '@/shared/ui'
 
 import type { PlatformOrganization } from './PlatformAdminWorkspace'
 
@@ -10,7 +12,7 @@ export function PlatformAdminDashboard({ organizations }: { organizations: Platf
   const orders = organizations.reduce((sum, item) => sum + (item.usage?.orders ?? 0), 0)
   const members = organizations.reduce((sum, item) => sum + (item.usage?.members ?? 0), 0)
   const openJobs = organizations.reduce((sum, item) => sum + (item.usage?.openProductionJobs ?? 0), 0)
-  const metrics = [
+  const metrics: [string, number, string][] = [
     ['Organizaciones', total, `${active} activas`],
     ['Clientes', customers, 'en toda la plataforma'],
     ['Pedidos', orders, 'históricos'],
@@ -18,17 +20,34 @@ export function PlatformAdminDashboard({ organizations }: { organizations: Platf
     ['Producción abierta', openJobs, 'trabajos en curso'],
     ['En prueba', trials, 'suscripciones trial'],
   ]
+  const recent = organizations.slice(0, 6)
 
   return (
-    <div className="mt-7 space-y-6">
+    <div className="flex flex-col gap-5">
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {metrics.map(([label, value, detail]) => <article key={label} className="rounded-[10px] border border-[#E3EFED] bg-white p-5"><p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#5F716C]">{label}</p><p className="mt-2 font-display text-3xl font-bold text-[#07322F]">{value}</p><p className="mt-1 text-xs text-[#5F716C]">{detail}</p></article>)}
+        {metrics.map(([label, value, hint]) => <StatCard key={label} label={label} value={value} hint={hint} />)}
       </div>
-      <section className="rounded-[10px] border border-[#E3EFED] bg-white">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#EEF5F4] p-5"><div><h2 className="font-display text-lg font-semibold text-[#07322F]">Actividad de organizaciones</h2><p className="mt-1 text-sm text-[#5F716C]">Las ópticas con actividad más reciente.</p></div><Link href="/organizations" className="rounded-[7px] bg-[#0D7A72] px-4 py-2.5 text-sm font-semibold text-white">Gestionar organizaciones</Link></div>
-        <div className="divide-y divide-[#EEF5F4]">{organizations.slice(0, 6).map((organization) => <div key={organization.id} className="grid gap-2 p-4 sm:grid-cols-[1fr_auto_auto] sm:items-center"><div><p className="font-semibold text-[#07322F]">{organization.name}</p><p className="text-xs text-[#5F716C]">{organization.order_prefix} · {organization.owners.map(({ display_name }) => display_name).join(', ') || 'Sin propietario'}</p></div><span className="text-sm text-[#4A5B58]">{organization.usage?.orders ?? 0} pedidos</span><span className="text-xs text-[#5F716C]">{organization.usage?.lastActivityAt ? new Date(organization.usage.lastActivityAt).toLocaleDateString('es-CU') : 'Sin actividad'}</span></div>)}</div>
-        {!organizations.length ? <p className="p-6 text-sm text-[#5F716C]">Aún no hay organizaciones. Créala desde el área de organizaciones.</p> : null}
-      </section>
+      <Card padded={false}>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line p-5">
+          <div className="flex flex-col gap-1">
+            <CardHeader title="Actividad de organizaciones" />
+            <p className="text-[13px] text-text-muted">Las ópticas con actividad más reciente.</p>
+          </div>
+          <ButtonLink href="/organizations" variant="secondary" size="sm">Gestionar organizaciones</ButtonLink>
+        </div>
+        {recent.map((organization, index) => (
+          <ListItem
+            key={organization.id}
+            avatarName={organization.name}
+            title={organization.name}
+            meta={`${organization.order_prefix} · ${organization.owners.map(({ display_name }) => display_name).join(', ') || 'Sin propietario'}`}
+            trailing={<span className="font-display text-[15px] font-semibold tabular-nums text-ink">{organization.usage?.orders ?? 0} pedidos</span>}
+            badge={<span className="text-[12px] text-text-muted">{organization.usage?.lastActivityAt ? new Date(organization.usage.lastActivityAt).toLocaleDateString('es-CU') : 'Sin actividad'}</span>}
+            last={index === recent.length - 1}
+          />
+        ))}
+        {!organizations.length ? <div className="p-5"><EmptyState icon={Building} title="Aún no hay organizaciones" description="Créala desde el área de organizaciones." /></div> : null}
+      </Card>
     </div>
   )
 }

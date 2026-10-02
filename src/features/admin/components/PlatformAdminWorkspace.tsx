@@ -1,10 +1,11 @@
 'use client'
 
-import { FormEvent, useEffect, useMemo, useState, useTransition } from 'react'
+import { Building, LifeBuoy, Plus, SearchX } from 'lucide-react'
+import { FormEvent, useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { FilterPanel, FormSelect } from '@/shared/components'
-import { Dialog } from '@/shared/ui'
+import { Alert, Badge, Button, ButtonLink, Card, CardHeader, Dialog, EmptyState, Field, Input, Switch, Textarea, Toast } from '@/shared/ui'
 import { OrganizationOnboardingForm } from './OrganizationOnboardingForm'
 
 const modules = [
@@ -28,16 +29,16 @@ export type PlatformOrganization = {
   supportSession?: { id: number; reason: string; started_at: string; expires_at: string }
 }
 
-const field = 'w-full rounded-[7px] border border-[#DCECEA] bg-[#FBFEFD] px-3 py-2.5 text-sm text-[#07322F] outline-none focus:border-[#0D7A72] focus:ring-4 focus:ring-[#E2F4F1]'
-
 export function PlatformAdminWorkspace({ organizations }: { organizations: PlatformOrganization[] }) {
   const supabase = useMemo(() => createClient(), [])
   const router = useRouter()
   const [openId, setOpenId] = useState<number | null>(null)
+  const [enabledModules, setEnabledModules] = useState<string[]>([])
   const [createOpen, setCreateOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
+  const [toast, setToast] = useState('')
   const [pending, startTransition] = useTransition()
   const filteredOrganizations = organizations.filter((organization) => {
     const term = query.trim().toLocaleLowerCase('es')
@@ -46,21 +47,23 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
   })
   const activeFilterCount = Number(Boolean(query.trim())) + Number(statusFilter !== 'all')
   const clearFilters = () => { setQuery(''); setStatusFilter('all') }
+  const openOrganization = organizations.find(({ id }) => id === openId) ?? null
 
-  useEffect(() => {
-    function closeOnEscape(event: KeyboardEvent) {
-      if (event.key === 'Escape') { setOpenId(null); setCreateOpen(false) }
-    }
-    window.addEventListener('keydown', closeOnEscape)
-    return () => window.removeEventListener('keydown', closeOnEscape)
-  }, [])
+  function openDetails(organization: PlatformOrganization) {
+    setError('')
+    setEnabledModules(organization.modules.filter(({ is_enabled }) => is_enabled).map(({ module_key }) => module_key))
+    setOpenId(organization.id)
+  }
+
+  function toggleModule(key: string, enabled: boolean) {
+    setEnabledModules((current) => enabled ? [...current, key] : current.filter((entry) => entry !== key))
+  }
 
   function save(event: FormEvent<HTMLFormElement>, organizationId: number) {
     event.preventDefault()
     const form = new FormData(event.currentTarget)
-    const selectedModules = modules.filter(([key]) => form.get(key) === 'on').map(([key]) => key)
     startTransition(async () => {
-      const { error } = await supabase.rpc('update_platform_organization', {
+      const { error: saveError } = await supabase.rpc('update_platform_organization', {
         target_organization_id: organizationId,
         target_organization_status: String(form.get('organizationStatus')),
         target_subscription_status: String(form.get('subscriptionStatus')),
@@ -69,11 +72,12 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
         target_billing_period: String(form.get('billingPeriod')),
         target_starts_on: String(form.get('startsOn')),
         target_expires_on: String(form.get('expiresOn')),
-        target_module_keys: selectedModules,
+        target_module_keys: modules.filter(([key]) => enabledModules.includes(key)).map(([key]) => key),
         change_reason: String(form.get('reason')),
       } as never)
-      if (error) return setMessage(error.message)
-      setMessage('Contrato y controles operativos actualizados con auditoría.')
+      if (saveError) return setError(saveError.message)
+      setError('')
+      setToast('Contrato y controles operativos actualizados con auditoría.')
       router.refresh()
     })
   }
@@ -82,51 +86,112 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
     event.preventDefault()
     const form = new FormData(event.currentTarget)
     startTransition(async () => {
-      const { error } = await supabase.rpc('begin_platform_support_session', {
+      const { error: supportError } = await supabase.rpc('begin_platform_support_session', {
         target_organization_id: organizationId,
         support_reason: String(form.get('supportReason')),
         duration_minutes: Number(form.get('duration')),
       } as never)
-      if (error) return setMessage(error.message)
-      setMessage('Sesión de asistencia iniciada y auditada.')
+      if (supportError) return setError(supportError.message)
+      setError('')
+      setToast('Sesión de asistencia iniciada y auditada.')
       router.refresh()
     })
   }
 
   function endSupport(sessionId: number) {
     startTransition(async () => {
-      const { error } = await supabase.rpc('end_platform_support_session', { target_session_id: sessionId } as never)
-      if (error) return setMessage(error.message)
-      setMessage('Sesión de asistencia cerrada.')
+      const { error: endError } = await supabase.rpc('end_platform_support_session', { target_session_id: sessionId } as never)
+      if (endError) return setError(endError.message)
+      setError('')
+      setToast('Sesión de asistencia cerrada.')
       router.refresh()
     })
   }
 
-  return <section className="mt-8">
-    <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D7A72]">Control de plataforma</p><h2 className="mt-1 font-display text-xl font-bold text-[#07322F]">Directorio de organizaciones</h2></div><button type="button" onClick={() => setCreateOpen(true)} className="rounded-[7px] bg-[#0D7A72] px-4 py-2.5 text-sm font-semibold text-white">+ Nueva organización</button></div>
-    <div className="mt-5"><FilterPanel title="Filtrar organizaciones" eyebrow="Administración" activeFilterCount={activeFilterCount} resultCount={filteredOrganizations.length} onClear={clearFilters}><div className="grid gap-3"><label className="text-xs font-semibold text-[#4A5B58]">Organización<input value={query} onChange={(event) => setQuery(event.target.value)} className={`${field} mt-1`} type="search" placeholder="Nombre, prefijo o propietario" aria-label="Buscar organizaciones" /></label><label className="text-xs font-semibold text-[#4A5B58]">Estado<FormSelect className="mt-1" ariaLabel="Filtrar por estado" value={statusFilter} onValueChange={setStatusFilter} options={[{ value: 'all', label: 'Todos los estados' }, { value: 'active', label: 'Activas' }, { value: 'suspended', label: 'Suspendidas' }, { value: 'archived', label: 'Archivadas' }]} /></label></div></FilterPanel></div>
-    <div className="mt-4 space-y-3">{filteredOrganizations.map(organization => {
-      const subscription = organization.subscription
-      const isOpen = openId === organization.id
-      return <article key={organization.id} className="overflow-hidden rounded-[10px] border border-[#E3EFED] bg-white">
-        <button type="button" onClick={() => setOpenId(organization.id)} className="flex w-full flex-wrap items-center justify-between gap-4 p-5 text-left hover:bg-[#F7FBFA]">
-          <div><span className="font-display text-lg font-bold text-[#07322F]">{organization.name}</span><p className="mt-1 text-xs text-[#5F716C]">{organization.order_prefix} · {organization.owners.map(owner => owner.display_name).join(', ') || 'Sin propietario'} · {organization.branches.length} sucursal(es)</p></div>
-          <div className="flex items-center gap-2"><span className={`rounded px-2 py-1 text-[11px] font-semibold ${organization.status === 'active' ? 'bg-[#D9F5EE] text-[#07655C]' : 'bg-[#FFF0EB] text-[#C23C1C]'}`}>{organizationStatusLabels[organization.status] ?? 'Estado desconocido'}</span><span className="text-sm font-semibold text-[#0D7A72]">Ver detalles</span></div>
+  return <div className="flex flex-col gap-4">
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <p className="text-sm text-text-muted">{filteredOrganizations.length === 1 ? '1 organización' : `${filteredOrganizations.length} organizaciones`}</p>
+      <div className="flex items-center gap-2">
+        <FilterPanel title="Filtrar organizaciones" eyebrow="Administración" activeFilterCount={activeFilterCount} resultCount={filteredOrganizations.length} onClear={clearFilters}>
+          <div className="flex flex-col gap-4">
+            <Field label="Organización"><Input value={query} onChange={(event) => setQuery(event.target.value)} type="search" placeholder="Nombre, prefijo o propietario" /></Field>
+            <Field label="Estado"><FormSelect ariaLabel="Filtrar por estado" value={statusFilter} onValueChange={setStatusFilter} options={[{ value: 'all', label: 'Todos los estados' }, { value: 'active', label: 'Activas' }, { value: 'suspended', label: 'Suspendidas' }, { value: 'archived', label: 'Archivadas' }]} /></Field>
+          </div>
+        </FilterPanel>
+        <Button icon={Plus} onClick={() => setCreateOpen(true)}>Nueva organización</Button>
+      </div>
+    </div>
+
+    {filteredOrganizations.map((organization) => (
+      <Card key={organization.id} padded={false} className="overflow-hidden">
+        <button type="button" onClick={() => openDetails(organization)} className="flex w-full flex-wrap items-center justify-between gap-3 p-5 text-left hover:bg-[#F7FBFA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-action">
+          <span className="flex min-w-0 flex-col gap-1">
+            <span className="font-display text-[17px] font-semibold text-ink">{organization.name}</span>
+            <span className="text-[13px] text-text-muted">{organization.order_prefix} · {organization.owners.map((owner) => owner.display_name).join(', ') || 'Sin propietario'} · {organization.branches.length === 1 ? '1 sucursal' : `${organization.branches.length} sucursales`}</span>
+          </span>
+          <span className="flex items-center gap-3">
+            <Badge tone={organization.status === 'active' ? 'success' : 'danger'}>{organizationStatusLabels[organization.status] ?? 'Estado desconocido'}</Badge>
+            <span className="text-[13px] font-semibold text-action">Ver detalles</span>
+          </span>
         </button>
-        <div className="grid grid-cols-2 gap-px border-y border-[#EEF5F4] bg-[#EEF5F4] sm:grid-cols-3 lg:grid-cols-6">{[
-          ['Clientes', organization.usage?.customers ?? 0], ['Pedidos', organization.usage?.orders ?? 0], ['Miembros', organization.usage?.members ?? 0], ['Producción abierta', organization.usage?.openProductionJobs ?? 0], ['Mensajes', organization.usage?.notificationAttempts ?? 0], ['Última actividad', organization.usage?.lastActivityAt ? new Date(organization.usage.lastActivityAt).toLocaleDateString('es-CU') : '—'],
-        ].map(([label, value]) => <div key={label} className="bg-[#FBFEFD] p-3"><p className="text-[11px] text-[#5F716C]">{label}</p><p className="mt-1 font-display text-sm font-bold text-[#07322F]">{value}</p></div>)}</div>
-        {isOpen ? <div role="dialog" aria-modal="true" aria-labelledby={`organization-${organization.id}-title`} className="fixed inset-0 z-50 grid place-items-center overflow-hidden bg-[#07322F]/60 p-3 sm:p-4" onMouseDown={(event) => { if (event.target === event.currentTarget) setOpenId(null) }}><div className="max-h-[90vh] min-w-0 w-full max-w-6xl overflow-x-hidden overflow-y-auto rounded-[12px] bg-white shadow-2xl"><div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#E3EFED] bg-white p-5"><div className="min-w-0"><p className="truncate text-xs text-[#5F716C]">{organization.order_prefix} · ID {organization.id}</p><h2 id={`organization-${organization.id}-title`} className="truncate font-display text-xl font-bold text-[#07322F]">{organization.name}</h2></div><button type="button" onClick={() => setOpenId(null)} className="rounded-lg border border-[#DCECEA] px-3 py-2 text-sm font-semibold text-[#07322F]">Cerrar</button></div><div className="grid min-w-0 gap-6 p-4 sm:p-5 xl:grid-cols-[2fr_1fr]">
-          <form onSubmit={event => save(event, organization.id)} className="min-w-0 space-y-4"><h3 className="font-display font-semibold text-[#07322F]">Contrato y operación</h3><div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-4"><FormSelect name="organizationStatus" ariaLabel="Estado de la organización" defaultValue={organization.status} options={[{ value: 'active', label: 'Organización activa' }, { value: 'suspended', label: 'Suspendida' }, { value: 'archived', label: 'Archivada' }]} /><FormSelect name="subscriptionStatus" ariaLabel="Estado de la suscripción" defaultValue={subscription?.status} options={[{ value: 'trial', label: 'Prueba' }, { value: 'active', label: 'Activa' }, { value: 'expired', label: 'Vencida' }, { value: 'suspended', label: 'Suspendida' }]} /><input aria-label="Importe" name="amount" type="number" min="0" step="0.01" defaultValue={subscription?.amount ?? 0} className={field} /><input aria-label="Moneda" name="currency" pattern="[A-Za-z]{3}" defaultValue={subscription?.currency ?? 'USD'} className={field} /><FormSelect name="billingPeriod" ariaLabel="Periodicidad" defaultValue={subscription?.billing_period ?? 'monthly'} options={[{ value: 'monthly', label: 'Mensual' }, { value: 'quarterly', label: 'Trimestral' }, { value: 'semiannual', label: 'Semestral' }, { value: 'annual', label: 'Anual' }, { value: 'custom', label: 'Personalizada' }]} /><input aria-label="Inicio" name="startsOn" type="date" defaultValue={subscription?.starts_on} className={field} /><input aria-label="Vencimiento" name="expiresOn" type="date" defaultValue={subscription?.expires_on} className={field} /></div>
-            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">{modules.map(([key, label]) => <label key={key} className="flex items-center gap-2 rounded-lg border border-[#EEF5F4] p-3 text-sm text-[#4A5B58]"><input type="checkbox" name={key} defaultChecked={organization.modules.some(module => module.module_key === key && module.is_enabled)} />{label}</label>)}</div>
-            <textarea name="reason" minLength={10} maxLength={500} required placeholder="Motivo auditado del cambio" className={field} /><button disabled={pending} className="rounded-[7px] bg-[#0D7A72] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">Guardar cambios</button>
-          </form>
-          <div><h3 className="font-display font-semibold text-[#07322F]">Asistencia auditada</h3>{organization.supportSession ? <div className="mt-3 rounded-lg bg-[#FFF6F2] p-4 text-sm text-[#7A3A26]"><p className="font-semibold">Sesión activa hasta {new Date(organization.supportSession.expires_at).toLocaleTimeString('es-CU')}</p><p className="mt-1 text-xs">{organization.supportSession.reason}</p><button type="button" disabled={pending} onClick={() => endSupport(organization.supportSession!.id)} className="mt-3 font-semibold underline">Cerrar asistencia</button></div> : <form onSubmit={event => startSupport(event, organization.id)} className="mt-3 space-y-3"><textarea name="supportReason" minLength={10} maxLength={500} required placeholder="Motivo y alcance de la asistencia" className={field} /><FormSelect name="duration" ariaLabel="Duración de la asistencia" defaultValue="30" options={[{ value: '15', label: '15 minutos' }, { value: '30', label: '30 minutos' }, { value: '60', label: '1 hora' }, { value: '120', label: '2 horas' }]} /><button disabled={pending} className="w-full rounded-[7px] border border-[#0D7A72] px-4 py-2.5 text-sm font-semibold text-[#0D7A72] disabled:opacity-50">Iniciar asistencia</button></form>}<a href="/catalog" className="mt-4 block text-sm font-semibold text-[#0D7A72] underline">Administrar catálogo base</a></div>
-        </div></div></div> : null}
-      </article>
-    })}</div>
-    {!filteredOrganizations.length ? <p className="mt-4 rounded-[10px] border border-dashed border-[#DCECEA] bg-white p-8 text-center text-sm text-[#5F716C]">No hay organizaciones que coincidan con los filtros.</p> : null}
+        <dl className="grid grid-cols-2 gap-px border-t border-line bg-line sm:grid-cols-3 lg:grid-cols-6">
+          {[
+            ['Clientes', organization.usage?.customers ?? 0], ['Pedidos', organization.usage?.orders ?? 0], ['Miembros', organization.usage?.members ?? 0], ['Producción abierta', organization.usage?.openProductionJobs ?? 0], ['Mensajes', organization.usage?.notificationAttempts ?? 0], ['Última actividad', organization.usage?.lastActivityAt ? new Date(organization.usage.lastActivityAt).toLocaleDateString('es-CU') : '—'],
+          ].map(([label, value]) => <div key={label} className="bg-canvas px-4 py-3"><dt className="text-[12px] text-text-muted">{label}</dt><dd className="mt-0.5 font-display text-[15px] font-semibold tabular-nums text-ink">{value}</dd></div>)}
+        </dl>
+      </Card>
+    ))}
+    {!organizations.length ? <EmptyState icon={Building} title="Aún no hay organizaciones" action={<Button icon={Plus} onClick={() => setCreateOpen(true)}>Nueva organización</Button>} /> : null}
+    {organizations.length > 0 && !filteredOrganizations.length ? <EmptyState icon={SearchX} title="Sin organizaciones con estos filtros" action={<Button variant="ghost" onClick={clearFilters}>Limpiar filtros</Button>} /> : null}
+
+    <Dialog
+      open={Boolean(openOrganization)}
+      onClose={() => { if (!pending) setOpenId(null) }}
+      eyebrow={openOrganization ? `${openOrganization.order_prefix} · ID ${openOrganization.id}` : undefined}
+      title={openOrganization?.name ?? ''}
+      size="xl"
+    >
+      {openOrganization ? <div key={openOrganization.id} className="grid min-w-0 gap-6 xl:grid-cols-[2fr_1fr]">
+        <form onSubmit={(event) => save(event, openOrganization.id)} className="flex min-w-0 flex-col gap-4">
+          <CardHeader title="Contrato y operación" />
+          <div className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Field label="Organización"><FormSelect name="organizationStatus" ariaLabel="Estado de la organización" defaultValue={openOrganization.status} options={[{ value: 'active', label: 'Activa' }, { value: 'suspended', label: 'Suspendida' }, { value: 'archived', label: 'Archivada' }]} /></Field>
+            <Field label="Suscripción"><FormSelect name="subscriptionStatus" ariaLabel="Estado de la suscripción" defaultValue={openOrganization.subscription?.status} options={[{ value: 'trial', label: 'Prueba' }, { value: 'active', label: 'Activa' }, { value: 'expired', label: 'Vencida' }, { value: 'suspended', label: 'Suspendida' }]} /></Field>
+            <Field label="Importe"><Input name="amount" type="number" inputMode="decimal" min="0" step="0.01" defaultValue={openOrganization.subscription?.amount ?? 0} numeric /></Field>
+            <Field label="Moneda"><Input name="currency" pattern="[A-Za-z]{3}" defaultValue={openOrganization.subscription?.currency ?? 'USD'} /></Field>
+            <Field label="Periodicidad"><FormSelect name="billingPeriod" ariaLabel="Periodicidad" defaultValue={openOrganization.subscription?.billing_period ?? 'monthly'} options={[{ value: 'monthly', label: 'Mensual' }, { value: 'quarterly', label: 'Trimestral' }, { value: 'semiannual', label: 'Semestral' }, { value: 'annual', label: 'Anual' }, { value: 'custom', label: 'Personalizada' }]} /></Field>
+            <Field label="Inicio"><Input name="startsOn" type="date" defaultValue={openOrganization.subscription?.starts_on} /></Field>
+            <Field label="Vencimiento"><Input name="expiresOn" type="date" defaultValue={openOrganization.subscription?.expires_on} /></Field>
+          </div>
+          <Field as="div" label="Módulos">
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {modules.map(([key, label]) => <div key={key} className="flex min-h-11 items-center rounded-control border border-line px-3"><Switch checked={enabledModules.includes(key)} onChange={(enabled) => toggleModule(key, enabled)} label={label} /></div>)}
+            </div>
+          </Field>
+          <Field label="Motivo del cambio" help="Queda registrado en la auditoría."><Textarea name="reason" minLength={10} maxLength={500} required rows={3} /></Field>
+          {error ? <Alert tone="danger" role="alert">{error}</Alert> : null}
+          <div className="flex justify-end"><Button type="submit" variant="ink" disabled={pending}>{pending ? 'Guardando…' : 'Guardar cambios'}</Button></div>
+        </form>
+        <div className="flex flex-col gap-4">
+          <CardHeader title="Asistencia auditada" />
+          {openOrganization.supportSession ? (
+            <Alert tone="warning" icon={LifeBuoy} title={`Sesión activa hasta ${new Date(openOrganization.supportSession.expires_at).toLocaleTimeString('es-CU')}`}>
+              {openOrganization.supportSession.reason}
+              <span className="mt-3 block"><Button size="sm" variant="secondary" disabled={pending} onClick={() => endSupport(openOrganization.supportSession!.id)}>Cerrar asistencia</Button></span>
+            </Alert>
+          ) : (
+            <form onSubmit={(event) => startSupport(event, openOrganization.id)} className="flex flex-col gap-4">
+              <Field label="Motivo y alcance"><Textarea name="supportReason" minLength={10} maxLength={500} required rows={3} /></Field>
+              <Field label="Duración"><FormSelect name="duration" ariaLabel="Duración de la asistencia" defaultValue="30" options={[{ value: '15', label: '15 minutos' }, { value: '30', label: '30 minutos' }, { value: '60', label: '1 hora' }, { value: '120', label: '2 horas' }]} /></Field>
+              <Button type="submit" variant="secondary" icon={LifeBuoy} block disabled={pending}>Iniciar asistencia</Button>
+            </form>
+          )}
+          <ButtonLink href="/catalog" variant="ghost">Administrar catálogo base</ButtonLink>
+        </div>
+      </div> : null}
+    </Dialog>
+
     <Dialog open={createOpen} onClose={() => setCreateOpen(false)} eyebrow="Alta de tenant" title="Nueva organización" size="xl"><OrganizationOnboardingForm onCreated={() => setCreateOpen(false)} /></Dialog>
-    {message ? <p role="status" className="mt-4 rounded-lg bg-[#F0FBF9] px-4 py-3 text-sm text-[#0D7A72]">{message}</p> : null}
-  </section>
+    <Toast message={toast} onDismiss={() => setToast('')} />
+  </div>
 }

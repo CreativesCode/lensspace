@@ -1,8 +1,10 @@
 'use client'
 
+import { RefreshCcw } from 'lucide-react'
 import { FormEvent, useEffect, useMemo, useState, useTransition } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { FormSelect } from '@/shared/components'
+import { Alert, Button, Card, CardHeader, Field, Input, StatCard } from '@/shared/ui'
 
 type Option = { id: number; name: string }
 type Seller = { id: string; name: string; branchId: number | null }
@@ -16,6 +18,7 @@ type Metrics = {
 }
 
 const money = (value: number) => Number(value ?? 0).toLocaleString('es-CU', { maximumFractionDigits: 2 })
+const jobTypeLabels: Record<string, string> = { lens: 'cristales', mounting: 'montaje' }
 
 export function OwnerAnalyticsDashboard({ organizationId, branches, sellers, defaultFrom, defaultTo }: { organizationId: number; branches: Option[]; sellers: Seller[]; defaultFrom: string; defaultTo: string }) {
   const supabase = useMemo(() => createClient(), [])
@@ -55,26 +58,41 @@ export function OwnerAnalyticsDashboard({ organizationId, branches, sellers, def
     )
   }
 
-  return <section className="mt-7 rounded-[10px] border border-[#E3EFED] bg-white p-5">
-    <div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D7A72]">Analítica</p><h2 className="mt-1 font-display text-xl font-bold text-[#07322F]">Pulso del negocio</h2></div></div>
-    <form onSubmit={load} className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-      <FormSelect name="branch" ariaLabel="Sucursal" options={[{ value: '', label: 'Todas las sucursales' }, ...branches.map(x => ({ value: String(x.id), label: x.name }))]} />
-      <FormSelect name="seller" ariaLabel="Vendedor" options={[{ value: '', label: 'Todos los vendedores' }, ...sellers.map(x => ({ value: x.id, label: x.name }))]} />
-      <input aria-label="Desde" name="from" type="date" defaultValue={defaultFrom} className="rounded-[7px] border border-[#DCECEA] bg-[#FBFEFD] px-3 py-2.5 text-sm" />
-      <input aria-label="Hasta" name="to" type="date" defaultValue={defaultTo} className="rounded-[7px] border border-[#DCECEA] bg-[#FBFEFD] px-3 py-2.5 text-sm" />
-      <button disabled={pending} className="rounded-[7px] bg-[#0D7A72] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">{pending ? 'Calculando…' : 'Actualizar métricas'}</button>
+  return <Card className="flex flex-col gap-5">
+    <div className="flex flex-col gap-1">
+      <p className="text-xs font-bold uppercase tracking-[0.16em] text-action">Analítica</p>
+      <CardHeader title="Pulso del negocio" />
+    </div>
+    <form onSubmit={load} className="grid items-end gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <Field label="Sucursal"><FormSelect name="branch" ariaLabel="Sucursal" options={[{ value: '', label: 'Todas las sucursales' }, ...branches.map(x => ({ value: String(x.id), label: x.name }))]} /></Field>
+      <Field label="Vendedor"><FormSelect name="seller" ariaLabel="Vendedor" options={[{ value: '', label: 'Todos los vendedores' }, ...sellers.map(x => ({ value: x.id, label: x.name }))]} /></Field>
+      <Field label="Desde"><Input name="from" type="date" defaultValue={defaultFrom} /></Field>
+      <Field label="Hasta"><Input name="to" type="date" defaultValue={defaultTo} /></Field>
+      <Button type="submit" icon={RefreshCcw} disabled={pending}>{pending ? 'Calculando…' : 'Actualizar métricas'}</Button>
     </form>
-    {metrics ? <div className="mt-5 space-y-5">
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{[
-        ['Ventas', `${money(metrics.salesCup)} CUP`], ['Cobros', `${money(metrics.collectionsCup)} CUP`], ['Saldo pendiente', `${money(metrics.outstandingCup)} CUP`], ['Pedidos', String(metrics.orders.total)]
-      ].map(([label, value]) => <div key={label} className="rounded-lg bg-[#F0FBF9] p-4"><p className="text-xs text-[#5F716C]">{label}</p><p className="mt-1 font-display text-xl font-bold text-[#07322F]">{value}</p></div>)}</div>
-      <div className="grid gap-4 lg:grid-cols-3"><MetricList title="Por vendedor" rows={metrics.bySeller.map(x => [x.seller_name, `${money(x.sales_cup)} CUP · ${x.order_count}`])} /><MetricList title="Carga de proveedores" rows={metrics.providerLoads.map(x => [x.provider_name, `${x.active_jobs} · ${x.job_type}`])} /><MetricList title="Productos destacados" rows={metrics.topItems.map(x => [x.name, String(x.quantity)])} /></div>
-      <p className="text-xs text-[#5F716C]">Incidencias: {metrics.orders.withIncidents} · Diferencia de caja: {money(metrics.cashDifferenceCup)} CUP · Promedio hasta entrega: {metrics.averageDeliveryHours ?? '—'} h</p>
-    </div> : <p className="mt-5 text-sm text-[#5F716C]">{pending ? 'Cargando indicadores…' : 'No fue posible cargar los indicadores.'}</p>}
-    {message ? <p role="status" className="mt-3 text-sm text-[#C23C1C]">{message}</p> : null}
-  </section>
+    {metrics ? <>
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard label="Ventas" value={money(metrics.salesCup)} unit="CUP" />
+        <StatCard label="Cobros" value={money(metrics.collectionsCup)} unit="CUP" tone="positive" />
+        <StatCard label="Saldo pendiente" value={money(metrics.outstandingCup)} unit="CUP" tone={metrics.outstandingCup > 0 ? 'attention' : 'default'} />
+        <StatCard label="Pedidos" value={metrics.orders.total} hint={`${metrics.orders.withIncidents} con incidencia`} tone={metrics.orders.withIncidents ? 'danger' : 'default'} />
+      </div>
+      <div className="grid gap-4 lg:grid-cols-3">
+        <MetricList title="Por vendedor" rows={metrics.bySeller.map(x => [x.seller_name, `${money(x.sales_cup)} CUP · ${x.order_count}`])} />
+        <MetricList title="Carga de proveedores" rows={metrics.providerLoads.map(x => [x.provider_name, `${x.active_jobs} · ${jobTypeLabels[x.job_type] ?? x.job_type}`])} />
+        <MetricList title="Productos destacados" rows={metrics.topItems.map(x => [x.name, String(x.quantity)])} />
+      </div>
+      <p className="text-[13px] text-text-muted">Diferencia de caja: {money(metrics.cashDifferenceCup)} CUP · Promedio hasta entrega: {metrics.averageDeliveryHours ?? '—'} h</p>
+    </> : <p className="text-sm text-text-muted">{pending ? 'Cargando indicadores…' : 'No fue posible cargar los indicadores.'}</p>}
+    {message ? <Alert tone="danger" role="alert">{message}</Alert> : null}
+  </Card>
 }
 
 function MetricList({ title, rows }: { title: string; rows: [string, string][] }) {
-  return <div className="rounded-lg border border-[#EEF5F4] p-4"><h3 className="font-display text-sm font-semibold text-[#07322F]">{title}</h3><div className="mt-3 space-y-2">{rows.length ? rows.map(([name, value], index) => <div key={`${name}:${index}`} className="flex justify-between gap-3 text-sm"><span className="truncate text-[#4A5B58]">{name}</span><strong className="shrink-0 text-[#07322F]">{value}</strong></div>) : <p className="text-xs text-[#5F716C]">Sin datos en el rango.</p>}</div></div>
+  return <div className="rounded-card border border-line p-4">
+    <h3 className="font-display text-[15px] font-semibold text-ink">{title}</h3>
+    <div className="mt-3 flex flex-col gap-2">
+      {rows.length ? rows.map(([name, value], index) => <div key={`${name}:${index}`} className="flex justify-between gap-3 text-sm"><span className="truncate text-text">{name}</span><strong className="shrink-0 tabular-nums text-ink">{value}</strong></div>) : <p className="text-[13px] text-text-muted">Sin datos en el rango.</p>}
+    </div>
+  </div>
 }

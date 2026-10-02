@@ -58,14 +58,18 @@ export function ButtonLink({ variant, size, icon: Icon, block, className, childr
 }
 
 // Square 44 px control (filters, close). `label` is required because there is no visible text.
-export function IconButton({ icon: Icon, label, count, className, type = 'button', ...props }: { icon: LucideIcon; label: string; count?: number } & ButtonHTMLAttributes<HTMLButtonElement>) {
+// outline: bordered (filters, close); ghost: borderless inside dense rows; danger: borderless destructive.
+export function IconButton({ icon: Icon, label, count, variant = 'outline', className, type = 'button', ...props }: { icon: LucideIcon; label: string; count?: number; variant?: 'outline' | 'ghost' | 'danger' } & ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       type={type}
       aria-label={label}
       title={label}
       className={cx(
-        'relative grid size-11 shrink-0 place-items-center rounded-control border border-[#CFE3E0] bg-surface text-action transition hover:bg-[#F0FBF9]',
+        'relative grid size-11 shrink-0 place-items-center rounded-control border transition',
+        variant === 'outline' && 'border-[#CFE3E0] bg-surface text-action hover:bg-[#F0FBF9]',
+        variant === 'ghost' && 'border-transparent bg-transparent text-text-muted hover:bg-[#F0FBF9] hover:text-action',
+        variant === 'danger' && 'border-transparent bg-transparent text-coral-ink hover:bg-[#FFF6F2]',
         'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#B9DFD9] disabled:cursor-not-allowed disabled:opacity-50',
         className,
       )}

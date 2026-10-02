@@ -12,6 +12,6 @@ export default async function TeamPage() {
 
   return <PageContainer>
     <PageHeader eyebrow="Administración" title="Equipo" description="Consulta los accesos e invita o administra miembros desde diálogos independientes." />
-    <div className="space-y-6">{organizations.map((organization) => <OrganizationTeamManager key={organization.id} organizationId={organization.id} organizationName={organization.name} branches={organization.branches} members={organization.members} canManage={organization.canManage} />)}</div>
+    <div className="flex flex-col gap-5">{organizations.map((organization) => <OrganizationTeamManager key={organization.id} organizationId={organization.id} organizationName={organization.name} branches={organization.branches} members={organization.members} canManage={organization.canManage} />)}</div>
   </PageContainer>
 }

@@ -1,7 +1,7 @@
 # PRP: Migración gradual a la Guía UI 2.0
 
 > **Estado**: EN EJECUCIÓN (aprobado 2026-10-01)
-> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ · Fase 4 ✅ (aprobada por el usuario) · Fase 5 ✅ · Fase 6 ✅ · Fase 7 ✅ (pendiente revisión manual) · Fase 8 siguiente
+> **Progreso**: Fase 0 ✅ · Fase 1 ✅ · Fase 2 ✅ · Fase 3 ✅ · Fase 4 ✅ (aprobada por el usuario) · Fase 5 ✅ · Fase 6 ✅ · Fase 7 ✅ · Fase 8 ✅ (pendiente revisión manual) · Fase 9 siguiente
 > **Fecha**: 2026-10-01
 > **Proyecto**: LensSpace
 
@@ -163,7 +163,7 @@ $$;
 **Objetivo**: clientes, recetas y ventas (`CustomerWorkspace`, `CustomerFormFields`, `PrescriptionWorkspace`, `PrescriptionFormFields` y `SalesWorkspace`, que tiene 914 líneas) migrados a primitivas, sin copias de `inputClass` ni hex.
 **Validación**: revisión manual del flujo receta → cotización → aceptación → pedido. Si `SalesWorkspace` se parte, solo se hace para sacar piezas de UI, sin cambiar lógica.
 
-### Fase 8: Workspaces, ola B (operación y gestión)
+### Fase 8: Workspaces, ola B (operación y gestión) ✅ (2026-10-01)
 **Objetivo**: caja, producción, catálogo, equipo, administración de plataforma u organizaciones y editor del manual (`client-docs`) migrados a primitivas y tonos.
 **Validación**: revisión manual de cierre de caja, cambio de estado de producción con incidencia, edición de catálogo e invitación de miembro.
 
@@ -227,6 +227,7 @@ $$;
 - Fase 7: `CustomerFormFields` y `PrescriptionFormFields` ya no reciben `fieldClass` (usan `Field`/`Input`); la receta pasó de tabla de 650 px a un bloque por ojo (3 columnas en móvil). `SalesWorkspace` 914 → 506 líneas: `ItemPicker`, `QuoteSummary`, `AcceptedOrderPanel` (reutiliza `PaymentForm` de pedidos) y `Dialog` compartido con `footer` + atributo `form`. Nueva primitiva `Steps` con el progreso real de la venta. `OrganizationList` muerto eliminado (aprobado).
 - Pendiente Fase 9: tokenizar los tonos derivados que aún aparecen como hex en features migradas (`#4A5B58` texto secundario, `#324E4A` etiqueta, `#E3EFED`/`#EEF5F4`/`#CFE3E0`/`#9BCDC6` bordes, `#F0FBF9` selección, `#07655C`/`#0B5A53` tintas de éxito y progreso) y reemplazarlos en bloque.
 - El efecto de auto-apertura en escritorio no puede llamar `setState` directo (`react-hooks/set-state-in-effect`): se carga dentro de `startTransition` y se fija la selección al terminar.
+- Fase 8: todas las cabeceras usan el `PageHeader` featured (tinta) aunque no tengan stats (decisión del usuario). Caja y Producción renderizan su `PageHeader` dentro del workspace para que las stats usen los datos filtrados en cliente; sus páginas solo envuelven en `PageContainer`. Producción: `ProductionJobCard` + `production-status.ts`. `Card` ganó `tone="danger"` e `IconButton` ganó `variant` (`outline`/`ghost`/`danger`) para no recolorear por `className`. Los 5 diálogos hechos a mano (producción ×3, catálogo, equipo, organizaciones) pasaron al `Dialog` compartido y se eliminaron sus `useEffect` de Escape/scroll. Mensajes: errores como `Alert` dentro del diálogo, éxitos como `Toast`. Catálogo: alta de artículo pasa de `<details>` a diálogo; "Disponible" y módulos de organización usan `Switch` (estado controlado, no `FormData`). Equipo: tabla → `ListItem` (funciona en móvil). Diálogo de organización con `key` por id para no arrastrar `defaultValue` de otra organización.
 
 ---
 
