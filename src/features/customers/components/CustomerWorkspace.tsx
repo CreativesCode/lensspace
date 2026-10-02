@@ -8,6 +8,7 @@ import type { Tables } from '@/lib/supabase/database.types'
 import { FormSelect } from '@/shared/components'
 import { Alert, Avatar, Badge, Button, ButtonLink, Card, CardHeader, EmptyState, Field, Input, ListItem } from '@/shared/ui'
 import { friendlyError } from '@/shared/lib/friendly-error'
+import { canonicalPhone } from '../phone'
 import { CustomerFormFields, customerFormValues, type CustomerPhoneDraft } from './CustomerFormFields'
 
 type AccessScope = {
@@ -44,9 +45,8 @@ type CustomerOrder = { customerId: number; commercialStatus: string }
 const customerSelect =
   'id, organization_id, branch_id, full_name, national_id, address, birth_date, notes, messaging_consent, customer_phones(id, phone_number, normalized_phone, label, is_primary, whatsapp_enabled)'
 
-function normalizePhone(value: string) {
-  return value.replace(/\D/g, '')
-}
+// Duplicate checks compare canonical numbers (8-digit Cuban numbers get 53).
+const normalizePhone = canonicalPhone
 
 export function CustomerWorkspace({ scopes }: { scopes: AccessScope[] }) {
   const supabase = useMemo(() => createClient(), [])

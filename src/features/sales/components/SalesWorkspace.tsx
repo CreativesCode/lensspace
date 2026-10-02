@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState, useTransition, type FormEvent, ty
 
 import { friendlyError, isNetworkError } from "@/shared/lib/friendly-error";
 import { CustomerFormFields, customerFormValues, type CustomerPhoneDraft } from "@/features/customers/components";
+import { findDuplicateCustomers, type DuplicateCustomer } from "@/features/customers/phone";
 import { PrescriptionFormFields } from "@/features/prescriptions/components";
 import {
   friendlyPrescriptionError,
@@ -119,6 +120,7 @@ export function SalesWorkspace({
   const [dialogMessage, setDialogMessage] = useState("");
   const [savingQuick, setSavingQuick] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState("");
+  const [duplicates, setDuplicates] = useState<DuplicateCustomer[] | null>(null);
   const [newCustomerPhones, setNewCustomerPhones] = useState<CustomerPhoneDraft[]>([{ number: "", label: "Principal", whatsappEnabled: true }]);
   const [pending, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
@@ -272,6 +274,16 @@ export function SalesWorkspace({
       );
     setSavingQuick(true);
     setDialogMessage("");
+    // QA-19: warn about a same-name or same-phone customer once; creating anyway is allowed.
+    if (duplicates === null) {
+      const matches = await findDuplicateCustomers(supabase, { organizationId: organization.id, branchId: organization.branchId }, name, values.phones.map(({ number }) => number));
+      if (matches.length) {
+        setDuplicates(matches);
+        setDialogMessage("Ya hay clientes parecidos. Usa uno de ellos o, si es otra persona, pulsa «Crear y seleccionar» de nuevo.");
+        setSavingQuick(false);
+        return;
+      }
+    }
     const { data, error } = await supabase.rpc("create_customer_with_phones", {
       target_organization_id: organization.id,
       target_branch_id: organization.branchId,
@@ -297,6 +309,7 @@ export function SalesWorkspace({
     setRevisionId(0);
     setNewCustomerName("");
     setNewCustomerPhones([{ number: "", label: "Principal", whatsappEnabled: true }]);
+    setDuplicates(null);
     setDialog(null);
     setMessage(`${name} quedó seleccionado para esta venta.`);
     setSavingQuick(false);
@@ -586,8 +599,18 @@ export function SalesWorkspace({
         </>}
       >
         <form id="sales-new-customer" onSubmit={createCustomer} className="flex flex-col gap-4">
-          <CustomerFormFields fullName={newCustomerName} onFullNameChange={setNewCustomerName} phones={newCustomerPhones} onPhonesChange={setNewCustomerPhones} />
-          {dialogMessage ? <Alert tone="danger" role="alert">{dialogMessage}</Alert> : null}
+          <CustomerFormFields fullName={newCustomerName} onFullNameChange={(value) => { setNewCustomerName(value); setDuplicates(null); }} phones={newCustomerPhones} onPhonesChange={(value) => { setNewCustomerPhones(value); setDuplicates(null); }} />
+          {dialogMessage ? <Alert tone={duplicates?.length ? "warning" : "danger"} role="alert">{dialogMessage}</Alert> : null}
+          {duplicates?.length ? (
+            <ul className="flex flex-col divide-y divide-line-soft rounded-control border border-line">
+              {duplicates.map((match) => (
+                <li key={match.id} className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5">
+                  <span className="min-w-0 text-sm"><strong className="text-ink">{match.name}</strong><span className="block text-text-muted">{match.phones.join(" · ") || "Sin teléfono"}</span></span>
+                  <Button size="sm" variant="secondary" onClick={() => { selectCustomer(match); setDuplicates(null); setDialog(null); setMessage(`${match.name} quedó seleccionado para esta venta.`); }}>Usar este cliente</Button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </form>
       </Dialog>
 

@@ -99,8 +99,8 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 | QA-16 | Mobile: total and Save/Accept buttons ~3000 px down, no sticky bar | medium | mobile | SOLO-16, SALES-12 | done 2026-10-02 | S |
 | QA-17 | Sale draft lost on reload/back/tab kill; saved quotations cannot be resumed | medium | offline | SALES-07, PERF-09, RC-11 | done 2026-10-02 | S |
 | QA-18 | Paying the full balance in USD leaves a CUP residue that blocks delivery | medium | bug | SALES-08 | done 2026-10-02 | S |
-| QA-19 | Nueva venta blocks real homonyms and never checks duplicate phones | medium | bug | SALES-05 | partial 2026-10-02 (homonyms no longer blocked; phone warning pending) | M |
-| QA-20 | Phones stored in two formats ('50000101' vs '5350000101'); duplicates missed | medium | data-integrity | SALES-13 | confirmed | S |
+| QA-19 | Nueva venta blocks real homonyms and never checks duplicate phones | medium | bug | SALES-05 | done 2026-10-02 | M |
+| QA-20 | Phones stored in two formats ('50000101' vs '5350000101'); duplicates missed | medium | data-integrity | SALES-13 | done 2026-10-02 | S |
 | QA-21 | No pending label and no request timeout on Save/Accept/Pay | medium | friction | SALES-18 (labels), RC-10 | confirmed | S |
 | QA-22 | Rate hardcoded to 420; absurd rate accepted; native English validation | low | friction | SOLO-15, SALES-18 (rate) | done 2026-10-02 (/catalog simulator still 420) | S |
 | QA-23 | No password recovery (self-service or admin) | medium | missing-feature | ADM-05 | confirmed | S |
@@ -453,7 +453,7 @@ Target for a solo owner on a phone:
 - **Fix:** extract the `/customers` duplicate query (name `ilike` + normalized phone) into a shared helper and list the matches with 'Usar este cliente' and 'Es otra persona, crear'.
 - **Verify:** same name with a different phone → verificar: a warning, then confirm creates the customer; same phone → verificar: a warning appears.
 
-- **Partial (2026-10-02):** the blocking exact-name check was removed with QA-12, so real homonyms can be created. The duplicate-phone warning is still pending.
+- **Done (2026-10-02):** `src/features/customers/phone.ts` (`findDuplicateCustomers`) checks for the same name (ilike) or a shared canonical phone within the branch. 'Nuevo cliente' in a sale warns once, listing the matches with 'Usar este cliente'; pressing 'Crear y seleccionar' again creates the homonym. Verified: '50000403' matched 'QA PILOTO Idempotencia 2' (+53 5000 0403) and 'Usar este cliente' selected it; a same-name customer with another phone warned and was then created.
 ### QA-20 Canonical Cuban phone numbers (medium, S)
 - **Problem:** '50000101' and '+53 5000 0101' are stored as different normalized numbers, so the duplicate check misses them. WhatsApp through OpenWA needs the country code.
 - **Evidence:** customer 55 is stored as '50000101' while others are '5350000101'; `sales-friction/customers-duplicate-warning.png`.
@@ -461,6 +461,7 @@ Target for a solo owner on a phone:
 - **Fix:** prefix 53 to 8-digit numbers in the shared `normalizePhone` and in the DB normalization path, and backfill in a migration.
 - **Verify:** '50000101' → verificar: stored as 5350000101 and flagged as a duplicate.
 
+- **Done (2026-10-02):** migration `20261002193033_canonical_cuban_phone_numbers.sql` changes the generated `customer_phones.normalized_phone` to prefix 53 to 8-digit numbers (PG17 `SET EXPRESSION`); all 34 rows now carry 53. `canonicalPhone` mirrors the rule on the client and is used by the `/customers` and sale duplicate checks.
 ### QA-21 Pending feedback and request timeout (medium, S)
 - **Problem:**
   - The Save, Accept and Register payment buttons only go disabled for 1.9–2.2 s on a slow link, with the same label.
