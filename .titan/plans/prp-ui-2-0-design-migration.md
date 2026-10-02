@@ -218,6 +218,11 @@ $$;
 - **Fix**: variantes explícitas (`Input controlSize="lg"`), envolver en un contenedor para alinear y no recolorear variantes. Con `leadingIcon`, el `className` de `Input` va al contenedor.
 - **Aplicar en**: todas las vistas de las fases 5–8: `className` de primitivas solo para layout (margin, flex, grid, width); el resto, por props.
 
+### 2026-10-02: Posicionar una primitiva que ya es `relative`
+- **Error**: en catálogo, `IconButton` con `className="absolute right-2 top-2"` quedó en flujo, abajo a la izquierda y fuera de la tarjeta: la primitiva ya trae `relative` (para el contador) y gana en el stylesheet.
+- **Fix**: envolver en un contenedor posicionado: `<div className="absolute right-2 top-2"><IconButton … /></div>`.
+- **Aplicar en**: `position`, `display` y cualquier utilidad que la primitiva ya fije: el posicionamiento va en un wrapper, nunca en su `className`.
+
 ### 2026-10-01: D1 aplicado — payload de pedidos
 - `list_accessible_orders` agrega `paidCup`, `balanceCup`, `paidTodayCup` (por `payments.business_date` en la zona horaria de la organización, igual que la caja) y `hasOpenIncident` (incidencia sin `rework_job_id`). `get_order_payment_summary` agrega `notes`. Migración `20261002013055_extend_order_list_for_ui_v2.sql`, security invoker, advisors sin hallazgos nuevos.
 - `FormSelect` se alineó a la guía en la Fase 5 (44 px, radio 10, foco teal): su `className` solo afecta al contenedor, así que el cambio es global y seguro. Hasta migrar las fases 7–8, en formularios viejos puede verse 2–4 px más alto que los inputs antiguos.

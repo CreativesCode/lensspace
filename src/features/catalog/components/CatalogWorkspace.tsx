@@ -299,7 +299,7 @@ export function CatalogWorkspace({
                           </span>
                         </span>
                       </button>
-                      {canManage ? <IconButton icon={Pencil} label={isPlatformAdmin ? `Editar artículo base ${item.name}` : `Personalizar ${item.name} para la organización`} onClick={() => openEditor(item.id, item.enabled)} className="absolute right-2 top-2" /> : null}
+                      {canManage ? <div className="absolute right-2 top-2"><IconButton icon={Pencil} label={isPlatformAdmin ? `Editar artículo base ${item.name}` : `Personalizar ${item.name} para la organización`} onClick={() => openEditor(item.id, item.enabled)} /></div> : null}
                     </div>
                   )
                 })}
