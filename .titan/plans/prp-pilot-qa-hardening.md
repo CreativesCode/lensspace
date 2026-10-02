@@ -293,6 +293,11 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
     - All attempts are stored `provider_http_500` (QA-61 false negative).
   - Related UI fix requested by the product owner: the production card's 'Ver receta de fabricación' now opens a dialog instead of an inline `<details>`, so expanding it no longer stretches the grid row (`ProductionJobCard.tsx`).
 
+- **Follow-up (2026-10-02, product owner request):** WhatsApp notices now identify the shop and the sender, because customers receive them from the app's number and not the shop's. Changes:
+  - Migration `20261002182801_identify_sender_in_whatsapp_notifications.sql` updates the templates with `{{store_name}}` and `{{payment_amount}}`, formats amounts as es-CU ('54 100', '16,67') via `private.format_amount_es`, and appends the signature 'Te atendió <nombre>. Si tienes dudas, escríbele al <teléfono>; este número solo envía avisos.' The phone comes from the actor's profile, else the owner's; without a phone the line is omitted. It also fixes the mojibake in the failure messages.
+  - UI: the sidebar account opens 'Mi perfil' to edit the name and the contact phone (`src/shared/components/AccountProfileDialog.tsx`).
+  - Verified: Javier's phone was saved from the dialog, and the new sale JAV-2026-000019 sent 'En Óptica Javier confirmamos tu pedido…' and 'Óptica Javier registró tu pago de 1 000 CUP… Saldo pendiente: 6 000 CUP', both signed with his phone.
+
 ### QA-09 `/production` crashes when the refetch fails (high, S)
 - **Problem:** after a successful assign, transition, incident or rework, a failed `list_accessible_production_jobs` refetch replaces the whole route with 'This page couldn't load', even though the mutation committed.
 - **Evidence:** `refresh-cache-code/03-production-refetch-failure.png`. The job was created as pending.

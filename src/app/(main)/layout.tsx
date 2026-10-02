@@ -77,19 +77,21 @@ async function loadShell(supabase: SupabaseServerClient, userId: string, email: 
   // Counters run in the same parallel batch (one light RLS-scoped query, ~5 ms).
   const [{ data: isPlatformAdmin }, { data: profile }, { data: membershipData }, { data: counterData }] = await Promise.all([
     supabase.rpc('current_user_is_platform_admin'),
-    supabase.from('profiles').select('display_name').eq('user_id', userId).maybeSingle(),
+    supabase.from('profiles').select('display_name, phone').eq('user_id', userId).maybeSingle(),
     supabase.from('organization_memberships').select('organization_id, role').eq('user_id', userId).eq('status', 'active'),
     supabase.rpc('get_navigation_counters'),
   ])
   const counters = counterData as unknown as NavigationCounters | null
   const counts = { '/orders': Number(counters?.ordersWithBalance ?? 0), '/production': Number(counters?.activeProductionJobs ?? 0) }
-  const displayName = (profile as Pick<Tables<'profiles'>, 'display_name'> | null)?.display_name ?? email.split('@')[0]
+  const profileRow = profile as Pick<Tables<'profiles'>, 'display_name' | 'phone'> | null
+  const displayName = profileRow?.display_name ?? email.split('@')[0]
+  const account = { userId, displayName, phone: profileRow?.phone ?? null }
 
   if (isPlatformAdmin) {
     return {
       allowedHrefs: ['/dashboard', '/organizations', '/catalog', '/manual'],
       counts: {},
-      identity: { displayName, roleLabel: 'Administración de plataforma', organizationName: 'Plataforma LensSpace' },
+      identity: { ...account, roleLabel: 'Administración de plataforma', organizationName: 'Plataforma LensSpace' },
     }
   }
 
@@ -99,7 +101,7 @@ async function loadShell(supabase: SupabaseServerClient, userId: string, email: 
   >[]
   const organizationIds = [...new Set(memberships.map(({ organization_id }) => organization_id))]
   const mainRole = rolePriority.find((role) => memberships.some((membership) => membership.role === role))
-  const identity: ShellIdentity = { displayName, roleLabel: mainRole ? roleLabels[mainRole] : 'Sin acceso activo', organizationName: 'Gestión óptica' }
+  const identity: ShellIdentity = { ...account, roleLabel: mainRole ? roleLabels[mainRole] : 'Sin acceso activo', organizationName: 'Gestión óptica' }
   if (!organizationIds.length) return { allowedHrefs: ['/dashboard'], counts: {}, identity }
 
   const [{ data: moduleData }, { data: organizationData }] = await Promise.all([
