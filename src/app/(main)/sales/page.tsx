@@ -12,10 +12,11 @@ export default async function SalesPage() {
   const memberships = (rawMemberships ?? []) as Pick<Tables<'organization_memberships'>, 'organization_id' | 'branch_id' | 'role'>[]
   const organizationIds = [...new Set(memberships.map((entry) => entry.organization_id))]
   const empty = Promise.resolve({ data: [] })
-  const [{ data: organizationData }, { data: branchData }, { data: itemData }] = await Promise.all([
+  const [{ data: organizationData }, { data: branchData }, { data: itemData }, { data: overrideData }] = await Promise.all([
     organizationIds.length ? supabase.from('organizations').select('id, name').in('id', organizationIds) : empty,
     organizationIds.length ? supabase.from('branches').select('id, organization_id, name').in('organization_id', organizationIds).eq('is_active', true) : empty,
     organizationIds.length ? supabase.from('catalog_items').select('id, organization_id, category, name, sale_price, currency').eq('is_active', true).order('category').order('name') : empty,
+    organizationIds.length ? supabase.from('catalog_item_overrides').select('organization_id, catalog_item_id, sale_price, currency, is_enabled').in('organization_id', organizationIds) : empty,
   ])
   const organizationRows = (organizationData ?? []) as unknown as { id: number; name: string }[]
   const branchRows = (branchData ?? []) as unknown as { id: number; organization_id: number; name: string }[]
@@ -49,11 +50,20 @@ export default async function SalesPage() {
   type CustomerRow = { id: number; organization_id: number; branch_id: number; full_name: string }
   type RevisionRow = { id: number; organization_id: number; branch_id: number; prescription_id: number; prescription_date: string; prescriptions: { customer_id: number } | null }
   type ItemRow = { id: number; organization_id: number | null; category: string; name: string; sale_price: number; currency: string }
+  type OverrideRow = { organization_id: number; catalog_item_id: number; sale_price: number | null; currency: string | null; is_enabled: boolean | null }
+  const overrides = (overrideData ?? []) as unknown as OverrideRow[]
+  // Base items are priced per organization (same rule as calculate_catalog_price):
+  // apply each óptica's override and drop the items it disabled.
+  const items = ((itemData ?? []) as unknown as ItemRow[]).flatMap((entry) => (entry.organization_id === null ? organizationIds : [entry.organization_id]).flatMap((organizationId) => {
+    const override = overrides.find((row) => row.organization_id === organizationId && row.catalog_item_id === entry.id)
+    if (override?.is_enabled === false) return []
+    return [{ id: entry.id, organizationId, name: entry.name, category: entry.category, price: Number(override?.sale_price ?? entry.sale_price), currency: override?.currency ?? entry.currency }]
+  }))
   return <PageContainer>
     <PageHeader eyebrow="Ventas ópticas" title="Nueva venta" description="Cliente, receta, configuración y aceptación en un flujo trazable." />
     <SalesWorkspace organizations={organizations}
       customers={((customerData ?? []) as unknown as CustomerRow[]).map((entry) => ({ id: entry.id, organizationId: entry.organization_id, branchId: entry.branch_id, name: entry.full_name }))}
       revisions={((revisionData ?? []) as unknown as RevisionRow[]).map((entry) => ({ id: entry.id, organizationId: entry.organization_id, branchId: entry.branch_id, customerId: entry.prescriptions?.customer_id ?? 0, label: `Receta #${entry.prescription_id} · ${entry.prescription_date}` }))}
-      items={((itemData ?? []) as unknown as ItemRow[]).map((entry) => ({ id: entry.id, organizationId: entry.organization_id, name: entry.name, category: entry.category, price: Number(entry.sale_price), currency: entry.currency }))} />
+      items={items} />
   </PageContainer>
 }

@@ -85,9 +85,9 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 | QA-02 | Owner can receive cash but cannot close his own cashbox | blocker | bug | SOLO-02 | done 2026-10-02 | S |
 | QA-03 | Payments not idempotent: lost response + retry, or a burst, creates duplicate immutable payments | high | data-integrity | SOLO-04, MR-01, SALES-01, SALES-10, PERF-02, RC-01, RC-02 | done 2026-10-02 (payments; quotation/customer keys pending) | M |
 | QA-04 | `accept_quotation` not idempotent: lost response strands the seller, order exists unseen | high | data-integrity | SOLO-08, SALES-02, RC-03 | done 2026-10-02 | S |
-| QA-05 | Prescription original upload/download broken for every role (missing EXECUTE grant) | high | bug | SOLO-03, ADM-01 | confirmed | S |
-| QA-06 | Tenant catalog overrides cannot be saved (403 on upsert) | high | bug | SOLO-05, SALES-03 | confirmed | S |
-| QA-07 | `/sales` shows base prices and disabled items, ignoring overrides | medium | data-integrity | SOLO-18, SALES-06 | confirmed | S |
+| QA-05 | Prescription original upload/download broken for every role (missing EXECUTE grant) | high | bug | SOLO-03, ADM-01 | done 2026-10-02 | S |
+| QA-06 | Tenant catalog overrides cannot be saved (403 on upsert) | high | bug | SOLO-05, SALES-03 | done 2026-10-02 | S |
+| QA-07 | `/sales` shows base prices and disabled items, ignoring overrides | medium | data-integrity | SOLO-18, SALES-06 | done 2026-10-02 | S |
 | QA-08 | 'Pedido listo' WhatsApp fires on first lens reception and is never re-sent after rework | high | data-integrity | MR-03 | confirmed | M |
 | QA-09 | `/production` crashes to 'This page couldn't load' when the post-mutation refetch fails | high | bug | RC-04 | confirmed | S |
 | QA-10 | Delivery event attributed to 'Sistema' (no `delivered_by`) | medium | data-integrity | SOLO-09, MR-09 | confirmed | S |
@@ -237,12 +237,24 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
   - Offer an 'Adjuntar original' action on an existing revision.
 - **Verify:** owner uploads a PNG and a PDF from `/sales` and `/prescriptions` → verificar: a row is added in `prescription_files` and the signed URL opens; cross-tenant upload → verificar: denied.
 
+- **Done (2026-10-02):** migration `20261002165930_grant_prescription_object_access_check.sql`. Verified as follows:
+  - The QSB owner attached a PNG from the Nueva venta prescription dialog, creating the first ever `prescription_files` row (id 1).
+  - The signed URL returns 200, and a PDF upload to the owner's own path is accepted.
+  - Javier reading or writing the QSB path is denied, and QSB writing to a Javier path is denied.
+  - Security advisors show no new findings.
+  - Not done: the 'Adjuntar original' action on an existing revision. It is a new feature and remains a Phase 2 candidate.
+
 ### QA-06 Catalog overrides return 403 (high, S)
 - **Problem:** 'Personalizar … para la organización' always fails with the raw message 'permission denied for table catalog_item_overrides'. Disabling an item fails the same way. Each óptica adjusting its own prices is a core BUSINESS_LOGIC capability.
 - **Evidence:** `solo-owner/04-catalog-override-error.png`, `sales-friction/catalog-override-attempt.png`. Column privileges: UPDATE is granted only on cost_amount, sale_price, currency, is_enabled, changed_by and changed_at.
 - **Root cause:** `src/features/catalog/components/CatalogWorkspace.tsx:150-170` uses `.upsert(entry)` including `organization_id` and `catalog_item_id`. PostgREST's `ON CONFLICT DO UPDATE` sets every column, but those two have no UPDATE grant (`20260913152157_catalog_pricing_and_graduation_rules.sql:251-253`).
 - **Fix:** if an override exists in state, `.update({...updatable}).eq('organization_id').eq('catalog_item_id')`; otherwise `.insert(entry)`. Map 42501 through QA-30.
 - **Verify:** change Bifocal · Blanco 20→25 USD and disable an item → verificar: rows are persisted and a new quote prices at 25 USD.
+
+- **Done (2026-10-02):** `CatalogWorkspace.saveOverride` updates an existing override and inserts a new one, falling back to update on 23505. Verified with the QSB owner:
+  - Bifocal · Blanco 20→25 (POST 201), then →26 (PATCH 204).
+  - Progresivo · Blanco disabled (POST 201).
+  - The values persisted after a reload.
 
 ### QA-07 `/sales` ignores overrides and disabled items (medium, S; ship with QA-06)
 - **Problem:** cards show base prices and disabled items, while the server prices with `coalesce(override.sale_price, item.sale_price)`. As a result:
@@ -252,6 +264,8 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 - **Root cause:** `src/app/(main)/sales/page.tsx:18` selects only `catalog_items`. The client checks are in `SalesWorkspace.tsx:298-303`, and the server side is in `20260913152157_*.sql:330-343`.
 - **Fix:** fetch `catalog_item_overrides` for the org in `sales/page.tsx`, merge the effective price and currency, and drop items with `is_enabled=false`, reusing the merge from `CatalogWorkspace`.
 - **Verify:** with an override at 3300 → verificar: the card shows 3300, an agreed price of 3300 needs no reason, and a disabled item is hidden.
+
+- **Done (2026-10-02):** `src/app/(main)/sales/page.tsx` loads the organization's overrides and expands base items per organization with the effective price and currency, dropping disabled ones. `SalesWorkspace` is unchanged. Verified: `/sales` shows 'Bifocal · Blanco Base: 26 USD', 'Progresivo · Blanco' is hidden, and the saved quotation totals 26 USD (10,920 CUP).
 
 ### QA-08 Premature 'Pedido listo' notification (high, M)
 - **Problem:** `order_ready` is queued the moment all current jobs are received or reviewed.

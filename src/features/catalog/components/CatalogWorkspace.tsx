@@ -151,9 +151,7 @@ export function CatalogWorkspace({
     setError(null)
     const form = new FormData(event.currentTarget)
     const { data: { user } } = await supabase.auth.getUser()
-    const entry = {
-      organization_id: organizationId,
-      catalog_item_id: item.id,
+    const changes = {
       cost_amount: Number(form.get('costAmount')),
       sale_price: Number(form.get('salePrice')),
       currency: String(form.get('currency')).toUpperCase(),
@@ -161,7 +159,13 @@ export function CatalogWorkspace({
       changed_by: user!.id,
       changed_at: new Date().toISOString(),
     }
-    const { error } = await supabase.from('catalog_item_overrides').upsert(entry as never)
+    const entry = { organization_id: organizationId, catalog_item_id: item.id, ...changes }
+    // UPDATE is granted only on the editable columns, so an upsert (which also sets the
+    // key columns) is rejected: update an existing override, insert a new one.
+    const updateExisting = () => supabase.from('catalog_item_overrides').update(changes as never).eq('organization_id', organizationId).eq('catalog_item_id', item.id)
+    const exists = overrides.some((override) => override.organization_id === organizationId && override.catalog_item_id === item.id)
+    let { error } = exists ? await updateExisting() : await supabase.from('catalog_item_overrides').insert(entry as never)
+    if (error?.code === '23505') ({ error } = await updateExisting())
     if (error) {
       setError(error.message || 'No se pudo guardar la personalización.')
     } else {
