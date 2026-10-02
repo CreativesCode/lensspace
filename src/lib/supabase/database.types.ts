@@ -1031,6 +1031,7 @@ export type Database = {
           payment_applied_rate: number
           payment_currency: string
           payment_notes?: string | null
+          payment_request_id?: string | null
           target_order_id: number
         }
         Returns: Json

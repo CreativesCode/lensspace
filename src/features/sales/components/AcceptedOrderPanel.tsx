@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState, useTransition } from 'react'
 
 import { PaymentForm, type PaymentInput } from '@/features/orders/components/PaymentForm'
 import { formatAmount } from '@/features/orders/format'
-import { friendlyPaymentError } from '@/features/orders/payment-errors'
+import { friendlyPaymentError, isNetworkError } from '@/features/orders/payment-errors'
 import type { PaymentSummary } from '@/features/orders/types'
 import { createClient } from '@/lib/supabase/client'
 import { Alert, Button, ButtonLink, Card, CardHeader, ProgressBar, Toast } from '@/shared/ui'
@@ -33,8 +33,16 @@ export function AcceptedOrderPanel({ order, customerName, preview, onNewSale }: 
   function registerPayment(input: PaymentInput) {
     return new Promise<boolean>((resolve) => {
       startTransition(async () => {
-        const { error: paymentError } = await supabase.rpc('register_cash_payment', { target_order_id: order.orderId, payment_amount: input.amount, payment_currency: input.currency, payment_applied_rate: input.rate, payment_notes: input.notes } as never)
-        if (paymentError) { setError(friendlyPaymentError(paymentError)); return resolve(false) }
+        const { error: paymentError } = await supabase.rpc('register_cash_payment', { target_order_id: order.orderId, payment_amount: input.amount, payment_currency: input.currency, payment_applied_rate: input.rate, payment_notes: input.notes, payment_request_id: input.requestId } as never)
+        if (paymentError) {
+          setError(friendlyPaymentError(paymentError))
+          // The payment may have committed: show the real balance before any retry.
+          if (isNetworkError(paymentError)) {
+            const { data } = await supabase.rpc('get_order_payment_summary', { target_order_id: order.orderId } as never)
+            if (data) setSummary(data as unknown as PaymentSummary)
+          }
+          return resolve(false)
+        }
         setError('')
         const { data, error: refreshError } = await supabase.rpc('get_order_payment_summary', { target_order_id: order.orderId } as never)
         if (refreshError) setError('El cobro se registró, pero no pudimos actualizar el saldo en pantalla.')

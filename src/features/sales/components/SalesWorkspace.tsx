@@ -3,6 +3,7 @@
 import { Plus, Save, Store, UserPlus } from "lucide-react";
 import { useMemo, useState, useTransition, type FormEvent, type ReactNode } from "react";
 
+import { isNetworkError } from "@/features/orders/payment-errors";
 import { CustomerFormFields, customerFormValues, type CustomerPhoneDraft } from "@/features/customers/components";
 import { PrescriptionFormFields } from "@/features/prescriptions/components";
 import {
@@ -338,10 +339,19 @@ export function SalesWorkspace({
   function accept() {
     if (!quotationId) return;
     startTransition(async () => {
-      const { data, error } = await supabase.rpc("accept_quotation", {
-        target_quotation_id: quotationId,
-      } as never);
-      if (error) return setMessage(error.message);
+      // accept_quotation is idempotent, so a dropped response is retried once.
+      const acceptOnce = () =>
+        supabase.rpc("accept_quotation", {
+          target_quotation_id: quotationId,
+        } as never);
+      let { data, error } = await acceptOnce();
+      if (error && isNetworkError(error)) ({ data, error } = await acceptOnce());
+      if (error)
+        return setMessage(
+          isNetworkError(error)
+            ? "Sin conexión: no pudimos confirmar el pedido. Pulsa “Cliente acepta” otra vez cuando vuelva la señal; no se creará un pedido duplicado."
+            : error.message,
+        );
       const result = data as unknown as AcceptedOrder;
       setMessage(
         `Pedido ${result.orderNumber} creado con precios y tasa inmutables.`,

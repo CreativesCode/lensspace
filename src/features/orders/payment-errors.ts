@@ -1,7 +1,16 @@
 type PaymentError = { code?: string; message?: string } | null
 
+// supabase-js reports a dropped connection as an error without a Postgres code.
+export function isNetworkError(error: PaymentError) {
+  return Boolean(error) && !error?.code && /fetch|network|load failed|aborted|timeout/i.test(error?.message ?? '')
+}
+
 export function friendlyPaymentError(error: PaymentError) {
   const message = error?.message ?? ''
+
+  if (isNetworkError(error)) {
+    return 'Sin conexión: no sabemos si el cobro llegó. Revisa el saldo; si no cambió, pulsa Registrar pago otra vez (no se cobrará dos veces).'
+  }
 
   if (message.includes('supera el saldo pendiente')) {
     return 'Ese cobro supera el saldo pendiente. Reduce el importe e inténtalo nuevamente.'

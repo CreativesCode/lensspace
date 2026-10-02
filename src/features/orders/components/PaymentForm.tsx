@@ -1,14 +1,24 @@
 'use client'
 
 import { Banknote } from 'lucide-react'
-import { useState, type FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 
 import { Button, Field, Input, SegmentedControl, cx } from '@/shared/ui'
 
 import { formatAmount } from '../format'
 
 type Currency = 'CUP' | 'USD'
-export type PaymentInput = { amount: number; currency: Currency; rate: number; notes: string }
+export type PaymentInput = { amount: number; currency: Currency; rate: number; notes: string; requestId: string }
+
+// randomUUID needs a secure context (HTTPS/localhost); getRandomValues does not.
+function newRequestId() {
+  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
+  const bytes = crypto.getRandomValues(new Uint8Array(16))
+  bytes[6] = (bytes[6] & 0x0f) | 0x40
+  bytes[8] = (bytes[8] & 0x3f) | 0x80
+  const hex = Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('')
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`
+}
 
 // Live equivalence and over-balance feedback are informative; the server RPC still
 // rejects overpayments and validates every field.
@@ -17,6 +27,10 @@ export function PaymentForm({ balanceCup, defaultRate, pending, onSubmit }: { ba
   const [amount, setAmount] = useState('')
   const [rate, setRate] = useState(String(defaultRate))
   const [notes, setNotes] = useState('')
+  // One id per payment attempt, reused on retry so a lost response never stores the
+  // payment twice; a synchronous flag blocks bursts before `pending` re-renders.
+  const requestId = useRef<string | null>(null)
+  const submitting = useRef(false)
 
   const numericAmount = Number(amount) || 0
   const numericRate = currency === 'USD' ? Number(rate) || 0 : 1
@@ -32,14 +46,21 @@ export function PaymentForm({ balanceCup, defaultRate, pending, onSubmit }: { ba
 
   function fillBalance() {
     const value = currency === 'USD' ? Math.floor((balanceCup / (numericRate || defaultRate)) * 100) / 100 : balanceCup
+    requestId.current = null
     setAmount(String(value))
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!canSubmit) return
-    const saved = await onSubmit({ amount: numericAmount, currency, rate: numericRate, notes })
-    if (saved) { setAmount(''); setNotes('') }
+    if (!canSubmit || submitting.current) return
+    submitting.current = true
+    requestId.current ??= newRequestId()
+    try {
+      const saved = await onSubmit({ amount: numericAmount, currency, rate: numericRate, notes, requestId: requestId.current })
+      if (saved) { setAmount(''); setNotes(''); requestId.current = null }
+    } finally {
+      submitting.current = false
+    }
   }
 
   return (
@@ -57,7 +78,7 @@ export function PaymentForm({ balanceCup, defaultRate, pending, onSubmit }: { ba
               min="0.01"
               step="0.01"
               value={amount}
-              onChange={(event) => setAmount(event.target.value)}
+              onChange={(event) => { requestId.current = null; setAmount(event.target.value) }}
               placeholder="0"
               aria-label="Importe del pago"
               invalid={over}
@@ -66,12 +87,12 @@ export function PaymentForm({ balanceCup, defaultRate, pending, onSubmit }: { ba
               required
               className="flex-1"
             />
-            <SegmentedControl label="Moneda del pago" value={currency} onChange={setCurrency} options={[{ value: 'CUP', label: 'CUP' }, { value: 'USD', label: 'USD' }]} />
+            <SegmentedControl label="Moneda del pago" value={currency} onChange={(value) => { requestId.current = null; setCurrency(value) }} options={[{ value: 'CUP', label: 'CUP' }, { value: 'USD', label: 'USD' }]} />
           </div>
         </Field>
         {currency === 'USD' ? (
           <Field label="Tasa aplicada">
-            <Input type="number" inputMode="decimal" min="0.01" step="0.01" value={rate} onChange={(event) => setRate(event.target.value)} numeric controlSize="lg" required />
+            <Input type="number" inputMode="decimal" min="0.01" step="0.01" value={rate} onChange={(event) => { requestId.current = null; setRate(event.target.value) }} numeric controlSize="lg" required />
           </Field>
         ) : null}
         <Field label="Nota" optional className={currency === 'USD' ? undefined : 'sm:col-span-2'}>

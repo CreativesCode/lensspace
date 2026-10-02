@@ -83,8 +83,8 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 |----|-------|----------|----------|-------------------|--------|--------|
 | QA-01 | Owner/seller cannot record provider stages or self-assign; solo owner cannot finish production or use mounting | blocker | bug | SOLO-01, MR-02 | done 2026-10-02 | M |
 | QA-02 | Owner can receive cash but cannot close his own cashbox | blocker | bug | SOLO-02 | done 2026-10-02 | S |
-| QA-03 | Payments not idempotent: lost response + retry, or a burst, creates duplicate immutable payments | high | data-integrity | SOLO-04, MR-01, SALES-01, SALES-10, PERF-02, RC-01, RC-02 | confirmed | M |
-| QA-04 | `accept_quotation` not idempotent: lost response strands the seller, order exists unseen | high | data-integrity | SOLO-08, SALES-02, RC-03 | confirmed | S |
+| QA-03 | Payments not idempotent: lost response + retry, or a burst, creates duplicate immutable payments | high | data-integrity | SOLO-04, MR-01, SALES-01, SALES-10, PERF-02, RC-01, RC-02 | done 2026-10-02 (payments; quotation/customer keys pending) | M |
+| QA-04 | `accept_quotation` not idempotent: lost response strands the seller, order exists unseen | high | data-integrity | SOLO-08, SALES-02, RC-03 | done 2026-10-02 | S |
 | QA-05 | Prescription original upload/download broken for every role (missing EXECUTE grant) | high | bug | SOLO-03, ADM-01 | confirmed | S |
 | QA-06 | Tenant catalog overrides cannot be saved (403 on upsert) | high | bug | SOLO-05, SALES-03 | confirmed | S |
 | QA-07 | `/sales` shows base prices and disabled items, ignoring overrides | medium | data-integrity | SOLO-18, SALES-06 | confirmed | S |
@@ -208,12 +208,24 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
   - Triple synchronous click → verificar: 1 payment, 1 customer, 1 quotation.
   - Offline submit → verificar: the 'Sin conexión…' copy appears and the balance is re-read.
 
+- **Done (2026-10-02, payments):** what changed:
+  - Migration `20261002164500_make_payment_and_acceptance_retry_safe.sql` (applied manually by the product owner) adds `payments.client_request_id`, a partial unique index, and `register_cash_payment(..., payment_request_id uuid)` with a per-key advisory lock.
+  - `PaymentForm` sends one id per attempt, reuses it on retry, resets it when the amount, currency or rate changes, and adds a synchronous in-flight guard.
+  - Network errors show 'Sin conexión: no sabemos si el cobro llegó…' and the balance is re-read.
+  - Verified on QSB-2026-000003: a lost response followed by a retry stored 1 row; a triple synchronous click sent 1 request and stored 1 row; 3 concurrent RPCs with the same key stored 1 row (the other two returned `duplicate: true`).
+  - Still pending from item 4: request keys for `save_quotation` and `create_customer_with_phones`. They are not financial, and the duplicate-customer warning (QA-19) mitigates the customer case.
+
 ### QA-04 Accept is not idempotent (high, S)
 - **Problem:** a lost 'Cliente acepta · crear pedido' response creates the order. The retry raises 'Cotización pendiente no encontrada.', the seller never sees the order number or the payment panel, and is likely to redo the sale.
 - **Evidence:** QAS-2026-000003 (quotation 38), JAV-2026-000009, and the 'Accept perdido 6999' order. Screenshots `solo-owner/19-accept-lost-response.png`, `19b-accept-retry.png`, `sales-friction/accept-lost-response-retry.png`, `refresh-cache-code/03-accept-lost-response-stuck.png`.
 - **Root cause:** `supabase/migrations/20260921015206_add_sale_line_price_adjustments.sql:200-202` raises P0002 whenever status ≠ `awaiting_acceptance`. `src/features/sales/components/SalesWorkspace.tsx:338-351` shows `error.message`.
 - **Fix:** `CREATE OR REPLACE accept_quotation`. After the `FOR UPDATE` select, if status = `accepted` and `can_write_seller_sale` holds, return `{orderId, orderNumber}` from `orders where quotation_id = target`. Client: on a network error, retry once automatically, which is now safe.
 - **Verify:** lost response, then retry → verificar: `AcceptedOrderPanel` shows the same order number, and only 1 order is linked to the quotation.
+
+- **Done (2026-10-02):** what changed:
+  - Follow-up migration `20261002165428_fix_accept_quotation_retry_lookup.sql`. The first attempt's early return never ran, because the `quotations_update` policy (`status <> 'accepted'`) hides accepted rows from `SELECT … FOR UPDATE`. The existing order is now looked up right before raising P0002, which also covers concurrent clicks.
+  - The client retries a network failure once automatically.
+  - Verified: QSB quotation 42 retried returned the same order with `alreadyAccepted`. In the browser, a lost response produced 2 calls, 1 order (QSB-2026-000003) and the panel showed it.
 
 ### QA-05 Prescription originals can never be stored (high, S)
 - **Problem:** every upload fails with 'permission denied for function can_access_prescription_object'. The revision is saved but the original is silently lost, which breaks the rule 'El original se preserva'.

@@ -8,7 +8,7 @@ import { ButtonLink, EmptyState, PageHeader, StatCard, Toast, cx } from '@/share
 
 import { formatAmount } from '../format'
 import { orderKpis } from '../order-kpis'
-import { friendlyPaymentError } from '../payment-errors'
+import { friendlyPaymentError, isNetworkError } from '../payment-errors'
 import type { Order, PaymentSummary, TimelineEvent } from '../types'
 import { OrderDetail } from './OrderDetail'
 import { OrdersInbox } from './OrdersInbox'
@@ -64,8 +64,13 @@ export function OrderPaymentsWorkspace({ initialOrders, initialCustomerFilter = 
   function registerPayment(input: PaymentInput) {
     return new Promise<boolean>((resolve) => {
       startTransition(async () => {
-        const { error: paymentError } = await supabase.rpc('register_cash_payment', { target_order_id: selectedId, payment_amount: input.amount, payment_currency: input.currency, payment_applied_rate: input.rate, payment_notes: input.notes } as never)
-        if (paymentError) { setError(friendlyPaymentError(paymentError)); return resolve(false) }
+        const { error: paymentError } = await supabase.rpc('register_cash_payment', { target_order_id: selectedId, payment_amount: input.amount, payment_currency: input.currency, payment_applied_rate: input.rate, payment_notes: input.notes, payment_request_id: input.requestId } as never)
+        if (paymentError) {
+          setError(friendlyPaymentError(paymentError))
+          // The payment may have committed: show the real balance before any retry.
+          if (isNetworkError(paymentError)) await loadDetail(selectedId).catch(() => undefined)
+          return resolve(false)
+        }
         setError('')
         await Promise.all([loadDetail(selectedId), refreshOrders()]).catch(() => undefined)
         setToast('Pago en efectivo registrado.')

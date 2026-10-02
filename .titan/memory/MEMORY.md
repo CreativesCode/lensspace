@@ -42,6 +42,7 @@ Read relevant entries only. Store decisions with dates and evidence.
 
 ## References
 
+- [2026-10-02 — RLS with FOR UPDATE and retry-safe RPCs](reference/2026-10-02-rls-for-update-and-retry-safe-rpcs.md)
 - [2026-09-14 — Next implementation block](reference/2026-09-13-next-work.md)
 - [2026-09-21 — Current implementation status](reference/2026-09-13-project-status.md)
 - [2026-09-12 — Development setup and handoff](reference/2026-09-12-development-setup.md)
