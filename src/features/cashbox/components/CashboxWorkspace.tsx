@@ -124,7 +124,7 @@ export function CashboxWorkspace({ initialCashboxes, currentUserId }: { initialC
               <Button type="submit" icon={Lock} disabled={pending || (selected.primaryClosed && selected.pendingPostCloseAmount <= 0)} className="w-full sm:w-auto">{selected.primaryClosed ? 'Generar complementario' : 'Cerrar caja del día'}</Button>
             </div>
             {selected.primaryClosed ? <p className="text-[13px] text-text-muted">Pendiente posterior al cierre: {money(selected.pendingPostCloseAmount, selected.currency)}</p> : null}
-          </form> : <Alert tone="info">Vista de revisión. Solo el vendedor responsable puede cerrar esta caja.</Alert>}
+          </form> : <Alert tone="info">Vista de revisión. Solo quien recibió el efectivo puede cerrar esta caja.</Alert>}
           {message ? <Alert tone="danger" role="alert">{message}</Alert> : null}
           <Alert tone="info" title="Cómo funciona tu caja.">Cada moneda se cierra por separado. Los cobros posteriores permanecen disponibles para un cierre complementario sin alterar el principal.</Alert>
         </Card>

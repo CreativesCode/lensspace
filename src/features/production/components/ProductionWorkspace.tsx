@@ -1,6 +1,6 @@
 'use client'
 
-import { Factory, Plus, RotateCcw, SearchX, SlidersHorizontal, TriangleAlert, UsersRound } from 'lucide-react'
+import { Factory, Plus, RotateCcw, SearchX, SlidersHorizontal, TriangleAlert } from 'lucide-react'
 import { FormEvent, useMemo, useState, useTransition } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { FormSelect, OperationalFilters } from '@/shared/components'
@@ -34,20 +34,27 @@ export type PrescriptionSnapshot = {
 }
 export type ProductionJob = { id: number; orderId: number; orderNumber: string; customerName?: string | null; jobType: 'lens' | 'mounting'; providerId: string; providerName: string; status: string; snapshot: { items?: { name: string }[]; prescription?: PrescriptionSnapshot | null }; originalJobId: number | null; assignedAt: string; incidents: Incident[] }
 export type AssignmentOrder = { id: number; organizationId: number; orderNumber: string; customerName?: string | null }
-export type Provider = { id: string; organizationId: number; name: string; role: 'lens_provider' | 'mounting_provider' }
+export type Provider = { id: string; organizationId: number; name: string; role: 'lens_provider' | 'mounting_provider' | 'in_house' }
+type JobAction = { target: string; label: string }
 
-
-function nextTransition(job: ProductionJob, opticalActor: boolean) {
+// Optical actors (owner/seller) may also record the provider's steps: directly on
+// their own in-house jobs, or "en nombre del proveedor" on someone else's.
+function jobActions(job: ProductionJob, opticalActor: boolean, currentUserId: string): { primary?: JobAction; secondary?: JobAction } {
   const opticalTransitions: Record<string, { target: string; label: string }> = job.jobType === 'lens'
     ? { pending: { target: 'ready_to_send', label: 'Marcar listo para enviar' }, ready_to_send: { target: 'dispatched', label: 'Marcar enviado' }, completed: { target: 'received', label: 'Marcar recibido' } }
     : { pending: { target: 'ready_to_send', label: 'Marcar listo para enviar' }, ready_to_send: { target: 'dispatched', label: 'Marcar enviado' }, completed: { target: 'received', label: 'Marcar recibido' }, received: { target: 'reviewed', label: 'Marcar revisado' } }
   const providerTransitions: Record<string, { target: string; label: string }> = job.jobType === 'lens'
     ? { pending: { target: 'in_production', label: 'Iniciar fabricación' }, dispatched: { target: 'in_production', label: 'Iniciar fabricación' }, in_production: { target: 'completed', label: 'Marcar trabajo listo' } }
     : { pending: { target: 'in_mounting', label: 'Iniciar montaje' }, dispatched: { target: 'in_mounting', label: 'Iniciar montaje' }, in_mounting: { target: 'completed', label: 'Marcar trabajo listo' } }
-  return (opticalActor ? opticalTransitions : providerTransitions)[job.status]
+  const optical = opticalTransitions[job.status]
+  const provider = providerTransitions[job.status]
+  if (!opticalActor) return { primary: provider }
+  if (job.providerId === currentUserId) return { primary: provider ?? optical }
+  const onBehalf = provider ? { ...provider, label: `${provider.label} (en nombre del proveedor)` } : undefined
+  return optical ? { primary: optical, secondary: onBehalf } : { primary: onBehalf }
 }
 
-export function ProductionWorkspace({ initialJobs, orders, providers, canManageTeam, canAssignProduction }: { initialJobs: ProductionJob[]; orders: AssignmentOrder[]; providers: Provider[]; canManageTeam: boolean; canAssignProduction: boolean }) {
+export function ProductionWorkspace({ initialJobs, orders, providers, currentUserId, canAssignProduction }: { initialJobs: ProductionJob[]; orders: AssignmentOrder[]; providers: Provider[]; currentUserId: string; canAssignProduction: boolean }) {
   const supabase = useMemo(() => createClient(), [])
   const [jobs, setJobs] = useState(initialJobs)
   const [message, setMessage] = useState('')
@@ -76,15 +83,13 @@ export function ProductionWorkspace({ initialJobs, orders, providers, canManageT
     event.preventDefault()
     const form = new FormData(event.currentTarget)
     startTransition(async () => {
-      const { error } = await supabase.rpc('assign_production_job', { target_order_id: Number(form.get('orderId')), job_type: jobType, provider_id: String(form.get('providerId')) } as never)
+      const { error } = await supabase.rpc('assign_production_job', { target_order_id: Number(form.get('orderId')), job_type: jobType, provider_id: effectiveProviderId } as never)
       if (error) return setAssignmentError(error.message)
       await refreshJobs(); setAssignmentOpen(false); setSelectedProviderId(''); setAssignmentError(''); setMessage('Trabajo asignado correctamente.')
     })
   }
 
-  function transitionProduction(job: ProductionJob) {
-    const transition = nextTransition(job, canAssignProduction)
-    if (!transition) return
+  function transitionProduction(job: ProductionJob, transition: JobAction) {
     startTransition(async () => {
       const { error } = await supabase.rpc('transition_production_job', { target_job_id: job.id, target_status: transition.target, notes: null } as never)
       if (error) return setMessage(error.message)
@@ -123,7 +128,8 @@ export function ProductionWorkspace({ initialJobs, orders, providers, canManageT
   }
 
   const selectedOrder = orders.find((order) => order.id === selectedOrderId)
-  const matchingProviders = providers.filter((provider) => provider.organizationId === selectedOrder?.organizationId && provider.role === (jobType === 'lens' ? 'lens_provider' : 'mounting_provider'))
+  const matchingProviders = providers.filter((provider) => provider.organizationId === selectedOrder?.organizationId && (provider.role === 'in_house' || provider.role === (jobType === 'lens' ? 'lens_provider' : 'mounting_provider')))
+  const effectiveProviderId = selectedProviderId || (matchingProviders.length === 1 ? matchingProviders[0].id : '')
   const filteredJobs = useMemo(() => {
     const customerTerm = customerFilter.trim().toLocaleLowerCase('es')
     return jobs.filter((job) => {
@@ -161,12 +167,6 @@ export function ProductionWorkspace({ initialJobs, orders, providers, canManageT
         <span className="mt-3 block"><ButtonLink href="/sales" icon={Plus} size="sm">Nueva venta</ButtonLink></span>
       </Alert>
     ) : null}
-    {canAssignProduction && !providers.length ? (
-      <Alert tone="warning" title="También falta un proveedor activo.">
-        Invita al menos un Cristalero/laboratorio o un Montador desde Equipo. Cuando acepte la invitación y quede activo, aparecerá automáticamente en el selector.
-        <span className="mt-3 block">{canManageTeam ? <ButtonLink href="/team" variant="secondary" icon={UsersRound} size="sm">Ir a Equipo</ButtonLink> : <strong>Pídele al propietario que invite al proveedor.</strong>}</span>
-      </Alert>
-    ) : null}
     {jobs.length ? (
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm text-text-muted">{filteredJobs.length === 1 ? '1 trabajo' : `${filteredJobs.length} trabajos`}</p>
@@ -178,8 +178,8 @@ export function ProductionWorkspace({ initialJobs, orders, providers, canManageT
     ) : null}
     <div className="grid items-start gap-4 lg:grid-cols-2 2xl:grid-cols-3">
       {filteredJobs.map((job) => {
-        const transition = nextTransition(job, canAssignProduction)
-        return <ProductionJobCard key={job.id} job={job} showCustomer={canAssignProduction} transitionLabel={transition?.label} pending={pending} onTransition={() => transitionProduction(job)} onReportIncident={() => openIncidentDialog(job)} onCreateRework={createRework} />
+        const { primary, secondary } = jobActions(job, canAssignProduction, currentUserId)
+        return <ProductionJobCard key={job.id} job={job} showCustomer={canAssignProduction} transitionLabel={primary?.label} secondaryTransitionLabel={secondary?.label} pending={pending} onTransition={() => primary && transitionProduction(job, primary)} onSecondaryTransition={() => secondary && transitionProduction(job, secondary)} onReportIncident={() => openIncidentDialog(job)} onCreateRework={createRework} />
       })}
     </div>
     {!jobs.length ? <EmptyState icon={Factory} title="Sin trabajos asignados" description={canAssignProduction ? 'Cuando completes los requisitos anteriores y pulses “Asignar trabajo”, aparecerán aquí.' : 'Aún no tienes trabajos de producción asignados.'} /> : null}
@@ -195,13 +195,13 @@ export function ProductionWorkspace({ initialJobs, orders, providers, canManageT
       size="md"
       footer={<>
         <Button variant="ghost" onClick={() => setAssignmentOpen(false)} disabled={pending}>Cancelar</Button>
-        <Button type="submit" form="production-assign" icon={Plus} disabled={pending || !selectedProviderId}>{pending ? 'Asignando…' : 'Asignar trabajo'}</Button>
+        <Button type="submit" form="production-assign" icon={Plus} disabled={pending || !effectiveProviderId}>{pending ? 'Asignando…' : 'Asignar trabajo'}</Button>
       </>}
     >
       <form id="production-assign" onSubmit={assign} className="flex flex-col gap-4">
         <Field label="Pedido"><FormSelect name="orderId" ariaLabel="Pedido" value={String(selectedOrderId)} onValueChange={(value) => { setSelectedOrderId(Number(value)); setSelectedProviderId('') }} options={orders.map((order) => ({ value: String(order.id), label: order.orderNumber }))} /></Field>
         <Field as="div" label="Tipo de trabajo"><SegmentedControl label="Tipo de trabajo" value={jobType} onChange={(value) => { setJobType(value); setSelectedProviderId('') }} options={[{ value: 'lens', label: 'Cristales' }, { value: 'mounting', label: 'Montaje' }]} /></Field>
-        <Field label="Proveedor"><FormSelect name="providerId" ariaLabel="Proveedor" required value={selectedProviderId} onValueChange={setSelectedProviderId} options={[{ value: '', label: matchingProviders.length ? 'Selecciona proveedor' : `No hay ${jobType === 'lens' ? 'cristaleros' : 'montadores'} activos` }, ...matchingProviders.map((provider) => ({ value: provider.id, label: provider.name }))]} /></Field>
+        <Field label="Proveedor"><FormSelect name="providerId" ariaLabel="Proveedor" required value={effectiveProviderId} onValueChange={setSelectedProviderId} options={[{ value: '', label: matchingProviders.length ? 'Selecciona proveedor' : `No hay ${jobType === 'lens' ? 'cristaleros' : 'montadores'} activos` }, ...matchingProviders.map((provider) => ({ value: provider.id, label: provider.name }))]} /></Field>
         {assignmentError ? <Alert tone="danger" role="alert">{assignmentError}</Alert> : null}
       </form>
     </Dialog>

@@ -11,17 +11,25 @@ export default async function ProductionPage() {
     supabase.rpc('list_accessible_production_jobs'),
     supabase.from('orders').select('id, organization_id, order_number, customer_id, customers(full_name)').order('created_at', { ascending: false }),
     supabase.from('organization_memberships').select('organization_id, user_id, role').in('role', ['lens_provider', 'mounting_provider']).eq('status', 'active'),
-    supabase.from('organization_memberships').select('role').eq('user_id', user.id).eq('status', 'active'),
+    supabase.from('organization_memberships').select('organization_id, role').eq('user_id', user.id).eq('status', 'active'),
   ])
   const memberships = (membershipData ?? []) as { organization_id: number; user_id: string; role: 'lens_provider' | 'mounting_provider' }[]
-  const providerIds = [...new Set(memberships.map((membership) => membership.user_id))]
+  const currentMemberships = (currentMembershipData ?? []) as { organization_id: number; role: string }[]
+  // Owners and sellers can take the work themselves (in-house workshop or a one-person shop).
+  const inHouseOrganizationIds = [...new Set(currentMemberships.filter(({ role }) => role === 'owner' || role === 'seller').map(({ organization_id }) => organization_id))]
+  const providerIds = [...new Set([...memberships.map((membership) => membership.user_id), ...(inHouseOrganizationIds.length ? [user.id] : [])])]
   const { data: profileData } = providerIds.length ? await supabase.from('profiles').select('user_id, display_name').in('user_id', providerIds) : { data: [] }
   const profiles = (profileData ?? []) as { user_id: string; display_name: string }[]
-  const providers: Provider[] = memberships.map((membership) => ({ id: membership.user_id, organizationId: membership.organization_id, role: membership.role, name: profiles.find((profile) => profile.user_id === membership.user_id)?.display_name ?? 'Proveedor' }))
+  const ownName = profiles.find((profile) => profile.user_id === user.id)?.display_name ?? 'Yo'
+  const providers: Provider[] = [
+    ...inHouseOrganizationIds.map((organizationId) => ({ id: user.id, organizationId, role: 'in_house' as const, name: `${ownName} (taller propio)` })),
+    ...memberships
+      .filter((membership) => membership.user_id !== user.id || !inHouseOrganizationIds.includes(membership.organization_id))
+      .map((membership) => ({ id: membership.user_id, organizationId: membership.organization_id, role: membership.role, name: profiles.find((profile) => profile.user_id === membership.user_id)?.display_name ?? 'Proveedor' })),
+  ]
   const orderRows = (orderData ?? []) as unknown as { id: number; organization_id: number; order_number: string; customer_id: number; customers: { full_name: string } | null }[]
   const orders: AssignmentOrder[] = orderRows.map((order) => ({ id: order.id, organizationId: order.organization_id, orderNumber: order.order_number, customerName: order.customers?.full_name ?? null }))
   const jobs = ((jobData ?? []) as unknown as ProductionJob[]).map((job) => ({ ...job, customerName: orderRows.find((order) => order.id === job.orderId)?.customers?.full_name ?? null }))
-  const canManageTeam = (currentMembershipData ?? []).some(({ role }) => role === 'owner')
-  const canAssignProduction = (currentMembershipData ?? []).some(({ role }) => role === 'owner' || role === 'seller')
-  return <PageContainer><ProductionWorkspace initialJobs={jobs} orders={orders} providers={providers} canManageTeam={canManageTeam} canAssignProduction={canAssignProduction} /></PageContainer>
+  const canAssignProduction = inHouseOrganizationIds.length > 0
+  return <PageContainer><ProductionWorkspace initialJobs={jobs} orders={orders} providers={providers} currentUserId={user.id} canAssignProduction={canAssignProduction} /></PageContainer>
 }

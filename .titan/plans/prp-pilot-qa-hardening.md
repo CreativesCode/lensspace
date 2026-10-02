@@ -81,8 +81,8 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 
 | ID | Title | Severity | Category | Area (source IDs) | Status | Effort |
 |----|-------|----------|----------|-------------------|--------|--------|
-| QA-01 | Owner/seller cannot record provider stages or self-assign; solo owner cannot finish production or use mounting | blocker | bug | SOLO-01, MR-02 | confirmed | M |
-| QA-02 | Owner can receive cash but cannot close his own cashbox | blocker | bug | SOLO-02 | confirmed | S |
+| QA-01 | Owner/seller cannot record provider stages or self-assign; solo owner cannot finish production or use mounting | blocker | bug | SOLO-01, MR-02 | done 2026-10-02 | M |
+| QA-02 | Owner can receive cash but cannot close his own cashbox | blocker | bug | SOLO-02 | done 2026-10-02 | S |
 | QA-03 | Payments not idempotent: lost response + retry, or a burst, creates duplicate immutable payments | high | data-integrity | SOLO-04, MR-01, SALES-01, SALES-10, PERF-02, RC-01, RC-02 | confirmed | M |
 | QA-04 | `accept_quotation` not idempotent: lost response strands the seller, order exists unseen | high | data-integrity | SOLO-08, SALES-02, RC-03 | confirmed | S |
 | QA-05 | Prescription original upload/download broken for every role (missing EXECUTE grant) | high | bug | SOLO-03, ADM-01 | confirmed | S |
@@ -168,12 +168,20 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
   - Javier records `completed` for Claudia's job → verificar: allowed, and actor = javier.
   - Claudia → verificar: still cannot do optical transitions.
 
+- **Done (2026-10-02):** migration `20261002153245_allow_optical_on_behalf_production_and_owner_cashbox.sql` (applied remotely) plus the production UI ('taller propio' option, auto-selected when it is the only one, and a secondary 'en nombre del proveedor' action). The dead 'También falta un proveedor activo' alert was removed. Verified as follows:
+  - New org 'QA Piloto Solo B 2026-10-02' (QSB, owner only, 1 membership). Order QSB-2026-000001: the lens job went to `received` and the mounting job to `reviewed` from the UI, all events as owner.
+  - JAV job 14 (Claudia): Javier `in_production` carries the note 'En nombre de Claudia Rodríguez Rodríguez' with actor = Javier. Claudia `completed` is allowed. Claudia `received`, Claudia assign and assigning a non-member are all rejected.
+  - Security advisors show no new findings.
+  - Evidence: `.titan/qa/2026-10-02-pilot-qa/fix-qa01-02/`.
+
 ### QA-02 Owner cannot close his own cashbox (blocker, S)
 - **Problem:** an owner who receives cash gets cashboxes in his name that he can never close. The UI still shows the close form.
 - **Evidence:** `solo-owner/15-cashbox-closed.png` shows 403 `{"code":"42501","message":"Solo el vendedor puede cerrar su propia caja operativa."}` for cashboxes 31 and 32. `15b-…after-self-seller.png` shows that it works only after the self-invite as Vendedor.
 - **Root cause:** `private.close_seller_cashbox` checks `has_organization_role(org, array['seller'])`. Migration `20260920221232_allow_owners_to_receive_cash.sql` relaxed only `prepare_cash_payment`.
 - **Fix:** add a new migration that recreates `close_seller_cashbox` with `array['seller','owner']`, keeping the `seller_id = auth.uid()` check. Apply the same relaxation to complementary closures if they use a separate path.
 - **Verify:** fresh solo owner (no Vendedor membership) receives cash, then closes CUP and USD → verificar: both closures are saved and appear in history; a post-close payment → verificar: 'Posterior al cierre' and a complementary closure works.
+
+- **Done (2026-10-02):** same migration. The QSB owner (owner role only) closed the CUP cashbox (primary, expected 500). The cashbox UI copy now reads 'Solo quien recibió el efectivo puede cerrar esta caja.'
 
 ### QA-03 Duplicate payments on retry or burst (high, M)
 - **Problem:** `register_cash_payment` inserts unconditionally.

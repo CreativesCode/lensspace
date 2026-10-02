@@ -11,13 +11,15 @@ type ProductionJobCardProps = {
   job: ProductionJob
   showCustomer: boolean
   transitionLabel?: string
+  secondaryTransitionLabel?: string
   pending: boolean
   onTransition: () => void
+  onSecondaryTransition: () => void
   onReportIncident: () => void
   onCreateRework: (incidentId: number) => void
 }
 
-export function ProductionJobCard({ job, showCustomer, transitionLabel, pending, onTransition, onReportIncident, onCreateRework }: ProductionJobCardProps) {
+export function ProductionJobCard({ job, showCustomer, transitionLabel, secondaryTransitionLabel, pending, onTransition, onSecondaryTransition, onReportIncident, onCreateRework }: ProductionJobCardProps) {
   const hasIncident = job.status === 'incident'
   return (
     <Card tone={hasIncident ? 'danger' : 'default'} className="flex flex-col gap-3">
@@ -42,6 +44,7 @@ export function ProductionJobCard({ job, showCustomer, transitionLabel, pending,
       ))}
       <div className="mt-auto flex flex-col gap-2 pt-1 sm:flex-row">
         {transitionLabel ? <Button disabled={pending} onClick={onTransition} className="sm:flex-1">{transitionLabel}</Button> : null}
+        {secondaryTransitionLabel ? <Button variant="secondary" disabled={pending} onClick={onSecondaryTransition} className="sm:flex-1">{secondaryTransitionLabel}</Button> : null}
         {!hasIncident ? <Button variant="danger" icon={TriangleAlert} disabled={pending} onClick={onReportIncident}>Incidencia</Button> : null}
       </div>
     </Card>
