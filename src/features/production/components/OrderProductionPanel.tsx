@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { FormSelect } from '@/shared/components'
 import { friendlyError } from '@/shared/lib/friendly-error'
+import { refreshNavigationCounters } from '@/shared/lib/navigation-counters'
 import { Alert, Badge, Button } from '@/shared/ui'
 
 import { productionStatusLabel, statusTone } from '../production-status'
@@ -80,6 +81,7 @@ export function OrderProductionPanel({ orderId, canAssign, onReadinessChange }: 
       const { error } = await supabase.rpc('assign_production_job', { target_order_id: orderId, job_type: jobType, provider_id: providerId } as never)
       if (error) return setMessage(friendlyError(error, 'No pudimos enviar el trabajo.'))
       setMessage(`${jobLabels[jobType]} enviados a ${names[providerId] ?? 'producción'}.`)
+      void refreshNavigationCounters()
       await load()
     })
   }

@@ -6,6 +6,8 @@ import { createClient } from '@/lib/supabase/client'
 import { FormSelect, OperationalFilters } from '@/shared/components'
 import { Alert, Button, ButtonLink, Dialog, EmptyState, Field, IconButton, PageHeader, SegmentedControl, StatCard, Textarea } from '@/shared/ui'
 import { friendlyError } from '@/shared/lib/friendly-error'
+import { useServerState } from '@/shared/hooks/use-server-state'
+import { refreshNavigationCounters } from '@/shared/lib/navigation-counters'
 
 import { productionStatusLabel, responsibilityLabels, statusLabels } from '../production-status'
 import { ProductionJobCard } from './ProductionJobCard'
@@ -33,7 +35,7 @@ export type PrescriptionSnapshot = {
   right_height?: number | null
   left_height?: number | null
 }
-export type ProductionJob = { id: number; orderId: number; orderNumber: string; customerName?: string | null; jobType: 'lens' | 'mounting'; providerId: string; providerName: string; status: string; snapshot: { items?: { name: string }[]; prescription?: PrescriptionSnapshot | null }; originalJobId: number | null; assignedAt: string; incidents: Incident[] }
+export type ProductionJob = { id: number; orderId: number; orderNumber: string; customerName?: string | null; jobType: 'lens' | 'mounting'; providerId: string; providerName: string; status: string; snapshot: { items?: { name: string }[]; prescription?: PrescriptionSnapshot | null }; originalJobId: number | null; assignedAt: string; incidents: Incident[]; isCurrent?: boolean }
 export type AssignmentOrder = { id: number; organizationId: number; orderNumber: string; customerName?: string | null }
 export type Provider = { id: string; organizationId: number; name: string; role: 'lens_provider' | 'mounting_provider' | 'in_house' }
 type JobAction = { target: string; label: string }
@@ -57,7 +59,7 @@ function jobActions(job: ProductionJob, opticalActor: boolean, currentUserId: st
 
 export function ProductionWorkspace({ initialJobs, orders, providers, currentUserId, canAssignProduction }: { initialJobs: ProductionJob[]; orders: AssignmentOrder[]; providers: Provider[]; currentUserId: string; canAssignProduction: boolean }) {
   const supabase = useMemo(() => createClient(), [])
-  const [jobs, setJobs] = useState(initialJobs)
+  const [jobs, setJobs] = useServerState(initialJobs)
   const [message, setMessage] = useState('')
   const [pending, startTransition] = useTransition()
   const [jobType, setJobType] = useState<'lens' | 'mounting'>('lens')
@@ -77,6 +79,7 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
   // Returns false instead of throwing: the mutation already committed, so a failed
   // reload (weak signal) must not take the page down.
   async function refreshJobs() {
+    void refreshNavigationCounters()
     const { data, error } = await supabase.rpc('list_accessible_production_jobs')
     if (error) return false
     setJobs((data as unknown as ProductionJob[]).map((job) => ({ ...job, customerName: orders.find((order) => order.id === job.orderId)?.customerName ?? null })))
@@ -150,7 +153,9 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
   const productionStatusOptions = [{ value: 'all', label: 'Todos los estados' }, ...Object.entries(statusLabels).map(([value, label]) => ({ value, label }))]
   const activeFilterCount = Number(Boolean(customerFilter.trim()) && canAssignProduction) + Number(statusFilter !== 'all') + Number(Boolean(dateFrom)) + Number(Boolean(dateTo))
   const clearFilters = () => { setCustomerFilter(''); setStatusFilter('all'); setDateFrom(''); setDateTo('') }
-  const activeJobs = jobs.filter((job) => !['received', 'reviewed'].includes(job.status))
+  // Superseded jobs (QA-25) are history: they never count as active work or incidents.
+  const currentJobs = jobs.filter((job) => job.isCurrent !== false)
+  const activeJobs = currentJobs.filter((job) => !['received', 'reviewed'].includes(job.status))
   const header = (
     <PageHeader
       eyebrow="Taller y proveedores"
@@ -159,9 +164,9 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
       actions={canAssignProduction && orders.length ? <Button variant="mint" icon={Plus} onClick={() => { setAssignmentError(''); setAssignmentOpen(true) }}>Asignar trabajo</Button> : undefined}
       stats={jobs.length ? <>
         <StatCard surface="ink" label="Trabajos activos" value={activeJobs.length} />
-        <StatCard surface="ink" label="En fabricación o montaje" value={jobs.filter((job) => ['in_production', 'in_mounting'].includes(job.status)).length} />
-        <StatCard surface="ink" tone="positive" label="Listos" value={jobs.filter((job) => job.status === 'completed').length} />
-        <StatCard surface="ink" tone={jobs.some((job) => job.status === 'incident') ? 'attention' : 'default'} label="Con incidencia" value={jobs.filter((job) => job.status === 'incident').length} />
+        <StatCard surface="ink" label="En fabricación o montaje" value={currentJobs.filter((job) => ['in_production', 'in_mounting'].includes(job.status)).length} />
+        <StatCard surface="ink" tone="positive" label="Listos" value={currentJobs.filter((job) => job.status === 'completed').length} />
+        <StatCard surface="ink" tone={currentJobs.some((job) => job.status === 'incident') ? 'attention' : 'default'} label="Con incidencia" value={currentJobs.filter((job) => job.status === 'incident').length} />
       </> : undefined}
     />
   )

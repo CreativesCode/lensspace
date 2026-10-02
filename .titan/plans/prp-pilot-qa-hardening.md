@@ -102,12 +102,12 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 | QA-19 | Nueva venta blocks real homonyms and never checks duplicate phones | medium | bug | SALES-05 | done 2026-10-02 | M |
 | QA-20 | Phones stored in two formats ('50000101' vs '5350000101'); duplicates missed | medium | data-integrity | SALES-13 | done 2026-10-02 | S |
 | QA-21 | No pending label and no request timeout on Save/Accept/Pay | medium | friction | SALES-18 (labels), RC-10 | done 2026-10-02 | S |
-| QA-22 | Rate hardcoded to 420; absurd rate accepted; native English validation | low | friction | SOLO-15, SALES-18 (rate) | done 2026-10-02 (/catalog simulator still 420) | S |
-| QA-23 | No password recovery (self-service or admin) | medium | missing-feature | ADM-05 | done 2026-10-02 (self-service; admin action pending) | S |
-| QA-24 | Sidebar counters never refresh after mutations or soft navigation | medium | refresh | SOLO-06, MR-04, SALES-15, PERF-04, RC-05 | confirmed | S |
-| QA-25 | Superseded incident jobs counted as active/incident forever | medium | bug | SOLO-07, MR-05 | confirmed | S |
-| QA-26 | Back/forward restores stale lists (`useState(initialX)` freezes props) | medium | refresh | RC-06 | confirmed | S |
-| QA-27 | No refetch on focus/reconnect/error: other users' changes, stale balances, renewal and module changes stay stale | medium | refresh | MR-04 (cross-user), RC-07, ADM-06 | confirmed | S |
+| QA-22 | Rate hardcoded to 420; absurd rate accepted; native English validation | low | friction | SOLO-15, SALES-18 (rate) | done 2026-10-02 (+ elTOQUE button) | S |
+| QA-23 | No password recovery (self-service or admin) | medium | missing-feature | ADM-05 | done 2026-10-02 (self-service + admin) | S |
+| QA-24 | Sidebar counters never refresh after mutations or soft navigation | medium | refresh | SOLO-06, MR-04, SALES-15, PERF-04, RC-05 | done 2026-10-02 | S |
+| QA-25 | Superseded incident jobs counted as active/incident forever | medium | bug | SOLO-07, MR-05 | done 2026-10-02 | S |
+| QA-26 | Back/forward restores stale lists (`useState(initialX)` freezes props) | medium | refresh | RC-06 | done 2026-10-02 | S |
+| QA-27 | No refetch on focus/reconnect/error: other users' changes, stale balances, renewal and module changes stay stale | medium | refresh | MR-04 (cross-user), RC-07, ADM-06 | done 2026-10-02 | S |
 | QA-28 | Offline navigation lands on the Chrome error page; no `loading.tsx`/`error.tsx`/offline banner | high | offline | SOLO-12, PERF-01, RC-08, MR-10 (offline view) | done 2026-10-02 (base; service worker pending) | S→M |
 | QA-29 | Every click waits 0.5–3 s with no feedback; nothing streams | medium | performance | PERF-05 | confirmed | S |
 | QA-30 | Raw technical errors ('TypeError: Failed to fetch', English RLS/privilege messages) | medium | ux-copy | SOLO-11, MR-10, SALES-09, ADM-07, RC-09 | done 2026-10-02 | S |
@@ -518,6 +518,7 @@ Principle for the pilot: **no polling and no Realtime**, to keep bandwidth low. 
 - **Root cause:** counters are computed in `src/app/(main)/layout.tsx:78-89` (`loadShell` → `get_navigation_counters`), and layouts are not re-rendered on soft navigation. None of these call `router.refresh()`: `SalesWorkspace.tsx:338-353`, `OrderPaymentsWorkspace.tsx:64-85`, `AcceptedOrderPanel.tsx:33-46`, `ProductionWorkspace.tsx:75-123`, `CashboxWorkspace.tsx:38-50`.
 - **Fix:** call `router.refresh()` after each successful mutation, after the local state update. A lighter alternative is a client counter component that refetches `get_navigation_counters` on a `lensspace:mutated` event and on focus, throttled to once per 60 s.
 - **Verify:** accept an unpaid order → verificar: the badge increments without a reload; pay in full → verificar: it decrements.
+- **Done (2026-10-02):** the lighter alternative. `src/shared/lib/navigation-counters.ts` is a shared client store (`useSyncExternalStore`) used by `MainNavigation`; `refreshNavigationCounters()` (one `get_navigation_counters` RPC, deduplicated while in flight) runs after accept, payments, delivery, production assignment/transitions/incidents/reworks. A new server render of the layout (refresh) resets the store; a menu that mounts later (mobile drawer) does not. Verified: 'Pedidos y cobros' went 3 → 4 after accepting from `/sales` and back to 3 after paying in `/orders`, with no reload.
 
 ### QA-25 Superseded jobs counted (medium, S)
 - **Problem:** after 'Aceptar repetición', the superseded incident job (`is_current=false`) is still counted. 'Trabajos activos' shows 3 instead of 2, and 'Con incidencia 1' stays forever, in both the sidebar and the stat cards.
@@ -528,6 +529,7 @@ Principle for the pilot: **no polling and no Realtime**, to keep bandwidth low. 
   - Filter active jobs and stats in `ProductionWorkspace`.
   - Render superseded jobs collapsed with the label 'Sustituido por repetición'.
 - **Verify:** incident → rework → verificar: active = 2 and incident = 0, in both the sidebar and the stats.
+- **Done (2026-10-02):** migration `20261002200721_exclude_superseded_jobs_from_counters.sql` (counters filter `is_current`; jobs RPC exposes `isCurrent`). `ProductionWorkspace` computes stats from current jobs only, and `ProductionJobCard` renders superseded jobs as a short inert card 'Sustituido por repetición'. `list_accessible_orders.hasOpenIncident` already ignored incidents with a rework. Verified in QAS: the sidebar dropped from 3 to 2, 'Con incidencia' 0, one superseded card.
 
 ### QA-26 Back/forward shows stale lists (medium, S)
 - **Problem:** after paying an order in full, navigating away and pressing Back shows '3,000 · Pendiente de pago'.
@@ -535,6 +537,8 @@ Principle for the pilot: **no polling and no Realtime**, to keep bandwidth low. 
 - **Root cause:** `src/features/orders/components/OrderPaymentsWorkspace.tsx:24` uses `useState(initialOrders)`, and the router cache reuses the payload. `ProductionWorkspace` (`initialJobs`), `CashboxWorkspace` and `SalesWorkspace.tsx:68-69` follow the same pattern. `router.refresh()` alone will not reset those copies.
 - **Fix:** add `router.refresh()` (QA-24) plus `useEffect(() => setOrders(initialOrders), [initialOrders])`, and the same for jobs.
 - **Verify:** pay → navigate away → Back → verificar: 'Pagado · por entregar'.
+- **Done (2026-10-02):** `useServerState` (`src/shared/hooks/use-server-state.ts`, React's adjust-state-while-rendering pattern) replaces `useState(initialX)` in orders, production and cashbox, and `RefreshOnFocus` refreshes the route on `popstate` (same cost as one link navigation). `/orders` keeps the open order on refresh and reloads its detail instead of jumping to the first one. Verified: QAS-2026-000006/8 paid → Clientes → Back shows 'Pagado · por entregar'.
+- **Found and fixed while testing:** `OrderDetail` rendered `PaymentForm` and `OrderProductionPanel` as siblings with the same `key={orderId}` (Phase 2 regression, React duplicate-key error on unpaid orders); the panel now uses `production-<id>`.
 
 ### QA-27 Refetch on focus, reconnect and error (medium, S)
 - **Problem:**
@@ -549,6 +553,7 @@ Principle for the pilot: **no polling and no Realtime**, to keep bandwidth low. 
   - After a payment or delivery error, reload the detail and the list.
   - On any 42501, call `router.refresh()` and show the read-only message.
 - **Verify:** Claudia's tab goes to the background, Javier assigns, Claudia refocuses → verificar: the job appears; a renewal plus refocus → verificar: forms are enabled.
+- **Done (2026-10-02):** `src/shared/components/RefreshOnFocus.tsx` in the `(main)` layout calls `router.refresh()` when the tab becomes visible after ≥ 60 s hidden, on `online` and on back/forward. No polling, no Realtime. A rejected payment now reloads both the detail and the list (not only on network errors). Verified: session B on `/production` showed the job assigned from session A after the connection returned (badge 2 → 3, later 4 → 5); 10 s away → no request; 61 s away → one 8.8 KB RSC refresh with the sale draft intact. Not re-verified: the renewal → refocus case (same mechanism: the layout and page re-render with fresh `canOperate`).
 
 ## Phase 4 — Performance and low-bandwidth/offline
 
@@ -839,6 +844,8 @@ Measured in the production build:
 ## Test data created
 
 All on the remote Supabase project. Real users' passwords are deliberately not recorded. Every QA customer has `messaging_consent = false` and fake numbers +53 5000 0xxx, and no real WhatsApp was sent.
+
+- **2026-10-02 (pending items + Phase 3):** QAS orders QAS-2026-000005..8 (Monofocal · Blanco, paid; 000006..8 with an in-house lens job), customer 'QA PILOTO Clave Cliente'. **Cleanup required:** the seeded `market_exchange_rates` row for 2026-10-02 (`rates->>'QA' = 'seed'`, 455 CUP) and the QAS rate adopted from it; while that row exists the real elTOQUE rate is not fetched that day. The MCP declined the cleanup statement.
 
 **Organizations**
 

@@ -16,6 +16,7 @@ import {
 import { uploadPrescriptionOriginal } from "@/features/prescriptions/upload-original";
 import { createClient } from "@/lib/supabase/client";
 import { newRequestId } from "@/shared/utils/request-id";
+import { refreshNavigationCounters } from "@/shared/lib/navigation-counters";
 import { ExchangeRateRefresh, FormSelect, type BusinessRate } from "@/shared/components";
 import { Alert, Button, Card, Dialog, EmptyState, Field, Input, Steps, Textarea } from "@/shared/ui";
 
@@ -463,6 +464,7 @@ export function SalesWorkspace({
         `Pedido ${result.orderNumber} creado con precios y tasa inmutables.`,
       );
       setAcceptedOrder(result);
+      void refreshNavigationCounters();
       setQuotationId(null);
       writeDraft(draftKey, null);
     });

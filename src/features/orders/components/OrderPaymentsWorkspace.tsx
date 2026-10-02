@@ -7,6 +7,8 @@ import { createClient } from '@/lib/supabase/client'
 import { ButtonLink, EmptyState, PageHeader, StatCard, Toast, cx } from '@/shared/ui'
 import { newRequestId } from '@/shared/utils/request-id'
 import { friendlyError } from '@/shared/lib/friendly-error'
+import { useServerState } from '@/shared/hooks/use-server-state'
+import { refreshNavigationCounters } from '@/shared/lib/navigation-counters'
 
 import { formatAmount } from '../format'
 import { orderKpis } from '../order-kpis'
@@ -23,7 +25,7 @@ type WorkspaceProps = { initialOrders: Order[]; initialCustomerFilter?: string; 
 
 export function OrderPaymentsWorkspace({ initialOrders, initialCustomerFilter = '', initialCustomerId }: WorkspaceProps) {
   const supabase = useMemo(() => createClient(), [])
-  const [orders, setOrders] = useState(initialOrders)
+  const [orders, setOrders] = useServerState(initialOrders)
   const [selectedId, setSelectedId] = useState(0)
   const [summary, setSummary] = useState<PaymentSummary | null>(null)
   const [timeline, setTimeline] = useState<TimelineEvent[]>([])
@@ -42,9 +44,10 @@ export function OrderPaymentsWorkspace({ initialOrders, initialCustomerFilter = 
   }, [supabase])
 
   const refreshOrders = useCallback(async () => {
+    void refreshNavigationCounters()
     const { data, error: listError } = await supabase.rpc('list_accessible_orders')
     if (!listError) setOrders(data as unknown as Order[])
-  }, [supabase])
+  }, [setOrders, supabase])
 
   const select = useCallback((orderId: number) => {
     setSelectedId(orderId); setError('')
@@ -54,8 +57,16 @@ export function OrderPaymentsWorkspace({ initialOrders, initialCustomerFilter = 
   }, [loadDetail])
 
   // Desktop shows inbox and detail side by side, so the first order opens automatically.
-  // Mobile shows one pane at a time and starts on the inbox.
+  // Mobile shows one pane at a time and starts on the inbox. When fresh server data
+  // arrives (focus, reconnect, back/forward) the open order reloads instead (QA-27).
+  const openOrderId = useRef(0)
+  useEffect(() => { openOrderId.current = selectedId }, [selectedId])
   useEffect(() => {
+    if (openOrderId.current) {
+      const orderId = openOrderId.current
+      startTransition(async () => { await loadDetail(orderId).catch(() => undefined) })
+      return
+    }
     const first = initialOrders[0]
     if (!first || !window.matchMedia(DESKTOP_QUERY).matches) return
     startTransition(async () => {
@@ -69,8 +80,9 @@ export function OrderPaymentsWorkspace({ initialOrders, initialCustomerFilter = 
         const { error: paymentError } = await supabase.rpc('register_cash_payment', { target_order_id: selectedId, payment_amount: input.amount, payment_currency: input.currency, payment_applied_rate: input.rate, payment_notes: input.notes, payment_request_id: input.requestId } as never)
         if (paymentError) {
           setError(friendlyPaymentError(paymentError))
-          // The payment may have committed: show the real balance before any retry.
-          if (isNetworkError(paymentError)) await loadDetail(selectedId).catch(() => undefined)
+          // The payment may have committed, or another tab changed the balance (QA-27):
+          // show the real state before any retry.
+          await Promise.all([loadDetail(selectedId), refreshOrders()]).catch(() => undefined)
           return resolve(false)
         }
         setError('')

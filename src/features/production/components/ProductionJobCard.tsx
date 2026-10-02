@@ -22,6 +22,19 @@ type ProductionJobCardProps = {
 
 export function ProductionJobCard({ job, showCustomer, transitionLabel, secondaryTransitionLabel, pending, onTransition, onSecondaryTransition, onReportIncident, onCreateRework }: ProductionJobCardProps) {
   const hasIncident = job.status === 'incident'
+  // QA-25: a job replaced by an accepted rework is history; keep it short and inert.
+  if (job.isCurrent === false) {
+    return (
+      <Card className="flex flex-col gap-1.5 opacity-80">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <strong className="font-display text-[15px] text-ink">{job.orderNumber}</strong>
+          <Badge tone="neutral">Sustituido por repetición</Badge>
+        </div>
+        <p className="text-[13px] text-text-muted">{job.jobType === 'lens' ? 'Cristales' : 'Montaje'} · {job.providerName} · {new Date(job.assignedAt).toLocaleDateString('es-CU')}</p>
+        {job.incidents[0] ? <p className="text-[13px] text-text-secondary [overflow-wrap:anywhere]">Incidencia: {job.incidents[0].description}</p> : null}
+      </Card>
+    )
+  }
   return (
     <Card tone={hasIncident ? 'danger' : 'default'} className="flex flex-col gap-3">
       <div className="flex flex-wrap items-start justify-between gap-2">

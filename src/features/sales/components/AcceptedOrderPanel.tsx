@@ -9,6 +9,7 @@ import { friendlyPaymentError, isNetworkError } from '@/features/orders/payment-
 import type { PaymentSummary } from '@/features/orders/types'
 import { OrderProductionPanel } from '@/features/production/components'
 import { createClient } from '@/lib/supabase/client'
+import { refreshNavigationCounters } from '@/shared/lib/navigation-counters'
 import { Alert, Button, ButtonLink, Card, CardHeader, ProgressBar, Toast } from '@/shared/ui'
 
 import type { AcceptedOrder, PriceResult } from './sale-types'
@@ -45,6 +46,7 @@ export function AcceptedOrderPanel({ order, customerName, preview, onNewSale }: 
           return resolve(false)
         }
         setError('')
+        void refreshNavigationCounters()
         const { data, error: refreshError } = await supabase.rpc('get_order_payment_summary', { target_order_id: order.orderId } as never)
         if (refreshError) setError('El cobro se registró, pero no pudimos actualizar el saldo en pantalla.')
         else setSummary(data as unknown as PaymentSummary)

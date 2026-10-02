@@ -5,7 +5,7 @@ import { Plus } from 'lucide-react'
 
 import type { Tables } from '@/lib/supabase/database.types'
 import { createClient } from '@/lib/supabase/server'
-import { LensSpaceLogo, MainNavigation, MobileSidebar, OfflineBanner, SidebarAccount, type ShellIdentity } from '@/shared/components'
+import { LensSpaceLogo, MainNavigation, MobileSidebar, OfflineBanner, RefreshOnFocus, SidebarAccount, type ShellIdentity } from '@/shared/components'
 
 const commercialHrefs = ['/prescriptions', '/catalog', '/orders', '/sales', '/customers']
 const roleLabels: Record<string, string> = {
@@ -64,6 +64,7 @@ async function AuthenticatedLayout({ children }: { children: React.ReactNode }) 
           </div>
         </header>
         <OfflineBanner />
+        <RefreshOnFocus />
         <main>{children}</main>
       </div>
     </div>

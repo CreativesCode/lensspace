@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { FilterPanel, FormSelect } from '@/shared/components'
 import { Alert, Badge, Button, Card, CardHeader, EmptyState, Field, Input, ListItem, PageHeader, StatCard, Toast, cx } from '@/shared/ui'
 import { friendlyError } from '@/shared/lib/friendly-error'
+import { useServerState } from '@/shared/hooks/use-server-state'
 
 type Closure = { id: number; type: 'primary' | 'complementary'; sequenceNumber: number; expectedAmount: number; declaredAmount: number; differenceAmount: number; closedAt: string }
 export type Cashbox = { id: number; branchName: string; sellerId: string; sellerName: string; businessDate: string; currency: 'CUP' | 'USD'; receivedAmount: number; paymentCount: number; pendingPostCloseAmount: number; primaryClosed: boolean; closedExpectedAmount: number; closedDeclaredAmount: number; closedDifferenceAmount: number; closures: Closure[] }
@@ -14,7 +15,7 @@ const amount = (value: number) => Number(value).toLocaleString('es-CU', { maximu
 
 export function CashboxWorkspace({ initialCashboxes, currentUserId }: { initialCashboxes: Cashbox[]; currentUserId: string }) {
   const supabase = useMemo(() => createClient(), [])
-  const [cashboxes, setCashboxes] = useState(initialCashboxes)
+  const [cashboxes, setCashboxes] = useServerState(initialCashboxes)
   const [selectedId, setSelectedId] = useState(initialCashboxes[0]?.id ?? 0)
   // Mobile shows one pane at a time; desktop (xl) shows list and detail side by side.
   const [detailOpen, setDetailOpen] = useState(false)
