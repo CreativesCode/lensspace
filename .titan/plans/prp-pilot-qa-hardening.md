@@ -648,6 +648,7 @@ Measured in the production build:
   - Confirm the Vercel function region equals the Supabase region.
 - **Verify:** owner `/dashboard` TTFB in the prod build → verificar: ≤ 1 s from this machine; auth calls per request → verificar: 1 or 0.
 - **Done (2026-10-02):** `getCurrentUser()` (`src/lib/supabase/current-user.ts`) wraps `auth.getClaims()` in React `cache()`: one local ES256 verification per request shared by layout and page, no Auth round trip (RLS still verifies the JWT). Used by the `(main)` layout, all pages and `loadOwnedOrganizations`. `/dashboard` loads owned orgs, member access and KPIs in parallel, parallelizes the member-access queries and per-org checks, derives owner modules from the same memberships, and the platform view reuses `loadPlatformOrganizations`. Prod build TTFB from this machine: `/dashboard` 460–930 ms (was 2.2–2.6 s), `/orders` 450–1100, `/production` 425–940, `/sales` 465–970. Not done: Vercel region check (deploy setting).
+  - Supabase region confirmed by the product owner: `ca-central-1` (Canada, Montréal). Matching Vercel function region: `yul1` (Montréal); fallback if the plan does not allow it: `iad1` (Washington, ~10–15 ms away). Product owner sets it in Vercel → Settings → Functions and redeploys.
 
 ### QA-32 Unbounded lists and search waterfall (medium, M)
 - **Problem:**
