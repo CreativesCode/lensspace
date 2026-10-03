@@ -32,6 +32,15 @@ answers HTTP 500 after sending, so attempts are stored as failed (QA-61).
 - OpenWA false negative (QA-61): our side done; the VPS fix (Vault session UUID,
   OpenWA logs) stays pending with the product owner.
 - WhatsApp messages carry the shop name, the sender's name and phone (QA-08 follow-up).
+- Superadmin (QA-38): never operational writes in a tenant; reading a tenant's
+  operational data requires an open, audited support session for that organization
+  (`private.has_platform_support_session`). Base catalog and platform admin unchanged.
+- Invitations (QA-39): always `invited`; new accounts activate by confirming the
+  email, existing accounts accept/decline on the dashboard. Owners cannot activate
+  an invited member; the invite response never reveals whether an account exists.
+- Phase 6 requests (not started): profile page with password change (QA-62),
+  landing recognizes a signed-in user (QA-63), manual editable only by the
+  superadmin and read-only + PDF for everyone else (QA-64).
 
 ## Test accounts and data
 

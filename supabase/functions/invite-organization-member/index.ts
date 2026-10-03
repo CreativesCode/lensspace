@@ -121,7 +121,6 @@ Deno.serve(async (request) => {
 
   const existingUser = existingUsers?.[0]
   let targetUserId = existingUser?.user_id
-  let isConfirmed = existingUser?.is_confirmed ?? false
   let createdInvitation = false
 
   if (!targetUserId) {
@@ -153,7 +152,6 @@ Deno.serve(async (request) => {
     }
 
     targetUserId = data.user.id
-    isConfirmed = Boolean(data.user.email_confirmed_at)
     createdInvitation = true
   }
 
@@ -165,7 +163,9 @@ Deno.serve(async (request) => {
       target_organization_id: payload.organizationId,
       target_branch_id: payload.role === 'seller' ? payload.branchId : null,
       target_role: payload.role,
-      target_status: isConfirmed ? 'active' : 'invited',
+      // QA-39: never enroll someone without consent. New accounts activate when they
+      // confirm the invitation email; existing ones accept it from their dashboard.
+      target_status: 'invited',
     },
   )
 
@@ -176,12 +176,7 @@ Deno.serve(async (request) => {
     return jsonResponse({ error: 'No se pudo vincular la cuenta a la organización.' }, 400)
   }
 
-  return jsonResponse(
-    {
-      membershipId,
-      status: isConfirmed ? 'active' : 'invited',
-      invitationSent: createdInvitation,
-    },
-    200,
-  )
+  // Same response for known and unknown emails: it must not reveal whether an
+  // account already exists.
+  return jsonResponse({ membershipId, status: 'invited' }, 200)
 })

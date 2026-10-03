@@ -36,7 +36,7 @@ export function OrganizationTeamManager({ organizationId, organizationName, bran
       if (inviteError.context instanceof Response) { const body = await inviteError.context.json().catch(() => null) as { error?: string } | null; text = body?.error ?? text }
       setError(text); setPending(false); return
     }
-    form.reset(); setRole('seller'); setToast('Invitación procesada correctamente.'); setInviteOpen(false); router.refresh(); setPending(false)
+    form.reset(); setRole('seller'); setToast('Invitación enviada. La persona se unirá cuando la acepte.'); setInviteOpen(false); router.refresh(); setPending(false)
   }
 
   async function manageMember(member: TeamMember, nextStatus: 'active' | 'inactive', nextBranchId: number | null) {

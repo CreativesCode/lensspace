@@ -118,11 +118,11 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 | QA-35 | `/orders` auto-loads first order detail (2 RPC + 2 preflights) | low | performance | PERF-13 | done 2026-10-02 | S |
 | QA-36 | Full supabase-js browser client is 66.6 KB gz on every page | low | performance | PERF-10 | deferred (post-pilot) | L |
 | QA-37 | Suspended org/subscription is read-only, not blocked | — | decision | ADM-03 | closed: keep read-only (decision 2026-10-02) | — |
-| QA-38 | Superadmin can write tenant data and read every tenant without a support session | medium | security | ADM-04 | confirmed | M |
-| QA-39 | Invite enrolls existing accounts as ACTIVE with no consent; response reveals whether an account exists | medium | security | ADM-02 | confirmed | M |
-| QA-40 | No read-only banner, 'Nueva venta' stays enabled when expired; owner never told of expiry | medium | friction | ADM-08, ADM-09 | confirmed | S |
-| QA-41 | Rework cannot be reassigned to another provider | medium | missing-feature | MR-06 | confirmed | S |
-| QA-42 | Provider sees 'Aceptar repetición' (DB rejects it) | medium | bug | MR-07 | confirmed | S |
+| QA-38 | Superadmin can write tenant data and read every tenant without a support session | medium | security | ADM-04 | done 2026-10-02 | M |
+| QA-39 | Invite enrolls existing accounts as ACTIVE with no consent; response reveals whether an account exists | medium | security | ADM-02 | done 2026-10-02 | M |
+| QA-40 | No read-only banner, 'Nueva venta' stays enabled when expired; owner never told of expiry | medium | friction | ADM-08, ADM-09 | done 2026-10-02 | S |
+| QA-41 | Rework cannot be reassigned to another provider | medium | missing-feature | MR-06 | done 2026-10-02 | S |
+| QA-42 | Provider sees 'Aceptar repetición' (DB rejects it) | medium | bug | MR-07 | done 2026-10-02 | S |
 | QA-43 | Mojibake in 8 DB functions and stored `notification_attempts`; unaccented messages | low | ux-copy | SOLO-19, ADM-16, MR-16 (part) | confirmed | S |
 | QA-44 | Prescription allows cylinder without axis and off-step values; two vision types with no warning | low | data-integrity | SALES-17, MR-15 | confirmed | S |
 | QA-45 | Provider mobile: lands on dashboard, stats fill the first screen, history always shown | low | mobile | MR-13 | confirmed | S |
@@ -140,7 +140,7 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 | QA-57 | Module dependency rules not reflected in admin UI | low | friction | ADM-15 | confirmed | S |
 | QA-58 | Deactivated/invited member shows as 'Usuario' | low | bug | ADM-18 | confirmed | S |
 | QA-59 | Session expiry drops the deep link; invite error is generic | low | friction | ADM-19 | confirmed | S |
-| QA-60 | Advisors: leaked-password protection off; DEFINER RPC exposed | low | security | ADM-20 | plausible | S |
+| QA-60 | Advisors: leaked-password protection off; DEFINER RPC exposed | low | security | ADM-20 | reviewed 2026-10-02 (leaked-password setting pending) | S |
 | QA-61 | WhatsApp is delivered but OpenWA answers HTTP 500, so it is recorded as failed (false negative) | high | data-integrity | controlled send 2026-10-02 | confirmed | S–M |
 
 ---
@@ -705,6 +705,13 @@ Measured in the production build:
   - Redirect admins away from tenant-only routes.
   - Clean up customer #54.
 - **Verify:** admin RPC create customer with no session → verificar: denied; with a session → verificar: allowed and audited.
+- **Done (2026-10-02, decision: reads only with a session, never operational writes):** migration `20261002225313_restrict_platform_admin_tenant_access.sql`.
+  - `private.has_platform_support_session(org)`: platform admin with an open, unexpired session of their own for that org.
+  - `can_operate_in_organization` and `can_write_branch_clinical_data` no longer bypass for the admin, so no sales, payments, customers, prescriptions or production writes, even with a session.
+  - `can_read_branch_clinical_data`, `can_access_seller_sale` and tenant `has_commercial_catalog_access` require the support session; `can_manage_commercial_catalog` lets the admin manage only the base catalog (`organization_id is null`).
+  - `get_platform_usage` became SECURITY DEFINER (it checks the role) so the panel keeps its counters.
+  - Verified in SQL as admin (rolled back): no session → 0 customers/orders visible, base catalog 14 items, usage for 5 orgs; with a QAP session → only QAP's 5 customers; creating a customer → denied. The `/organizations` panel still shows usage counts.
+  - Pending cleanup: customer #54 created by the admin in QAP.
 
 ### QA-39 Invite consent and enumeration (medium, M)
 - **Problem:** inviting an existing confirmed account adds it as ACTIVE immediately, with no consent. Owner B suddenly saw '2 organizaciones'. The response status ('active' vs 'invited') reveals whether the account exists. Provider reuse across tenants is intended, but the missing consent is not.
@@ -714,6 +721,7 @@ Measured in the production build:
   - Always use `invited` and activate on acceptance, via an `accept_organization_invitation` RPC plus a dashboard banner 'Te invitaron a X: Aceptar'.
   - Return a uniform response.
 - **Verify:** inviting an existing user → verificar: status `invited` until accepted; the response is identical for known and unknown emails.
+- **Done (2026-10-02):** the Edge Function always creates `invited` and returns `{ membershipId, status: 'invited' }` for every email (deployed). New accounts still activate when they confirm the invitation email (existing auth trigger); existing accounts see 'Te invitaron a X · Aceptar / Rechazar' on the dashboard (`PendingInvitations`, RPCs `list_my_pending_invitations` and `respond_to_organization_invitation`, audited; migration `20261002232553_invitation_consent.sql`). `manage_organization_member` can no longer turn an invited member active. The owner's toast reads 'Invitación enviada. La persona se unirá cuando la acepte.' Verified: QAS invited the existing QSB owner → membership 46 `invited` → banner → 'Rechazar' → `inactive` and the banner disappears; re-inviting works.
 
 ### QA-40 Subscription state visible to the owner (medium, S)
 - **Problem:** when expired, there is no banner and 'Nueva venta' stays in the nav. `/sales` buttons stay enabled, and only the save is disabled, with no explanation. Owners are never told when the trial ends.
@@ -725,17 +733,21 @@ Measured in the production build:
   - Show 'Prueba hasta 17 oct' in `SidebarAccount`, with a warning when 5 or fewer days remain.
   - Hide 'Nueva venta' when the org cannot operate.
 - **Verify:** expired → verificar: banner shown and no 'Nueva venta'; trial with 3 days left → verificar: warning shown.
+- **Done (2026-10-02):** `get_my_subscription_notices()` (migration `20261002223933`) returns per membership organization whether it can operate; owners also get status, expiry and days left. The layout loads it in its parallel batch and renders `SubscriptionBanner`: red 'X está en solo lectura: la suscripción venció el 1 oct… Contacta a LensSpace para renovar.' (non-owners: 'Consulta con el dueño de la óptica.'), amber 'La prueba de X vence en 3 días (5 oct)' for owners at ≤ 5 days. 'Nueva venta' (sidebar, mobile drawer, header +) hides when no organization can operate. Verified with QAP temporarily expired and QAB at 3 days (dates restored).
 
 ### QA-41 Reassign a rework (medium, S)
 - **Problem:** 'Las repeticiones … pueden reasignarse' is not possible. The rework copies the original provider, and a new assignment fails with 409 'El pedido ya tiene un trabajo activo de ese tipo.'
 - **Root cause:** `private.create_production_rework` has no provider parameter, and the unique index `production_jobs_one_current_type_idx` blocks a second job.
 - **Fix:** add an optional `new_provider_id` parameter, validated like an assignment, and a provider select in the 'Aceptar repetición' dialog.
 - **Verify:** a rework assigned to another provider → verificar: allowed and linked through `original_job_id`.
+- **Done (2026-10-02):** migration `20261002223547_reassign_production_rework.sql` adds `create_production_rework(incident, new_provider_id)` (validated like an assignment; the 1-argument version delegates). 'Aceptar repetición' opens a dialog 'Responsable de la repetición' defaulting to the original provider. Verified: JAV-2026-000016 incident → rework job 23 assigned to Javier (taller propio), `original_job_id = 15`.
 
 ### QA-42 Provider sees 'Aceptar repetición' (medium, S)
 - **Root cause:** `src/features/production/components/ProductionJobCard.tsx:41` has no role check.
 - **Fix:** add a `canAuthorizeRework` prop, passed from `ProductionWorkspace` (around :185), and show 'Pendiente de decisión de la óptica' to providers.
 - **Verify:** Claudia on an incident → verificar: no button is shown.
+- **Done (2026-10-02):** `canAuthorizeRework` (= optical actor). Verified: Claudia sees 'Pendiente de decisión de la óptica' and no button on the JAV-2026-000016 incident.
+- **Related UI fixes (2026-10-02, product owner feedback):** the shared `Dialog` and the mobile drawer now render through a portal in `<body>`; opened from the sticky sidebar ('Mi perfil') they were trapped in its stacking context and page fields/selects painted over them. On-behalf production actions show the short label ('Iniciar fabricación') with 'en nombre del proveedor' in the tooltip/accessible name, and 'Marcar listo para enviar' became 'Listo para enviar'.
 
 ### QA-43 Mojibake and missing accents in DB messages (low, S)
 - **Problem:**
@@ -853,6 +865,31 @@ Measured in the production build:
 ### QA-60 Advisors (low, S, plausible)
 - **Fix:** enable leaked-password protection, which may require a paid plan. Document why `manage_organization_member` is SECURITY DEFINER. Index FKs later.
 - **Verify:** `get_advisors` → verificar: no WARN items, or the remaining ones are documented.
+- **Reviewed (2026-10-02):** remaining WARNs are documented, not bugs:
+  - SECURITY DEFINER RPCs callable by `authenticated` (8): `adopt_market_usd_rate`, `get_my_subscription_notices`, `get_platform_usage`, `list_my_pending_invitations`, `manage_organization_member`, `notify_order_ready`, `platform_owner_email`, `respond_to_organization_invitation`. Each checks `auth.uid()` and the role/ownership internally and needs rows RLS would hide (subscriptions, other members, auth emails, aggregate usage). Moving them behind `private.` wrappers would only silence the linter.
+  - Leaked-password protection: Supabase Dashboard → Authentication → Providers/Policies → 'Prevent use of leaked passwords' (may require a paid plan). Product owner action.
+
+## Phase 6 — Product owner requests (2026-10-02)
+
+Requested during Phase 5. Not started.
+
+### QA-62 Profile page (medium, M)
+- **Request:** a real profile where each user changes their name and other personal data, and their password.
+- **Today:** only the 'Mi perfil' dialog in the sidebar (`AccountProfileDialog`: display name and contact phone). Password changes exist only through recovery (`/forgot-password` → `/set-password`).
+- **Proposal:** a `/profile` route (`(main)` group) with personal data (name, phone; email read-only) and 'Cambiar contraseña' (current password re-check, then `auth.updateUser({ password })`, Spanish errors, rate-limit aware). Link it from `SidebarAccount`; keep the dialog or replace it with the link.
+- **Verify:** change name → sidebar and WhatsApp signature update; change password → old one fails, new one works; wrong current password → Spanish error.
+
+### QA-63 Landing recognizes a signed-in user (medium, S)
+- **Request:** when already signed in, the landing must let the user go to the dashboard without logging in again.
+- **Today:** `/` (landing) always shows the public CTA to `/login`.
+- **Proposal:** read the session on the landing (`getCurrentUser()`; the page stays fast) and swap the header/hero CTA to 'Ir a mi panel' → `/dashboard`; `/login` redirects to `/dashboard` when a session exists. Keep the landing cacheable for anonymous visitors if possible (check the Next 16 docs before choosing dynamic vs a small client check).
+- **Verify:** signed in → landing shows 'Ir a mi panel' and opens the dashboard with no login; signed out → normal CTA; `/login` while signed in → dashboard.
+
+### QA-64 User manual: superadmin edits, everyone reads (medium, M)
+- **Request:** only the superadmin can edit the user manual. Everyone else only reads it as pages and can download the PDF.
+- **Today:** `src/app/manual/page.tsx` → `authorizeManualEditor()` lets platform admins **and owners** open the editor (`ClientDocsGenerator`); sellers and providers are redirected to `/dashboard`.
+- **Proposal:** split the route: a read-only manual view (sections as pages with navigation, 'Descargar PDF' via the existing print view) for every signed-in role, and the editor only for `current_user_is_platform_admin`. Enforce edit permission where the manual content is saved (server), not only in the UI. Show 'Manual del sistema' in the nav for all roles.
+- **Verify:** seller/provider/owner → read-only pages + PDF, no edit controls, save attempts rejected; superadmin → editor.
 
 ---
 
@@ -860,7 +897,9 @@ Measured in the production build:
 
 All on the remote Supabase project. Real users' passwords are deliberately not recorded. Every QA customer has `messaging_consent = false` and fake numbers +53 5000 0xxx, and no real WhatsApp was sent.
 
-- **2026-10-02 (pending items + Phase 3):** QAS orders QAS-2026-000005..8 (Monofocal · Blanco, paid; 000006..8 with an in-house lens job), customer 'QA PILOTO Clave Cliente'. The seeded `market_exchange_rates` row (455 CUP) and the QAS rate adopted from it were deleted by the product owner on 2026-10-02 (verified: 0 market rows, 0 organizations with an adopted rate).
+- **2026-10-02 (pending items + Phase 3):** QAS orders QAS-2026-000005..8 (Monofocal · Blanco, paid; 000006..8 with an in-house lens job), customer 'QA PILOTO Clave Cliente'. - **2026-10-02 (Phase 5):** QAS → QSB-owner invitation (membership 46, declined → `inactive`); incident 5 on JAV-2026-000016 and rework job 23 (Javier, taller propio); QAP/QAB subscription dates were changed for the test and restored (QAP 2026-10-02…2026-11-02, QAB trial until 2026-10-17).
+
+The seeded `market_exchange_rates` row (455 CUP) and the QAS rate adopted from it were deleted by the product owner on 2026-10-02 (verified: 0 market rows, 0 organizations with an adopted rate).
 
 **Organizations**
 

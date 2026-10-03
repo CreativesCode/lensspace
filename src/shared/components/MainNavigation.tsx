@@ -45,10 +45,9 @@ const navigationSections: { label: string; items: { href: string; label: string;
 
 // The active accent bar sits at -14px: containers must keep a 14px (px-3.5) horizontal padding.
 // `counts` maps an href to its pending figure (guide: pill after the label, hidden at 0).
-export function MainNavigation({ allowedHrefs, counts: serverCounts = noCounts, onNavigate }: { allowedHrefs: string[]; counts?: Record<string, number>; onNavigate?: () => void }) {
+export function MainNavigation({ allowedHrefs, counts: serverCounts = noCounts, canCreateSale = allowedHrefs.includes('/sales'), onNavigate }: { allowedHrefs: string[]; counts?: Record<string, number>; canCreateSale?: boolean; onNavigate?: () => void }) {
   const pathname = usePathname()
   const counts = useNavigationCounts(serverCounts)
-  const canCreateSale = allowedHrefs.includes('/sales')
   const visibleSections = navigationSections
     .map((section) => ({ ...section, items: section.items.filter(({ href }) => allowedHrefs.includes(href)) }))
     .filter(({ items }) => items.length)

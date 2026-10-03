@@ -2156,10 +2156,12 @@ export type Database = {
         }
         Returns: Json
       }
-      create_production_rework: {
-        Args: { target_incident_id: number }
-        Returns: number
-      }
+      create_production_rework:
+        | { Args: { target_incident_id: number }; Returns: number }
+        | {
+            Args: { new_provider_id: string; target_incident_id: number }
+            Returns: number
+          }
       current_user_can_manage_organization: {
         Args: { target_organization_id: number }
         Returns: boolean
@@ -2184,6 +2186,7 @@ export type Database = {
         Args: { target_dispatch_id: number }
         Returns: Json
       }
+      get_my_subscription_notices: { Args: never; Returns: Json }
       get_navigation_counters: { Args: never; Returns: Json }
       get_openwa_runtime_config: { Args: never; Returns: Json }
       get_order_detail: { Args: { target_order_id: number }; Returns: Json }
@@ -2220,6 +2223,7 @@ export type Database = {
         | { Args: never; Returns: Json }
         | { Args: { finished_since: string }; Returns: Json }
       list_accessible_production_jobs: { Args: never; Returns: Json }
+      list_my_pending_invitations: { Args: never; Returns: Json }
       manage_organization_member: {
         Args: {
           target_branch_id: number
@@ -2266,6 +2270,10 @@ export type Database = {
           target_job_id: number
         }
         Returns: number
+      }
+      respond_to_organization_invitation: {
+        Args: { accept: boolean; target_membership_id: number }
+        Returns: undefined
       }
       save_quotation: {
         Args: {

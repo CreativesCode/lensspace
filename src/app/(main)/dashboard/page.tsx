@@ -3,6 +3,7 @@ import { Building, Factory, Plus } from 'lucide-react'
 import { PlatformAdminDashboard } from '@/features/admin/components'
 import { OwnerAnalyticsDashboard } from '@/features/analytics/components'
 import { MemberAccessCard, OwnerAccessCard } from '@/features/dashboard/components/AccessCards'
+import { PendingInvitations, type PendingInvitation } from '@/features/dashboard/components/PendingInvitations'
 import { formatAmount } from '@/features/orders/format'
 import { loadPlatformOrganizations } from '@/features/admin/load-platform-organizations'
 import { loadOwnedOrganizations } from '@/features/team/load-owned-organizations'
@@ -42,11 +43,13 @@ export default async function DashboardPage() {
 
   // QA-31: independent loads in parallel. Memberships include the owner role, so the
   // owner's enabled modules come from the same query. KPIs are aggregated server-side.
-  const [ownedOrganizations, allAccess, { data: kpiData }] = await Promise.all([
+  const [ownedOrganizations, allAccess, { data: kpiData }, { data: invitationData }] = await Promise.all([
     loadOwnedOrganizations(supabase),
     loadMemberAccess(supabase),
     supabase.rpc('get_order_kpis'),
+    supabase.rpc('list_my_pending_invitations'),
   ])
+  const invitations = (invitationData ?? []) as unknown as PendingInvitation[]
   const memberAccess = ownedOrganizations.length ? [] : allAccess
   const ownedModules = allAccess.filter((access) => access.roles.includes('owner')).flatMap((access) => access.modules)
   const canSell = ownedModules.includes('optical_sales') || memberAccess.some((access) => access.roles.includes('seller') && access.modules.includes('optical_sales'))
@@ -79,6 +82,7 @@ export default async function DashboardPage() {
           <StatCard surface="ink" tone="attention" label="Saldo por cobrar" value={formatAmount(kpis.balanceDue)} unit="CUP" />
         </> : undefined}
       />
+      <PendingInvitations invitations={invitations} />
       {ownedOrganizations.length ? (
         ownedOrganizations.map((organization) => (
           <div key={organization.id} className="flex flex-col gap-5">
