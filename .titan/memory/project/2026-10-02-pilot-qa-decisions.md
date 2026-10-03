@@ -40,9 +40,12 @@ answers HTTP 500 after sending, so attempts are stored as failed (QA-61).
 - Invitations (QA-39): always `invited`; new accounts activate by confirming the
   email, existing accounts accept/decline on the dashboard. Owners cannot activate
   an invited member; the invite response never reveals whether an account exists.
-- Phase 6 requests (not started): profile page with password change (QA-62),
-  landing recognizes a signed-in user (QA-63), manual editable only by the
-  superadmin and read-only + PDF for everyone else (QA-64).
+- Phase 6 done 2026-10-03: `/profile` with password change (re-checks the current
+  password) replaces the sidebar dialog (QA-62); the static landing swaps its CTAs
+  to 'Ir a mi panel' from the session cookie (QA-63); the manual is persisted in
+  `manual_documents` (superadmin writes by RLS, everyone reads; owners also see the
+  administration variant; PDF from the saved text) (QA-64).
+- Phase 5 low items done 2026-10-03 (QA-52 recommended deposit deferred post-pilot).
 
 ## Test accounts and data
 

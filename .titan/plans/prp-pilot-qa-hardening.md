@@ -53,11 +53,11 @@ Make LensSpace safe and frictionless for the Cuba pilot:
 
 **Not covered.** See *Coverage gaps*. The main gaps are the seller and mounter accounts, a real WhatsApp send and Vercel-region TTFB.
 
-## Current status (2026-10-03)
+## Current status (2026-10-03, after Phase 6)
 
-- **Done:** Phases 1–5 complete (QA-52 deferred post-pilot by plan; QA-37 closed by decision; QA-60 reviewed). Extra: elTOQUE rate button, retry-safe customers, owner reset link, dialog stacking fix, and the proxy moved to `src/proxy.ts` (it never ran from the root; see QA-59).
+- **Done:** Phases 1–6 complete (QA-52 deferred post-pilot by plan; QA-37 closed by decision; QA-60 reviewed). Extra: elTOQUE rate button, retry-safe customers, owner reset link, dialog stacking fix, and the proxy moved to `src/proxy.ts` (it never ran from the root; see QA-59).
 - **Waiting on the product owner:** elTOQUE token (`ELTOQUE_API_TOKEN` secret, approval up to a week); OpenWA fix on the VPS (QA-61); Vercel function region = Supabase region (QA-31: ca-central-1 → yul1, iad1 fallback); leaked-password protection setting (QA-60).
-- **Now:** Phase 6 product requests QA-62 (profile + password), QA-63 (landing knows the session; `/login` → `/dashboard` already works since the proxy fix), QA-64 (manual: superadmin edits, others read + PDF).
+- **Next:** cleanup of QA data before the pilot (below), then a production build + Vercel deploy check once the region is set. The superadmin should open `/manual` and press 'Guardar manual' once to publish the reviewed text.
 - **Deferred:** QA-36 supabase-js bundle, QA-52 recommended deposit, jobs history flag, provider jobs offline snapshot, `/catalog` column trimming.
 - **Cleanup before the pilot:** QA orgs QAS/QAP/QAB/QSB, customer #54, extra memberships of the QAS owner, the test phone on Javier's profile, QA PILOTO orders/jobs in Óptica Javier.
 
@@ -897,19 +897,21 @@ Measured in the production build:
 
 ## Phase 6 — Product owner requests (2026-10-02)
 
-Requested during Phase 5. Not started.
+Requested during Phase 5. Done 2026-10-03.
 
 ### QA-62 Profile page (medium, M)
 - **Request:** a real profile where each user changes their name and other personal data, and their password.
 - **Today:** only the 'Mi perfil' dialog in the sidebar (`AccountProfileDialog`: display name and contact phone). Password changes exist only through recovery (`/forgot-password` → `/set-password`).
 - **Proposal:** a `/profile` route (`(main)` group) with personal data (name, phone; email read-only) and 'Cambiar contraseña' (current password re-check, then `auth.updateUser({ password })`, Spanish errors, rate-limit aware). Link it from `SidebarAccount`; keep the dialog or replace it with the link.
 - **Verify:** change name → sidebar and WhatsApp signature update; change password → old one fails, new one works; wrong current password → Spanish error.
+- **Done (2026-10-03):** `/profile` (`src/app/(main)/profile/page.tsx`, `src/features/account/components/`): name and contact phone (email read-only) and 'Cambiar contraseña' (re-checks the current password with `signInWithPassword`, then `updateUser`; Spanish errors for invalid_credentials, same_password, weak_password, rate limit, offline). The sidebar name is now a link to `/profile` (the 'Mi perfil' dialog was removed). Verified with the QA solo account: name change shows in the sidebar; wrong current password → 'La contraseña actual no es correcta.'; after the change the old password fails and the new one works; password restored afterwards.
 
 ### QA-63 Landing recognizes a signed-in user (medium, S)
 - **Request:** when already signed in, the landing must let the user go to the dashboard without logging in again.
 - **Today:** `/` (landing) always shows the public CTA to `/login`.
 - **Proposal:** read the session on the landing (`getCurrentUser()`; the page stays fast) and swap the header/hero CTA to 'Ir a mi panel' → `/dashboard`; `/login` redirects to `/dashboard` when a session exists. Keep the landing cacheable for anonymous visitors if possible (check the Next 16 docs before choosing dynamic vs a small client check).
 - **Verify:** signed in → landing shows 'Ir a mi panel' and opens the dashboard with no login; signed out → normal CTA; `/login` while signed in → dashboard.
+- **Done (2026-10-03):** The landing stays static (no supabase-js in its bundle): `AccessLink` checks that the Supabase session cookie exists and swaps the 4 access CTAs to 'Ir a mi panel' → `/dashboard`. `/login` while signed in → `/dashboard` via the proxy (works since the QA-59 proxy fix). Verified signed in and signed out.
 
 ### QA-64 User manual: superadmin edits, everyone reads (medium, M)
 - **Request:** only the superadmin can edit the user manual. Everyone else only reads it as pages and can download the PDF.
@@ -918,6 +920,7 @@ Requested during Phase 5. Not started.
 - **Verify:** seller/provider/owner → read-only pages + PDF, no edit controls, save attempts rejected; superadmin → editor.
 
 ---
+- **Done (2026-10-03):** Manual content is now persisted: table `manual_documents` (RLS: every authenticated user reads; only `private.is_platform_admin()` inserts/updates; `updated_by` set by trigger). `/manual`: superadmin gets the editor with 'Guardar manual' (publish), 'Descartar cambios' and an unsaved-changes notice; every other signed-in role gets `ManualReader` (section pages with previous/next, 'Descargar PDF', 'Volver al panel'); owners also read the administration variant. `/manual/print` renders the saved content from the server (no localStorage) and forces the operative variant for roles without admin access. 'Manual del sistema' is in the menu for every role. Verified: Claudia reads with no editor and her print is 'Manual operativo' even with `?audience=admin`; admin sees the editor; SQL as provider → RLS 42501 on write, read OK; as admin → write OK (rolled back). Until the superadmin saves once, everyone sees the bundled default content.
 
 ## Test data created
 

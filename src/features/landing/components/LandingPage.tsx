@@ -7,6 +7,7 @@ import {
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { AccessLink } from './AccessLink'
 import styles from './landing.module.css'
 
 const workflow = [
@@ -48,9 +49,7 @@ export function LandingPage() {
             <a className="transition hover:text-[#0D7A72]" href="#accesos">Accesos</a>
             <a className="transition hover:text-[#0D7A72]" href="#seguridad">Seguridad</a>
           </nav>
-          <Link href="/login" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[7px] bg-[#07322F] px-4 text-sm font-bold text-white transition hover:bg-[#0D7A72]">
-            Iniciar sesión <ArrowRight aria-hidden="true" size={16} />
-          </Link>
+          <AccessLink label="Iniciar sesión" arrow className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[7px] bg-[#07322F] px-4 text-sm font-bold text-white transition hover:bg-[#0D7A72]" />
         </div>
       </header>
 
@@ -70,9 +69,7 @@ export function LandingPage() {
               <a href="#como-funciona" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[7px] bg-[#FF6B4A] px-5 font-display text-sm font-bold text-[#07322F] shadow-[0_12px_30px_rgba(255,107,74,0.22)] transition hover:-translate-y-0.5 hover:bg-[#FF8466]">
                 Ver cómo funciona <ArrowRight aria-hidden="true" size={17} />
               </a>
-              <Link href="/login" className="inline-flex min-h-12 items-center justify-center rounded-[7px] border border-[#B9D8D3] bg-white/70 px-5 font-display text-sm font-bold text-[#07322F] transition hover:border-[#0D7A72] hover:bg-white">
-                Ya tengo acceso
-              </Link>
+              <AccessLink label="Ya tengo acceso" className="inline-flex min-h-12 items-center justify-center rounded-[7px] border border-[#B9D8D3] bg-white/70 px-5 font-display text-sm font-bold text-[#07322F] transition hover:border-[#0D7A72] hover:bg-white" />
             </div>
             <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3 text-sm text-[#4A5B58]">
               {['Por sucursal', 'Permisos por rol', 'Historial verificable'].map((item) => (
@@ -195,7 +192,7 @@ export function LandingPage() {
       <section className="px-5 pb-24 md:px-8 md:pb-32">
         <div className={`${styles.cta} relative mx-auto max-w-7xl overflow-hidden rounded-[30px] border border-[#CBE5E0] bg-[#EAF8F5] px-6 py-16 text-center md:px-12 md:py-20`}>
           <div className={styles.ctaGlow} aria-hidden="true" /><Image className="relative mx-auto" src="/brand/lensspace-mark.svg" width={64} height={64} alt="" /><p className="relative mt-7 text-xs font-bold uppercase tracking-[0.2em] text-[#0D7A72]">UN PEDIDO. UN HISTORIAL.</p><h2 className="relative mx-auto mt-4 max-w-3xl font-display text-4xl font-bold leading-tight tracking-[-0.045em] text-[#07322F] md:text-6xl">Mira tu operación con más claridad.</h2><p className="relative mx-auto mt-5 max-w-2xl text-lg leading-8 text-[#4A5B58]">Clientes, ventas, taller y cobros trabajando sobre la misma información, con el acceso correcto para cada persona.</p>
-          <div className="relative mt-9 flex flex-wrap justify-center gap-3"><a href="#como-funciona" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[7px] bg-[#07322F] px-5 font-display text-sm font-bold text-white transition hover:bg-[#0D7A72]">Explorar el recorrido <ArrowRight aria-hidden="true" size={17} /></a><Link href="/login" className="inline-flex min-h-12 items-center justify-center rounded-[7px] border border-[#9BCDC6] bg-white px-5 font-display text-sm font-bold text-[#07322F] transition hover:border-[#0D7A72]">Iniciar sesión</Link></div>
+          <div className="relative mt-9 flex flex-wrap justify-center gap-3"><a href="#como-funciona" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[7px] bg-[#07322F] px-5 font-display text-sm font-bold text-white transition hover:bg-[#0D7A72]">Explorar el recorrido <ArrowRight aria-hidden="true" size={17} /></a><AccessLink label="Iniciar sesión" className="inline-flex min-h-12 items-center justify-center rounded-[7px] border border-[#9BCDC6] bg-white px-5 font-display text-sm font-bold text-[#07322F] transition hover:border-[#0D7A72]" /></div>
         </div>
       </section>
 
@@ -214,7 +211,7 @@ export function LandingPage() {
             <a href="#capacidades" className="transition hover:text-[#0D7A72]">Capacidades</a>
             <a href="#accesos" className="transition hover:text-[#0D7A72]">Accesos</a>
             <a href="#seguridad" className="transition hover:text-[#0D7A72]">Seguridad</a>
-            <Link href="/login" className="transition hover:text-[#0D7A72]">Iniciar sesión</Link>
+            <AccessLink label="Iniciar sesión" className="transition hover:text-[#0D7A72]" />
           </nav>
 
           <p className="text-xs text-[#8B9A97]">© {new Date().getFullYear()} LensSpace</p>

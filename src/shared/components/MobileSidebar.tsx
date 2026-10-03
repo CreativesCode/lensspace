@@ -43,7 +43,7 @@ export function MobileSidebar({ allowedHrefs, counts, identity, canCreateSale }:
             </button>
           </div>
           <MainNavigation allowedHrefs={allowedHrefs} counts={counts} canCreateSale={canCreateSale} onNavigate={() => setOpen(false)} />
-          <div className="mt-auto pt-[22px]"><SidebarAccount identity={identity} /></div>
+          <div className="mt-auto pt-[22px]"><SidebarAccount identity={identity} onNavigate={() => setOpen(false)} /></div>
         </aside>
       </div>, document.body) : null}
     </>

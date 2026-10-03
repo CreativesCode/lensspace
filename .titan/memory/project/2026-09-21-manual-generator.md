@@ -2,10 +2,12 @@
 
 Fecha: 2026-09-21
 
-Actualización 2026-10-02: el dueño del producto pidió que solo el superadmin edite el
-manual y que el resto de roles lo lea como páginas y descargue el PDF (QA-64, Fase 6,
-pendiente). Hoy `authorizeManualEditor` deja editar a admin y dueños, y vendedores y
-proveedores no pueden verlo.
+Actualización 2026-10-03 (QA-64, sustituye el control de acceso descrito abajo): el
+contenido se guarda en `public.manual_documents` (clave `main`, jsonb con el
+`ClientDocsInput`). Solo el superadmin edita y publica («Guardar manual»; RLS lo
+impone); todos los roles leen `/manual` como páginas (`ManualReader`) y descargan el
+PDF desde `/manual/print`, que usa el texto guardado. Los dueños ven también la
+variante de administración. Sin fila guardada se muestra el contenido inicial.
 
 LensSpace incorpora un generador interno en `/manual` para producir documentación en español. La herramienta ofrece editor, vista previa, variantes para personal operativo y administración, descarga Markdown y vista preparada para guardar como PDF.
 

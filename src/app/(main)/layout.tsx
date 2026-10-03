@@ -106,7 +106,7 @@ async function loadShell(supabase: SupabaseServerClient, userId: string, email: 
   const organizationIds = [...new Set(memberships.map(({ organization_id }) => organization_id))]
   const mainRole = rolePriority.find((role) => memberships.some((membership) => membership.role === role))
   const identity: ShellIdentity = { ...account, roleLabel: mainRole ? roleLabels[mainRole] : 'Sin acceso activo', organizationName: 'Gestión óptica' }
-  if (!organizationIds.length) return { allowedHrefs: ['/dashboard'], counts: {}, identity, notices }
+  if (!organizationIds.length) return { allowedHrefs: ['/dashboard', '/manual'], counts: {}, identity, notices }
 
   const [{ data: moduleData }, { data: organizationData }] = await Promise.all([
     supabase.from('organization_modules').select('organization_id, module_key').in('organization_id', organizationIds).eq('is_enabled', true),
@@ -127,8 +127,9 @@ async function loadShell(supabase: SupabaseServerClient, userId: string, email: 
       ),
     )
 
-  const allowed = ['/dashboard']
-  if (memberships.some((membership) => membership.role === 'owner')) allowed.push('/team', '/manual')
+  // QA-64: every role reads the manual.
+  const allowed = ['/dashboard', '/manual']
+  if (memberships.some((membership) => membership.role === 'owner')) allowed.push('/team')
   if (hasAccess(['owner', 'seller'], 'optical_sales')) allowed.push(...commercialHrefs)
   if (hasAccess(['owner', 'seller'], 'cashbox')) allowed.push('/cashbox')
   if (hasAccess(['owner', 'seller', 'lens_provider', 'mounting_provider'], 'production')) {
