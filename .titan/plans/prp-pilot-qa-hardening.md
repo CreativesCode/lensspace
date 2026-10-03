@@ -53,6 +53,15 @@ Make LensSpace safe and frictionless for the Cuba pilot:
 
 **Not covered.** See *Coverage gaps*. The main gaps are the seller and mounter accounts, a real WhatsApp send and Vercel-region TTFB.
 
+## Current status (2026-10-02, end of session)
+
+- **Done:** Phases 1–4 complete; Phase 5 medium items QA-38..QA-42 done, QA-60 reviewed. QA-37 closed by decision. Extra: elTOQUE rate button, retry-safe customers, owner reset link, dialog stacking fix.
+- **Waiting on the product owner:** elTOQUE token (`ELTOQUE_API_TOKEN` secret, approval up to a week); OpenWA fix on the VPS (QA-61); Vercel function region = Supabase region (QA-31); leaked-password protection setting (QA-60).
+- **Next (Phase 5 low):** QA-43 mojibake/accents, QA-44 prescription validation, QA-45/46 provider mobile and commercial pages, QA-47 Escape in selects, QA-48 timeline polish, QA-49 stuck buttons offline, QA-50 order prefix, QA-51 onboarding feedback, QA-52 recommended deposit (feature), QA-53..57 platform audit/admin, QA-58 inactive member name, QA-59 deep link/invite error.
+- **Then:** Phase 6 product requests QA-62 (profile + password), QA-63 (landing knows the session), QA-64 (manual: superadmin edits, others read + PDF).
+- **Deferred:** QA-36 supabase-js bundle, jobs history flag, provider jobs offline snapshot, `/catalog` column trimming.
+- **Cleanup before the pilot:** QA orgs QAS/QAP/QAB/QSB, customer #54, extra memberships of the QAS owner, the test phone on Javier's profile, QA PILOTO orders/jobs in Óptica Javier.
+
 ## Executive summary
 
 **Verdict: NOT READY for the pilot as-is. It becomes ready once Phase 1 ships, plus the cheap offline items QA-28 and QA-30.** Selling works. The shortest sale is 6 clicks with 0 fields and about 4.8 s. A full sale with a new customer and prescription is 11–16 clicks on one screen. Totals and USD/CUP equivalents were correct in every run, and tenant and provider isolation held under every probe. But:
