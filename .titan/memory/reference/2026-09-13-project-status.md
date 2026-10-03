@@ -2,6 +2,10 @@
 
 Date: 2026-09-13
 Last updated: 2026-09-21
+Superseded for current status (2026-10-02): the live status, done/pending items and
+next steps are in `.titan/plans/prp-pilot-qa-hardening.md` → "Current status", and
+decisions in `project/2026-10-02-pilot-qa-decisions.md`. This file remains as the
+history of the build up to 2026-09-21.
 
 ## Product identity
 

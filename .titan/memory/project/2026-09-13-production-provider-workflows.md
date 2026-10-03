@@ -2,6 +2,12 @@
 
 Date: 2026-09-13; updated 2026-09-21
 Status: database deployed and remotely verified; application UI verified locally
+Updated 2026-10-02 (pilot QA): owners/sellers can act as an in-house workshop and
+record provider steps "en nombre del proveedor" (QA-01); superseded jobs
+(`is_current = false`) are history and never counted (QA-25); a rework can be
+reassigned to another responsible person (QA-41); providers see a pending rework as
+'Pendiente de decisión de la óptica' (QA-42); production can be assigned from the
+order (QA-13). Details in `.titan/plans/prp-pilot-qa-hardening.md`.
 
 Lens and mounting work are independent production jobs. An order has at most one
 current job of each type. Assignment snapshots only the operational item names

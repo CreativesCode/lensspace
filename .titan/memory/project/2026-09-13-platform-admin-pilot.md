@@ -2,6 +2,12 @@
 
 Date: 2026-09-13
 
+Updated 2026-10-02 (QA-38): support sessions now gate tenant reads. The platform
+admin has no operational writes in any tenant; reading a tenant's operational data
+requires an open, unexpired session of their own (`private.has_platform_support_session`).
+`get_platform_usage` is SECURITY DEFINER so counters keep working. Still open:
+starting a session silently closes the previous one without audit (QA-56).
+
 Phase 7 platform controls are implemented locally and deployed to the linked
 Supabase project. The superadministrator workspace now combines tenant status,
 negotiated subscription fields, module entitlements, usage counters, audited
