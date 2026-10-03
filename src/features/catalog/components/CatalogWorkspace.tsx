@@ -52,6 +52,7 @@ function money(value: number, currency: string) {
 
 export function CatalogWorkspace({
   isPlatformAdmin,
+  currentUserId,
   organizations,
   initialItems,
   initialOverrides,
@@ -59,6 +60,9 @@ export function CatalogWorkspace({
   prescriptions,
 }: {
   isPlatformAdmin?: boolean
+  // QA-49: from the server page; `auth.getUser()` in a handler fails offline and
+  // `user!.id` then threw, leaving the button stuck in its pending state.
+  currentUserId: string
   organizations: OrganizationAccess[]
   initialItems: CatalogItem[]
   initialOverrides: CatalogOverride[]
@@ -151,13 +155,12 @@ export function CatalogWorkspace({
     setPending(true)
     setError(null)
     const form = new FormData(event.currentTarget)
-    const { data: { user } } = await supabase.auth.getUser()
     const changes = {
       cost_amount: Number(form.get('costAmount')),
       sale_price: Number(form.get('salePrice')),
       currency: String(form.get('currency')).toUpperCase(),
       is_enabled: editEnabled,
-      changed_by: user!.id,
+      changed_by: currentUserId,
       changed_at: new Date().toISOString(),
     }
     const entry = { organization_id: organizationId, catalog_item_id: item.id, ...changes }
@@ -220,7 +223,6 @@ export function CatalogWorkspace({
     setError(null)
     const formElement = event.currentTarget
     const form = new FormData(formElement)
-    const { data: { user } } = await supabase.auth.getUser()
     const entry = {
       organization_id: isPlatformAdmin ? null : organizationId,
       category: String(form.get('category')),
@@ -230,7 +232,7 @@ export function CatalogWorkspace({
       cost_amount: Number(form.get('costAmount')),
       sale_price: Number(form.get('salePrice')),
       currency: String(form.get('currency')).toUpperCase(),
-      created_by: user!.id,
+      created_by: currentUserId,
     }
     const { data, error } = await supabase
       .from('catalog_items')

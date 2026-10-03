@@ -59,6 +59,10 @@ function jobActions(job: ProductionJob, opticalActor: boolean, currentUserId: st
   return optical ? { primary: optical, secondary: onBehalf } : { primary: onBehalf }
 }
 
+// Still needs someone: everything current except closed steps (a received mounting
+// job still waits for the optical's review).
+const isActiveJob = (job: ProductionJob) => job.isCurrent !== false && job.status !== 'reviewed' && !(job.status === 'received' && job.jobType === 'lens')
+
 export function ProductionWorkspace({ initialJobs, orders, providers, currentUserId, canAssignProduction }: { initialJobs: ProductionJob[]; orders: AssignmentOrder[]; providers: Provider[]; currentUserId: string; canAssignProduction: boolean }) {
   const supabase = useMemo(() => createClient(), [])
   const [jobs, setJobs] = useServerState(initialJobs)
@@ -71,7 +75,8 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
   const [incidentResponsibility, setIncidentResponsibility] = useState<IncidentResponsibility>('organization')
   const [incidentError, setIncidentError] = useState('')
   const [customerFilter, setCustomerFilter] = useState('')
-  const [statusFilter, setStatusFilter] = useState('all')
+  // QA-45: open on the work still to do; received/superseded jobs are one filter away.
+  const [statusFilter, setStatusFilter] = useState('active')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   const [assignmentOpen, setAssignmentOpen] = useState(false)
@@ -167,28 +172,32 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
     return jobs.filter((job) => {
       const assignedDate = job.assignedAt.slice(0, 10)
       return (!customerTerm || job.customerName?.toLocaleLowerCase('es').includes(customerTerm))
-        && (statusFilter === 'all' || job.status === statusFilter)
+        && (statusFilter === 'all' || (statusFilter === 'active' ? isActiveJob(job) : job.status === statusFilter))
         && (!dateFrom || assignedDate >= dateFrom)
         && (!dateTo || assignedDate <= dateTo)
     })
   }, [customerFilter, dateFrom, dateTo, jobs, statusFilter])
-  const productionStatusOptions = [{ value: 'all', label: 'Todos los estados' }, ...Object.entries(statusLabels).map(([value, label]) => ({ value, label }))]
-  const activeFilterCount = Number(Boolean(customerFilter.trim()) && canAssignProduction) + Number(statusFilter !== 'all') + Number(Boolean(dateFrom)) + Number(Boolean(dateTo))
-  const clearFilters = () => { setCustomerFilter(''); setStatusFilter('all'); setDateFrom(''); setDateTo('') }
+  const productionStatusOptions = [{ value: 'active', label: 'Trabajos activos' }, { value: 'all', label: 'Todos, con historial' }, ...Object.entries(statusLabels).map(([value, label]) => ({ value, label }))]
+  const activeFilterCount = Number(Boolean(customerFilter.trim()) && canAssignProduction) + Number(statusFilter !== 'active') + Number(Boolean(dateFrom)) + Number(Boolean(dateTo))
+  const clearFilters = () => { setCustomerFilter(''); setStatusFilter('active'); setDateFrom(''); setDateTo('') }
   // Superseded jobs (QA-25) are history: they never count as active work or incidents.
   const currentJobs = jobs.filter((job) => job.isCurrent !== false)
-  const activeJobs = currentJobs.filter((job) => !['received', 'reviewed'].includes(job.status))
+  const activeJobs = jobs.filter(isActiveJob)
+  const incidentCount = currentJobs.filter((job) => job.status === 'incident').length
   const header = (
     <PageHeader
       eyebrow="Taller y proveedores"
       title="Producción"
       description="Cada proveedor ve únicamente los trabajos asignados, sin precios ni pagos."
       actions={canAssignProduction && orders.length ? <Button variant="mint" icon={Plus} onClick={() => { setAssignmentError(''); setAssignmentOpen(true) }}>Asignar trabajo</Button> : undefined}
+      // Providers get two cards (one row on a phone) so the first job stays above the fold.
       stats={jobs.length ? <>
         <StatCard surface="ink" label="Trabajos activos" value={activeJobs.length} />
-        <StatCard surface="ink" label="En fabricación o montaje" value={currentJobs.filter((job) => ['in_production', 'in_mounting'].includes(job.status)).length} />
-        <StatCard surface="ink" tone="positive" label="Listos" value={currentJobs.filter((job) => job.status === 'completed').length} />
-        <StatCard surface="ink" tone={currentJobs.some((job) => job.status === 'incident') ? 'attention' : 'default'} label="Con incidencia" value={currentJobs.filter((job) => job.status === 'incident').length} />
+        {canAssignProduction ? <>
+          <StatCard surface="ink" label="En fabricación o montaje" value={currentJobs.filter((job) => ['in_production', 'in_mounting'].includes(job.status)).length} />
+          <StatCard surface="ink" tone="positive" label="Listos" value={currentJobs.filter((job) => job.status === 'completed').length} />
+        </> : null}
+        <StatCard surface="ink" tone={incidentCount ? 'attention' : 'default'} label="Con incidencia" value={incidentCount} />
       </> : undefined}
     />
   )
@@ -213,11 +222,12 @@ export function ProductionWorkspace({ initialJobs, orders, providers, currentUse
     <div className="grid items-start gap-4 lg:grid-cols-2 2xl:grid-cols-3">
       {filteredJobs.map((job) => {
         const { primary, secondary } = jobActions(job, canAssignProduction, currentUserId)
-        return <ProductionJobCard key={job.id} job={job} showCustomer={canAssignProduction} canAuthorizeRework={canAssignProduction} transitionLabel={primary?.label} transitionOnBehalf={primary?.onBehalf} secondaryTransitionLabel={secondary?.label} secondaryOnBehalf={secondary?.onBehalf} pending={pending} onTransition={() => primary && transitionProduction(job, primary)} onSecondaryTransition={() => secondary && transitionProduction(job, secondary)} onReportIncident={() => openIncidentDialog(job)} onCreateRework={(incidentId) => openRework(job, incidentId)} />
+        return <ProductionJobCard key={job.id} job={job} showCustomer={canAssignProduction} showProvider={canAssignProduction} canAuthorizeRework={canAssignProduction} transitionLabel={primary?.label} transitionOnBehalf={primary?.onBehalf} secondaryTransitionLabel={secondary?.label} secondaryOnBehalf={secondary?.onBehalf} pending={pending} onTransition={() => primary && transitionProduction(job, primary)} onSecondaryTransition={() => secondary && transitionProduction(job, secondary)} onReportIncident={() => openIncidentDialog(job)} onCreateRework={(incidentId) => openRework(job, incidentId)} />
       })}
     </div>
     {!jobs.length ? <EmptyState icon={Factory} title="Sin trabajos asignados" description={canAssignProduction ? 'Cuando completes los requisitos anteriores y pulses “Asignar trabajo”, aparecerán aquí.' : 'Aún no tienes trabajos de producción asignados.'} /> : null}
-    {jobs.length > 0 && !filteredJobs.length ? <EmptyState icon={SearchX} title="Sin trabajos con estos filtros" action={<Button variant="ghost" onClick={clearFilters}>Limpiar filtros</Button>} /> : null}
+    {jobs.length > 0 && !filteredJobs.length && !activeFilterCount ? <EmptyState icon={Factory} title="Sin trabajos pendientes" description="Todo lo asignado ya está cerrado." action={<Button variant="ghost" onClick={() => setStatusFilter('all')}>Ver historial</Button>} /> : null}
+    {jobs.length > 0 && !filteredJobs.length && activeFilterCount ? <EmptyState icon={SearchX} title="Sin trabajos con estos filtros" action={<Button variant="ghost" onClick={clearFilters}>Limpiar filtros</Button>} /> : null}
     {message ? <Alert tone="info">{message}</Alert> : null}
 
     <Dialog

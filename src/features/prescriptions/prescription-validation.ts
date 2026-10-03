@@ -92,9 +92,21 @@ export function validatePrescriptionForm(form: FormData) {
     if (value < rule.min || value > rule.max) {
       return `${rule.label} debe estar entre ${rule.min} y ${rule.max}. Revisa el valor introducido.`
     }
+    if (quarterStepFields.has(rule.name) && Math.abs(value * 4 - Math.round(value * 4)) > 1e-9) {
+      return `${rule.label} debe ir en pasos de 0,25 (por ejemplo -2,00 o -2,25).`
+    }
+    if (axisEyes.has(rule.name) && !Number.isInteger(value)) return `${rule.label} debe ser un número entero de grados.`
+  }
+  // A cylinder is meaningless to the workshop without its axis.
+  for (const [cylinder, axis, eye] of [['rightCylinder', 'rightAxis', 'derecho (OD)'], ['leftCylinder', 'leftAxis', 'izquierdo (OI)']] as const) {
+    const cylinderValue = optionalNumber(form, cylinder)
+    if (cylinderValue && optionalNumber(form, axis) === null) return `Indica el eje del ojo ${eye}: tiene cilindro.`
   }
   return null
 }
+
+const quarterStepFields = new Set(['rightSphere', 'leftSphere', 'rightCylinder', 'leftCylinder', 'rightAddition', 'leftAddition'])
+const axisEyes = new Set(['rightAxis', 'leftAxis'])
 
 const constraintMessages: Record<string, string> = {
   right_sphere: 'La esfera del ojo derecho (OD) debe estar entre -40 y 40.',

@@ -7,13 +7,31 @@ import { createClient } from '@/lib/supabase/client'
 import { FilterPanel, FormSelect } from '@/shared/components'
 import { Alert, Badge, Button, ButtonLink, Card, CardHeader, Dialog, EmptyState, Field, Input, Switch, Textarea, Toast } from '@/shared/ui'
 import { friendlyError } from '@/shared/lib/friendly-error'
+import { BUSINESS_TIME_ZONE, formatBusinessDate, todayIn } from '@/shared/utils/dates'
 import { sendOwnerPasswordReset } from '../actions'
+import { OrganizationAuditHistory } from './OrganizationAuditHistory'
 import { OrganizationOnboardingForm } from './OrganizationOnboardingForm'
 
 const modules = [
   ['optical_sales', 'Ventas ópticas'], ['cashbox', 'Caja'], ['production', 'Producción'],
   ['whatsapp', 'WhatsApp'], ['analytics', 'Analítica'], ['multi_branch', 'Multisucursal'],
 ] as const
+
+// QA-57: Caja, Producción y WhatsApp require Ventas ópticas (module_dependencies).
+const salesDependents = ['cashbox', 'production', 'whatsapp']
+
+// QA-54: one subscription state for the badge and the filter.
+type SubscriptionState = 'trial' | 'active' | 'expiring' | 'expired' | 'suspended' | 'none'
+const subscriptionStateLabels: Record<SubscriptionState, string> = { trial: 'Prueba', active: 'Al día', expiring: 'Por vencer', expired: 'Vencida', suspended: 'Suspendida', none: 'Sin suscripción' }
+const subscriptionStateTones = { trial: 'progress', active: 'success', expiring: 'warning', expired: 'danger', suspended: 'danger', none: 'neutral' } as const
+function subscriptionState(subscription: PlatformOrganization['subscription'], today: string): SubscriptionState {
+  if (!subscription) return 'none'
+  if (subscription.status === 'suspended') return 'suspended'
+  if (subscription.status === 'expired' || subscription.expires_on < today) return 'expired'
+  const daysLeft = (Date.parse(subscription.expires_on) - Date.parse(today)) / 86_400_000
+  if (daysLeft <= 5) return 'expiring'
+  return subscription.status === 'trial' ? 'trial' : 'active'
+}
 
 const organizationStatusLabels: Record<string, string> = {
   active: 'Activa',
@@ -25,7 +43,7 @@ export type PlatformOrganization = {
   id: number; name: string; order_prefix: string; status: string
   branches: { id: number; name: string; is_active: boolean }[]
   owners: { user_id: string; display_name: string }[]
-  subscription?: { status: string; amount: number; currency: string; billing_period: string; starts_on: string; expires_on: string }
+  subscription?: { status: string; amount: number; currency: string; billing_period: string; starts_on: string; expires_on: string; last_renewed_on: string | null }
   modules: { module_key: string; is_enabled: boolean }[]
   usage?: { customers: number; orders: number; members: number; openProductionJobs: number; notificationAttempts: number; lastActivityAt: string | null }
   supportSession?: { id: number; reason: string; started_at: string; expires_at: string }
@@ -39,6 +57,9 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
   const [createOpen, setCreateOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [subscriptionFilter, setSubscriptionFilter] = useState('all')
+  const [historyKey, setHistoryKey] = useState(0)
+  const today = todayIn()
   const [error, setError] = useState('')
   const [toast, setToast] = useState('')
   const [pending, startTransition] = useTransition()
@@ -46,9 +67,10 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
     const term = query.trim().toLocaleLowerCase('es')
     const matchesQuery = !term || [organization.name, organization.order_prefix, ...organization.owners.map(({ display_name }) => display_name)].some((value) => value.toLocaleLowerCase('es').includes(term))
     return matchesQuery && (statusFilter === 'all' || organization.status === statusFilter)
+      && (subscriptionFilter === 'all' || subscriptionState(organization.subscription, today) === subscriptionFilter)
   })
-  const activeFilterCount = Number(Boolean(query.trim())) + Number(statusFilter !== 'all')
-  const clearFilters = () => { setQuery(''); setStatusFilter('all') }
+  const activeFilterCount = Number(Boolean(query.trim())) + Number(statusFilter !== 'all') + Number(subscriptionFilter !== 'all')
+  const clearFilters = () => { setQuery(''); setStatusFilter('all'); setSubscriptionFilter('all') }
   const openOrganization = organizations.find(({ id }) => id === openId) ?? null
 
   function openDetails(organization: PlatformOrganization) {
@@ -67,7 +89,10 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
   }
 
   function toggleModule(key: string, enabled: boolean) {
-    setEnabledModules((current) => enabled ? [...current, key] : current.filter((entry) => entry !== key))
+    setEnabledModules((current) => {
+      if (enabled) return [...new Set([...current, key, ...(salesDependents.includes(key) ? ['optical_sales'] : [])])]
+      return current.filter((entry) => entry !== key && !(key === 'optical_sales' && salesDependents.includes(entry)))
+    })
   }
 
   function save(event: FormEvent<HTMLFormElement>, organizationId: number) {
@@ -89,6 +114,7 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
       if (saveError) return setError(friendlyError(saveError, 'No pudimos guardar los cambios de la organización.'))
       setError('')
       setToast('Contrato y controles operativos actualizados con auditoría.')
+      setHistoryKey((current) => current + 1)
       router.refresh()
     })
   }
@@ -105,6 +131,7 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
       if (supportError) return setError(friendlyError(supportError, 'No pudimos iniciar la asistencia.'))
       setError('')
       setToast('Sesión de asistencia iniciada y auditada.')
+      setHistoryKey((current) => current + 1)
       router.refresh()
     })
   }
@@ -115,6 +142,7 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
       if (endError) return setError(friendlyError(endError, 'No pudimos cerrar la asistencia.'))
       setError('')
       setToast('Sesión de asistencia cerrada.')
+      setHistoryKey((current) => current + 1)
       router.refresh()
     })
   }
@@ -127,6 +155,7 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
           <div className="flex flex-col gap-4">
             <Field label="Organización"><Input value={query} onChange={(event) => setQuery(event.target.value)} type="search" placeholder="Nombre, prefijo o propietario" /></Field>
             <Field label="Estado"><FormSelect ariaLabel="Filtrar por estado" value={statusFilter} onValueChange={setStatusFilter} options={[{ value: 'all', label: 'Todos los estados' }, { value: 'active', label: 'Activas' }, { value: 'suspended', label: 'Suspendidas' }, { value: 'archived', label: 'Archivadas' }]} /></Field>
+            <Field label="Suscripción"><FormSelect ariaLabel="Filtrar por suscripción" value={subscriptionFilter} onValueChange={setSubscriptionFilter} options={[{ value: 'all', label: 'Todas' }, { value: 'trial', label: 'En prueba' }, { value: 'expiring', label: 'Por vencer (5 días o menos)' }, { value: 'expired', label: 'Vencidas' }, { value: 'active', label: 'Al día' }, { value: 'suspended', label: 'Suspendidas' }]} /></Field>
           </div>
         </FilterPanel>
         <Button icon={Plus} onClick={() => setCreateOpen(true)}>Nueva organización</Button>
@@ -140,14 +169,15 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
             <span className="font-display text-[17px] font-semibold text-ink">{organization.name}</span>
             <span className="text-[13px] text-text-muted">{organization.order_prefix} · {organization.owners.map((owner) => owner.display_name).join(', ') || 'Sin propietario'} · {organization.branches.length === 1 ? '1 sucursal' : `${organization.branches.length} sucursales`}</span>
           </span>
-          <span className="flex items-center gap-3">
+          <span className="flex flex-wrap items-center gap-2">
+            <Badge tone={subscriptionStateTones[subscriptionState(organization.subscription, today)]}>{subscriptionStateLabels[subscriptionState(organization.subscription, today)]}</Badge>
             <Badge tone={organization.status === 'active' ? 'success' : 'danger'}>{organizationStatusLabels[organization.status] ?? 'Estado desconocido'}</Badge>
             <span className="text-[13px] font-semibold text-action">Ver detalles</span>
           </span>
         </button>
         <dl className="grid grid-cols-2 gap-px border-t border-line bg-line sm:grid-cols-3 lg:grid-cols-6">
           {[
-            ['Clientes', organization.usage?.customers ?? 0], ['Pedidos', organization.usage?.orders ?? 0], ['Miembros', organization.usage?.members ?? 0], ['Producción abierta', organization.usage?.openProductionJobs ?? 0], ['Mensajes', organization.usage?.notificationAttempts ?? 0], ['Última actividad', organization.usage?.lastActivityAt ? new Date(organization.usage.lastActivityAt).toLocaleDateString('es-CU') : '—'],
+            ['Clientes', organization.usage?.customers ?? 0], ['Pedidos', organization.usage?.orders ?? 0], ['Miembros', organization.usage?.members ?? 0], ['Producción abierta', organization.usage?.openProductionJobs ?? 0], ['Mensajes', organization.usage?.notificationAttempts ?? 0], ['Última actividad', organization.usage?.lastActivityAt ? formatBusinessDate(organization.usage.lastActivityAt) : '—'],
           ].map(([label, value]) => <div key={label} className="bg-canvas px-4 py-3"><dt className="text-[12px] text-text-muted">{label}</dt><dd className="mt-0.5 font-display text-[15px] font-semibold tabular-nums text-ink">{value}</dd></div>)}
         </dl>
       </Card>
@@ -173,8 +203,9 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
             <Field label="Periodicidad"><FormSelect name="billingPeriod" ariaLabel="Periodicidad" defaultValue={openOrganization.subscription?.billing_period ?? 'monthly'} options={[{ value: 'monthly', label: 'Mensual' }, { value: 'quarterly', label: 'Trimestral' }, { value: 'semiannual', label: 'Semestral' }, { value: 'annual', label: 'Anual' }, { value: 'custom', label: 'Personalizada' }]} /></Field>
             <Field label="Inicio"><Input name="startsOn" type="date" defaultValue={openOrganization.subscription?.starts_on} /></Field>
             <Field label="Vencimiento"><Input name="expiresOn" type="date" defaultValue={openOrganization.subscription?.expires_on} /></Field>
+            <div className="flex flex-col justify-end text-sm"><span className="text-[12px] text-text-muted">Última renovación</span><span className="font-semibold tabular-nums text-ink">{openOrganization.subscription?.last_renewed_on ? formatBusinessDate(`${openOrganization.subscription.last_renewed_on}T12:00:00`) : '—'}</span></div>
           </div>
-          <Field as="div" label="Módulos">
+          <Field as="div" label="Módulos" help="Caja, Producción y WhatsApp requieren Ventas ópticas: se activan y desactivan juntos.">
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {modules.map(([key, label]) => <div key={key} className="flex min-h-11 items-center rounded-control border border-line px-3"><Switch checked={enabledModules.includes(key)} onChange={(enabled) => toggleModule(key, enabled)} label={label} /></div>)}
             </div>
@@ -186,7 +217,7 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
         <div className="flex flex-col gap-4">
           <CardHeader title="Asistencia auditada" />
           {openOrganization.supportSession ? (
-            <Alert tone="warning" icon={LifeBuoy} title={`Sesión activa hasta ${new Date(openOrganization.supportSession.expires_at).toLocaleTimeString('es-CU')}`}>
+            <Alert tone="warning" icon={LifeBuoy} title={`Sesión activa hasta ${new Date(openOrganization.supportSession.expires_at).toLocaleTimeString('es-CU', { timeZone: BUSINESS_TIME_ZONE, hour: '2-digit', minute: '2-digit' })}`}>
               {openOrganization.supportSession.reason}
               <span className="mt-3 block"><Button size="sm" variant="secondary" disabled={pending} onClick={() => endSupport(openOrganization.supportSession!.id)}>Cerrar asistencia</Button></span>
             </Alert>
@@ -205,11 +236,13 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
             </div>
           )) : <p className="text-sm text-text-muted">Sin propietario activo.</p>}
           <ButtonLink href="/catalog" variant="ghost">Administrar catálogo base</ButtonLink>
+          <CardHeader title="Historial" />
+          <OrganizationAuditHistory organizationId={openOrganization.id} refreshKey={historyKey} />
         </div>
       </div> : null}
     </Dialog>
 
-    <Dialog open={createOpen} onClose={() => setCreateOpen(false)} eyebrow="Alta de tenant" title="Nueva organización" size="xl"><OrganizationOnboardingForm onCreated={() => setCreateOpen(false)} /></Dialog>
+    <Dialog open={createOpen} onClose={() => setCreateOpen(false)} eyebrow="Alta de tenant" title="Nueva organización" size="xl"><OrganizationOnboardingForm onCreated={(created) => { setCreateOpen(false); setToast(created) }} /></Dialog>
     <Toast message={toast} onDismiss={() => setToast('')} />
   </div>
 }

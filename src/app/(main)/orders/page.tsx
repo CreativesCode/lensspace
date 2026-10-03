@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { OrderPaymentsWorkspace } from '@/features/orders/components'
 import type { Order } from '@/features/orders/types'
 import { FINISHED_ORDERS_DAYS } from '@/features/orders/format'
+import { requireCommercialRole } from '@/lib/supabase/access'
 import { getCurrentUser } from '@/lib/supabase/current-user'
 import { createClient } from '@/lib/supabase/server'
 import { PageContainer } from '@/shared/ui'
@@ -11,6 +12,7 @@ export default async function OrdersPage({ searchParams }: PageProps<'/orders'>)
   const supabase = await createClient()
   const user = await getCurrentUser()
   if (!user) redirect('/login')
+  await requireCommercialRole()
   const query = await searchParams
   const customerFilter = typeof query.cliente === 'string' ? query.cliente : ''
   const parsedCustomerId = typeof query.clienteId === 'string' ? Number(query.clienteId) : Number.NaN

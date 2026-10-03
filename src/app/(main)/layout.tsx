@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { Plus } from 'lucide-react'
 
 import type { Tables } from '@/lib/supabase/database.types'
+import { getAccessSummary } from '@/lib/supabase/access'
 import { getCurrentUser } from '@/lib/supabase/current-user'
 import { createClient } from '@/lib/supabase/server'
 import { LensSpaceLogo, MainNavigation, MobileSidebar, OfflineBanner, RefreshOnFocus, SidebarAccount, SubscriptionBanner, type ShellIdentity, type SubscriptionNotice } from '@/shared/components'
@@ -80,10 +81,9 @@ type NavigationCounters = { ordersWithBalance: number; activeProductionJobs: num
 
 async function loadShell(supabase: SupabaseServerClient, userId: string, email: string): Promise<{ allowedHrefs: string[]; counts: Record<string, number>; identity: ShellIdentity; notices: SubscriptionNotice[] }> {
   // Counters run in the same parallel batch (one light RLS-scoped query, ~5 ms).
-  const [{ data: isPlatformAdmin }, { data: profile }, { data: membershipData }, { data: counterData }, { data: noticeData }] = await Promise.all([
-    supabase.rpc('current_user_is_platform_admin'),
+  const [{ isPlatformAdmin, memberships }, { data: profile }, { data: counterData }, { data: noticeData }] = await Promise.all([
+    getAccessSummary(),
     supabase.from('profiles').select('display_name, phone').eq('user_id', userId).maybeSingle(),
-    supabase.from('organization_memberships').select('organization_id, role').eq('user_id', userId).eq('status', 'active'),
     supabase.rpc('get_navigation_counters'),
     supabase.rpc('get_my_subscription_notices'),
   ])
@@ -103,10 +103,6 @@ async function loadShell(supabase: SupabaseServerClient, userId: string, email: 
     }
   }
 
-  const memberships = (membershipData ?? []) as Pick<
-    Tables<'organization_memberships'>,
-    'organization_id' | 'role'
-  >[]
   const organizationIds = [...new Set(memberships.map(({ organization_id }) => organization_id))]
   const mainRole = rolePriority.find((role) => memberships.some((membership) => membership.role === role))
   const identity: ShellIdentity = { ...account, roleLabel: mainRole ? roleLabels[mainRole] : 'Sin acceso activo', organizationName: 'Gestión óptica' }

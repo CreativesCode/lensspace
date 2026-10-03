@@ -33,19 +33,24 @@ export function FormSelect({ name, value: controlledValue, defaultValue, options
   }
 
   useEffect(() => {
+    if (!open) return
     function handlePointerDown(event: PointerEvent) {
       if (!rootRef.current?.contains(event.target as Node)) setOpen(false)
     }
+    // QA-47: capture phase + stopImmediatePropagation so Escape closes only the open
+    // listbox, not the dialog that also listens on window.
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') setOpen(false)
+      if (event.key !== 'Escape') return
+      event.stopImmediatePropagation()
+      setOpen(false)
     }
     document.addEventListener('pointerdown', handlePointerDown)
-    window.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('keydown', handleKeyDown, true)
     return () => {
       document.removeEventListener('pointerdown', handlePointerDown)
-      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('keydown', handleKeyDown, true)
     }
-  }, [])
+  }, [open])
 
   useEffect(() => {
     if (controlledValue !== undefined) return

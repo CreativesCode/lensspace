@@ -1,4 +1,5 @@
 import { Building, Factory, Plus } from 'lucide-react'
+import { redirect } from 'next/navigation'
 
 import { PlatformAdminDashboard } from '@/features/admin/components'
 import { OwnerAnalyticsDashboard } from '@/features/analytics/components'
@@ -8,6 +9,7 @@ import { formatAmount } from '@/features/orders/format'
 import { loadPlatformOrganizations } from '@/features/admin/load-platform-organizations'
 import { loadOwnedOrganizations } from '@/features/team/load-owned-organizations'
 import type { Tables } from '@/lib/supabase/database.types'
+import { getAccessSummary, isProviderOnly } from '@/lib/supabase/access'
 import { getCurrentUser } from '@/lib/supabase/current-user'
 import { createClient } from '@/lib/supabase/server'
 import { ButtonLink, EmptyState, PageContainer, PageHeader, StatCard } from '@/shared/ui'
@@ -18,13 +20,14 @@ export default async function DashboardPage() {
   const defaultFrom = daysAgoIn(29)
   const supabase = await createClient()
   const user = await getCurrentUser()
-  const [{ data: isPlatformAdmin }, { data: profile }] = await Promise.all([
-    supabase.rpc('current_user_is_platform_admin'),
+  const [access, { data: profile }] = await Promise.all([
+    getAccessSummary(),
     user ? supabase.from('profiles').select('display_name').eq('user_id', user.id).maybeSingle() : Promise.resolve({ data: null }),
   ])
   const displayName = (profile as Pick<Tables<'profiles'>, 'display_name'> | null)?.display_name ?? user?.email?.split('@')[0] ?? ''
   const greeting = `${greetingFor(new Date())}, ${displayName.split(' ')[0]}`
 
+  const { isPlatformAdmin } = access
   if (isPlatformAdmin) {
     const organizations = await loadPlatformOrganizations(supabase)
     return (
@@ -39,6 +42,12 @@ export default async function DashboardPage() {
         <PlatformAdminDashboard organizations={organizations} />
       </PageContainer>
     )
+  }
+
+  // QA-45: a provider's home is the job list; stay only to answer an invitation.
+  if (isProviderOnly(access)) {
+    const { data: pending } = await supabase.rpc('list_my_pending_invitations')
+    if (!(pending as unknown[] | null)?.length) redirect('/production')
   }
 
   // QA-31: independent loads in parallel. Memberships include the owner role, so the

@@ -66,7 +66,7 @@ export function OrderDetail({ order, summary, timeline, pending, error, onBack, 
               </span>
             </div>
             <div className="mt-4"><ProgressBar value={percent} tone={owes ? 'attention' : 'success'} size="lg" label="Porcentaje cobrado" /></div>
-            <p className="mt-2 text-[13px] text-text-secondary">Cobrado {Math.min(100, Math.round(percent))} % · {paymentStatusLabels[summary.paymentStatus] ?? summary.paymentStatus}</p>
+            <p className="mt-2 text-[13px] text-text-secondary">Cobrado {percent > 0 && percent < 1 ? '<1' : Math.min(100, Math.floor(percent))} % · {paymentStatusLabels[summary.paymentStatus] ?? summary.paymentStatus}</p>
           </div>
           <div className="grid flex-[1_1_200px] grid-cols-2 gap-2.5">
             <div className="rounded-card border border-line-card px-4 py-3.5">

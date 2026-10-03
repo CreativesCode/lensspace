@@ -1,6 +1,7 @@
 import { Building } from 'lucide-react'
 
 import { ButtonLink, Card, CardHeader, EmptyState, ListItem, StatCard } from '@/shared/ui'
+import { formatBusinessDate } from '@/shared/utils/dates'
 
 import type { PlatformOrganization } from './PlatformAdminWorkspace'
 
@@ -42,7 +43,7 @@ export function PlatformAdminDashboard({ organizations }: { organizations: Platf
             title={organization.name}
             meta={`${organization.order_prefix} · ${organization.owners.map(({ display_name }) => display_name).join(', ') || 'Sin propietario'}`}
             trailing={<span className="font-display text-[15px] font-semibold tabular-nums text-ink">{organization.usage?.orders ?? 0} pedidos</span>}
-            badge={<span className="text-[12px] text-text-muted">{organization.usage?.lastActivityAt ? new Date(organization.usage.lastActivityAt).toLocaleDateString('es-CU') : 'Sin actividad'}</span>}
+            badge={<span className="text-[12px] text-text-muted">{organization.usage?.lastActivityAt ? formatBusinessDate(organization.usage.lastActivityAt) : 'Sin actividad'}</span>}
             last={index === recent.length - 1}
           />
         ))}

@@ -248,10 +248,15 @@ export function SalesWorkspace({
     resetQuote();
   }
   function toggle(itemId: number) {
+    // A pair of glasses has one vision type: picking another replaces the previous one.
+    const category = availableItems.find((item) => item.id === itemId)?.category;
+    const exclusiveIds = category === "vision_type"
+      ? new Set(availableItems.filter((item) => item.category === category).map((item) => item.id))
+      : null;
     setSelected((current) =>
       current.includes(itemId)
         ? current.filter((id) => id !== itemId)
-        : [...current, itemId],
+        : [...current.filter((id) => !exclusiveIds?.has(id)), itemId],
     );
     resetQuote();
   }

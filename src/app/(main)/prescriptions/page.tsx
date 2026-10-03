@@ -1,3 +1,4 @@
+import { requireCommercialRole } from '@/lib/supabase/access'
 import { getCurrentUser } from '@/lib/supabase/current-user'
 import { redirect } from 'next/navigation'
 
@@ -10,6 +11,7 @@ export default async function PrescriptionsPage() {
   const supabase = await createClient()
   const user = await getCurrentUser()
   if (!user) redirect('/login')
+  await requireCommercialRole()
 
   const { data: membershipData } = await supabase
     .from('organization_memberships')

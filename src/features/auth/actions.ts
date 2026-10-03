@@ -26,7 +26,8 @@ function isValidEmail(value: string) {
 }
 
 function safeNextPath(value: FormDataEntryValue | null) {
-  if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//')) {
+  // Browsers read '/\host' as '//host': reject it too (open redirect).
+  if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//') || value.startsWith('/\\')) {
     return '/dashboard'
   }
 

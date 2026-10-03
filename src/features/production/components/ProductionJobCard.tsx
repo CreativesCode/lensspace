@@ -4,6 +4,7 @@ import { FileText, RefreshCcw, TriangleAlert } from 'lucide-react'
 import { useState } from 'react'
 
 import { Badge, Button, Card, Dialog } from '@/shared/ui'
+import { formatBusinessDate } from '@/shared/utils/dates'
 
 import { productionStatusLabel, responsibilityLabels, statusTone } from '../production-status'
 import type { PrescriptionSnapshot, ProductionJob } from './ProductionWorkspace'
@@ -11,6 +12,8 @@ import type { PrescriptionSnapshot, ProductionJob } from './ProductionWorkspace'
 type ProductionJobCardProps = {
   job: ProductionJob
   showCustomer: boolean
+  // Providers already know the job is theirs; the optical needs to see who has it.
+  showProvider: boolean
   // Only the optical (owner/seller) decides on a rework; providers just see it pending.
   canAuthorizeRework: boolean
   transitionLabel?: string
@@ -24,8 +27,9 @@ type ProductionJobCardProps = {
   onCreateRework: (incidentId: number) => void
 }
 
-export function ProductionJobCard({ job, showCustomer, canAuthorizeRework, transitionLabel, secondaryTransitionLabel, transitionOnBehalf, secondaryOnBehalf, pending, onTransition, onSecondaryTransition, onReportIncident, onCreateRework }: ProductionJobCardProps) {
+export function ProductionJobCard({ job, showCustomer, showProvider, canAuthorizeRework, transitionLabel, secondaryTransitionLabel, transitionOnBehalf, secondaryOnBehalf, pending, onTransition, onSecondaryTransition, onReportIncident, onCreateRework }: ProductionJobCardProps) {
   const hasIncident = job.status === 'incident'
+  const meta = [job.jobType === 'lens' ? 'Cristales' : 'Montaje', showProvider ? job.providerName : null, formatBusinessDate(job.assignedAt)].filter(Boolean).join(' · ')
   // QA-25: a job replaced by an accepted rework is history; keep it short and inert.
   if (job.isCurrent === false) {
     return (
@@ -34,7 +38,7 @@ export function ProductionJobCard({ job, showCustomer, canAuthorizeRework, trans
           <strong className="font-display text-[15px] text-ink">{job.orderNumber}</strong>
           <Badge tone="neutral">Sustituido por repetición</Badge>
         </div>
-        <p className="text-[13px] text-text-muted">{job.jobType === 'lens' ? 'Cristales' : 'Montaje'} · {job.providerName} · {new Date(job.assignedAt).toLocaleDateString('es-CU')}</p>
+        <p className="text-[13px] text-text-muted">{meta}</p>
         {job.incidents[0] ? <p className="text-[13px] text-text-secondary [overflow-wrap:anywhere]">Incidencia: {job.incidents[0].description}</p> : null}
       </Card>
     )
@@ -43,11 +47,14 @@ export function ProductionJobCard({ job, showCustomer, canAuthorizeRework, trans
     <Card tone={hasIncident ? 'danger' : 'default'} className="flex flex-col gap-3">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <strong className="font-display text-[15px] text-ink">{job.orderNumber}</strong>
-        <Badge tone={statusTone(job.status)}>{productionStatusLabel(job.status, job.jobType)}</Badge>
+        <div className="flex flex-wrap gap-1.5">
+          {job.originalJobId ? <Badge tone="warning">Repetición</Badge> : null}
+          <Badge tone={statusTone(job.status)}>{productionStatusLabel(job.status, job.jobType)}</Badge>
+        </div>
       </div>
       <div>
         {showCustomer && job.customerName ? <p className="text-[15px] font-semibold text-ink">{job.customerName}</p> : null}
-        <p className="mt-0.5 text-[13px] text-text-muted">{job.jobType === 'lens' ? 'Cristales' : 'Montaje'} · {job.providerName} · {new Date(job.assignedAt).toLocaleDateString('es-CU')}</p>
+        <p className="mt-0.5 text-[13px] text-text-muted">{meta}</p>
       </div>
       <p className="text-sm leading-6 text-text-secondary">{job.snapshot.items?.map((item) => item.name).join(' · ') || 'Configuración preservada en la asignación.'}</p>
       <PrescriptionDetails prescription={job.snapshot.prescription} eyebrow={`${job.orderNumber} · ${job.jobType === 'lens' ? 'Cristales' : 'Montaje'}`} />

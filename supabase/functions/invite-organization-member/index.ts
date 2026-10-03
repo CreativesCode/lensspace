@@ -148,6 +148,9 @@ Deno.serve(async (request) => {
           429,
         )
       }
+      if (error?.code === 'email_address_invalid') {
+        return jsonResponse({ error: 'El correo no es válido o no acepta mensajes. Revísalo e inténtalo de nuevo.' }, 400)
+      }
       return jsonResponse({ error: 'No se pudo enviar la invitación.' }, 400)
     }
 

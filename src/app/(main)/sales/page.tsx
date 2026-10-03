@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { SalesWorkspace } from '@/features/sales/components'
 import type { Tables } from '@/lib/supabase/database.types'
+import { requireCommercialRole } from '@/lib/supabase/access'
 import { getCurrentUser } from '@/lib/supabase/current-user'
 import { createClient } from '@/lib/supabase/server'
 import { PageContainer, PageHeader } from '@/shared/ui'
@@ -10,6 +11,7 @@ export default async function SalesPage({ searchParams }: { searchParams: Promis
   const supabase = await createClient()
   const user = await getCurrentUser()
   if (!user) redirect('/login')
+  await requireCommercialRole()
   const { data: rawMemberships } = await supabase.from('organization_memberships').select('organization_id, branch_id, role').eq('user_id', user.id).eq('status', 'active').in('role', ['owner', 'seller'])
   const memberships = (rawMemberships ?? []) as Pick<Tables<'organization_memberships'>, 'organization_id' | 'branch_id' | 'role'>[]
   const organizationIds = [...new Set(memberships.map((entry) => entry.organization_id))]

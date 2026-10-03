@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 
 import { CatalogWorkspace } from '@/features/catalog/components'
 import type { Tables } from '@/lib/supabase/database.types'
+import { requireCommercialRole } from '@/lib/supabase/access'
 import { getCurrentUser } from '@/lib/supabase/current-user'
 import { createClient } from '@/lib/supabase/server'
 import { PageContainer, PageHeader } from '@/shared/ui'
@@ -10,6 +11,7 @@ export default async function CatalogPage() {
   const supabase = await createClient()
   const user = await getCurrentUser()
   if (!user) redirect('/login')
+  await requireCommercialRole()
   const { data: isPlatformAdmin } = await supabase.rpc('current_user_is_platform_admin')
 
   const { data: membershipData } = isPlatformAdmin
@@ -58,6 +60,7 @@ export default async function CatalogPage() {
       <PageHeader eyebrow={isPlatformAdmin ? 'Administración de plataforma' : 'Ventas ópticas'} title={isPlatformAdmin ? 'Catálogo base' : 'Catálogo y precios'} description={isPlatformAdmin ? 'Mantén los artículos globales disponibles para las organizaciones.' : 'Configura precios por organización y simula combinaciones sin perder la moneda de origen.'} />
       <CatalogWorkspace
         isPlatformAdmin={Boolean(isPlatformAdmin)}
+        currentUserId={user.id}
         organizations={access}
         initialItems={(items ?? []) as Tables<'catalog_items'>[]}
         initialOverrides={(overrides ?? []) as Tables<'catalog_item_overrides'>[]}

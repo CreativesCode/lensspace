@@ -3,7 +3,8 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 import type { Database } from './database.types'
 
-const protectedPrefixes = ['/dashboard']
+// QA-59: every signed-in area, so an expired session comes back to the same page.
+const protectedPrefixes = ['/dashboard', '/orders', '/sales', '/customers', '/prescriptions', '/catalog', '/cashbox', '/production', '/team', '/organizations', '/profile', '/manual']
 const authPrefixes = ['/login', '/signup']
 
 export async function updateSession(request: NextRequest) {
@@ -37,14 +38,15 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname
   const isProtected = protectedPrefixes.some((prefix) =>
-    pathname.startsWith(prefix),
+    pathname === prefix || pathname.startsWith(`${prefix}/`),
   )
   const isAuthRoute = authPrefixes.some((prefix) => pathname.startsWith(prefix))
 
   if (isProtected && !claims) {
     const loginUrl = request.nextUrl.clone()
     loginUrl.pathname = '/login'
-    loginUrl.searchParams.set('next', pathname)
+    loginUrl.search = ''
+    loginUrl.searchParams.set('next', `${pathname}${request.nextUrl.search}`)
     return NextResponse.redirect(loginUrl)
   }
 

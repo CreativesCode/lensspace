@@ -53,13 +53,12 @@ Make LensSpace safe and frictionless for the Cuba pilot:
 
 **Not covered.** See *Coverage gaps*. The main gaps are the seller and mounter accounts, a real WhatsApp send and Vercel-region TTFB.
 
-## Current status (2026-10-02, end of session)
+## Current status (2026-10-03)
 
-- **Done:** Phases 1–4 complete; Phase 5 medium items QA-38..QA-42 done, QA-60 reviewed. QA-37 closed by decision. Extra: elTOQUE rate button, retry-safe customers, owner reset link, dialog stacking fix.
-- **Waiting on the product owner:** elTOQUE token (`ELTOQUE_API_TOKEN` secret, approval up to a week); OpenWA fix on the VPS (QA-61); Vercel function region = Supabase region (QA-31); leaked-password protection setting (QA-60).
-- **Next (Phase 5 low):** QA-43 mojibake/accents, QA-44 prescription validation, QA-45/46 provider mobile and commercial pages, QA-47 Escape in selects, QA-48 timeline polish, QA-49 stuck buttons offline, QA-50 order prefix, QA-51 onboarding feedback, QA-52 recommended deposit (feature), QA-53..57 platform audit/admin, QA-58 inactive member name, QA-59 deep link/invite error.
-- **Then:** Phase 6 product requests QA-62 (profile + password), QA-63 (landing knows the session), QA-64 (manual: superadmin edits, others read + PDF).
-- **Deferred:** QA-36 supabase-js bundle, jobs history flag, provider jobs offline snapshot, `/catalog` column trimming.
+- **Done:** Phases 1–5 complete (QA-52 deferred post-pilot by plan; QA-37 closed by decision; QA-60 reviewed). Extra: elTOQUE rate button, retry-safe customers, owner reset link, dialog stacking fix, and the proxy moved to `src/proxy.ts` (it never ran from the root; see QA-59).
+- **Waiting on the product owner:** elTOQUE token (`ELTOQUE_API_TOKEN` secret, approval up to a week); OpenWA fix on the VPS (QA-61); Vercel function region = Supabase region (QA-31: ca-central-1 → yul1, iad1 fallback); leaked-password protection setting (QA-60).
+- **Now:** Phase 6 product requests QA-62 (profile + password), QA-63 (landing knows the session; `/login` → `/dashboard` already works since the proxy fix), QA-64 (manual: superadmin edits, others read + PDF).
+- **Deferred:** QA-36 supabase-js bundle, QA-52 recommended deposit, jobs history flag, provider jobs offline snapshot, `/catalog` column trimming.
 - **Cleanup before the pilot:** QA orgs QAS/QAP/QAB/QSB, customer #54, extra memberships of the QAS owner, the test phone on Javier's profile, QA PILOTO orders/jobs in Óptica Javier.
 
 ## Executive summary
@@ -132,23 +131,23 @@ Effort: S ≤ half a day · M 1–2 days · L > 2 days. Area keys: SOLO = solo o
 | QA-40 | No read-only banner, 'Nueva venta' stays enabled when expired; owner never told of expiry | medium | friction | ADM-08, ADM-09 | done 2026-10-02 | S |
 | QA-41 | Rework cannot be reassigned to another provider | medium | missing-feature | MR-06 | done 2026-10-02 | S |
 | QA-42 | Provider sees 'Aceptar repetición' (DB rejects it) | medium | bug | MR-07 | done 2026-10-02 | S |
-| QA-43 | Mojibake in 8 DB functions and stored `notification_attempts`; unaccented messages | low | ux-copy | SOLO-19, ADM-16, MR-16 (part) | confirmed | S |
-| QA-44 | Prescription allows cylinder without axis and off-step values; two vision types with no warning | low | data-integrity | SALES-17, MR-15 | confirmed | S |
-| QA-45 | Provider mobile: lands on dashboard, stats fill the first screen, history always shown | low | mobile | MR-13 | confirmed | S |
-| QA-46 | Provider can open commercial pages with misleading empty states | low | ux-copy | MR-14 | confirmed | S |
-| QA-47 | Escape on an open select inside a dialog closes the dialog | low | bug | SOLO-20 | confirmed | S |
-| QA-48 | Timeline polish: duplicate incident rows, no cost owner, 'Cobrado 0 %', consent reason hidden, date hydration mismatch | low | ux-copy | MR-16, SOLO-19 (UI) | confirmed | S |
-| QA-49 | `auth.getUser()` + `user!.id` in write handlers can leave buttons stuck offline | low | bug | RC-17 | plausible | S |
-| QA-50 | Order prefix not derived from name; owner cannot edit it before the first order | low | missing-feature | SOLO-13 | confirmed | M |
-| QA-51 | Onboarding success message never visible; invalid branch-code pattern regex | low | ux-copy | SOLO-14, ADM-17 | confirmed | S |
-| QA-52 | Recommended/minimum deposit not implemented | low | missing-feature | SALES-19 | confirmed | M |
-| QA-53 | Base catalog create/price/availability changes not audited | low | data-integrity | ADM-13 | confirmed | S |
-| QA-54 | Admin: no audit history, notes or last-renewal; filter ignores subscription state | low | missing-feature | ADM-10 | confirmed | M |
-| QA-55 | `last_renewed_on` overwritten on every save while active | low | data-integrity | ADM-11 | confirmed | S |
-| QA-56 | Starting a support session silently closes the previous one with no audit | low | data-integrity | ADM-12 | confirmed | S |
-| QA-57 | Module dependency rules not reflected in admin UI | low | friction | ADM-15 | confirmed | S |
-| QA-58 | Deactivated/invited member shows as 'Usuario' | low | bug | ADM-18 | confirmed | S |
-| QA-59 | Session expiry drops the deep link; invite error is generic | low | friction | ADM-19 | confirmed | S |
+| QA-43 | Mojibake in 8 DB functions and stored `notification_attempts`; unaccented messages | low | ux-copy | SOLO-19, ADM-16, MR-16 (part) | done 2026-10-03 | S |
+| QA-44 | Prescription allows cylinder without axis and off-step values; two vision types with no warning | low | data-integrity | SALES-17, MR-15 | done 2026-10-03 | S |
+| QA-45 | Provider mobile: lands on dashboard, stats fill the first screen, history always shown | low | mobile | MR-13 | done 2026-10-03 | S |
+| QA-46 | Provider can open commercial pages with misleading empty states | low | ux-copy | MR-14 | done 2026-10-03 | S |
+| QA-47 | Escape on an open select inside a dialog closes the dialog | low | bug | SOLO-20 | done 2026-10-03 | S |
+| QA-48 | Timeline polish: duplicate incident rows, no cost owner, 'Cobrado 0 %', consent reason hidden, date hydration mismatch | low | ux-copy | MR-16, SOLO-19 (UI) | done 2026-10-03 | S |
+| QA-49 | `auth.getUser()` + `user!.id` in write handlers can leave buttons stuck offline | low | bug | RC-17 | done 2026-10-03 | S |
+| QA-50 | Order prefix not derived from name; owner cannot edit it before the first order | low | missing-feature | SOLO-13 | done 2026-10-03 | M |
+| QA-51 | Onboarding success message never visible; invalid branch-code pattern regex | low | ux-copy | SOLO-14, ADM-17 | done 2026-10-03 | S |
+| QA-52 | Recommended/minimum deposit not implemented | low | missing-feature | SALES-19 | deferred post-pilot | M |
+| QA-53 | Base catalog create/price/availability changes not audited | low | data-integrity | ADM-13 | done 2026-10-03 | S |
+| QA-54 | Admin: no audit history, notes or last-renewal; filter ignores subscription state | low | missing-feature | ADM-10 | done 2026-10-03 | M |
+| QA-55 | `last_renewed_on` overwritten on every save while active | low | data-integrity | ADM-11 | done 2026-10-03 | S |
+| QA-56 | Starting a support session silently closes the previous one with no audit | low | data-integrity | ADM-12 | done 2026-10-03 | S |
+| QA-57 | Module dependency rules not reflected in admin UI | low | friction | ADM-15 | done 2026-10-03 | S |
+| QA-58 | Deactivated/invited member shows as 'Usuario' | low | bug | ADM-18 | done 2026-10-03 | S |
+| QA-59 | Session expiry drops the deep link; invite error is generic | low | friction | ADM-19 | done 2026-10-03 | S |
 | QA-60 | Advisors: leaked-password protection off; DEFINER RPC exposed | low | security | ADM-20 | reviewed 2026-10-02 (leaked-password setting pending) | S |
 | QA-61 | WhatsApp is delivered but OpenWA answers HTTP 500, so it is recorded as failed (false negative) | high | data-integrity | controlled send 2026-10-02 | confirmed | S–M |
 
@@ -771,6 +770,7 @@ Measured in the production build:
   - Add the missing accents.
   - Add a test asserting no `prosrc` contains 'Ã'.
 - **Verify:** `select count(*) from pg_proc where prosrc like '%Ã%'` → verificar: 0.
+- **Done (2026-10-03):** `20261003012754_repair_function_text_encoding` rebuilds every public/private function containing 'Ã' (folding each 'Ã'+byte back with `chr()`, immune to client encoding) and repairs 71 `notification_attempts.failure_message` rows (immutability trigger lifted only for the repair). Also accented 'producción' and 'válida'. Guard: `supabase/tests/function_text_encoding.sql`. Verified: 0 functions and 0 rows with 'Ã'.
 
 ### QA-44 Prescription validation and vision-type advisory (low, S)
 - **Problem:** cylinder -1.00 with no axis and sphere -2.13 are accepted. Two vision types in one quote raise no warning, and the provider snapshot reads 'Bifocal · Anti Blue · Monofocal · Anti Blue'.
@@ -780,6 +780,7 @@ Measured in the production build:
   - Validate 'Indica el eje del ojo X' and 0.25 steps.
   - Make the vision_type group single-select, or show a non-blocking warning in `QuoteSummary`.
 - **Verify:** cylinder with no axis → verificar: Spanish error; two vision types → verificar: replaced, or a warning shown.
+- **Done (2026-10-03):** `validatePrescriptionForm`: sphere/cylinder/addition in 0.25 steps, integer axis, and 'Indica el eje del ojo …: tiene cilindro.' when a cylinder has no axis. Vision type is single-select in `SalesWorkspace.toggle` (a new one replaces the previous). Verified in /sales: two vision-type clicks leave one selected.
 
 ### QA-45 Provider mobile ergonomics (low, S)
 - **Problem:** the provider lands on `/dashboard`, 4 stat cards take about 650 px, received and superseded jobs are always listed, her own name repeats on every card, and there is no 'Repetición' badge.
@@ -787,17 +788,20 @@ Measured in the production build:
 - **Root cause:** login redirect, `ProductionWorkspace.tsx:156-161` and `ProductionJobCard.tsx:31`.
 - **Fix:** redirect provider-only users to `/production`, use compact stats on mobile, default the filter to active jobs, hide the provider name for providers, and show a 'Repetición de …' badge.
 - **Verify:** Claudia logs in on 390x844 → verificar: lands on `/production` with the first actionable card above the fold.
+- **Done (2026-10-03):** Provider-only users are redirected from `/dashboard` to `/production` unless they have a pending invitation (`getAccessSummary`/`isProviderOnly` in `src/lib/supabase/access.ts`). Providers see 2 stat cards (activos, con incidencia); the job filter defaults to 'Trabajos activos' (history via 'Todos, con historial' or the 'Ver historial' empty state); the provider name is hidden for providers; reworks show a 'Repetición' badge; card dates use `formatBusinessDate` (Havana). Verified: Claudia on 390x844 lands on /production with 2 cards.
 
 ### QA-46 Provider commercial pages (low, S)
 - **Problem:** `/orders`, `/customers`, `/sales`, `/cashbox`, `/catalog` and `/prescriptions` render 200 for a provider, with CTAs such as 'Nueva venta'. RLS returns 0 rows, so nothing leaks.
 - **Evidence:** `multirole/claudia-probe-orders.png`, `claudia-probe-customers.png`, `claudia-probe-catalog.png`.
 - **Fix:** add a server helper `requireCommercialRole()` that calls `redirect('/production')`.
 - **Verify:** Claudia opens `/orders` → verificar: redirected to `/production`.
+- **Done (2026-10-03):** `requireCommercialRole()` on /orders, /customers, /sales, /cashbox, /catalog and /prescriptions. Verified: Claudia opening /orders or /catalog ends on /production.
 
 ### QA-47 Escape closes the dialog behind a select (low, S)
 - **Root cause:** `src/shared/components/FormSelect.tsx:40-43` and `src/shared/ui/dialog.tsx:40-41` both listen on window.
 - **Fix:** register the FormSelect listener in capture phase and call `stopImmediatePropagation()` when the select is open.
 - **Verify:** Escape on an open select inside 'Asignar trabajo' → verificar: only the listbox closes.
+- **Done (2026-10-03):** FormSelect listens only while open, in capture phase, and stops propagation. Verified in 'Asignar producción': first Escape closes the listbox only, second closes the dialog.
 
 ### QA-48 Timeline and copy polish (low, S)
 - **Problem:**
@@ -812,32 +816,38 @@ Measured in the production build:
   - Use failure_code-based copy: 'WhatsApp no enviado: el cliente no autorizó mensajes'.
   - Format dates with an explicit timeZone (shared with QA-11).
 - **Verify:** timeline after an incident with consent OFF → verificar: one incident row with the cost owner and a readable reason.
+- **Done (2026-10-03):** `20261003013616_polish_order_timeline`: the job's 'incident' status event is no longer listed (one 'Incidencia de producción' row) and its detail ends with 'Costo: Óptica/Cristalero/Montador/Cliente'; failed WhatsApp attempts use failure_code copy ('WhatsApp no enviado: el cliente no autorizó mensajes' / '… el módulo no está activo'). 'Cobrado' shows '<1 %' for tiny fractions. Dates: `formatBusinessDate` and explicit timeZone in admin views. Verified on JAV-2026-000016.
 
 ### QA-49 `getUser()` then `user!.id` in handlers (low, S, plausible)
 - **Root cause:** `CatalogWorkspace.tsx:153,161,218,228`, `PrescriptionWorkspace.tsx:171,181` and `SalesWorkspace.tsx:246,258`.
 - **Fix:** pass the user id from the server page, or use `getSession()`, guard against null, and wrap the handlers in try/finally.
 - **Verify:** offline catalog save → verificar: the button re-enables with friendly copy.
+- **Done (2026-10-03):** `CatalogWorkspace` gets `currentUserId` from the server page (no `getUser()`/`user!.id` in handlers); the prescription upload uses the local session. The other files listed no longer had the pattern.
 
 ### QA-50 Order prefix (low, M)
 - **Problem:** the prefix is typed manually at onboarding instead of being derived from the first 3 normalized letters of the name. The owner cannot change it before the first order (BUSINESS_LOGIC).
 - **Root cause:** `src/features/admin/components/OrganizationOnboardingForm.tsx:105`; no owner UI exists.
 - **Fix:** prefill the prefix from the name, and add an owner setting through an RPC that updates the prefix only while the org has no orders.
 - **Verify:** typing a name → verificar: prefix prefilled; owner edits it before the first order → verificar: saved; after the first order → verificar: locked.
+- **Done (2026-10-03):** Onboarding suggests the prefix from the name (skipping a leading 'Óptica'/articles: 'Óptica Prueba Norte' → PRU) until edited. Owners get 'Prefijo de pedidos' on /team (`OrderPrefixSetting`): editable until the first order (existing RLS + `protect_organization_order_prefix` trigger, now with Spanish copy), duplicate → friendly error. Verified: JAV shows 'fijo desde el primer pedido'.
 
 ### QA-51 Onboarding feedback and pattern (low, S)
 - **Problem:** the success Alert unmounts when the dialog closes. `pattern="[A-Za-z0-9_-]{1,16}"` is invalid under the `v` flag, so the browser ignores it. Only 'Ventas ópticas' is pre-checked.
 - **Root cause:** `OrganizationOnboardingForm.tsx:93-97,107`, with the dialog closed from `PlatformAdminWorkspace.tsx:194`.
 - **Fix:** show a toast in `PlatformAdminWorkspace` after `onCreated`, use `pattern="[\-A-Za-z0-9_]{1,16}"`, and consider pre-checking all modules for trial.
 - **Verify:** create an org → verificar: toast visible and no console regex error.
+- **Done (2026-10-03):** Success is a toast in `PlatformAdminWorkspace` (`onCreated(message)`), branch-code pattern `[\-A-Za-z0-9_]{1,16}`, and Ventas ópticas + Caja + Producción are pre-checked (one-person shop).
 
 ### QA-52 Recommended deposit (low, M — defer)
 - **Problem:** BUSINESS_LOGIC.md:106 defines a recommended or minimum deposit, but there is no schema or UI for it.
 - **Fix (post-pilot):** add `organizations.recommended_deposit_percent`, prefill the first payment with it, and log a timeline exception when the seller skips it.
+- **Status (2026-10-03):** deferred post-pilot as planned (needs a product decision on the percentage).
 
 ### QA-53 Base catalog audit (low, S)
 - **Root cause:** `CatalogWorkspace.tsx:184-241` writes `catalog_items` directly, and nothing writes an audit event.
 - **Fix:** add an AFTER INSERT/UPDATE trigger for rows with `organization_id is null` that writes `audit_events` with the old and new price and active state.
 - **Verify:** edit a base item → verificar: an audit row is written.
+- **Done (2026-10-03):** `catalog_items_audit_base` AFTER INSERT/UPDATE trigger writes `catalog.base_item_created/changed` with old/new price, currency and active state for rows with `organization_id is null` (migration `20261003014630`).
 
 ### QA-54 Admin history, notes and subscription filter (low, M)
 - **Fix:**
@@ -846,31 +856,37 @@ Measured in the production build:
   - Add a subscription badge and filters (Prueba/Vencida/Por vencer).
   - Add an 'Historial' tab from `audit_events` with a limit of 20.
 - **Root cause:** `PlatformAdminWorkspace.tsx:46` filters on org status only. `update_platform_organization` has no notes parameter.
+- **Done (2026-10-03):** Organization cards show a subscription badge (Prueba / Al día / Por vencer ≤5 días / Vencida / Suspendida) with a matching filter; the detail shows 'Última renovación' read-only and an 'Historial' (last 20 `audit_events`, loaded only when the dialog opens). Notes were not added: the mandatory change reason already records the why.
 
 ### QA-55 `last_renewed_on` overwritten (low, S)
 - **Root cause:** `update_platform_organization` sets `current_date` whenever the status is active.
 - **Fix:** update the date only when `expires_on` increases or the status changes to active.
 - **Verify:** an amount-only edit → verificar: the date is unchanged.
+- **Done (2026-10-03):** `last_renewed_on` changes only when the subscription becomes active or `expires_on` increases. Verified in a rolled-back transaction: an amount-only edit kept the date.
 
 ### QA-56 Support session auto-close audit (low, S)
 - **Root cause:** `begin_platform_support_session` updates the previous open session without calling `write_platform_audit`.
 - **Fix:** use `update … returning`, then `perform write_platform_audit('support.session_ended', …, 'Cerrada al iniciar otra asistencia')`.
 - **Verify:** start A, then start B → verificar: an end event is written for A.
+- **Done (2026-10-03):** Auto-closed sessions write `support.session_ended` ('Cerrada al iniciar otra asistencia'). Verified in a rolled-back transaction: starting B after A wrote one end event.
 
 ### QA-57 Module dependency UI (low, S)
 - **Root cause:** `PlatformAdminWorkspace.tsx:57-60` (`toggleModule`).
 - **Fix:** turning off `optical_sales` also turns off cashbox, production and whatsapp, and turning one of those on enables `optical_sales`.
 - **Verify:** no 'Faltan dependencias…' error is reachable from the UI.
+- **Done (2026-10-03):** Turning off Ventas ópticas turns off Caja/Producción/WhatsApp; turning one of those on enables Ventas ópticas; the help text says so. Verified in the admin dialog.
 
 ### QA-58 Inactive member name (low, S)
 - **Root cause:** the `profiles_select_self_or_related` policy requires `theirs.status = 'active'`.
 - **Fix:** let owners read profiles of invited and inactive members of their org.
 - **Verify:** deactivate Claudia → verificar: her name is shown with an 'Inactivo' badge.
+- **Done (2026-10-03):** `profiles_select_self_or_related` lets owners read invited/inactive members of their organizations. Verified: no 'Usuario' fallback on Javier's team.
 
 ### QA-59 Deep link and invite error copy (low, S)
 - **Root cause:** `src/lib/supabase/proxy.ts:6` (`protectedPrefixes = ['/dashboard']`), `layout.tsx:33` (`redirect('/login')` with no next), and invite `index.ts:152`.
 - **Fix:** protect every `(main)` route with `?next=`, and map `email_address_invalid` to 'El correo no es válido.'
 - **Verify:** session expires on `/orders` and the user logs in again → verificar: lands back on `/orders`.
+- **Done (2026-10-03):** Root cause was bigger: `proxy.ts` sat in the repo root, but with `src/` Next 16 only loads `src/proxy.ts`, so the proxy (session refresh, `/login` → `/dashboard` when signed in, `?next=`) never ran. Moved to `src/proxy.ts`, protected every signed-in prefix and kept the query string in `next`; `safeNextPath` also rejects '/\\'. Invite: `email_address_invalid` → 'El correo no es válido o no acepta mensajes…' (function redeployed). Verified: /orders?view=finished signed out → login → back on /orders?view=finished.
 
 ### QA-60 Advisors (low, S, plausible)
 - **Fix:** enable leaked-password protection, which may require a paid plan. Document why `manage_organization_member` is SECURITY DEFINER. Index FKs later.

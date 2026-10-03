@@ -43,6 +43,7 @@ Read relevant entries only. Store decisions with dates and evidence.
 
 ## References
 
+- [2026-10-03 — Proxy must live in src/proxy.ts; server access helpers](reference/2026-10-03-proxy-and-server-access.md)
 - [2026-10-02 — Refresh without polling](reference/2026-10-02-refresh-without-polling.md)
 - [2026-10-02 — RLS with FOR UPDATE and retry-safe RPCs](reference/2026-10-02-rls-for-update-and-retry-safe-rpcs.md)
 - [2026-09-14 — Next implementation block (superseded by the pilot QA plan)](reference/2026-09-13-next-work.md)
