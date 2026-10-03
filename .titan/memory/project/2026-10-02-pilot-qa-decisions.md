@@ -54,3 +54,8 @@ answers HTTP 500 after sending, so attempts are stored as failed (QA-61).
 - Customers named "QA PILOTO ..." with consent OFF, except "QA PILOTO WhatsApp"
   (consent ON, product owner's controlled number) on JAV-2026-000018, kept open
   for the OpenWA re-test.
+- QA data cleaned 2026-10-03: only Óptica Javier remains (pre-QA customer and
+  JAV-2026-000001; next order JAV-2026-000002); QA orgs 3–6 and the `@lensspace.test`
+  accounts are gone. Cleaning tenant data needs disabling the immutability triggers
+  inside one transaction and also deleting `private.notification_dispatches`; the
+  Supabase MCP declines DELETE, so the product owner runs it in the SQL Editor.

@@ -57,9 +57,9 @@ Make LensSpace safe and frictionless for the Cuba pilot:
 
 - **Done:** Phases 1–6 complete (QA-52 deferred post-pilot by plan; QA-37 closed by decision; QA-60 reviewed). Extra: elTOQUE rate button, retry-safe customers, owner reset link, dialog stacking fix, and the proxy moved to `src/proxy.ts` (it never ran from the root; see QA-59).
 - **Waiting on the product owner:** elTOQUE token (`ELTOQUE_API_TOKEN` secret, approval up to a week); OpenWA fix on the VPS (QA-61); Vercel function region = Supabase region (QA-31: ca-central-1 → yul1, iad1 fallback); leaked-password protection setting (QA-60).
-- **Next:** cleanup of QA data before the pilot (below), then a production build + Vercel deploy check once the region is set. The superadmin should open `/manual` and press 'Guardar manual' once to publish the reviewed text.
+- **Next:** a production build + Vercel deploy check once the region is set. The superadmin should open `/manual` and press 'Guardar manual' once to publish the reviewed text.
 - **Deferred:** QA-36 supabase-js bundle, QA-52 recommended deposit, jobs history flag, provider jobs offline snapshot, `/catalog` column trimming.
-- **Cleanup before the pilot:** QA orgs QAS/QAP/QAB/QSB, customer #54, extra memberships of the QAS owner, the test phone on Javier's profile, QA PILOTO orders/jobs in Óptica Javier.
+- **QA data cleaned (2026-10-03):** see *Test data created → Cleanup*. Only Óptica Javier remains, with its pre-QA customer and JAV-2026-000001.
 
 ## Executive summary
 
@@ -923,6 +923,8 @@ Requested during Phase 5. Done 2026-10-03.
 - **Done (2026-10-03):** Manual content is now persisted: table `manual_documents` (RLS: every authenticated user reads; only `private.is_platform_admin()` inserts/updates; `updated_by` set by trigger). `/manual`: superadmin gets the editor with 'Guardar manual' (publish), 'Descartar cambios' and an unsaved-changes notice; every other signed-in role gets `ManualReader` (section pages with previous/next, 'Descargar PDF', 'Volver al panel'); owners also read the administration variant. `/manual/print` renders the saved content from the server (no localStorage) and forces the operative variant for roles without admin access. 'Manual del sistema' is in the menu for every role. Verified: Claudia reads with no editor and her print is 'Manual operativo' even with `?audience=admin`; admin sees the editor; SQL as provider → RLS 42501 on write, read OK; as admin → write OK (rolled back). Until the superadmin saves once, everyone sees the bundled default content.
 
 ## Test data created
+
+**Cleanup (2026-10-03): everything below was deleted** by a one-off SQL block run by the product owner in the SQL Editor (the MCP declines DELETE), after a rolled-back dry run. Removed: orgs 3–6 (QAP, QAS, QAB, QSB) with all their rows; in Óptica Javier every 'QA PILOTO' customer (20), orders JAV-2026-000002..000019 and their quotations, payments, empty cashboxes, production jobs/events/incidents, notification attempts and `private.notification_dispatches`; base catalog item 27; the 4 `@lensspace.test` auth users; Javier's test phone; the 2 QSB prescription files in Storage. Immutability triggers were disabled only inside that transaction. Kept: customer 20 'Claudia Rodríguez Rodríguez', JAV-2026-000001 (2 payments, 1 cashbox), users admin/Javier/Robert/Claudia; the JAV counter was reset to 1 (next order JAV-2026-000002). Verified afterwards: 1 org, 1 customer, 1 order, 0 storage objects, no disabled triggers. The throwaway accounts listed below no longer exist.
 
 All on the remote Supabase project. Real users' passwords are deliberately not recorded. Every QA customer has `messaging_consent = false` and fake numbers +53 5000 0xxx, and no real WhatsApp was sent.
 
