@@ -3,6 +3,7 @@ import { Source_Sans_3, Space_Grotesk } from 'next/font/google'
 
 import { ServiceWorkerRegistration } from '@/shared/components/ServiceWorkerRegistration'
 import { siteConfig } from '@/shared/config/site'
+import { installPromptCaptureScript } from '@/shared/lib/pwa-install'
 
 import './globals.css'
 
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es" className={`${sourceSans.variable} ${spaceGrotesk.variable}`}>
       <body>
+        <script dangerouslySetInnerHTML={{ __html: installPromptCaptureScript }} />
         {children}
         <ServiceWorkerRegistration />
       </body>

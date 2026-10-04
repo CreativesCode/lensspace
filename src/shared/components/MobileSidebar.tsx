@@ -4,6 +4,7 @@ import { Menu, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
+import { InstallAppButton } from './InstallAppButton'
 import { MainNavigation } from './MainNavigation'
 import { LensSpaceLogo } from './LensSpaceLogo'
 import { SidebarAccount, type ShellIdentity } from './SidebarAccount'
@@ -43,7 +44,7 @@ export function MobileSidebar({ allowedHrefs, counts, identity, canCreateSale }:
             </button>
           </div>
           <MainNavigation allowedHrefs={allowedHrefs} counts={counts} canCreateSale={canCreateSale} onNavigate={() => setOpen(false)} />
-          <div className="mt-auto pt-[22px]"><SidebarAccount identity={identity} onNavigate={() => setOpen(false)} /></div>
+          <div className="mt-auto space-y-2.5 pt-[22px]"><InstallAppButton className="flex min-h-11 w-full items-center gap-2.5 rounded-control border border-on-ink-stroke px-3 text-sm font-semibold text-on-ink-soft transition hover:bg-ink-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint" /><SidebarAccount identity={identity} onNavigate={() => setOpen(false)} /></div>
         </aside>
       </div>, document.body) : null}
     </>

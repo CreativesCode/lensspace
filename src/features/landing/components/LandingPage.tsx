@@ -7,6 +7,8 @@ import {
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { InstallAppButton } from '@/shared/components/InstallAppButton'
+
 import { AccessLink } from './AccessLink'
 import styles from './landing.module.css'
 
@@ -70,6 +72,7 @@ export function LandingPage() {
                 Ver cómo funciona <ArrowRight aria-hidden="true" size={17} />
               </a>
               <AccessLink label="Ya tengo acceso" className="inline-flex min-h-12 items-center justify-center rounded-[7px] border border-[#B9D8D3] bg-white/70 px-5 font-display text-sm font-bold text-[#07322F] transition hover:border-[#0D7A72] hover:bg-white" />
+              <InstallAppButton className="inline-flex min-h-12 items-center justify-center gap-2 rounded-[7px] px-4 font-display text-sm font-bold text-[#0D7A72] transition hover:bg-[#DDF5F0]" />
             </div>
             <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3 text-sm text-[#4A5B58]">
               {['Por sucursal', 'Permisos por rol', 'Historial verificable'].map((item) => (

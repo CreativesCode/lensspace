@@ -7,7 +7,7 @@ import type { Tables } from '@/lib/supabase/database.types'
 import { getAccessSummary } from '@/lib/supabase/access'
 import { getCurrentUser } from '@/lib/supabase/current-user'
 import { createClient } from '@/lib/supabase/server'
-import { LensSpaceLogo, MainNavigation, MobileSidebar, OfflineBanner, RefreshOnFocus, SidebarAccount, SubscriptionBanner, type ShellIdentity, type SubscriptionNotice } from '@/shared/components'
+import { InstallAppButton, LensSpaceLogo, MainNavigation, MobileSidebar, OfflineBanner, RefreshOnFocus, SidebarAccount, SubscriptionBanner, type ShellIdentity, type SubscriptionNotice } from '@/shared/components'
 
 const commercialHrefs = ['/prescriptions', '/catalog', '/orders', '/sales', '/customers']
 const roleLabels: Record<string, string> = {
@@ -44,7 +44,8 @@ async function AuthenticatedLayout({ children }: { children: React.ReactNode }) 
           <LensSpaceLogo compact inverse subtitle={identity.organizationName} />
         </div>
         <MainNavigation allowedHrefs={allowedHrefs} counts={counts} canCreateSale={canCreateSale} />
-        <div className="mt-auto pt-[22px]">
+        <div className="mt-auto space-y-2.5 pt-[22px]">
+          <InstallAppButton className="flex min-h-11 w-full items-center gap-2.5 rounded-control border border-on-ink-stroke px-3 text-sm font-semibold text-on-ink-soft transition hover:bg-ink-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint" />
           <SidebarAccount identity={identity} />
         </div>
       </aside>
