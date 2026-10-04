@@ -1,9 +1,9 @@
 import type { Audience, DocSectionType, ManualAudience } from './types'
 
 export const COPY = {
-  sectionTitle: { overview: 'Vista general', access: 'Acceso al sistema', roles: 'Roles y permisos', faq: 'Preguntas frecuentes', support: 'Soporte y contacto', policy: 'Políticas de uso' },
-  sectionTypeLabel: { overview: 'Vista general', access: 'Acceso', roles: 'Roles', module: 'Módulo', workflow: 'Flujo', faq: 'Preguntas frecuentes', support: 'Soporte', policy: 'Política' } satisfies Record<DocSectionType, string>,
-  audienceLabel: { 'end-user': 'Personal operativo', admin: 'Administración', support: 'Soporte' } satisfies Record<Audience, string>,
-  manualTitle: (audience: ManualAudience, app: string) => audience === 'admin' ? `Manual de administración · ${app}` : `Manual operativo · ${app}`,
-  manualSubtitle: (audience: ManualAudience, client: string) => audience === 'admin' ? `Guía completa para administrar ${client}` : `Guía de trabajo diario para el equipo de ${client}`,
+  sectionTitle: { overview: 'Para empezar', access: 'Cómo entrar', roles: 'Quién hace qué', faq: 'Preguntas que siempre salen', support: 'Ayuda', policy: 'Reglas de la casa' },
+  sectionTypeLabel: { overview: 'Para empezar', access: 'Entrar', roles: 'Quién hace qué', module: 'Sección', workflow: 'Paso a paso', faq: 'Preguntas', support: 'Ayuda', policy: 'Reglas' } satisfies Record<DocSectionType, string>,
+  audienceLabel: { 'end-user': 'todo el equipo', admin: 'el dueño', support: 'ayuda' } satisfies Record<Audience, string>,
+  manualTitle: (audience: ManualAudience, app: string) => audience === 'admin' ? `Guía del dueño · ${app}` : `Guía del equipo · ${app}`,
+  manualSubtitle: (audience: ManualAudience, client: string) => audience === 'admin' ? `Todo lo que necesitas para llevar ${client}` : `Cómo hacer el trabajo de cada día en ${client}`,
 }
