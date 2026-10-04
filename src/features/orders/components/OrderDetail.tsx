@@ -89,7 +89,7 @@ export function OrderDetail({ order, summary, timeline, pending, error, onBack, 
         )}
         {error ? <Alert tone="danger" role="alert">{error}</Alert> : null}
 
-        <OrderProductionPanel key={`production-${summary.orderId}`} orderId={summary.orderId} canAssign={summary.commercialStatus === 'accepted'} onReadinessChange={handleReadiness} />
+        <OrderProductionPanel key={`production-${summary.orderId}`} orderId={summary.orderId} canAssign={summary.commercialStatus === 'accepted'} delivered={summary.commercialStatus === 'delivered' || summary.commercialStatus === 'closed'} onReadinessChange={handleReadiness} />
 
         <div>
           <Tabs label="Detalle del pedido" value={tab} onChange={setTab} tabs={[{ value: 'payments', label: 'Pagos', count: paymentCount }, { value: 'history', label: 'Historial', count: history.length }]} />

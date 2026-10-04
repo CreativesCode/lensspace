@@ -22,7 +22,7 @@ const finished = (status: string) => status === 'received' || status === 'review
 
 // Production state and assignment from the order itself (QA-13/QA-14): the seller
 // sends the work without leaving the sale, and delivery can warn when it is unfinished.
-export function OrderProductionPanel({ orderId, canAssign, onReadinessChange }: { orderId: number; canAssign: boolean; onReadinessChange?: (readiness: ProductionReadiness) => void }) {
+export function OrderProductionPanel({ orderId, canAssign, delivered = false, onReadinessChange }: { orderId: number; canAssign: boolean; delivered?: boolean; onReadinessChange?: (readiness: ProductionReadiness) => void }) {
   const supabase = useMemo(() => createClient(), [])
   const [jobs, setJobs] = useState<CurrentJob[] | null>(null)
   const [assignees, setAssignees] = useState<Assignee[]>([])
@@ -75,7 +75,7 @@ export function OrderProductionPanel({ orderId, canAssign, onReadinessChange }: 
     <div className="flex flex-col gap-3 rounded-card border border-line-card px-4 py-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="flex items-center gap-2 font-display text-[16px] font-semibold text-ink"><Factory aria-hidden="true" size={17} className="text-action" />Producción</h3>
-        {ready ? <Badge tone="success">Listo para recoger</Badge> : null}
+        {delivered ? <Badge tone="neutral">Entregado al cliente</Badge> : ready ? <Badge tone="success">Listo para recoger</Badge> : null}
       </div>
       {jobs.map((job) => (
         <div key={job.id} className="flex flex-wrap items-center justify-between gap-2 text-sm">
