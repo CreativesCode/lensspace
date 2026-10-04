@@ -27,8 +27,15 @@ export default function manifest(): MetadataRoute.Manifest {
         type: 'image/png',
       },
       {
-        // The mark sits inside the 80% safe zone, so Android can crop it to its icon shape.
-        src: '/brand/lensspace-app-icon-512.png',
+        // Padded variant: some Android launchers zoom past the 80% safe zone and
+        // clipped the full-size mark (seen on a real phone, 2026-10-04).
+        src: '/brand/lensspace-app-icon-maskable-192.png',
+        sizes: '192x192',
+        type: 'image/png',
+        purpose: 'maskable',
+      },
+      {
+        src: '/brand/lensspace-app-icon-maskable-512.png',
         sizes: '512x512',
         type: 'image/png',
         purpose: 'maskable',

@@ -14,7 +14,10 @@ never need to know the browser steps.
   `preventDefault`, so Chrome's own Android mini-infobar still shows.
 - Modes (`useInstallMode`): native prompt (Chrome/Edge/Samsung), iOS guide (Share →
   Agregar a inicio), Safari macOS guide (Archivo → Agregar al Dock), generic menu guide.
-- The manifest also lists the 512 icon as `maskable` (the mark sits in the safe zone).
+- Maskable icons are a separate padded variant (`lensspace-app-icon-maskable*.svg/png`,
+  mark scaled to 0.76): a real Android launcher zoomed the full-size icon and clipped
+  the eye even though it sat inside the nominal 80% safe zone. Regenerate both PNGs
+  from the SVG if the mark changes. Installed apps keep the old icon until reinstalled.
 - Install prompts only appear in production builds (the service worker registers only
   there). QA evidence: `.titan/qa/2026-10-04-pwa-install/`.
 - If a real store APK is ever needed, the free route is a Capacitor shell or TWA
