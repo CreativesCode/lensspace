@@ -14,6 +14,8 @@ type Props = {
   multiBranchEnabled: boolean
   // 1 + extra branches of the signed contract (the server enforces the same rule).
   branchLimit: number
+  // Extra branches of a draft contract: they count only once its signed copy is uploaded.
+  draftExtraBranches: number | null
   onChanged: (message: string) => void
 }
 type Action = { kind: 'create' } | { kind: 'edit' | 'toggle' | 'primary'; branch: Branch }
@@ -21,7 +23,7 @@ type Action = { kind: 'create' } | { kind: 'edit' | 'toggle' | 'primary'; branch
 const actionTitles = { create: 'Nueva sucursal', edit: 'Editar sucursal', toggle: '', primary: 'Hacer principal' }
 
 // Only the platform admin creates and changes branches (product owner, 2026-10-10).
-export function BranchManagementPanel({ organizationId, branches, multiBranchEnabled, branchLimit, onChanged }: Props) {
+export function BranchManagementPanel({ organizationId, branches, multiBranchEnabled, branchLimit, draftExtraBranches, onChanged }: Props) {
   const supabase = useMemo(() => createClient(), [])
   const [action, setAction] = useState<Action | null>(null)
   const [error, setError] = useState('')
@@ -67,7 +69,11 @@ export function BranchManagementPanel({ organizationId, branches, multiBranchEna
     <p className="text-[13px] text-text-muted">
       {activeCount} de {branchLimit} activas según el contrato firmado.
       {!multiBranchEnabled ? ' Activa el módulo Multisucursal para crear más; sin él, solo la principal opera y las demás quedan en solo lectura.' : ''}
-      {multiBranchEnabled && !canCreate ? ' Para otra sucursal, prepara un contrato con más sucursales extra.' : ''}
+      {multiBranchEnabled && !canCreate
+        ? draftExtraBranches !== null && 1 + draftExtraBranches > branchLimit
+          ? ` El borrador del contrato incluye ${draftExtraBranches} sucursal(es) extra: cuentan cuando subas el contrato firmado.`
+          : ' Para otra sucursal, prepara un contrato con más sucursales extra y sube el firmado.'
+        : ''}
     </p>
 
     <ul className="flex flex-col gap-2">

@@ -236,6 +236,7 @@ export function PlatformAdminWorkspace({ organizations, providerProfile }: { org
           branches={openOrganization.branches}
           multiBranchEnabled={openOrganization.modules.some(({ module_key, is_enabled }) => module_key === 'multi_branch' && is_enabled)}
           branchLimit={1 + (openOrganization.contracts.find(({ status }) => status === 'signed')?.extra_branches ?? 0)}
+          draftExtraBranches={openOrganization.contracts.find(({ status }) => status === 'draft')?.extra_branches ?? null}
           onChanged={contractChanged}
         />
         </div>
