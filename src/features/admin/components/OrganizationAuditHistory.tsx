@@ -21,6 +21,11 @@ const eventLabels: Record<string, string> = {
   'license.contract_signed': 'Contrato firmado registrado',
   'license.contract_cancelled': 'Contrato anulado',
   'license.referral_credit_applied': 'Crédito por óptica referida aplicado',
+  'branch.created': 'Sucursal creada',
+  'branch.updated': 'Sucursal editada',
+  'branch.activated': 'Sucursal reactivada',
+  'branch.deactivated': 'Sucursal desactivada',
+  'branch.primary_changed': 'Sucursal principal cambiada',
 }
 
 const dateTime = new Intl.DateTimeFormat('es-CU', { timeZone: BUSINESS_TIME_ZONE, day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })

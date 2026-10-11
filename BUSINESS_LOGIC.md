@@ -272,6 +272,13 @@ Caja y Producción dependen de Ventas ópticas; WhatsApp depende de Ventas ópti
 Multisucursal amplía el Núcleo. Si se desactiva Multisucursal, se escoge una
 sucursal activa y las restantes quedan en modo lectura.
 
+Decisiones del 2026-10-10: solo el superadministrador crea, edita, activa o
+desactiva sucursales, hasta el número que permite el contrato firmado (1 incluida
+más las sucursales extra). Cada óptica tiene una sucursal principal, que sigue
+operando sin Multisucursal. Un vendedor trabaja en una sola sucursal, los clientes
+son por sucursal y la numeración de pedidos es única por óptica. Una sucursal no se
+desactiva con pedidos sin entregar, cobros sin cerrar en caja o vendedores asignados.
+
 ## Conservación y eliminación
 
 - Clientes, recetas, pedidos, pagos, cierres e historial no se eliminan físicamente.

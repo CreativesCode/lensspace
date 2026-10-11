@@ -10,6 +10,7 @@ import { Alert, Badge, Button, ButtonLink, Card, CardHeader, Dialog, EmptyState,
 import { friendlyError } from '@/shared/lib/friendly-error'
 import { BUSINESS_TIME_ZONE, formatBusinessDate, todayIn } from '@/shared/utils/dates'
 import { sendOwnerPasswordReset } from '../actions'
+import { BranchManagementPanel } from './BranchManagementPanel'
 import { LicenseContractPanel } from './LicenseContractPanel'
 import { OrganizationAuditHistory } from './OrganizationAuditHistory'
 import { OrganizationOnboardingForm } from './OrganizationOnboardingForm'
@@ -44,7 +45,7 @@ const organizationStatusLabels: Record<string, string> = {
 
 export type PlatformOrganization = {
   id: number; name: string; order_prefix: string; status: string
-  branches: { id: number; name: string; is_active: boolean }[]
+  branches: { id: number; name: string; code: string; is_active: boolean; is_primary: boolean }[]
   owners: { user_id: string; display_name: string }[]
   subscription?: { status: string; amount: number; currency: string; billing_period: string; starts_on: string; expires_on: string; last_renewed_on: string | null }
   modules: { module_key: string; is_enabled: boolean }[]
@@ -230,6 +231,13 @@ export function PlatformAdminWorkspace({ organizations, providerProfile }: { org
           <div className="flex justify-end"><Button type="submit" variant="ink" disabled={pending}>{pending ? 'Guardando…' : 'Guardar cambios'}</Button></div>
         </form>
         <LicenseContractPanel organization={openOrganization} organizationNames={organizationNames} onChanged={contractChanged} />
+        <BranchManagementPanel
+          organizationId={openOrganization.id}
+          branches={openOrganization.branches}
+          multiBranchEnabled={openOrganization.modules.some(({ module_key, is_enabled }) => module_key === 'multi_branch' && is_enabled)}
+          branchLimit={1 + (openOrganization.contracts.find(({ status }) => status === 'signed')?.extra_branches ?? 0)}
+          onChanged={contractChanged}
+        />
         </div>
         <div className="flex flex-col gap-4">
           <CardHeader title="Asistencia auditada" />

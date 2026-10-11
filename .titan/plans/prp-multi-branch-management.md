@@ -1,7 +1,7 @@
 # PRP — Multi-branch management
 
 Date: 2026-10-10
-Status: proposed (not started)
+Status: implemented 2026-10-10 (browser QA pending a superadmin session)
 
 ## Problem
 
@@ -66,3 +66,29 @@ existing branch filters. The platform admin can do the same for support.
   `branch_id`; BUSINESS_LOGIC says commercial config is shared per organization.
 - Should each branch have its own order prefix, or keep one sequence per
   organization?
+
+## Decisions (product owner, 2026-10-10)
+
+- A seller works in exactly one branch (unchanged).
+- Customers and prescriptions stay per branch (unchanged).
+- One order sequence per organization (unchanged).
+- **Only the platform admin creates and changes branches** (no owner self-service):
+  the owner UI items in "Behavior" 1 and 6 collapse into the admin panel.
+
+## Implementation notes
+
+- `20261011030648_multi_branch_management.sql`: `branches.is_primary` (backfilled,
+  one per organization), `private.is_operational_branch` added to
+  `can_write_branch_clinical_data` and `can_write_seller_sale` (active branch, and
+  primary or multi_branch enabled), `private.branch_limit` = 1 + signed contract
+  `extra_branches`, admin RPCs `create_branch`, `update_branch`, `set_branch_active`,
+  `set_primary_branch` (audited); direct insert/update on `branches` revoked.
+- `20261011030815_first_branch_is_primary.sql`: trigger marks the first branch of an
+  organization as primary. Found during implementation: onboarding inserts the branch
+  without the flag, so a new organization would have been read-only.
+- Deactivation is blocked by: primary branch, orders with `commercial_status =
+  'accepted'`, payments not allocated to a cashbox closure, active/invited members.
+- UI: `BranchManagementPanel.tsx` in the organization dialog of /organizations.
+- Known gap: owner filters list only active branches, so data of a deactivated branch
+  is kept but not filterable from the owner views.
+- Test: `supabase/tests/multi_branch_management.sql` (ran rolled back before applying).

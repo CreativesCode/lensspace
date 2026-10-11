@@ -16,6 +16,7 @@ Read relevant entries only. Store decisions with dates and evidence.
 
 ## Project decisions
 
+- [2026-10-10 — Multi-branch: admin-managed branches and operational rule](project/2026-10-10-multi-branch-admin-only.md)
 - [2026-10-10 — License pricing, contracts and founder partner](project/2026-10-10-license-pricing-contracts.md)
 - [2026-10-04 — PWA install button instead of an APK](project/2026-10-04-pwa-install-button.md)
 - [2026-10-02 — Pilot QA decisions and readiness](project/2026-10-02-pilot-qa-decisions.md)

@@ -19,7 +19,7 @@ Decision (product owner): LensSpace is licensed monthly per module, not sold.
   `license-contracts`) → subscription amount/period sync. Provider legal data are
   editable in the admin ("Datos del proveedor"). The proforma text is pending legal
   review by the product owner.
-- Multi-branch is sold but has no branch-creation screen yet: see
-  `.titan/plans/prp-multi-branch-management.md`.
+- Multi-branch: implemented the same day, see
+  `project/2026-10-10-multi-branch-admin-only.md`.
 
 Plan: `.titan/plans/prp-license-pricing-and-contracts.md`.

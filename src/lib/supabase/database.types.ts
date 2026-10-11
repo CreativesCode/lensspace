@@ -67,6 +67,7 @@ export type Database = {
           created_at: string
           id: number
           is_active: boolean
+          is_primary: boolean
           name: string
           organization_id: number
           timezone: string
@@ -77,6 +78,7 @@ export type Database = {
           created_at?: string
           id?: never
           is_active?: boolean
+          is_primary?: boolean
           name: string
           organization_id: number
           timezone?: string
@@ -87,6 +89,7 @@ export type Database = {
           created_at?: string
           id?: never
           is_active?: boolean
+          is_primary?: boolean
           name?: string
           organization_id?: number
           timezone?: string
@@ -2275,6 +2278,15 @@ export type Database = {
         }
         Returns: undefined
       }
+      create_branch: {
+        Args: {
+          branch_code: string
+          branch_name: string
+          change_reason: string
+          target_organization_id: number
+        }
+        Returns: number
+      }
       create_customer_with_phones:
         | {
             Args: {
@@ -2483,6 +2495,18 @@ export type Database = {
         }
         Returns: Json
       }
+      set_branch_active: {
+        Args: {
+          change_reason: string
+          target_active: boolean
+          target_branch_id: number
+        }
+        Returns: boolean
+      }
+      set_primary_branch: {
+        Args: { change_reason: string; target_branch_id: number }
+        Returns: boolean
+      }
       sign_license_contract: {
         Args: { signed_path: string; target_contract_id: number }
         Returns: Json
@@ -2490,6 +2514,15 @@ export type Database = {
       transition_production_job: {
         Args: { notes?: string; target_job_id: number; target_status: string }
         Returns: undefined
+      }
+      update_branch: {
+        Args: {
+          branch_code: string
+          branch_name: string
+          change_reason: string
+          target_branch_id: number
+        }
+        Returns: boolean
       }
       update_customer_with_phones: {
         Args: {

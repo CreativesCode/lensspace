@@ -8,7 +8,7 @@ type Client = Awaited<ReturnType<typeof createClient>>
 export async function loadPlatformOrganizations(supabase: Client): Promise<PlatformOrganization[]> {
   const [{ data: organizations }, { data: branches }, { data: subscriptions }, { data: entitlements }, { data: owners }, { data: usage }, { data: support }, { data: contracts }] = await Promise.all([
     supabase.from('organizations').select('id, name, order_prefix, status, created_at').order('created_at', { ascending: false }),
-    supabase.from('branches').select('id, organization_id, name, is_active'),
+    supabase.from('branches').select('id, organization_id, name, code, is_active, is_primary').order('id'),
     supabase.from('subscriptions').select('organization_id, status, expires_on, starts_on, amount, currency, billing_period, last_renewed_on'),
     supabase.from('organization_modules').select('organization_id, module_key, is_enabled'),
     supabase.from('organization_memberships').select('organization_id, user_id').eq('role', 'owner').eq('status', 'active'),
@@ -26,7 +26,7 @@ export async function loadPlatformOrganizations(supabase: Client): Promise<Platf
 
   return ((organizations ?? []) as Pick<Tables<'organizations'>, 'id' | 'name' | 'order_prefix' | 'status'>[]).map((organization) => ({
     ...organization,
-    branches: ((branches ?? []) as Pick<Tables<'branches'>, 'id' | 'organization_id' | 'name' | 'is_active'>[]).filter((row) => row.organization_id === organization.id).map(({ id, name, is_active }) => ({ id, name, is_active })),
+    branches: ((branches ?? []) as Pick<Tables<'branches'>, 'id' | 'organization_id' | 'name' | 'code' | 'is_active' | 'is_primary'>[]).filter((row) => row.organization_id === organization.id).map(({ id, name, code, is_active, is_primary }) => ({ id, name, code, is_active, is_primary })),
     subscription: ((subscriptions ?? []) as Pick<Tables<'subscriptions'>, 'organization_id' | 'status' | 'amount' | 'currency' | 'billing_period' | 'starts_on' | 'expires_on' | 'last_renewed_on'>[]).find((row) => row.organization_id === organization.id),
     modules: ((entitlements ?? []) as Pick<Tables<'organization_modules'>, 'organization_id' | 'module_key' | 'is_enabled'>[]).filter((row) => row.organization_id === organization.id),
     owners: ownerRows.filter((row) => row.organization_id === organization.id).map((row) => profileRows.find((profile) => profile.user_id === row.user_id)).filter((profile): profile is NonNullable<typeof profile> => Boolean(profile)).map(({ user_id, display_name }) => ({ user_id, display_name })),
