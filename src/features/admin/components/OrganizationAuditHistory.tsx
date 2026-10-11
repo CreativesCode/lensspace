@@ -16,6 +16,11 @@ const eventLabels: Record<string, string> = {
   'membership.updated': 'Miembro actualizado',
   'membership.invitation_accepted': 'Invitación aceptada',
   'membership.invitation_declined': 'Invitación rechazada',
+  'license.contract_drafted': 'Borrador de contrato creado',
+  'license.contract_draft_changed': 'Borrador de contrato editado',
+  'license.contract_signed': 'Contrato firmado registrado',
+  'license.contract_cancelled': 'Contrato anulado',
+  'license.referral_credit_applied': 'Crédito por óptica referida aplicado',
 }
 
 const dateTime = new Intl.DateTimeFormat('es-CU', { timeZone: BUSINESS_TIME_ZONE, day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
@@ -43,7 +48,7 @@ export function OrganizationAuditHistory({ organizationId, refreshKey }: { organ
   if (!rows.length) return <p className="text-sm text-text-muted">Sin eventos registrados.</p>
   return <ol className="flex flex-col gap-2.5">
     {rows.map((row) => <li key={row.id} className="border-l-2 border-line pl-3 text-sm">
-      <p className="font-semibold text-ink">{eventLabels[row.event_type] ?? row.event_type}</p>
+      <p className="font-semibold text-ink">{eventLabels[row.event_type] ?? 'Cambio registrado'}</p>
       <p className="text-[12px] text-text-muted">{dateTime.format(new Date(row.occurred_at))}</p>
       {row.reason ? <p className="text-[13px] text-text-secondary [overflow-wrap:anywhere]">{row.reason}</p> : null}
     </li>)}

@@ -603,6 +603,141 @@ export type Database = {
           },
         ]
       }
+      license_contracts: {
+        Row: {
+          billing_period: string
+          client_address: string | null
+          client_email: string | null
+          client_identification: string | null
+          client_legal_name: string
+          client_phone: string | null
+          client_representative: string | null
+          created_at: string
+          created_by: string | null
+          currency: string
+          ends_on: string
+          extra_branches: number
+          id: number
+          module_keys: string[]
+          monthly_amount: number
+          notes: string | null
+          organization_id: number
+          period_amount: number
+          plan: string
+          post_lock_monthly_amount: number | null
+          price_locked_until: string | null
+          referral_credit_applied_on: string | null
+          referral_credit_days: number | null
+          referred_by_organization_id: number | null
+          signed_at: string | null
+          signed_file_path: string | null
+          starts_on: string
+          status: string
+          term_months: number
+          updated_at: string
+        }
+        Insert: {
+          billing_period?: string
+          client_address?: string | null
+          client_email?: string | null
+          client_identification?: string | null
+          client_legal_name: string
+          client_phone?: string | null
+          client_representative?: string | null
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          ends_on: string
+          extra_branches?: number
+          id?: never
+          module_keys?: string[]
+          monthly_amount: number
+          notes?: string | null
+          organization_id: number
+          period_amount?: number
+          plan: string
+          post_lock_monthly_amount?: number | null
+          price_locked_until?: string | null
+          referral_credit_applied_on?: string | null
+          referral_credit_days?: number | null
+          referred_by_organization_id?: number | null
+          signed_at?: string | null
+          signed_file_path?: string | null
+          starts_on: string
+          status?: string
+          term_months?: number
+          updated_at?: string
+        }
+        Update: {
+          billing_period?: string
+          client_address?: string | null
+          client_email?: string | null
+          client_identification?: string | null
+          client_legal_name?: string
+          client_phone?: string | null
+          client_representative?: string | null
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          ends_on?: string
+          extra_branches?: number
+          id?: never
+          module_keys?: string[]
+          monthly_amount?: number
+          notes?: string | null
+          organization_id?: number
+          period_amount?: number
+          plan?: string
+          post_lock_monthly_amount?: number | null
+          price_locked_until?: string | null
+          referral_credit_applied_on?: string | null
+          referral_credit_days?: number | null
+          referred_by_organization_id?: number | null
+          signed_at?: string | null
+          signed_file_path?: string | null
+          starts_on?: string
+          status?: string
+          term_months?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "license_contracts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "license_contracts_referred_by_organization_id_fkey"
+            columns: ["referred_by_organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      manual_documents: {
+        Row: {
+          content: Json
+          key: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          content: Json
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          content?: Json
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       market_exchange_rates: {
         Row: {
           fetched_at: string
@@ -1277,6 +1412,42 @@ export type Database = {
             referencedColumns: ["id", "organization_id", "branch_id"]
           },
         ]
+      }
+      platform_provider_profile: {
+        Row: {
+          address: string | null
+          email: string | null
+          id: boolean
+          identification: string | null
+          legal_name: string
+          payment_instructions: string | null
+          phone: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          address?: string | null
+          email?: string | null
+          id?: boolean
+          identification?: string | null
+          legal_name: string
+          payment_instructions?: string | null
+          phone?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          address?: string | null
+          email?: string | null
+          id?: boolean
+          identification?: string | null
+          legal_name?: string
+          payment_instructions?: string | null
+          phone?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
       }
       platform_support_sessions: {
         Row: {
@@ -2030,6 +2201,10 @@ export type Database = {
         Args: { target_organization_id: number }
         Returns: Json
       }
+      apply_referral_credit: {
+        Args: { target_contract_id: number }
+        Returns: Json
+      }
       assign_production_job: {
         Args: { job_type: string; provider_id: string; target_order_id: number }
         Returns: number
@@ -2079,6 +2254,10 @@ export type Database = {
           usd_to_cup_rate: number
         }
         Returns: Json
+      }
+      cancel_license_contract: {
+        Args: { cancel_reason: string; target_contract_id: number }
+        Returns: boolean
       }
       close_cashbox: {
         Args: {
@@ -2302,6 +2481,10 @@ export type Database = {
           target_quotation_id: number
           target_usd_to_cup_rate: number
         }
+        Returns: Json
+      }
+      sign_license_contract: {
+        Args: { signed_path: string; target_contract_id: number }
         Returns: Json
       }
       transition_production_job: {

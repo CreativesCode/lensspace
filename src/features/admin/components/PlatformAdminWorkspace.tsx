@@ -1,16 +1,19 @@
 'use client'
 
-import { Building, KeyRound, LifeBuoy, Plus, SearchX } from 'lucide-react'
+import { Building, IdCard, KeyRound, LifeBuoy, Plus, SearchX } from 'lucide-react'
 import { FormEvent, useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import type { Tables } from '@/lib/supabase/database.types'
 import { FilterPanel, FormSelect } from '@/shared/components'
 import { Alert, Badge, Button, ButtonLink, Card, CardHeader, Dialog, EmptyState, Field, Input, Switch, Textarea, Toast } from '@/shared/ui'
 import { friendlyError } from '@/shared/lib/friendly-error'
 import { BUSINESS_TIME_ZONE, formatBusinessDate, todayIn } from '@/shared/utils/dates'
 import { sendOwnerPasswordReset } from '../actions'
+import { LicenseContractPanel } from './LicenseContractPanel'
 import { OrganizationAuditHistory } from './OrganizationAuditHistory'
 import { OrganizationOnboardingForm } from './OrganizationOnboardingForm'
+import { type ProviderProfile, ProviderProfileForm } from './ProviderProfileForm'
 
 const modules = [
   ['optical_sales', 'Ventas ópticas'], ['cashbox', 'Caja'], ['production', 'Producción'],
@@ -47,14 +50,17 @@ export type PlatformOrganization = {
   modules: { module_key: string; is_enabled: boolean }[]
   usage?: { customers: number; orders: number; members: number; openProductionJobs: number; notificationAttempts: number; lastActivityAt: string | null }
   supportSession?: { id: number; reason: string; started_at: string; expires_at: string }
+  contracts: Tables<'license_contracts'>[]
+  referrals: Tables<'license_contracts'>[]
 }
 
-export function PlatformAdminWorkspace({ organizations }: { organizations: PlatformOrganization[] }) {
+export function PlatformAdminWorkspace({ organizations, providerProfile }: { organizations: PlatformOrganization[]; providerProfile: ProviderProfile | null }) {
   const supabase = useMemo(() => createClient(), [])
   const router = useRouter()
   const [openId, setOpenId] = useState<number | null>(null)
   const [enabledModules, setEnabledModules] = useState<string[]>([])
   const [createOpen, setCreateOpen] = useState(false)
+  const [providerOpen, setProviderOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [subscriptionFilter, setSubscriptionFilter] = useState('all')
@@ -72,6 +78,13 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
   const activeFilterCount = Number(Boolean(query.trim())) + Number(statusFilter !== 'all') + Number(subscriptionFilter !== 'all')
   const clearFilters = () => { setQuery(''); setStatusFilter('all'); setSubscriptionFilter('all') }
   const openOrganization = organizations.find(({ id }) => id === openId) ?? null
+  const organizationNames = organizations.map(({ id, name }) => ({ id, name }))
+
+  function contractChanged(message: string) {
+    setToast(message)
+    setHistoryKey((current) => current + 1)
+    router.refresh()
+  }
 
   function openDetails(organization: PlatformOrganization) {
     setError('')
@@ -158,6 +171,7 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
             <Field label="Suscripción"><FormSelect ariaLabel="Filtrar por suscripción" value={subscriptionFilter} onValueChange={setSubscriptionFilter} options={[{ value: 'all', label: 'Todas' }, { value: 'trial', label: 'En prueba' }, { value: 'expiring', label: 'Por vencer (5 días o menos)' }, { value: 'expired', label: 'Vencidas' }, { value: 'active', label: 'Al día' }, { value: 'suspended', label: 'Suspendidas' }]} /></Field>
           </div>
         </FilterPanel>
+        <Button variant="secondary" icon={IdCard} onClick={() => setProviderOpen(true)}>Datos del proveedor</Button>
         <Button icon={Plus} onClick={() => setCreateOpen(true)}>Nueva organización</Button>
       </div>
     </div>
@@ -193,8 +207,9 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
       size="xl"
     >
       {openOrganization ? <div key={openOrganization.id} className="grid min-w-0 gap-6 xl:grid-cols-[2fr_1fr]">
+        <div className="flex min-w-0 flex-col gap-8">
         <form onSubmit={(event) => save(event, openOrganization.id)} className="flex min-w-0 flex-col gap-4">
-          <CardHeader title="Contrato y operación" />
+          <CardHeader title="Suscripción y operación" />
           <div className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Field label="Organización"><FormSelect name="organizationStatus" ariaLabel="Estado de la organización" defaultValue={openOrganization.status} options={[{ value: 'active', label: 'Activa' }, { value: 'suspended', label: 'Suspendida' }, { value: 'archived', label: 'Archivada' }]} /></Field>
             <Field label="Suscripción"><FormSelect name="subscriptionStatus" ariaLabel="Estado de la suscripción" defaultValue={openOrganization.subscription?.status} options={[{ value: 'trial', label: 'Prueba' }, { value: 'active', label: 'Activa' }, { value: 'expired', label: 'Vencida' }, { value: 'suspended', label: 'Suspendida' }]} /></Field>
@@ -214,6 +229,8 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
           {error ? <Alert tone="danger" role="alert">{error}</Alert> : null}
           <div className="flex justify-end"><Button type="submit" variant="ink" disabled={pending}>{pending ? 'Guardando…' : 'Guardar cambios'}</Button></div>
         </form>
+        <LicenseContractPanel organization={openOrganization} organizationNames={organizationNames} onChanged={contractChanged} />
+        </div>
         <div className="flex flex-col gap-4">
           <CardHeader title="Asistencia auditada" />
           {openOrganization.supportSession ? (
@@ -242,6 +259,7 @@ export function PlatformAdminWorkspace({ organizations }: { organizations: Platf
       </div> : null}
     </Dialog>
 
+    <Dialog open={providerOpen} onClose={() => setProviderOpen(false)} eyebrow="Contratos" title="Datos del proveedor" description="Salen en cada proforma de contrato. Si cambian, actualízalos aquí." size="lg"><ProviderProfileForm profile={providerProfile} onSaved={(message) => { setProviderOpen(false); setToast(message); router.refresh() }} /></Dialog>
     <Dialog open={createOpen} onClose={() => setCreateOpen(false)} eyebrow="Alta de tenant" title="Nueva organización" size="xl"><OrganizationOnboardingForm onCreated={(created) => { setCreateOpen(false); setToast(created) }} /></Dialog>
     <Toast message={toast} onDismiss={() => setToast('')} />
   </div>

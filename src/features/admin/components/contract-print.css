@@ -1,0 +1,35 @@
+[data-contract-root] { color: #1c3a37; font: 11pt/1.55 system-ui, sans-serif; }
+[data-contract-root] h1 { margin: 22pt 0 2pt; font-size: 20pt; line-height: 1.2; color: #07322f; }
+[data-contract-root] h2 { margin: 14pt 0 4pt; font-size: 11.5pt; color: #07322f; page-break-after: avoid; }
+[data-contract-root] p { margin: 0 0 6pt; text-align: justify; }
+.contract-brand { display: flex; align-items: center; justify-content: space-between; gap: 16pt; padding-bottom: 12pt; border-bottom: 2pt solid #35c2a8; }
+.contract-ref { display: flex; flex-direction: column; align-items: flex-end; font-size: 9pt; color: #5f716c; }
+.contract-ref span:first-child { font-weight: 700; color: #0d7a72; letter-spacing: .06em; text-transform: uppercase; }
+.contract-plan { color: #0d7a72; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: 9.5pt; }
+.contract-parties { margin: 14pt 0; padding: 10pt 12pt; border-left: 3pt solid #ff6b4a; background: #f3fbf9; }
+.contract-clause { page-break-inside: avoid; }
+.contract-place { margin-top: 20pt !important; }
+.contract-signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 36pt; margin-top: 46pt; page-break-inside: avoid; }
+.contract-signatures div { display: flex; flex-direction: column; gap: 2pt; font-size: 10pt; }
+.contract-line { display: block; height: 1pt; margin-bottom: 4pt; background: #07322f; }
+.contract-footer { margin-top: 28pt; padding-top: 8pt; border-top: 1pt solid #dcecea; font-size: 8.5pt; color: #5f716c; text-align: center; }
+
+@media print {
+  @page { size: A4; margin: 18mm 18mm 20mm; @bottom-right { content: counter(page) ' / ' counter(pages); font: 8.5pt system-ui; color: #5f716c; } @bottom-left { content: 'LensSpace · Contrato de licencia'; font: 8.5pt system-ui; color: #5f716c; } }
+  html, body { background: white !important; }
+  body * { visibility: hidden; } [data-contract-root], [data-contract-root] * { visibility: visible; } [data-no-print] { display: none !important; }
+  [data-contract-root] { position: absolute; inset: 0; width: 100%; }
+  .contract-parties { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+@media screen {
+  .contract-notice { max-width: 820px; margin: 24px auto 0; border: 1px solid #f1d5a8; border-left: 4px solid #ff6b4a; border-radius: 8px; background: #fff9ef; padding: 16px 18px; color: #6b4e16; }
+  .contract-notice p { margin-top: 4px; font-size: 14px; }
+  [data-contract-root] { max-width: 820px; margin: 18px auto 36px; border: 1px solid #dcecea; border-radius: 10px; background: white; padding: 56px; }
+}
+@media screen and (max-width: 640px) {
+  [data-contract-root] { margin: 12px 16px 24px; padding: 24px 18px; }
+  .contract-brand { flex-direction: column; align-items: flex-start; }
+  .contract-ref { align-items: flex-start; }
+  .contract-signatures { grid-template-columns: 1fr; }
+}

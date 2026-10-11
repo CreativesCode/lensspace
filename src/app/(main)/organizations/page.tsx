@@ -12,7 +12,10 @@ export default async function OrganizationsPage() {
   if (!user) redirect('/login')
   const { data: isPlatformAdmin } = await supabase.rpc('current_user_is_platform_admin')
   if (!isPlatformAdmin) redirect('/dashboard')
-  const organizations = await loadPlatformOrganizations(supabase)
+  const [organizations, { data: providerProfile }] = await Promise.all([
+    loadPlatformOrganizations(supabase),
+    supabase.from('platform_provider_profile').select('*').maybeSingle(),
+  ])
 
-  return <PageContainer><PageHeader eyebrow="Administración de plataforma" title="Organizaciones" description="Busca, revisa y administra ópticas sin cargar todos sus formularios a la vez." /><PlatformAdminWorkspace organizations={organizations} /></PageContainer>
+  return <PageContainer><PageHeader eyebrow="Administración de plataforma" title="Organizaciones" description="Busca, revisa y administra ópticas sin cargar todos sus formularios a la vez." /><PlatformAdminWorkspace organizations={organizations} providerProfile={providerProfile} /></PageContainer>
 }

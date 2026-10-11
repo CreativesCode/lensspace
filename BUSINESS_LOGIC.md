@@ -212,6 +212,25 @@ El panel administrativo registrará como mínimo:
 - Módulos habilitados.
 - Notas administrativas del acuerdo.
 
+### Precios y contratos de licencia (decisión del 2026-10-10)
+
+| Plan o módulo | USD al mes |
+|---------------|-----------|
+| Básico: Núcleo + Ventas ópticas + WhatsApp | 10 |
+| + Caja / + Producción / + Analítica | 3 / 5 / 3 |
+| + Multisucursal | 5 por sucursal adicional |
+| Completo (una sucursal) | 19 |
+| Socio fundador (Completo) | 15 durante 24 meses; después, precio de lista |
+
+- Pago mensual, trimestral, semestral o anual; el anual cobra 10 meses por 12.
+- Cada contrato se prepara en el panel, se descarga como proforma con la marca
+  LensSpace y se sube firmado. El contrato firmado guarda una copia del precio,
+  la vigencia y los módulos; cambiar la lista de precios no lo altera.
+- Recomendaciones: cuando una óptica referida paga su primer periodo, la óptica
+  que la recomendó suma 15 días a su vencimiento si tiene vigente el precio de
+  socio fundador, y 10 días en los demás casos. Una sola vez por óptica referida.
+- Los datos del proveedor que salen en el contrato se editan en el panel.
+
 La prueba dura 15 días por defecto, aunque el superadministrador puede ajustar su
 duración. Al vencer, la organización pasa a solo lectura. La suspensión no será
 automática: la decide el superadministrador. Una renovación válida restablece el
