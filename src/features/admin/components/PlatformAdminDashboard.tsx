@@ -9,6 +9,7 @@ export function PlatformAdminDashboard({ organizations }: { organizations: Platf
   const total = organizations.length
   const active = organizations.filter(({ status }) => status === 'active').length
   const trials = organizations.filter(({ subscription }) => subscription?.status === 'trial').length
+  const preparing = organizations.filter(({ subscription }) => subscription?.status === 'pending').length
   const customers = organizations.reduce((sum, item) => sum + (item.usage?.customers ?? 0), 0)
   const orders = organizations.reduce((sum, item) => sum + (item.usage?.orders ?? 0), 0)
   const members = organizations.reduce((sum, item) => sum + (item.usage?.members ?? 0), 0)
@@ -19,7 +20,7 @@ export function PlatformAdminDashboard({ organizations }: { organizations: Platf
     ['Pedidos', orders, 'históricos'],
     ['Usuarios', members, 'miembros activos'],
     ['Producción abierta', openJobs, 'trabajos en curso'],
-    ['En prueba', trials, 'suscripciones trial'],
+    ['En prueba', trials, `${preparing} en preparación`],
   ]
   const recent = organizations.slice(0, 6)
 

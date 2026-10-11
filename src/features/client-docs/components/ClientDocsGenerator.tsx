@@ -74,7 +74,7 @@ export function ClientDocsGenerator({ initialInput, savedAt }: { initialInput: C
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-text-muted">{docs.subtitle}</p>
                 <h2 className="mt-1 font-display text-[17px] font-semibold text-ink">{docs.title}</h2>
               </div>
-              <SegmentedControl<ManualAudience> label="Audiencia" value={audience} onChange={setVariant} options={[{ value: 'worker', label: 'Personal operativo' }, { value: 'admin', label: 'Administración' }]} />
+              <SegmentedControl<ManualAudience> label="Audiencia" value={audience} onChange={setVariant} options={[{ value: 'worker', label: 'Personal operativo' }, { value: 'admin', label: 'Administración' }, { value: 'platform', label: 'Plataforma' }]} />
             </div>
             <Field label="Sección" className="lg:hidden"><FormSelect ariaLabel="Sección" value={selected.id} onValueChange={setSelectedId} options={docs.sections.map((section) => ({ value: section.id, label: section.title }))} /></Field>
           </Card>

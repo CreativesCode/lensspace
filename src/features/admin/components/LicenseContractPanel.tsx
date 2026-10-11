@@ -66,7 +66,7 @@ export function LicenseContractPanel({ organization, organizationNames, onChange
       if (!signError) return null
       await supabase.storage.from('license-contracts').remove([path])
       return friendlyError(signError, 'No pudimos registrar el contrato firmado.')
-    }, 'Contrato firmado registrado. El importe de la suscripción quedó actualizado.')
+    }, 'Contrato firmado registrado. Registra el pago en «Suscripción» para activarla.')
   }
 
   // The tab opens synchronously (popup blockers) and receives the short-lived URL.

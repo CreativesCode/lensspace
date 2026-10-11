@@ -26,6 +26,8 @@ const eventLabels: Record<string, string> = {
   'branch.activated': 'Sucursal reactivada',
   'branch.deactivated': 'Sucursal desactivada',
   'branch.primary_changed': 'Sucursal principal cambiada',
+  'subscription.payment_recorded': 'Pago de licencia registrado',
+  'organization.deleted': 'Organización eliminada',
 }
 
 const dateTime = new Intl.DateTimeFormat('es-CU', { timeZone: BUSINESS_TIME_ZONE, day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })

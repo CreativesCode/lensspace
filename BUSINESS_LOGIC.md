@@ -194,6 +194,9 @@ urgencias ni indicadores de atraso.
 El MVP gestionará suscripciones manualmente, sin pasarela de pago. Cada organización
 tendrá fecha de inicio, fecha de vencimiento y uno de estos estados:
 
+- **En preparación:** óptica creada sin prueba, mientras se prepara y firma el
+  contrato. Solo lectura y sin avisos de cobro hasta el primer pago (decisión del
+  2026-10-11). Nunca se vuelve a este estado.
 - **Prueba:** acceso temporal de evaluación.
 - **Activa:** operación normal.
 - **Vencida:** acceso de solo lectura; no permite nuevas operaciones.
@@ -202,6 +205,20 @@ tendrá fecha de inicio, fecha de vencimiento y uno de estos estados:
 
 El superadministrador registra renovaciones y cambios de estado. Los datos siguen
 perteneciendo a la organización aunque su suscripción venza o sea suspendida.
+
+Estados de la organización (decisión del 2026-10-11):
+
+- **Activa:** opera según su suscripción.
+- **Suspendida:** solo lectura.
+- **Archivada:** nadie de la óptica puede entrar; los datos se conservan y la
+  organización se puede restaurar con los accesos que tenía.
+- **Eliminar** solo es posible si la organización nunca tuvo actividad (clientes,
+  cotizaciones, pedidos, cobros, cajas, producción, mensajes, contrato firmado o
+  referidos). Con historial se archiva: pedidos y cobros son registros contables.
+  La cuenta del dueño no se borra.
+
+El manual tiene una «Guía de la plataforma» que solo ve el superadministrador, con el
+alta de ópticas, precios, contratos, cobros, sucursales y estados.
 
 Habrá un solo tipo de plan contractual, pero será configurable por organización.
 El panel administrativo registrará como mínimo:
@@ -230,6 +247,29 @@ El panel administrativo registrará como mínimo:
   que la recomendó suma 15 días a su vencimiento si tiene vigente el precio de
   socio fundador, y 10 días en los demás casos. Una sola vez por óptica referida.
 - Los datos del proveedor que salen en el contrato se editan en el panel.
+
+Prueba y pago (decisión del 2026-10-11):
+
+- La prueba es gratis (importe 0) y solo se da al crear la organización, cuando se
+  decide: 15 días o 1 mes. Después la óptica paga o se va: nunca vuelve a prueba, y
+  una óptica que entró pagando no puede tener prueba. Mientras dura la prueba
+  original se puede corregir su fecha de fin. Una óptica dada de alta sin prueba
+  queda «En preparación» (solo lectura) hasta su primer pago, que cuenta desde ese día.
+- Margen de pago (decisión del 2026-10-11, se paga en efectivo o Zelle): al vencer
+  la prueba o el periodo pagado, la óptica sigue operando 5 días; el sexto queda en
+  solo lectura hasta que se registra un pago. Los días de margen nunca se regalan:
+  el nuevo periodo empieza el día siguiente al vencimiento o, si ya estaba
+  bloqueada, 5 días antes del pago (se cobran los días de margen usados, no los días
+  bloqueada). Fórmula: inicio = max(vencimiento + 1, hoy − 5). Pagar durante la prueba
+  o con tiempo pagado no hace perder días.
+- Avisos (WhatsApp diario a las 10:00 de Cuba + aviso web una vez al día): al dueño
+  desde 2 días antes del vencimiento hasta el último día de margen, con el teléfono
+  del administrador; al administrador el día del vencimiento, con los datos del
+  dueño; y a ambos el día del bloqueo.
+- «Registrar pago» exige el contrato firmado: cobra el importe del periodo según el
+  contrato (el precio de socio fundador pasa al de lista al terminar sus 24 meses),
+  activa la suscripción y extiende el vencimiento un periodo desde hoy o desde el
+  fin del periodo pagado en curso.
 
 La prueba dura 15 días por defecto, aunque el superadministrador puede ajustar su
 duración. Al vencer, la organización pasa a solo lectura. La suspensión no será

@@ -1,5 +1,6 @@
 export type Audience = 'end-user' | 'admin' | 'support'
-export type ManualAudience = 'worker' | 'admin'
+// 'platform' = superadmin-only guide to running LensSpace (fixed copy).
+export type ManualAudience = 'worker' | 'admin' | 'platform'
 export type ManualLocale = 'es'
 export type DocSectionType = 'overview' | 'access' | 'roles' | 'module' | 'workflow' | 'faq' | 'support' | 'policy'
 

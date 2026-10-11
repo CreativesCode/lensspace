@@ -1,4 +1,5 @@
 import { COPY } from './copy'
+import { platformGuideSections } from './platformGuide'
 import type { ClientDocsInput, DocSection, GeneratedClientDocs, ManualAudience } from './types'
 
 const slugify = (value: string) => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
@@ -10,9 +11,14 @@ const ORDER_JOURNEY = ['El cliente llega y se le busca o se le crea su ficha.', 
 const GLOSSARY = ['Cotización: el precio que le das al cliente antes de que diga que sí.', 'Pedido: la venta que el cliente ya aceptó.', 'Saldo: lo que el cliente todavía debe.', 'Tasa: cuántos CUP vale 1 USD ese día.', 'Incidencia: cuando un trabajo sale mal y hay que repetirlo.', 'OD y OI: ojo derecho y ojo izquierdo.']
 const FIRST_ACCESS = ['El dueño te manda una invitación a tu correo.', 'Abre el correo y toca el enlace.', 'Inventa una contraseña, escríbela dos veces y toca «Guardar contraseña».', 'Ya estás dentro.']
 const FORGOT_PASSWORD = ['En la pantalla de entrar, toca «¿Olvidaste tu contraseña?».', 'Escribe tu correo y toca «Enviar enlace».', 'Abre el correo y crea una contraseña nueva.']
+// Owner-only: how the license works from the optician's side (decisions 2026-10-10/11).
+const OWNER_SUBSCRIPTION = ['Si empezaste con prueba, es gratis hasta la fecha que te dijeron. La prueba se da una sola vez.', 'Si empezaste sin prueba, la óptica está «en preparación» hasta que firmas el contrato y haces el primer pago: puedes verla, pero no vender ni cobrar.', 'Para seguir, firmas el contrato de licencia y pagas el periodo acordado (mensual, trimestral, semestral o anual).', 'Desde 2 días antes del vencimiento te llega un aviso por WhatsApp y lo ves arriba en el panel, con el teléfono para pagar.', 'Tienes 5 días de margen después del vencimiento para pagar: el sistema sigue funcionando y te avisamos cada día.', 'Si pasan esos 5 días sin pagar, el sistema queda en solo lectura: puedes ver todo, pero no vender ni cobrar. Al pagar vuelve a funcionar enseguida.', 'Los días de margen que usaste se cuentan dentro del periodo que pagas; los días en que estuvo bloqueado, no.', 'Para recibir los avisos, pon tu teléfono en «Mi perfil».', 'Para agregar módulos o sucursales, pídeselo a LensSpace: se cambia el contrato y el precio.', 'Tus datos son tuyos: si algún día dejas LensSpace, puedes pedir que te los entreguen.']
 const ACCOUNT_SAFETY = ['No le digas tu contraseña a nadie, ni a un compañero.', 'Si usas una computadora que no es tuya, sal del sistema al terminar.', 'Si alguien deja de trabajar en la óptica, pídele al dueño que le quite el acceso ese mismo día.']
 
 export function generateClientDocs(input: ClientDocsInput, audience: ManualAudience = 'worker'): GeneratedClientDocs {
+  if (audience === 'platform') {
+    return { title: COPY.manualTitle(audience, input.appName), subtitle: COPY.manualSubtitle(audience, input.appName), audience, locale: 'es', generatedAt: new Date().toISOString(), sections: platformGuideSections(input.appUrl) }
+  }
   const modules = input.modules.filter((module) => audience === 'admin' || (module.audience !== 'admin' && module.endUserActions.length > 0))
   const login = [`Abre el navegador y escribe ${input.appUrl}/login`, 'Escribe tu correo.', 'Escribe tu contraseña.', 'Toca «Iniciar sesión».', 'Vas a ver solo las partes que te tocan según tu trabajo.']
   const sections: DocSection[] = [
@@ -21,6 +27,9 @@ export function generateClientDocs(input: ClientDocsInput, audience: ManualAudie
     { id: 'roles', title: COPY.sectionTitle.roles, type: 'roles', content: `# ${COPY.sectionTitle.roles}\n\n${input.roles.map((role) => `## ${role.name}\n\n${role.description}\n\n${bullets(role.permissions)}`).join('\n\n')}` },
     ...modules.map((module): DocSection => ({ id: `module-${slugify(module.name)}`, title: module.name, type: 'module', content: `# ${module.name}\n${module.image ? `\n![${module.image.alt}](${module.image.src})\n` : ''}\n${module.description}\n\n${module.endUserActions.length ? `## Cómo se hace\n\n${bullets(module.endUserActions)}` : ''}${audience === 'admin' && module.adminActions?.length ? `\n\n## Para el dueño\n\n${bullets(module.adminActions)}` : ''}` })),
     ...input.workflows.filter((workflow) => audience === 'admin' || workflow.audience === 'end-user').map((workflow): DocSection => ({ id: `workflow-${slugify(workflow.title)}`, title: `Paso a paso: ${workflow.title}`, type: 'workflow', content: `# ${workflow.title}\n\nPara: ${COPY.audienceLabel[workflow.audience]}\n\n${steps(workflow.steps)}` })),
+    ...(audience === 'admin' ? [{ id: 'subscription', title: 'Tu suscripción', type: 'policy' as const, content: `# Tu suscripción
+
+${bullets(OWNER_SUBSCRIPTION)}` }] : []),
     { id: 'faq', title: COPY.sectionTitle.faq, type: 'faq', content: `# ${COPY.sectionTitle.faq}\n\n${input.faqs.map((faq) => `## ${faq.question}\n\n${faq.answer}`).join('\n\n')}` },
     ...(input.policies?.length ? [{ id: 'policies', title: COPY.sectionTitle.policy, type: 'policy' as const, content: `# ${COPY.sectionTitle.policy}\n\n${bullets(input.policies)}` }] : []),
   ]

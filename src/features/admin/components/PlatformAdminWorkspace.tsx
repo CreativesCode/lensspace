@@ -10,11 +10,14 @@ import { Alert, Badge, Button, ButtonLink, Card, CardHeader, Dialog, EmptyState,
 import { friendlyError } from '@/shared/lib/friendly-error'
 import { BUSINESS_TIME_ZONE, formatBusinessDate, todayIn } from '@/shared/utils/dates'
 import { sendOwnerPasswordReset } from '../actions'
+import { addMonthsIso, SUBSCRIPTION_GRACE_DAYS } from '../license-pricing'
 import { BranchManagementPanel } from './BranchManagementPanel'
+import { DeleteOrganizationPanel } from './DeleteOrganizationPanel'
 import { LicenseContractPanel } from './LicenseContractPanel'
 import { OrganizationAuditHistory } from './OrganizationAuditHistory'
 import { OrganizationOnboardingForm } from './OrganizationOnboardingForm'
 import { type ProviderProfile, ProviderProfileForm } from './ProviderProfileForm'
+import { SubscriptionActions } from './SubscriptionActions'
 
 const modules = [
   ['optical_sales', 'Ventas ópticas'], ['cashbox', 'Caja'], ['production', 'Producción'],
@@ -25,13 +28,16 @@ const modules = [
 const salesDependents = ['cashbox', 'production', 'whatsapp']
 
 // QA-54: one subscription state for the badge and the filter.
-type SubscriptionState = 'trial' | 'active' | 'expiring' | 'expired' | 'suspended' | 'none'
-const subscriptionStateLabels: Record<SubscriptionState, string> = { trial: 'Prueba', active: 'Al día', expiring: 'Por vencer', expired: 'Vencida', suspended: 'Suspendida', none: 'Sin suscripción' }
-const subscriptionStateTones = { trial: 'progress', active: 'success', expiring: 'warning', expired: 'danger', suspended: 'danger', none: 'neutral' } as const
+type SubscriptionState = 'pending' | 'trial' | 'active' | 'expiring' | 'grace' | 'expired' | 'suspended' | 'none'
+const subscriptionStateLabels: Record<SubscriptionState, string> = { pending: 'En preparación', trial: 'Prueba', active: 'Al día', expiring: 'Por vencer', grace: 'En margen de pago', expired: 'Vencida', suspended: 'Suspendida', none: 'Sin suscripción' }
+const subscriptionStateTones = { pending: 'neutral', trial: 'progress', active: 'success', expiring: 'warning', grace: 'warning', expired: 'danger', suspended: 'danger', none: 'neutral' } as const
 function subscriptionState(subscription: PlatformOrganization['subscription'], today: string): SubscriptionState {
   if (!subscription) return 'none'
   if (subscription.status === 'suspended') return 'suspended'
-  if (subscription.status === 'expired' || subscription.expires_on < today) return 'expired'
+  if (subscription.status === 'pending') return 'pending'
+  if (subscription.status === 'expired') return 'expired'
+  // Past the expiry but still operating: the grace period before the block.
+  if (subscription.expires_on < today) return addMonthsIso(subscription.expires_on, 0, false, SUBSCRIPTION_GRACE_DAYS) >= today ? 'grace' : 'expired'
   const daysLeft = (Date.parse(subscription.expires_on) - Date.parse(today)) / 86_400_000
   if (daysLeft <= 5) return 'expiring'
   return subscription.status === 'trial' ? 'trial' : 'active'
@@ -60,6 +66,7 @@ export function PlatformAdminWorkspace({ organizations, providerProfile }: { org
   const router = useRouter()
   const [openId, setOpenId] = useState<number | null>(null)
   const [enabledModules, setEnabledModules] = useState<string[]>([])
+  const [statusDraft, setStatusDraft] = useState('trial')
   const [createOpen, setCreateOpen] = useState(false)
   const [providerOpen, setProviderOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -90,6 +97,7 @@ export function PlatformAdminWorkspace({ organizations, providerProfile }: { org
   function openDetails(organization: PlatformOrganization) {
     setError('')
     setEnabledModules(organization.modules.filter(({ is_enabled }) => is_enabled).map(({ module_key }) => module_key))
+    setStatusDraft(organization.subscription?.status ?? 'trial')
     setOpenId(organization.id)
   }
 
@@ -169,7 +177,7 @@ export function PlatformAdminWorkspace({ organizations, providerProfile }: { org
           <div className="flex flex-col gap-4">
             <Field label="Organización"><Input value={query} onChange={(event) => setQuery(event.target.value)} type="search" placeholder="Nombre, prefijo o propietario" /></Field>
             <Field label="Estado"><FormSelect ariaLabel="Filtrar por estado" value={statusFilter} onValueChange={setStatusFilter} options={[{ value: 'all', label: 'Todos los estados' }, { value: 'active', label: 'Activas' }, { value: 'suspended', label: 'Suspendidas' }, { value: 'archived', label: 'Archivadas' }]} /></Field>
-            <Field label="Suscripción"><FormSelect ariaLabel="Filtrar por suscripción" value={subscriptionFilter} onValueChange={setSubscriptionFilter} options={[{ value: 'all', label: 'Todas' }, { value: 'trial', label: 'En prueba' }, { value: 'expiring', label: 'Por vencer (5 días o menos)' }, { value: 'expired', label: 'Vencidas' }, { value: 'active', label: 'Al día' }, { value: 'suspended', label: 'Suspendidas' }]} /></Field>
+            <Field label="Suscripción"><FormSelect ariaLabel="Filtrar por suscripción" value={subscriptionFilter} onValueChange={setSubscriptionFilter} options={[{ value: 'all', label: 'Todas' }, { value: 'pending', label: 'En preparación' }, { value: 'trial', label: 'En prueba' }, { value: 'expiring', label: 'Por vencer (5 días o menos)' }, { value: 'grace', label: 'En margen de pago' }, { value: 'expired', label: 'Vencidas' }, { value: 'active', label: 'Al día' }, { value: 'suspended', label: 'Suspendidas' }]} /></Field>
           </div>
         </FilterPanel>
         <Button variant="secondary" icon={IdCard} onClick={() => setProviderOpen(true)}>Datos del proveedor</Button>
@@ -209,12 +217,16 @@ export function PlatformAdminWorkspace({ organizations, providerProfile }: { org
     >
       {openOrganization ? <div key={openOrganization.id} className="grid min-w-0 gap-6 xl:grid-cols-[2fr_1fr]">
         <div className="flex min-w-0 flex-col gap-8">
+        <div className="flex flex-col gap-3">
+          <CardHeader title="Suscripción" />
+          <SubscriptionActions organizationId={openOrganization.id} subscription={openOrganization.subscription} signedContract={openOrganization.contracts.find(({ status }) => status === 'signed')} onChanged={contractChanged} />
+        </div>
         <form onSubmit={(event) => save(event, openOrganization.id)} className="flex min-w-0 flex-col gap-4">
-          <CardHeader title="Suscripción y operación" />
+          <CardHeader title="Operación y ajustes manuales" />
           <div className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Field label="Organización"><FormSelect name="organizationStatus" ariaLabel="Estado de la organización" defaultValue={openOrganization.status} options={[{ value: 'active', label: 'Activa' }, { value: 'suspended', label: 'Suspendida' }, { value: 'archived', label: 'Archivada' }]} /></Field>
-            <Field label="Suscripción"><FormSelect name="subscriptionStatus" ariaLabel="Estado de la suscripción" defaultValue={openOrganization.subscription?.status} options={[{ value: 'trial', label: 'Prueba' }, { value: 'active', label: 'Activa' }, { value: 'expired', label: 'Vencida' }, { value: 'suspended', label: 'Suspendida' }]} /></Field>
-            <Field label="Importe"><Input name="amount" type="number" inputMode="decimal" min="0" step="0.01" defaultValue={openOrganization.subscription?.amount ?? 0} numeric /></Field>
+            <Field label="Organización"><FormSelect name="organizationStatus" ariaLabel="Estado de la organización" defaultValue={openOrganization.status} options={[{ value: 'active', label: 'Activa' }, { value: 'suspended', label: 'Suspendida (solo lectura)' }, { value: 'archived', label: 'Archivada (sin acceso, restaurable)' }]} /></Field>
+            <Field label="Suscripción"><FormSelect name="subscriptionStatus" ariaLabel="Estado de la suscripción" value={statusDraft} onValueChange={setStatusDraft} options={[...(openOrganization.subscription?.status === 'pending' ? [{ value: 'pending', label: 'En preparación' }] : []), ...(openOrganization.subscription?.status === 'trial' ? [{ value: 'trial', label: 'Prueba' }] : []), { value: 'active', label: 'Activa' }, { value: 'expired', label: 'Vencida' }, { value: 'suspended', label: 'Suspendida' }]} /></Field>
+            <Field label="Importe" help={statusDraft === 'trial' ? 'La prueba es gratis.' : statusDraft === 'pending' ? 'Sin cobro hasta el primer pago.' : undefined}><Input name="amount" type="number" inputMode="decimal" min="0" step="0.01" defaultValue={openOrganization.subscription?.amount ?? 0} disabled={statusDraft === 'trial' || statusDraft === 'pending'} numeric /></Field>
             <Field label="Moneda"><Input name="currency" pattern="[A-Za-z]{3}" defaultValue={openOrganization.subscription?.currency ?? 'USD'} /></Field>
             <Field label="Periodicidad"><FormSelect name="billingPeriod" ariaLabel="Periodicidad" defaultValue={openOrganization.subscription?.billing_period ?? 'monthly'} options={[{ value: 'monthly', label: 'Mensual' }, { value: 'quarterly', label: 'Trimestral' }, { value: 'semiannual', label: 'Semestral' }, { value: 'annual', label: 'Anual' }, { value: 'custom', label: 'Personalizada' }]} /></Field>
             <Field label="Inicio"><Input name="startsOn" type="date" defaultValue={openOrganization.subscription?.starts_on} /></Field>
@@ -238,6 +250,12 @@ export function PlatformAdminWorkspace({ organizations, providerProfile }: { org
           branchLimit={1 + (openOrganization.contracts.find(({ status }) => status === 'signed')?.extra_branches ?? 0)}
           draftExtraBranches={openOrganization.contracts.find(({ status }) => status === 'draft')?.extra_branches ?? null}
           onChanged={contractChanged}
+        />
+        <DeleteOrganizationPanel
+          organizationId={openOrganization.id}
+          organizationName={openOrganization.name}
+          hasActivity={Boolean(openOrganization.usage?.customers || openOrganization.usage?.orders || openOrganization.usage?.notificationAttempts) || openOrganization.contracts.some(({ status }) => status === 'signed' || status === 'superseded')}
+          onDeleted={(message) => { setOpenId(null); setToast(message); router.refresh() }}
         />
         </div>
         <div className="flex flex-col gap-4">

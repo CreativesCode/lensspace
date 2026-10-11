@@ -2278,6 +2278,16 @@ export type Database = {
         }
         Returns: undefined
       }
+      complete_subscription_notice: {
+        Args: {
+          target_failure_code: string
+          target_failure_message: string
+          target_message_id: string
+          target_notice_id: number
+          target_outcome: string
+        }
+        Returns: undefined
+      }
       create_branch: {
         Args: {
           branch_code: string
@@ -2362,6 +2372,14 @@ export type Database = {
         Returns: boolean
       }
       current_user_is_platform_admin: { Args: never; Returns: boolean }
+      delete_empty_organization: {
+        Args: {
+          change_reason: string
+          confirm_name: string
+          target_organization_id: number
+        }
+        Returns: boolean
+      }
       end_platform_support_session: {
         Args: { target_session_id: number }
         Returns: boolean
@@ -2402,6 +2420,10 @@ export type Database = {
         Returns: Json
       }
       get_platform_usage: { Args: never; Returns: Json }
+      get_subscription_notice_payload: {
+        Args: { target_notice_id: number }
+        Returns: Json
+      }
       list_accessible_cashboxes: {
         Args: {
           target_branch_id?: number
@@ -2415,6 +2437,10 @@ export type Database = {
         | { Args: { finished_since: string }; Returns: Json }
       list_accessible_production_jobs: { Args: never; Returns: Json }
       list_my_pending_invitations: { Args: never; Returns: Json }
+      list_subscription_notices: {
+        Args: { target_organization_id: number }
+        Returns: Json
+      }
       manage_organization_member: {
         Args: {
           target_branch_id: number
@@ -2441,6 +2467,10 @@ export type Database = {
       }
       prepare_openwa_notification: {
         Args: { target_order_id: number; target_template_key: string }
+        Returns: Json
+      }
+      record_subscription_payment: {
+        Args: { payment_note: string; target_organization_id: number }
         Returns: Json
       }
       register_cash_payment: {

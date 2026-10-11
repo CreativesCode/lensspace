@@ -11,6 +11,7 @@ const generatedDate = new Intl.DateTimeFormat('es-CU', { timeZone: BUSINESS_TIME
 export default async function ManualPrintPage({ searchParams }: PageProps<'/manual/print'>) {
   const [access, manual, query] = await Promise.all([authorizeManualAccess(), loadManualInput(), searchParams])
   // The administration variant only for those allowed to read it.
-  const audience = query.audience === 'admin' && access.audiences.includes('admin') ? 'admin' : 'worker'
+  const requested = query.audience === 'admin' || query.audience === 'platform' ? query.audience : 'worker'
+  const audience = access.audiences.includes(requested) ? requested : 'worker'
   return <PrintView input={manual.input} audience={audience} generatedDateLabel={generatedDate.format(new Date())} />
 }

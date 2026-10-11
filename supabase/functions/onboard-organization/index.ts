@@ -15,7 +15,10 @@ type OnboardingRequest = {
   ownerName: string
   ownerEmail: string
   ownerPassword: string
-  subscriptionStatus: 'trial' | 'active'
+  // 'trial' = free trial until expiresOn; 'pending' = no trial, in preparation
+  // (read-only) until the first payment activates it (record_subscription_payment).
+  // Never 'active' here.
+  subscriptionStatus: 'trial' | 'pending'
   subscriptionAmount: number
   subscriptionCurrency: string
   billingPeriod: 'monthly' | 'quarterly' | 'semiannual' | 'annual' | 'custom'
@@ -62,7 +65,7 @@ function validateRequest(value: unknown): value is OnboardingRequest {
     typeof input.subscriptionAmount === 'number' &&
     Number.isFinite(input.subscriptionAmount) &&
     input.subscriptionAmount >= 0 &&
-    (input.subscriptionStatus === 'trial' || input.subscriptionStatus === 'active') &&
+    (input.subscriptionStatus === 'trial' || input.subscriptionStatus === 'pending') &&
     ['monthly', 'quarterly', 'semiannual', 'annual', 'custom'].includes(
       input.billingPeriod ?? '',
     ) &&

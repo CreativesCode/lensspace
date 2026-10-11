@@ -11,12 +11,12 @@ export type ManualAccess = { canEdit: boolean; audiences: ManualAudience[] }
 
 // QA-64: every signed-in user reads the manual; only the platform superadmin edits it
 // (also enforced by RLS on manual_documents). Owners and the superadmin also read the
-// administration variant.
+// administration variant; only the superadmin reads the platform guide.
 export async function authorizeManualAccess(): Promise<ManualAccess> {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=/manual')
   const { isPlatformAdmin, roles } = await getAccessSummary()
-  const audiences: ManualAudience[] = isPlatformAdmin || roles.includes('owner') ? ['worker', 'admin'] : ['worker']
+  const audiences: ManualAudience[] = isPlatformAdmin ? ['worker', 'admin', 'platform'] : roles.includes('owner') ? ['worker', 'admin'] : ['worker']
   return { canEdit: isPlatformAdmin, audiences }
 }
 

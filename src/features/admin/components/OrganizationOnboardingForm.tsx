@@ -8,6 +8,7 @@ import { Building } from 'lucide-react'
 
 import { FormSelect, PasswordInput } from '@/shared/components'
 import { Alert, Button, Field, Input } from '@/shared/ui'
+import { todayIn } from '@/shared/utils/dates'
 
 const optionalModules = [
   { key: 'optical_sales', label: 'Ventas ópticas' },
@@ -27,19 +28,18 @@ export function suggestOrderPrefix(name: string) {
   return (meaningful.length ? meaningful : words).join('').slice(0, 3)
 }
 
-function toIsoDate(date: Date) {
-  return date.toISOString().slice(0, 10)
+// Trial only when the admin decides it (2026-10-11). Without a trial the organization
+// is in preparation ('pending', read-only) until the first payment activates it.
+const trialOptions = [{ value: '15', label: '15 días de prueba gratis' }, { value: '30', label: '1 mes de prueba gratis' }, { value: '0', label: 'Sin prueba (en preparación hasta el primer pago)' }]
+
+function addDaysIso(isoDate: string, days: number) {
+  const [year, month, day] = isoDate.split('-').map(Number)
+  return new Date(Date.UTC(year, month - 1, day + days)).toISOString().slice(0, 10)
 }
 
 export function OrganizationOnboardingForm({ onCreated }: { onCreated?: (message: string) => void }) {
   const router = useRouter()
   const supabase = useMemo(() => createClient(), [])
-  const today = useMemo(() => new Date(), [])
-  const trialEnd = useMemo(() => {
-    const date = new Date(today)
-    date.setDate(date.getDate() + 15)
-    return date
-  }, [today])
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [organizationName, setOrganizationName] = useState('')
@@ -57,6 +57,8 @@ export function OrganizationOnboardingForm({ onCreated }: { onCreated?: (message
     const enabledModules = optionalModules
       .filter(({ key }) => formData.get(key) === 'on')
       .map(({ key }) => key)
+    const trialDays = Number(formData.get('trialDays'))
+    const startsOn = todayIn()
 
     const { data, error } = await supabase.functions.invoke(
       'onboard-organization',
@@ -70,12 +72,12 @@ export function OrganizationOnboardingForm({ onCreated }: { onCreated?: (message
           ownerName: formData.get('ownerName'),
           ownerEmail: formData.get('ownerEmail'),
           ownerPassword: formData.get('ownerPassword'),
-          subscriptionStatus: formData.get('subscriptionStatus'),
-          subscriptionAmount: Number(formData.get('subscriptionAmount')),
-          subscriptionCurrency: formData.get('subscriptionCurrency'),
-          billingPeriod: formData.get('billingPeriod'),
-          startsOn: formData.get('startsOn'),
-          expiresOn: formData.get('expiresOn'),
+          subscriptionStatus: trialDays > 0 ? 'trial' : 'pending',
+          subscriptionAmount: 0,
+          subscriptionCurrency: 'USD',
+          billingPeriod: 'monthly',
+          startsOn,
+          expiresOn: trialDays > 0 ? addDaysIso(startsOn, trialDays - 1) : startsOn,
           enabledModules,
         },
       },
@@ -127,14 +129,9 @@ export function OrganizationOnboardingForm({ onCreated }: { onCreated?: (message
         </Field>
       </fieldset>
 
-      <fieldset className="grid gap-[18px] sm:grid-cols-2 lg:grid-cols-4">
+      <fieldset className="grid gap-[18px] md:grid-cols-2">
         <legend className="mb-4 font-display text-[17px] font-semibold text-ink">Suscripción</legend>
-        <Field label="Estado"><FormSelect name="subscriptionStatus" ariaLabel="Estado de la suscripción" defaultValue="trial" options={[{ value: 'trial', label: 'Prueba' }, { value: 'active', label: 'Activa' }]} /></Field>
-        <Field label="Importe"><Input name="subscriptionAmount" type="number" inputMode="decimal" min="0" step="0.01" defaultValue="0" numeric required /></Field>
-        <Field label="Moneda"><Input name="subscriptionCurrency" pattern="[A-Za-z]{3}" defaultValue="USD" required /></Field>
-        <Field label="Periodicidad"><FormSelect name="billingPeriod" ariaLabel="Periodicidad" defaultValue="monthly" options={[{ value: 'monthly', label: 'Mensual' }, { value: 'quarterly', label: 'Trimestral' }, { value: 'semiannual', label: 'Semestral' }, { value: 'annual', label: 'Anual' }, { value: 'custom', label: 'Personalizada' }]} /></Field>
-        <Field label="Inicio"><Input name="startsOn" type="date" defaultValue={toIsoDate(today)} required /></Field>
-        <Field label="Vencimiento"><Input name="expiresOn" type="date" defaultValue={toIsoDate(trialEnd)} required /></Field>
+        <Field label="Período de prueba" help="La prueba es gratis y tiene 5 días de margen al vencer. Sin prueba, la óptica queda en preparación (solo lectura) hasta que registres su primer pago con el contrato firmado."><FormSelect name="trialDays" ariaLabel="Período de prueba" defaultValue="15" options={trialOptions} /></Field>
       </fieldset>
 
       <fieldset>
