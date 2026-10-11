@@ -21,6 +21,16 @@ producto lo aprobó como **documentación oficial del sitio**: `/manual` y su PD
 guarda desde el editor, debe partir de este texto. Reglas de redacción:
 `feedback/2026-10-04-plain-language-end-user-docs.md`.
 
+Actualización 2026-10-11 (formato visual, pedido por el dueño del producto: «les falta
+vidilla»): el lector web y el PDF comparten un parser (`generators/docBlocks.ts`) con un
+subconjunto de Markdown: pasos numerados, viñetas, `**negrita**`, «etiqueta de la
+interfaz» dibujada como chip y notas `> Ojo:` / `> Importante:` / `> Cuidado:` (ámbar) o
+`> Nota:` / `> Consejo:` / `> Ejemplo:` (verde). El PDF salía sin números ni viñetas
+porque el reset de Tailwind quita `list-style`: `print.css` dibuja sus propios marcadores
+y usa `print-color-adjust: exact` para que los fondos lleguen al PDF. El marcado se puso
+solo en los textos fijos (`generateClientDocs.ts`, `platformGuide.ts`); el contenido
+editable de `manual_documents` no cambió y recibe los chips automáticamente.
+
 LensSpace incorpora un generador interno en `/manual` para producir documentación en español. La herramienta ofrece editor, vista previa, variantes para personal operativo y administración, descarga Markdown y vista preparada para guardar como PDF.
 
 El acceso se valida en servidor y está limitado a superadministradores y dueños activos. La ruta de impresión aplica el mismo control. El menú muestra «Manual del sistema» únicamente a esos perfiles.

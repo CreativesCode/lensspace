@@ -3,6 +3,7 @@ import type { DocSection } from './types'
 // Platform guide: only the superadmin reads it (how LensSpace itself is run). Fixed
 // copy because it documents the admin panel exactly as built; keep it in sync with
 // src/features/admin and BUSINESS_LOGIC.md (pricing, trial, contracts, branches).
+// Markup (see docBlocks.ts): **bold**, «UI label» and `> Ojo:` / `> Nota:` / `> Ejemplo:` notes.
 
 const bullets = (items: string[]) => items.map((item) => `- ${item}`).join('\n')
 const steps = (items: string[]) => items.map((item, index) => `${index + 1}. ${item}`).join('\n')
@@ -41,35 +42,36 @@ ${steps([
 ## Organización y primera sucursal
 
 ${bullets([
-  'Nombre de la óptica: como la conoce la gente. Sale en los mensajes de WhatsApp.',
-  'Prefijo de pedidos: 3 a 8 letras o números. Los pedidos salen como JAV-2026-000001. Se sugiere solo desde el nombre; el dueño lo puede cambiar antes de su primer pedido.',
-  'Nombre y código de la sucursal: la primera sucursal (normalmente «Principal», código MAIN). Es la sucursal principal.',
-  'Zona horaria: deja America/Havana salvo que la óptica esté en otro país.',
+  '**Nombre de la óptica:** como la conoce la gente. Sale en los mensajes de WhatsApp.',
+  '**Prefijo de pedidos:** 3 a 8 letras o números. Los pedidos salen como JAV-2026-000001. Se sugiere solo desde el nombre; el dueño lo puede cambiar antes de su primer pedido.',
+  '**Nombre y código de la sucursal:** la primera sucursal (normalmente «Principal», código MAIN). Es la sucursal principal.',
+  '**Zona horaria:** deja America/Havana salvo que la óptica esté en otro país.',
 ])}
 
 ## Propietario
 
 ${bullets([
-  'Nombre y correo del dueño: con ese correo entra. Si el correo ya tiene cuenta en LensSpace, el alta falla: usa otro.',
-  'Contraseña inicial: mínimo 10 caracteres.',
+  '**Nombre y correo del dueño:** con ese correo entra. Si el correo ya tiene cuenta en LensSpace, el alta falla: usa otro.',
+  '**Contraseña inicial:** mínimo 10 caracteres.',
 ])}
 
 ## Suscripción: período de prueba
 
 ${bullets([
-  '15 días o 1 mes de prueba gratis: la óptica trabaja sin pagar hasta esa fecha.',
-  'Sin prueba: la óptica queda «En preparación» (solo lectura, sin avisos de cobro) mientras preparas y firmas el contrato. Empieza a trabajar cuando registres su primer pago, y el periodo cuenta desde ese día.',
-  'La prueba solo se da aquí, al crear la óptica. Después nunca se puede volver a dar.',
+  '**15 días o 1 mes de prueba gratis:** la óptica trabaja sin pagar hasta esa fecha.',
+  '**Sin prueba:** la óptica queda «En preparación» (solo lectura, sin avisos de cobro) mientras preparas y firmas el contrato. Empieza a trabajar cuando registres su primer pago, y el periodo cuenta desde ese día.',
 ])}
+
+> Ojo: La prueba solo se da aquí, al crear la óptica. Después nunca se puede volver a dar.
 
 ## Módulos
 
 ${bullets([
-  'El Núcleo siempre está (usuarios, seguridad, una sucursal, auditoría).',
-  'Ventas ópticas: clientes, recetas, catálogo, cotizaciones, pedidos y cobros. Casi siempre hace falta.',
-  'Caja, Producción y WhatsApp necesitan Ventas ópticas: se activan juntos.',
-  'Analítica: indicadores para el dueño.',
-  'Multisucursal: permite tener más sucursales (ver «Sucursales»).',
+  '**El Núcleo siempre está** (usuarios, seguridad, una sucursal, auditoría).',
+  '**Ventas ópticas:** clientes, recetas, catálogo, cotizaciones, pedidos y cobros. Casi siempre hace falta.',
+  '**Caja, Producción y WhatsApp** necesitan Ventas ópticas: se activan juntos.',
+  '**Analítica:** indicadores para el dueño.',
+  '**Multisucursal:** permite tener más sucursales (ver «Sucursales»).',
   'Activa los que vaya a pagar. Puedes cambiarlos después en «Operación y ajustes manuales».',
 ])}` },
 
@@ -78,15 +80,15 @@ ${bullets([
 Precios acordados el 10 de octubre de 2026, en USD al mes:
 
 ${bullets([
-  'Básico: 10 (Núcleo + Ventas ópticas + WhatsApp).',
-  'Caja: +3. Producción y proveedores: +5. Analítica: +3.',
-  'Multisucursal: +5 por cada sucursal adicional.',
-  'Completo (una sucursal): 19.',
-  'Socio fundador: el Completo a 15 durante 24 meses; después paga el precio de lista.',
-  'Pago anual: paga 10 meses y recibe 12. También hay trimestral y semestral.',
+  '**Básico:** 10 (Núcleo + Ventas ópticas + WhatsApp).',
+  '**Caja:** +3. **Producción y proveedores:** +5. **Analítica:** +3.',
+  '**Multisucursal:** +5 por cada sucursal adicional.',
+  '**Completo (una sucursal):** 19.',
+  '**Socio fundador:** el Completo a 15 durante 24 meses; después paga el precio de lista.',
+  '**Pago anual:** paga 10 meses y recibe 12. También hay trimestral y semestral.',
 ])}
 
-El contrato guarda una copia del precio: si cambias la lista más adelante, los contratos firmados no cambian.` },
+> Nota: El contrato guarda una copia del precio: si cambias la lista más adelante, los contratos firmados no cambian.` },
 
     { id: 'workflow-contrato', title: 'Contrato de licencia', type: 'workflow', content: `# Contrato de licencia
 
@@ -109,8 +111,8 @@ El contrato firmado queda guardado en privado: solo tú lo ves («Ver firmado»)
 ## Cambiar o anular
 
 ${bullets([
-  'Un borrador se puede editar o descartar.',
-  'Un contrato firmado no se edita: para cambiar algo, prepara uno nuevo y súbelo firmado.',
+  '**Un borrador** se puede editar o descartar.',
+  '**Un contrato firmado no se edita:** para cambiar algo, prepara uno nuevo y súbelo firmado.',
   '«Anular» termina el contrato firmado (pide motivo). Con eso no se puede registrar pago hasta que haya otro firmado.',
 ])}
 
@@ -134,41 +136,43 @@ ${steps([
 ## Reglas
 
 ${bullets([
-  'Sin contrato firmado no se puede registrar pago: el importe sale del contrato.',
-  'Si todavía tiene tiempo pagado o de prueba, el nuevo periodo empieza cuando termina el actual (no pierde días).',
-  'El primer pago de una óptica «En preparación» empieza el día del pago.',
-  'El periodo cubre 1 mes (mensual), 3 (trimestral), 6 (semestral) o 12 meses (anual, cobrando 10).',
-  'Hay 5 días de margen para pagar: la óptica sigue trabajando hasta 5 días después del vencimiento. El sexto día queda en solo lectura (ve sus datos pero no puede vender ni cobrar). Al registrar el pago vuelve a trabajar enseguida.',
-  'Los días de margen nunca se regalan. Si paga dentro del margen, el nuevo periodo empieza el día siguiente al vencimiento.',
-  'Si paga ya bloqueada, el periodo empieza 5 días antes del pago: se cobran los 5 días de margen que usó, pero no los días que estuvo bloqueada. Ejemplo: vencía el 5 y paga el 20 → el periodo empieza el 15.',
+  '**Sin contrato firmado no se puede registrar pago:** el importe sale del contrato.',
+  'Si todavía tiene tiempo pagado o de prueba, el nuevo periodo empieza cuando termina el actual (**no pierde días**).',
+  'El primer pago de una óptica «En preparación» empieza **el día del pago**.',
+  'El periodo cubre **1 mes** (mensual), **3** (trimestral), **6** (semestral) o **12 meses** (anual, cobrando 10).',
+  '**Hay 5 días de margen para pagar:** la óptica sigue trabajando hasta 5 días después del vencimiento. El sexto día queda en solo lectura (ve sus datos pero no puede vender ni cobrar). Al registrar el pago vuelve a trabajar enseguida.',
+  '**Los días de margen nunca se regalan.** Si paga dentro del margen, el nuevo periodo empieza el día siguiente al vencimiento.',
+  'Si paga ya bloqueada, el periodo empieza **5 días antes del pago**: se cobran los 5 días de margen que usó, pero no los días que estuvo bloqueada.',
 ])}
+
+> Ejemplo: Vencía el 5 y paga el 20 → el periodo empieza el 15.
 
 ## Avisos automáticos por WhatsApp
 
 Cada día a las 10:00 (hora de Cuba; 9:00 en invierno) el sistema manda estos avisos. Vale igual para la prueba y para la suscripción. Ejemplo con vencimiento el día 5:
 
 ${bullets([
-  'Días 3 y 4: al dueño, que debe pagar y con tu teléfono para contactarte.',
-  'Día 5 (vence): al dueño, y a ti con el nombre, teléfono y correo del dueño.',
-  'Días 6 al 10 (margen): al dueño, cada día, con cuántos días le quedan y la fecha de bloqueo.',
-  'Día 11: la óptica queda en solo lectura y se avisa al dueño y a ti.',
+  '**Días 3 y 4:** al dueño, que debe pagar y con tu teléfono para contactarte.',
+  '**Día 5 (vence):** al dueño, y a ti con el nombre, teléfono y correo del dueño.',
+  '**Días 6 al 10 (margen):** al dueño, cada día, con cuántos días le quedan y la fecha de bloqueo.',
+  '**Día 11:** la óptica queda en solo lectura y se avisa al dueño y a ti.',
 ])}
 
 En la web, el dueño ve el mismo aviso arriba del panel una vez al día (si lo cierra, vuelve al día siguiente).
 
-Para que lleguen: tu teléfono va en «Datos del proveedor» y el del dueño en su perfil (si no lo tiene, se usa el del contrato firmado). En el detalle de la óptica, «Avisos de WhatsApp enviados» muestra cada aviso y si salió.
+> Nota: Para que lleguen, tu teléfono va en «Datos del proveedor» y el del dueño en su perfil (si no lo tiene, se usa el del contrato firmado). En el detalle de la óptica, «Avisos de WhatsApp enviados» muestra cada aviso y si salió.
 
 ## La prueba gratis
 
 ${bullets([
-  'Solo existe si la diste al crear la óptica, y siempre es gratis.',
+  'Solo existe si la diste al crear la óptica, y **siempre es gratis**.',
   'Mientras dure y la óptica no haya pagado, puedes corregir su fecha de fin en «Operación y ajustes manuales».',
-  'Cuando paga por primera vez, la prueba termina para siempre: nunca vuelve a prueba.',
+  'Cuando paga por primera vez, la prueba termina para siempre: **nunca vuelve a prueba**.',
 ])}` },
 
     { id: 'workflow-sucursales', title: 'Sucursales', type: 'workflow', content: `# Sucursales
 
-Solo tú creas y cambias sucursales. El dueño no puede.
+> Nota: Solo tú creas y cambias sucursales. El dueño no puede.
 
 ${steps([
   'Activa el módulo Multisucursal en «Operación y ajustes manuales».',
@@ -180,10 +184,10 @@ ${steps([
 ## Reglas
 
 ${bullets([
-  'Sucursales activas permitidas = 1 + las sucursales extra del contrato firmado. Las de un borrador no cuentan hasta que subas el firmado.',
-  'La sucursal principal es la que sigue trabajando si se apaga Multisucursal; las demás quedan en solo lectura.',
+  '**Sucursales activas permitidas = 1 + las sucursales extra** del contrato firmado. Las de un borrador no cuentan hasta que subas el firmado.',
+  '**La sucursal principal** es la que sigue trabajando si se apaga Multisucursal; las demás quedan en solo lectura.',
   '«Hacer principal» cambia cuál es la principal.',
-  'Una sucursal no se puede desactivar si tiene pedidos sin entregar, cobros sin cerrar en caja o vendedores asignados. Sus datos nunca se borran.',
+  'Una sucursal **no se puede desactivar** si tiene pedidos sin entregar, cobros sin cerrar en caja o vendedores asignados. Sus datos nunca se borran.',
   'Cada vendedor trabaja en una sola sucursal, los clientes son de cada sucursal y la numeración de pedidos es una sola por óptica.',
 ])}` },
 
@@ -192,30 +196,32 @@ ${bullets([
 El estado de la óptica se cambia en «Operación y ajustes manuales» (con motivo).
 
 ${bullets([
-  'Activa: trabaja normal (si su suscripción está al día).',
-  'Suspendida: solo lectura. Úsalo para un problema temporal (por ejemplo, un pago en disputa).',
-  'Archivada: nadie de la óptica puede entrar. Los datos se guardan. Úsalo cuando la óptica deja LensSpace. Si vuelve, ponla otra vez como Activa: todos recuperan su acceso como lo tenían.',
+  '**Activa:** trabaja normal (si su suscripción está al día).',
+  '**Suspendida:** solo lectura. Úsalo para un problema temporal (por ejemplo, un pago en disputa).',
+  '**Archivada:** nadie de la óptica puede entrar. Los datos se guardan. Úsalo cuando la óptica deja LensSpace. Si vuelve, ponla otra vez como Activa: todos recuperan su acceso como lo tenían.',
 ])}
 
 ## Eliminar
 
-Al final del detalle de la óptica está «Eliminar organización». Solo funciona si la óptica nunca tuvo actividad: sin clientes, pedidos, cobros, mensajes ni contrato firmado. Sirve para una óptica creada por error o que se fue durante la prueba sin usarla.
+Al final del detalle de la óptica está «Eliminar organización». Solo funciona si la óptica **nunca tuvo actividad**: sin clientes, pedidos, cobros, mensajes ni contrato firmado. Sirve para una óptica creada por error o que se fue durante la prueba sin usarla.
 
 ${steps([
   'Toca «Eliminar organización».',
   'Escribe el nombre exacto de la óptica y el motivo.',
-  'Toca «Eliminar definitivamente». No se puede deshacer.',
+  'Toca «Eliminar definitivamente».',
 ])}
+
+> Ojo: Eliminar no se puede deshacer.
 
 La cuenta del dueño no se borra (puede estar en otra óptica). Si una óptica tiene historial, archívala: los pedidos y cobros son registros contables y no se borran.` },
 
     { id: 'module-asistencia', title: 'Asistencia y acceso', type: 'module', content: `# Asistencia y acceso
 
 ${bullets([
-  'Asistencia auditada: para ver los datos de una óptica y ayudarla, inicia una sesión de asistencia con motivo y duración (máximo 2 horas). Queda registrada. Sin esa sesión no ves sus datos operativos.',
-  'Acceso del propietario: si el dueño olvidó su contraseña, toca «Enviar enlace de restablecimiento» y le llega un correo para crear una nueva.',
-  'Historial: cada cambio de contrato, pago, sucursal, módulo o estado queda anotado con fecha y motivo.',
-  'Manual: en el Manual eres el único que edita el contenido de las guías del equipo y del dueño. Esta guía de plataforma no se edita desde ahí.',
+  '**Asistencia auditada:** para ver los datos de una óptica y ayudarla, inicia una sesión de asistencia con motivo y duración (máximo 2 horas). Queda registrada. Sin esa sesión no ves sus datos operativos.',
+  '**Acceso del propietario:** si el dueño olvidó su contraseña, toca «Enviar enlace de restablecimiento» y le llega un correo para crear una nueva.',
+  '**Historial:** cada cambio de contrato, pago, sucursal, módulo o estado queda anotado con fecha y motivo.',
+  '**Manual:** en el Manual eres el único que edita el contenido de las guías del equipo y del dueño. Esta guía de plataforma no se edita desde ahí.',
 ])}` },
 
     { id: 'faq', title: 'Preguntas que siempre salen', type: 'faq', content: `# Preguntas que siempre salen
