@@ -31,6 +31,15 @@
 .trustPanel { position:relative; }
 .trustPanel::after { position:absolute; right:-100px; bottom:-180px; width:430px; height:430px; border:1px solid rgba(127,216,200,.18); border-radius:50%; box-shadow:0 0 0 60px rgba(127,216,200,.035),0 0 0 120px rgba(127,216,200,.02); content:''; pointer-events:none; }
 .ctaGlow { position:absolute; top:-180px; left:50%; width:480px; height:320px; border-radius:50%; background:rgba(53,194,168,.2); filter:blur(60px); transform:translateX(-50%); }
+.pricing { background:radial-gradient(circle at 50% 0%,rgba(53,194,168,.13),transparent 46%),linear-gradient(180deg,#f7fbfa 0%,#eef8f6 100%); }
+.billingThumb { position:absolute; top:4px; bottom:4px; left:4px; width:calc(50% - 4px); border-radius:999px; background:#07322f; box-shadow:0 8px 20px rgba(7,50,47,.22); transition:transform 320ms cubic-bezier(.2,.75,.25,1); }
+.billingThumbAnnual { transform:translateX(100%); }
+.planCard { transition:transform 220ms ease,box-shadow 220ms ease,border-color 220ms ease; box-shadow:0 16px 45px rgba(7,50,47,.06); }
+.planCard:hover { border-color:#9bcdc6; box-shadow:0 26px 60px rgba(7,50,47,.12); transform:translateY(-5px); }
+.planFeatured { background-image:radial-gradient(circle at 100% 0%,rgba(53,194,168,.3),transparent 52%),radial-gradient(circle at 0% 100%,rgba(255,107,74,.13),transparent 45%); box-shadow:0 30px 70px rgba(7,50,47,.3); }
+.planFeatured:hover { border-color:transparent; box-shadow:0 36px 80px rgba(7,50,47,.36); }
+.priceSwap { animation:price-swap 380ms cubic-bezier(.2,.75,.25,1) both; }
+@keyframes price-swap { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 @keyframes rise-in { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
 @keyframes window-float { 0%,100% { transform:translateY(0) rotate(-.25deg); } 50% { transform:translateY(-8px) rotate(.25deg); } }
 @keyframes badge-float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-7px); } }
@@ -39,4 +48,4 @@
 @keyframes focus-pulse { 0% { box-shadow:0 0 0 0 rgba(255,107,74,.42); } 70%,100% { box-shadow:0 0 0 10px rgba(255,107,74,0); } }
 @keyframes progress-in { from { width:0; } to { width:68%; } }
 @media (max-width:767px) { .badgeTop { top:-17px; right:6px; } .badgeBottom { bottom:-20px; left:6px; } .orbitOne { inset:-5% -2%; } .orbitTwo { display:none; } .roleCard { min-height:auto; } }
-@media (prefers-reduced-motion:reduce) { .page { scroll-behavior:auto; } .heroCopy,.heroVisual,.productWindow,.orbitOne,.orbitTwo,.floatingBadge,.activeStep,.progressBar { animation:none!important; } .workflowCard,.capabilityCard,.roleCard { transition:none; } }
+@media (prefers-reduced-motion:reduce) { .page { scroll-behavior:auto; } .heroCopy,.heroVisual,.productWindow,.orbitOne,.orbitTwo,.floatingBadge,.activeStep,.progressBar { animation:none!important; } .priceSwap { animation:none!important; } .workflowCard,.capabilityCard,.roleCard,.planCard,.billingThumb { transition:none; } }
